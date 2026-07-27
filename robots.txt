@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard-master.html
+Disallow: /dashboard-partenaire.html
+Disallow: /compte.html
+Sitemap: https://melodia-funebre.fr/sitemap.xml

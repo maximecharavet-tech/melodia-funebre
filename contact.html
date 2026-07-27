@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Melodia Funèbre</title>
+<meta name="description" content="Contactez Melodia Funèbre : réponse personnelle sous 2 heures ouvrées, urgences traitées 7j/7.">
+<link rel="icon" href="assets/img/logo-melodia.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+<body>
+<nav class="nav at-top">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <img src="assets/img/logo-melodia.jpg" alt="Melodia Funèbre" class="nav-logo">
+      <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="processus.html">Processus</a>
+      <a href="demos.html">Écouter</a>
+      <a href="offres.html">Offres</a>
+      <a href="agences.html">Agences</a>
+      <a href="contact.html">Contact</a>
+      <a href="compte.html" class="nav-cta">Mon compte</a>
+    </div>
+    <button class="nav-burger" aria-label="Ouvrir le menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile">
+  <a href="processus.html">Processus</a>
+  <a href="demos.html">Écouter</a>
+  <a href="offres.html">Offres</a>
+  <a href="agences.html">Agences</a>
+  <a href="contact.html">Contact</a>
+  <a href="compte.html">Mon compte</a>
+</div>
+
+<main>
+
+  <section class="section" style="padding-top:9rem; padding-bottom:0;">
+    <div class="wrap">
+      <div class="eyebrow reveal in">Nous écrire</div>
+      <h1 class="h-hero reveal in reveal-d1">Parlons de<br>votre <em>hommage.</em></h1>
+      <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Une question, une urgence, un projet d'agence : nous répondons personnellement, sous deux heures ouvrées.</p>
+    </div>
+  </section>
+  <section class="section"><div class="wrap"><div class="grid-2" style="gap:3rem; align-items:start;">
+    <form class="card reveal" onsubmit="event.preventDefault(); window.melodiaToast('Message envoyé — réponse sous 2 heures ouvrées.'); this.reset();">
+      <div class="field-row">
+        <div class="field"><label class="field-label" for="c-nom">Votre nom</label><input class="field-input" id="c-nom" required placeholder="Prénom Nom"></div>
+        <div class="field"><label class="field-label" for="c-email">Email</label><input class="field-input" id="c-email" type="email" required placeholder="vous@email.fr"></div>
+      </div>
+      <div class="field"><label class="field-label" for="c-type">Vous êtes</label><select class="field-select" id="c-type"><option>Une famille</option><option>Une agence de pompes funèbres</option><option>Un officiant de cérémonie</option><option>Autre</option></select></div>
+      <div class="field"><label class="field-label" for="c-msg">Votre message</label><textarea class="field-area" id="c-msg" required placeholder="Dites-nous tout — y compris si la cérémonie est proche, nous prioriserons."></textarea></div>
+      <button type="submit" class="btn btn-gold" style="width:100%;">Envoyer</button>
+    </form>
+    <div>
+      <div class="card reveal reveal-d1" style="margin-bottom:1.2rem;"><h3 class="h-lg" style="font-size:1.3rem; margin-bottom:1rem;">Contact direct</h3>
+        <p style="color:var(--bone); margin-bottom:0.5rem;"><a href="tel:+33784101696" style="color:var(--or);">07 84 10 16 96</a> — nous décrochons personnellement</p>
+        <p style="color:var(--bone);"><a href="mailto:contact@melodia-funebre.fr" style="color:var(--or);">contact@melodia-funebre.fr</a></p></div>
+      <div class="card reveal reveal-d2" style="margin-bottom:1.2rem;"><h3 class="h-lg" style="font-size:1.3rem; margin-bottom:1rem;">Urgence cérémonie</h3>
+        <p style="color:var(--ash); font-size:0.92rem;">Cérémonie sous quarante-huit heures ? Appelez en mentionnant « urgence » : l'option prioritaire livre un hommage complet en six heures.</p></div>
+      <div class="card reveal reveal-d3"><h3 class="h-lg" style="font-size:1.3rem; margin-bottom:1rem;">Horaires</h3>
+        <p style="color:var(--ash); font-size:0.92rem;">Lundi au samedi, 8 h – 20 h. Les messages hors horaires reçoivent une réponse le lendemain matin. Les urgences sont traitées sept jours sur sept.</p></div>
+    </div>
+  </div></div></section>
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <img src="assets/img/logo-melodia.jpg" alt="Melodia Funèbre" class="footer-logo">
+        <p class="footer-tag">Maison française de composition musicale personnalisée pour cérémonies funéraires.</p>
+        <p class="footer-baseline">Écoute · Respect · Accompagnement<br>Harmonie · Mémoire</p>
+      </div>
+      <div>
+        <h4>Découvrir</h4>
+        <ul class="footer-links">
+          <li><a href="processus.html">Le processus</a></li>
+          <li><a href="demos.html">Écouter</a></li>
+          <li><a href="offres.html">Offres &amp; tarifs</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Professionnels</h4>
+        <ul class="footer-links">
+          <li><a href="agences.html">Espace agences</a></li>
+          <li><a href="compte.html">Connexion partenaire</a></li>
+          <li><a href="compte.html">Créer un compte</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:contact@melodia-funebre.fr">contact@melodia-funebre.fr</a></li>
+          <li><a href="tel:+33784101696">07 84 10 16 96</a></li>
+          <li><a href="contact.html">Nous écrire</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Melodia Funèbre — Tous droits réservés</span>
+      <span class="gold">Fondateur : Maxime Charavet · Hyper AI Engine™</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>

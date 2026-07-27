@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace partenaire — Melodia Funèbre</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/logo-melodia.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+<div class="dash">
+  <aside class="side" id="side">
+    <a href="index.html" class="side-brand">
+      <img src="assets/img/logo-melodia.jpg" alt="">
+      <span><span class="n">Melodia</span><span class="s">Espace partenaire</span></span>
+    </a>
+    <div class="side-label">Pilotage</div>
+    <button class="side-item active" data-v="accueil"><span class="ico">◈</span>Tableau de bord</button>
+    <button class="side-item" data-v="commandes"><span class="ico">♪</span>Mes commandes<span class="side-badge" id="badge-cmd">0</span></button>
+    <button class="side-item" data-v="nouvelle"><span class="ico">✚</span>Nouvelle commande</button>
+    <div class="side-label">Ressources</div>
+    <button class="side-item" data-v="ressources"><span class="ico">◇</span>Kit de vente</button>
+    <button class="side-item" data-v="compte"><span class="ico">◎</span>Mon compte</button>
+    <div class="side-foot">
+      <div class="side-user">
+        <div class="side-avatar" id="u-initial">—</div>
+        <div style="min-width:0;">
+          <div class="side-uname" id="u-name">—</div>
+          <div class="side-urole" id="u-role">Partenaire</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" onclick="logout()">Déconnexion</button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-top">
+      <div style="display:flex; gap:1rem; align-items:flex-start;">
+        <button class="dash-burger" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+        <div>
+          <div class="dash-eyebrow" id="head-eyebrow">Espace partenaire</div>
+          <h1 class="dash-title" id="head-title">Bonjour, <em id="head-name">—</em></h1>
+        </div>
+      </div>
+      <a href="#" class="btn btn-gold btn-sm" onclick="go('nouvelle');return false;">Nouvelle commande</a>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+var U = window.MelodiaAuth.guard();
+if (U && U.role === 'master') location.href = 'dashboard-master.html';
+
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
+function eur(n){return (n||0).toLocaleString('fr-FR')+' €';}
+function logout(){window.MelodiaAuth.logout();location.href='compte.html';}
+
+var ORDERS = [];
+var FLOW = window.MELODIA_FLOW, ST = window.MELODIA_STATUS;
+
+async function boot() {
+  document.getElementById('u-name').textContent = U.name;
+  document.getElementById('u-initial').textContent = (U.name || '?').charAt(0).toUpperCase();
+  document.getElementById('u-role').textContent = U.agence || 'Partenaire';
+  document.getElementById('head-name').textContent = U.name.split(' ')[0];
+  await window.MelodiaDB.seedIfEmpty();
+  ORDERS = await window.MelodiaDB.mine();
+  document.getElementById('badge-cmd').textContent = ORDERS.length;
+  go('accueil');
+}
+
+document.querySelectorAll('.side-item').forEach(function(b){
+  b.addEventListener('click', function(){ go(b.dataset.v); document.getElementById('side').classList.remove('open'); });
+});
+
+function go(v) {
+  document.querySelectorAll('.side-item').forEach(function(b){ b.classList.toggle('active', b.dataset.v === v); });
+  var H = {
+    accueil: ['Espace partenaire', 'Bonjour, <em>' + esc(U.name.split(' ')[0]) + '</em>'],
+    commandes: ['Suivi', 'Mes <em>commandes</em>'],
+    nouvelle: ['Nouvelle demande', 'Composer un <em>hommage</em>'],
+    ressources: ['Ressources', 'Kit de <em>vente</em>'],
+    compte: ['Paramètres', 'Mon <em>compte</em>']
+  }[v];
+  document.getElementById('head-eyebrow').textContent = H[0];
+  document.getElementById('head-title').innerHTML = H[1];
+  document.getElementById('view').innerHTML = ({ accueil: vAccueil, commandes: vCommandes, nouvelle: vNouvelle, ressources: vRessources, compte: vCompte })[v]();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function timeline(status) {
+  var i = FLOW.indexOf(status);
+  return '<div class="tl">' + FLOW.map(function(s, k){
+    var cls = k < i ? 'done' : (k === i ? (s === 'livree' ? 'done' : 'now') : '');
+    return '<div class="tl-s ' + cls + '"><div class="tl-dot"></div><div class="tl-lab">' + ST[s].label + '</div></div>';
+  }).join('') + '</div>';
+}
+
+function orderCard(o) {
+  var m = ST[o.status] || { label: o.status, color: '#888' };
+  return '<div class="o-row"><div class="o-head">' +
+    '<div><div class="o-name">Hommage à ' + esc(o.defunt) + (o.urgence ? ' ⚡' : '') + '</div>' +
+    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' · ' + eur(o.price) + ' · marge ' + eur(Math.round(o.price * 0.6)) + '</div></div>' +
+    '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span></div>' +
+    timeline(o.status) +
+    '<div class="o-brief">Style : ' + esc(o.style || '—') + ' · ' + esc(o.traits || '—') + (o.metier ? ' · ' + esc(o.metier) : '') + '</div></div>';
+}
+
+function vAccueil() {
+  var livrees = ORDERS.filter(function(o){return o.status==='livree';}).length;
+  var ca = ORDERS.reduce(function(s,o){return s+(o.price||0);},0);
+  var marge = Math.round(ca * 0.6);
+  var encours = ORDERS.filter(function(o){return o.status!=='livree';});
+  return '<div class="kpi-grid">' +
+    '<div class="kpi"><div class="kpi-label">Commandes</div><div class="kpi-value">' + ORDERS.length + '</div><div class="kpi-foot">Depuis l\\'ouverture</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Hommages livrés</div><div class="kpi-value">' + livrees + '</div><div class="kpi-foot">Familles accompagnées</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Votre marge</div><div class="kpi-value">' + marge + '<span class="u"> €</span></div><div class="kpi-foot">60 % du volume</div></div>' +
+    '<div class="kpi"><div class="kpi-label">En cours</div><div class="kpi-value">' + encours.length + '</div><div class="kpi-foot">Compositions actives</div></div>' +
+    '</div>' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">Compositions <em>en cours</em></div><div class="panel-sub">Suivi en temps réel</div></div>' +
+    '<button class="btn btn-outline btn-sm" onclick="go(\\'commandes\\')">Tout voir</button></div>' +
+    (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune composition en cours. <a href="#" onclick="go(\\'nouvelle\\');return false;" style="color:var(--or);">Lancer une commande →</a></p>') +
+    '</div>' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">Votre <em>argumentaire</em></div><div class="panel-sub">À présenter aux familles</div></div></div>' +
+    '<p style="color:var(--bone); font-family:var(--ff-d); font-size:1.15rem; line-height:1.7; font-style:italic;">« Nous pouvons créer un hommage musical unique pour [Prénom] — une œuvre originale composée à partir de sa vie, de ses gestes, de ce qui faisait sa personne. Souhaitez-vous l\\'écouter ? »</p>' +
+    '<div class="grid-3" style="margin-top:1.8rem; gap:1rem;">' +
+    '<div><div class="kpi-label">Marge agence</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">60 %</div></div>' +
+    '<div><div class="kpi-label">Droits SACEM</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">0 €</div></div>' +
+    '<div><div class="kpi-label">Délai</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">24 h</div></div>' +
+    '</div></div>';
+}
+
+function vCommandes() {
+  if (!ORDERS.length) return '<div class="panel"><p style="color:var(--ash);">Aucune commande enregistrée pour le moment.</p></div>';
+  return '<div class="panel"><div class="panel-head"><div><div class="panel-title">Toutes vos <em>commandes</em></div><div class="panel-sub">' + ORDERS.length + ' au total</div></div></div>' +
+    ORDERS.map(orderCard).join('') + '</div>';
+}
+
+function vNouvelle() {
+  return '<div class="panel" style="max-width:760px;"><div class="panel-head"><div><div class="panel-title">Le <em>brief</em></div><div class="panel-sub">Cinq questions · trois minutes</div></div></div>' +
+    '<div id="nv-msg" class="form-msg"></div>' +
+    '<div class="field"><label class="field-label">Offre choisie</label><select class="field-select" id="nv-offer">' +
+    '<option value="149">Essentiel — 149 € (votre marge 89 €)</option>' +
+    '<option value="299" selected>Prestige — 299 € (votre marge 179 €)</option>' +
+    '<option value="499">Mémorial — 499 € (votre marge 299 €)</option></select></div>' +
+    '<div class="field-row"><div class="field"><label class="field-label">Prénom du défunt *</label><input class="field-input" id="nv-defunt" placeholder="Maurice"></div>' +
+    '<div class="field"><label class="field-label">Style musical</label><select class="field-select" id="nv-style">' +
+    ['Chanson française','Folk acoustique','Classique piano','Jazz doux','Bossa nova','Gospel'].map(function(s){return '<option>'+s+'</option>';}).join('') +
+    '</select></div></div>' +
+    '<div class="field"><label class="field-label">Trois traits de caractère *</label><input class="field-input" id="nv-traits" placeholder="têtu, généreux, taquin"></div>' +
+    '<div class="field-row"><div class="field"><label class="field-label">Métier ou passion</label><input class="field-input" id="nv-metier" placeholder="pêcheur"></div>' +
+    '<div class="field"><label class="field-label">Habitude quotidienne</label><input class="field-input" id="nv-habitude" placeholder="sifflait en marchant"></div></div>' +
+    '<div class="field"><label class="field-label">Anecdote qui le résume</label><textarea class="field-area" id="nv-anecdote" placeholder="Il a appris à pêcher à ses quatre petits-enfants…"></textarea></div>' +
+    '<label style="display:flex; align-items:center; gap:0.8rem; color:var(--bone); font-size:0.9rem; margin-bottom:1.6rem; cursor:pointer;"><input type="checkbox" id="nv-urgence" style="accent-color:var(--or); width:17px; height:17px;">Urgence — cérémonie sous 48 heures</label>' +
+    '<button class="btn btn-gold" style="width:100%;" onclick="submitOrder()">Transmettre la commande</button>' +
+    '<p style="font-family:var(--ff-m); font-size:0.54rem; letter-spacing:0.12em; color:var(--dust); margin-top:1.2rem; text-align:center;">FACTURATION EN FIN DE MOIS · ENTRETIEN DE VALIDATION SOUS 24 H</p></div>';
+}
+
+async function submitOrder() {
+  var defunt = document.getElementById('nv-defunt').value.trim();
+  var m = document.getElementById('nv-msg');
+  if (!defunt) { m.className = 'form-msg err'; m.textContent = 'Le prénom du défunt est requis.'; return; }
+  var price = parseInt(document.getElementById('nv-offer').value, 10);
+  var offer = { 149: 'Essentiel', 299: 'Prestige', 499: 'Mémorial' }[price];
+  try {
+    var o = await window.MelodiaDB.create({
+      offer: offer, price: price, defunt: defunt,
+      traits: document.getElementById('nv-traits').value.trim(),
+      metier: document.getElementById('nv-metier').value.trim(),
+      habitude: document.getElementById('nv-habitude').value.trim(),
+      anecdote: document.getElementById('nv-anecdote').value.trim(),
+      style: document.getElementById('nv-style').value,
+      urgence: document.getElementById('nv-urgence').checked
+    });
+    ORDERS = await window.MelodiaDB.mine();
+    document.getElementById('badge-cmd').textContent = ORDERS.length;
+    window.melodiaToast('Commande ' + o.ref + ' transmise. Nous vous appelons sous 24 h.');
+    go('commandes');
+  } catch (err) { m.className = 'form-msg err'; m.textContent = err.message; }
+}
+
+function vRessources() {
+  return '<div class="grid-2">' +
+    '<div class="panel"><div class="panel-title">Les trois <em>offres</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Tarifs publics et marges</div>' +
+    '<table class="tbl"><thead><tr><th>Offre</th><th>Prix famille</th><th>Votre marge</th></tr></thead><tbody>' +
+    '<tr><td>Essentiel</td><td>149 €</td><td style="color:var(--or);">89 €</td></tr>' +
+    '<tr><td>Prestige</td><td>299 €</td><td style="color:var(--or);">179 €</td></tr>' +
+    '<tr><td>Mémorial</td><td>499 €</td><td style="color:var(--or);">299 €</td></tr>' +
+    '</tbody></table></div>' +
+    '<div class="panel"><div class="panel-title">Objections <em>fréquentes</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Réponses éprouvées</div>' +
+    '<div style="font-size:0.9rem; color:var(--bone); line-height:1.8;">' +
+    '<p><b style="color:var(--paper);">« C\\'est cher »</b><br>149 € sur un budget moyen de 3 500 € : quatre pour cent, pour l\\'unique objet que la famille gardera.</p>' +
+    '<p style="margin-top:1.2rem;"><b style="color:var(--paper);">« L\\'IA, c\\'est froid »</b><br>Le brief vient de vous, la supervision est humaine. Seule la réalisation est assistée — le résultat fait pleurer, jamais l\\'inverse.</p>' +
+    '<p style="margin-top:1.2rem;"><b style="color:var(--paper);">« Et si ça ne plaît pas ? »</b><br>Une révision est offerte dès Prestige, illimitées en Mémorial.</p>' +
+    '</div></div>' +
+    '<div class="panel"><div class="panel-title">Démonstrations à <em>faire écouter</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Trois hommages réels</div>' +
+    '<div class="player"><div class="player-head">Sélectionnez un hommage</div><div class="player-list"></div><div class="player-progress"><div class="player-progress-fill"></div></div><div class="player-wave"></div></div></div>' +
+    '<div class="panel"><div class="panel-title">Le <em>déroulé</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Ce que vous dites, ce que nous faisons</div>' +
+    '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
+    '<p><b style="color:var(--or);">I.</b> Vous proposez l\\'hommage à la famille.</p>' +
+    '<p><b style="color:var(--or);">II.</b> Vous saisissez le brief ici (3 minutes).</p>' +
+    '<p><b style="color:var(--or);">III.</b> Nous appelons pour valider, puis composons.</p>' +
+    '<p><b style="color:var(--or);">IV.</b> Livraison sous 24 h, suivi visible ici.</p>' +
+    '<p><b style="color:var(--or);">V.</b> Facturation groupée en fin de mois.</p>' +
+    '</div></div></div>';
+}
+
+function vCompte() {
+  return '<div class="panel" style="max-width:620px;"><div class="panel-head"><div><div class="panel-title">Vos <em>informations</em></div><div class="panel-sub">Compte partenaire</div></div></div>' +
+    '<table class="tbl"><tbody>' +
+    '<tr><td style="color:var(--ash);">Agence</td><td>' + esc(U.agence || '—') + '</td></tr>' +
+    '<tr><td style="color:var(--ash);">Responsable</td><td>' + esc(U.name) + '</td></tr>' +
+    '<tr><td style="color:var(--ash);">Identifiant</td><td>' + esc(U.email) + '</td></tr>' +
+    '<tr><td style="color:var(--ash);">Statut</td><td style="color:var(--green);">Partenaire actif</td></tr>' +
+    '<tr><td style="color:var(--ash);">Marge contractuelle</td><td style="color:var(--or);">60 %</td></tr>' +
+    '</tbody></table>' +
+    '<p style="color:var(--ash); font-size:0.88rem; margin-top:1.6rem;">Pour modifier vos informations ou votre mot de passe, écrivez à <a href="mailto:contact@melodia-funebre.fr" style="color:var(--or);">contact@melodia-funebre.fr</a> ou appelez le 07 84 10 16 96.</p>' +
+    '<button class="btn btn-outline" style="margin-top:1.6rem;" onclick="logout()">Se déconnecter</button></div>';
+}
+
+if (U) boot();
+</script>
+</body>
+</html>

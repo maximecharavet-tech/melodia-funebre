@@ -1,0 +1,47 @@
+name: Validate & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validation du site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier la structure des fichiers
+        run: node scripts/check.js
+
+      - name: Vérifier le HTML (balises équilibrées)
+        run: |
+          for f in index.html processus.html demos.html offres.html agences.html contact.html compte.html dashboard-partenaire.html dashboard-master.html; do
+            python3 -c "
+          c = open('$f', encoding='utf-8').read()
+          assert c.count('<!DOCTYPE') == 1, 'DOCTYPE'
+          assert c.count('</html>') == 1, 'html close'
+          assert c.count('<body') == c.count('</body>'), 'body'
+          print('✓ $f')
+          " || exit 1
+          done
+
+  deploy:
+    name: Déploiement Vercel
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Déployer sur Vercel (production)
+        run: |
+          npm i -g vercel
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

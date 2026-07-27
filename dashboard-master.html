@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Console maître — Melodia Funèbre</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/logo-melodia.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+<div class="dash">
+  <aside class="side" id="side">
+    <a href="index.html" class="side-brand">
+      <img src="assets/img/logo-melodia.jpg" alt="">
+      <span><span class="n">Melodia</span><span class="s">Console maître</span></span>
+    </a>
+    <div class="side-label">Direction</div>
+    <button class="side-item active" data-v="accueil"><span class="ico">◈</span>Vue générale</button>
+    <button class="side-item" data-v="commandes"><span class="ico">♪</span>Commandes<span class="side-badge" id="badge-cmd">0</span></button>
+    <button class="side-item" data-v="atelier"><span class="ico">✦</span>Atelier de composition</button>
+    <div class="side-label">Développement</div>
+    <button class="side-item" data-v="partenaires"><span class="ico">◇</span>Partenaires</button>
+    <button class="side-item" data-v="finances"><span class="ico">€</span>Finances</button>
+    <button class="side-item" data-v="prospection"><span class="ico">◎</span>Prospection</button>
+    <button class="side-item" data-v="systeme"><span class="ico">⚙</span>Système</button>
+    <div class="side-foot">
+      <div class="side-user">
+        <div class="side-avatar">M</div>
+        <div style="min-width:0;">
+          <div class="side-uname">Maxime Charavet</div>
+          <div class="side-urole" style="color:var(--or);">Fondateur · Maître</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" onclick="logout()">Déconnexion</button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-top">
+      <div style="display:flex; gap:1rem; align-items:flex-start;">
+        <button class="dash-burger" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+        <div>
+          <div class="dash-eyebrow" id="head-eyebrow">Console maître</div>
+          <h1 class="dash-title" id="head-title">Vue <em>générale</em></h1>
+        </div>
+      </div>
+      <span class="status-live" id="mode-badge">Mode débutant · composition manuelle</span>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+var U = window.MelodiaAuth.guard();
+if (U && U.role !== 'master') location.href = 'dashboard-partenaire.html';
+
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
+function eur(n){return (n||0).toLocaleString('fr-FR')+' €';}
+function logout(){window.MelodiaAuth.logout();location.href='compte.html';}
+
+var ORDERS = [], PARTNERS = [], FLOW = window.MELODIA_FLOW, ST = window.MELODIA_STATUS;
+var AI = { title:'', lyrics:'', style:'' };
+
+async function boot() {
+  await window.MelodiaDB.seedIfEmpty();
+  ORDERS = await window.MelodiaDB.all();
+  PARTNERS = await window.MelodiaDB.partners();
+  document.getElementById('badge-cmd').textContent = ORDERS.length;
+  document.getElementById('mode-badge').textContent = (window.MelodiaDB.mode === 'supabase' ? 'Base Supabase · ' : 'Base locale · ') + 'mode débutant';
+  go('accueil');
+}
+
+document.querySelectorAll('.side-item').forEach(function(b){
+  b.addEventListener('click', function(){ go(b.dataset.v); document.getElementById('side').classList.remove('open'); });
+});
+
+function go(v) {
+  document.querySelectorAll('.side-item').forEach(function(b){ b.classList.toggle('active', b.dataset.v === v); });
+  var H = {
+    accueil: ['Console maître', 'Vue <em>générale</em>'],
+    commandes: ['Production', 'Toutes les <em>commandes</em>'],
+    atelier: ['Hyper AI Engine', 'Atelier de <em>composition</em>'],
+    partenaires: ['Réseau', 'Agences <em>partenaires</em>'],
+    finances: ['Comptabilité', 'Vue <em>financière</em>'],
+    prospection: ['Croissance', 'Plan de <em>prospection</em>'],
+    systeme: ['Configuration', 'Le <em>système</em>']
+  }[v];
+  document.getElementById('head-eyebrow').textContent = H[0];
+  document.getElementById('head-title').innerHTML = H[1];
+  document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, systeme:vSysteme })[v]();
+  if (v === 'atelier') restoreAtelier();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function timeline(s) {
+  var i = FLOW.indexOf(s);
+  return '<div class="tl">' + FLOW.map(function(x,k){
+    var c = k < i ? 'done' : (k === i ? (x === 'livree' ? 'done' : 'now') : '');
+    return '<div class="tl-s ' + c + '"><div class="tl-dot"></div><div class="tl-lab">' + ST[x].label + '</div></div>';
+  }).join('') + '</div>';
+}
+
+function orderCard(o) {
+  var m = ST[o.status] || { label:o.status, color:'#888' };
+  var i = FLOW.indexOf(o.status);
+  var next = i < FLOW.length - 1 ? FLOW[i+1] : null;
+  return '<div class="o-row"><div class="o-head">' +
+    '<div><div class="o-name">Hommage à ' + esc(o.defunt) + (o.urgence ? ' ⚡' : '') + '</div>' +
+    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' ' + eur(o.price) + ' · ' + (o.paid ? 'payé' : 'non payé') + ' · ' + esc(o.agence || o.user_name) + '</div></div>' +
+    '<div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">' +
+    '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span>' +
+    (next ? '<button class="btn btn-gold btn-sm" onclick="advance(\\'' + o.ref + '\\',\\'' + next + '\\')">→ ' + ST[next].label + '</button>' : '') +
+    '<button class="btn btn-outline btn-sm" onclick=\\'loadBrief(' + JSON.stringify(JSON.stringify(o)) + ')\\'>Composer</button>' +
+    '</div></div>' + timeline(o.status) +
+    '<div class="o-brief"><b style="color:var(--bone);">Brief —</b> Style : ' + esc(o.style || '—') + ' · Traits : ' + esc(o.traits || '—') + ' · Métier : ' + esc(o.metier || '—') + ' · Habitude : ' + esc(o.habitude || '—') +
+    (o.anecdote ? '<br><b style="color:var(--bone);">Anecdote —</b> ' + esc(o.anecdote) : '') +
+    '<br><b style="color:var(--bone);">Contact —</b> ' + esc(o.user_name) + ' · ' + esc(o.user_email) + '</div></div>';
+}
+
+async function advance(ref, status) {
+  await window.MelodiaDB.setStatus(ref, status);
+  ORDERS = await window.MelodiaDB.all();
+  window.melodiaToast('Statut mis à jour — le client le voit immédiatement.');
+  go('commandes');
+}
+
+function loadBrief(json) {
+  var o = JSON.parse(json);
+  go('atelier');
+  setTimeout(function(){
+    ['defunt','traits','metier','habitude','anecdote'].forEach(function(k){
+      var el = document.getElementById('at-' + k); if (el) el.value = o[k] || '';
+    });
+    var s = document.getElementById('at-style'); if (s && o.style) s.value = o.style;
+    window.melodiaToast('Brief de ' + o.defunt + ' chargé dans l\\'atelier.');
+  }, 60);
+}
+
+/* ═══ VUES ═══ */
+function vAccueil() {
+  var ca = ORDERS.reduce(function(s,o){return s+(o.price||0);},0);
+  var livrees = ORDERS.filter(function(o){return o.status==='livree';}).length;
+  var encours = ORDERS.filter(function(o){return o.status!=='livree';});
+  var urgentes = ORDERS.filter(function(o){return o.urgence && o.status!=='livree';}).length;
+  return '<div class="kpi-grid">' +
+    '<div class="kpi"><div class="kpi-label">Chiffre d\\'affaires</div><div class="kpi-value">' + ca + '<span class="u"> €</span></div><div class="kpi-foot">Toutes commandes</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Hommages livrés</div><div class="kpi-value">' + livrees + '</div><div class="kpi-foot">Familles accompagnées</div></div>' +
+    '<div class="kpi"><div class="kpi-label">En production</div><div class="kpi-value">' + encours.length + '</div><div class="kpi-foot">' + urgentes + ' urgence(s)</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Partenaires</div><div class="kpi-value">' + PARTNERS.length + '</div><div class="kpi-foot">Agences inscrites</div></div>' +
+    '</div>' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">À <em>traiter</em></div><div class="panel-sub">Commandes en attente d\\'action</div></div>' +
+    '<button class="btn btn-outline btn-sm" onclick="go(\\'commandes\\')">Tout voir</button></div>' +
+    (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune commande en attente.</p>') + '</div>' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">Le <em>workflow</em></div><div class="panel-sub">Mode débutant — composition manuelle</div></div></div>' +
+    '<div style="font-size:0.92rem; color:var(--bone); line-height:2;">' +
+    '<p><b style="color:var(--or);">I.</b> La commande arrive (site ou espace partenaire) → statut <i>Reçue</i></p>' +
+    '<p><b style="color:var(--or);">II.</b> Vous appelez la famille pour valider → <i>Brief validé</i></p>' +
+    '<p><b style="color:var(--or);">III.</b> Atelier → paroles + direction musicale → export vers Suno (abonnement Pro) → <i>En composition</i></p>' +
+    '<p><b style="color:var(--or);">IV.</b> Vous envoyez le fichier à la famille → <i>Livrée</i></p>' +
+    '<p style="color:var(--ash); font-size:0.85rem; margin-top:0.8rem;">Chaque changement de statut est visible instantanément par le client dans son espace.</p>' +
+    '</div></div>';
+}
+
+function vCommandes() {
+  if (!ORDERS.length) return '<div class="panel"><p style="color:var(--ash);">Aucune commande. Les commandes passées sur le site ou par les partenaires apparaîtront ici.</p></div>';
+  var groups = FLOW.map(function(s){
+    var list = ORDERS.filter(function(o){return o.status===s;});
+    if (!list.length) return '';
+    return '<div class="panel"><div class="panel-head"><div><div class="panel-title">' + ST[s].label + '</div><div class="panel-sub">' + list.length + ' commande(s)</div></div></div>' + list.map(orderCard).join('') + '</div>';
+  }).join('');
+  return groups;
+}
+
+function vAtelier() {
+  return '<div class="grid-2" style="align-items:start; gap:1.4rem;">' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">Le <em>brief</em></div><div class="panel-sub">Saisi ou chargé depuis une commande</div></div></div>' +
+    '<div class="field"><label class="field-label">Prénom du défunt</label><input class="field-input" id="at-defunt" placeholder="Maurice"></div>' +
+    '<div class="field"><label class="field-label">Traits de caractère</label><input class="field-input" id="at-traits" placeholder="têtu, généreux, taquin"></div>' +
+    '<div class="field-row"><div class="field"><label class="field-label">Métier / passion</label><input class="field-input" id="at-metier" placeholder="pêcheur"></div>' +
+    '<div class="field"><label class="field-label">Style</label><select class="field-select" id="at-style">' +
+    ['Chanson française','Folk acoustique','Classique piano','Jazz doux','Bossa nova','Gospel'].map(function(s){return '<option>'+s+'</option>';}).join('') + '</select></div></div>' +
+    '<div class="field"><label class="field-label">Habitude quotidienne</label><input class="field-input" id="at-habitude" placeholder="sifflait en marchant"></div>' +
+    '<div class="field"><label class="field-label">Anecdote</label><textarea class="field-area" id="at-anecdote"></textarea></div>' +
+    '<button class="btn btn-gold" style="width:100%;" id="at-btn" onclick="genLyrics()">Écrire les paroles</button>' +
+    '<p style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.12em; color:var(--dust); margin-top:1rem; text-align:center;">HYPER AI ENGINE · AUCUNE DONNÉE CONSERVÉE</p></div>' +
+
+    '<div><div class="panel"><div class="panel-head"><div><div class="panel-title" id="at-title-h">Les <em>paroles</em></div><div class="panel-sub">Éditables avant composition</div></div>' +
+    '<button class="btn btn-outline btn-sm" onclick="copyLyrics()">Copier</button></div>' +
+    '<div id="at-status" style="display:none; margin-bottom:1rem;" class="status-live">Rédaction…</div>' +
+    '<div id="at-msg" class="form-msg"></div>' +
+    '<textarea class="field-area" id="at-lyrics" style="min-height:230px; font-family:var(--ff-d); font-size:1.05rem; line-height:1.8;" placeholder="Les paroles apparaîtront ici…"></textarea>' +
+    '<div class="field" style="margin-top:1.1rem;"><label class="field-label">Direction musicale (Style of Music)</label>' +
+    '<textarea class="field-area" id="at-style-prompt" style="min-height:60px; font-family:var(--ff-m); font-size:0.76rem;" placeholder="french chanson, warm male voice, acoustic guitar, accordion, 72 BPM…"></textarea></div>' +
+    '<button class="btn btn-silver" style="width:100%;" onclick="toSuno()">Copier et ouvrir Suno</button>' +
+    '<p style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.12em; color:var(--dust); margin-top:0.9rem; text-align:center;">SUNO PRO · MODE CUSTOM · COLLEZ PAROLES ET STYLE</p></div></div></div>';
+}
+
+function restoreAtelier() {
+  if (AI.lyrics) document.getElementById('at-lyrics').value = AI.lyrics;
+  if (AI.style) document.getElementById('at-style-prompt').value = AI.style;
+  if (AI.title) document.getElementById('at-title-h').innerHTML = '« <em>' + esc(AI.title) + '</em> »';
+}
+
+async function genLyrics() {
+  var defunt = document.getElementById('at-defunt').value.trim();
+  var msg = document.getElementById('at-msg');
+  msg.className = 'form-msg';
+  if (!defunt) { msg.className = 'form-msg err'; msg.textContent = 'Le prénom est requis.'; return; }
+  var btn = document.getElementById('at-btn'), st = document.getElementById('at-status');
+  btn.disabled = true; btn.textContent = 'Rédaction en cours…'; st.style.display = 'inline-flex';
+  var phases = ['Lecture du brief…','Écriture des couplets…','Composition du refrain…','Direction artistique…'], p = 0;
+  st.textContent = phases[0];
+  var t = setInterval(function(){ p = Math.min(p+1, phases.length-1); st.textContent = phases[p]; }, 1400);
+  try {
+    var out = await window.MelodiaAI.lyrics({
+      defunt: defunt,
+      traits: document.getElementById('at-traits').value.trim(),
+      metier: document.getElementById('at-metier').value.trim(),
+      habitude: document.getElementById('at-habitude').value.trim(),
+      anecdote: document.getElementById('at-anecdote').value.trim(),
+      style: document.getElementById('at-style').value
+    });
+    AI = { title: out.title, lyrics: out.lyrics, style: out.style_prompt };
+    document.getElementById('at-lyrics').value = out.lyrics;
+    document.getElementById('at-style-prompt').value = out.style_prompt;
+    document.getElementById('at-title-h').innerHTML = '« <em>' + esc(out.title) + '</em> »';
+  } catch (err) { msg.className = 'form-msg err'; msg.textContent = err.message; }
+  clearInterval(t); st.style.display = 'none';
+  btn.disabled = false; btn.textContent = 'Écrire les paroles';
+}
+
+function copyLyrics() {
+  var l = document.getElementById('at-lyrics').value;
+  if (navigator.clipboard) navigator.clipboard.writeText(l);
+  window.melodiaToast('Paroles copiées.');
+}
+
+function toSuno() {
+  var l = document.getElementById('at-lyrics').value;
+  var s = document.getElementById('at-style-prompt').value;
+  if (!l) { window.melodiaToast('Écrivez d\\'abord les paroles.'); return; }
+  window.MelodiaAI.sunoExport(AI.title || 'Hommage Melodia', l, s);
+  window.melodiaToast('Copié — dans Suno : mode Custom, collez paroles et style.');
+}
+
+function vPartenaires() {
+  var rows = PARTNERS.length ? PARTNERS.map(function(p){
+    var n = ORDERS.filter(function(o){return o.user_email===p.email;}).length;
+    return '<tr><td>' + esc(p.agence || '—') + '</td><td>' + esc(p.name) + '</td><td>' + esc(p.ville || '—') + '</td><td>' + esc(p.email) + '</td><td style="color:var(--or);">' + n + '</td></tr>';
+  }).join('') : '<tr><td colspan="5" style="color:var(--ash);">Aucune agence inscrite pour le moment.</td></tr>';
+  return '<div class="panel"><div class="panel-head"><div><div class="panel-title">Agences <em>partenaires</em></div><div class="panel-sub">' + PARTNERS.length + ' compte(s)</div></div></div>' +
+    '<table class="tbl"><thead><tr><th>Agence</th><th>Responsable</th><th>Ville</th><th>Identifiant</th><th>Commandes</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<div class="panel"><div class="panel-title">Objectif <em>réseau</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Trajectoire commerciale</div>' +
+    '<table class="tbl"><thead><tr><th>Horizon</th><th>Agences</th><th>Hommages / mois</th><th>CA mensuel</th></tr></thead><tbody>' +
+    '<tr><td>Fin de trimestre</td><td>5</td><td>6</td><td>1 800 €</td></tr>' +
+    '<tr><td>Fin d\\'année 1</td><td>50</td><td>120</td><td>24 000 €</td></tr>' +
+    '<tr><td>Fin d\\'année 2</td><td>180</td><td>450</td><td>90 000 €</td></tr>' +
+    '</tbody></table></div>';
+}
+
+function vFinances() {
+  var ca = ORDERS.reduce(function(s,o){return s+(o.price||0);},0);
+  var paid = ORDERS.filter(function(o){return o.paid;}).reduce(function(s,o){return s+(o.price||0);},0);
+  var duMois = ORDERS.filter(function(o){ return new Date(o.created_at).getMonth() === new Date().getMonth(); });
+  var caMois = duMois.reduce(function(s,o){return s+(o.price||0);},0);
+  var cout = ORDERS.length * 1;
+  return '<div class="kpi-grid">' +
+    '<div class="kpi"><div class="kpi-label">CA total</div><div class="kpi-value">' + ca + '<span class="u"> €</span></div><div class="kpi-foot">Toutes commandes</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Encaissé</div><div class="kpi-value">' + paid + '<span class="u"> €</span></div><div class="kpi-foot">Paiements confirmés</div></div>' +
+    '<div class="kpi"><div class="kpi-label">CA du mois</div><div class="kpi-value">' + caMois + '<span class="u"> €</span></div><div class="kpi-foot">' + duMois.length + ' commande(s)</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Coût production</div><div class="kpi-value">' + cout + '<span class="u"> €</span></div><div class="kpi-foot">≈ 1 € par hommage (Suno Pro)</div></div>' +
+    '</div>' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">Détail des <em>commandes</em></div><div class="panel-sub">Base de facturation</div></div></div>' +
+    '<table class="tbl"><thead><tr><th>Référence</th><th>Date</th><th>Défunt</th><th>Offre</th><th>Montant</th><th>Marge agence</th><th>Net maison</th></tr></thead><tbody>' +
+    (ORDERS.length ? ORDERS.map(function(o){
+      var agence = o.agence ? Math.round(o.price*0.6) : 0;
+      return '<tr><td>' + esc(o.ref) + '</td><td>' + new Date(o.created_at).toLocaleDateString('fr-FR') + '</td><td>' + esc(o.defunt) + '</td><td>' + esc(o.offer) + '</td><td>' + eur(o.price) + '</td><td>' + (agence ? eur(agence) : '—') + '</td><td style="color:var(--or);">' + eur(o.price - agence) + '</td></tr>';
+    }).join('') : '<tr><td colspan="7" style="color:var(--ash);">Aucune commande.</td></tr>') +
+    '</tbody></table></div>' +
+    '<div class="panel"><div class="panel-title">Rappel <em>fiscal</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Auto-entrepreneur</div>' +
+    '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
+    '<p>Cotisations URSSAF prestations de services : 21,2 % du CA encaissé.</p>' +
+    '<p>Versement libératoire de l\\'impôt (si opté) : 2,2 % supplémentaires.</p>' +
+    '<p>TVA non applicable — article 293 B du CGI, jusqu\\'à 39 100 € de CA.</p>' +
+    '<p style="color:var(--ash);">Déclaration trimestrielle : provisionnez environ 25 % de chaque encaissement.</p>' +
+    '</div></div>';
+}
+
+function vProspection() {
+  var funnel = [['Agences ciblées',100],['Contactées',64],['Rendez-vous',23],['Démonstration',11],['Signées',6]];
+  return '<div class="panel"><div class="panel-head"><div><div class="panel-title">Entonnoir de <em>conversion</em></div><div class="panel-sub">Objectif 100 agences</div></div></div>' +
+    funnel.map(function(f){
+      return '<div style="margin-bottom:1.1rem;"><div style="display:flex; justify-content:space-between; font-family:var(--ff-m); font-size:0.58rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--bone); margin-bottom:0.5rem;"><span>' + f[0] + '</span><span style="color:var(--or);">' + f[1] + '</span></div>' +
+      '<div style="height:3px; background:var(--ink-3);"><div style="height:100%; width:' + f[1] + '%; background:var(--or);"></div></div></div>';
+    }).join('') + '</div>' +
+    '<div class="grid-2">' +
+    '<div class="panel"><div class="panel-title">Cadence de <em>contact</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Huit touches sur 21 jours</div>' +
+    '<table class="tbl"><tbody>' +
+    '<tr><td style="color:var(--or);">J+0</td><td>Premier email</td></tr>' +
+    '<tr><td style="color:var(--or);">J+3</td><td>Visite du profil LinkedIn</td></tr>' +
+    '<tr><td style="color:var(--or);">J+5</td><td>Relance courte</td></tr>' +
+    '<tr><td style="color:var(--or);">J+7</td><td>Demande de connexion</td></tr>' +
+    '<tr><td style="color:var(--or);">J+10</td><td>Offre de démonstration gratuite</td></tr>' +
+    '<tr><td style="color:var(--or);">J+14</td><td>Appel téléphonique</td></tr>' +
+    '<tr><td style="color:var(--or);">J+18</td><td>Message LinkedIn</td></tr>' +
+    '<tr><td style="color:var(--or);">J+21</td><td>Email de clôture</td></tr>' +
+    '</tbody></table></div>' +
+    '<div class="panel"><div class="panel-title">Argument <em>d\\'ouverture</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Premier contact</div>' +
+    '<p style="font-family:var(--ff-d); font-style:italic; font-size:1.1rem; line-height:1.75; color:var(--bone);">« Une famille de votre ville écrivait récemment que la musique de la cérémonie n\\'avait rien à voir avec son père. Nous composons une œuvre originale pour chaque défunt, en 24 heures, sans droit SACEM — avec 60 % de marge pour votre agence. Souhaitez-vous écouter ? »</p>' +
+    '<div style="margin-top:1.6rem; font-family:var(--ff-m); font-size:0.56rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--or-patina);">Taux de réponse visé : 10 à 15 %</div></div>' +
+    '</div>';
+}
+
+function vSysteme() {
+  return '<div class="grid-2">' +
+    '<div class="panel"><div class="panel-title">État du <em>système</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Configuration actuelle</div>' +
+    '<table class="tbl"><tbody>' +
+    '<tr><td style="color:var(--ash);">Base de données</td><td>' + (window.MelodiaDB.mode === 'supabase' ? '<span style="color:var(--green);">Supabase (production)</span>' : '<span style="color:var(--amber);">Locale (démonstration)</span>') + '</td></tr>' +
+    '<tr><td style="color:var(--ash);">Rédaction des paroles</td><td><span style="color:var(--green);">Active</span></td></tr>' +
+    '<tr><td style="color:var(--ash);">Composition musicale</td><td>Suno Pro — manuelle</td></tr>' +
+    '<tr><td style="color:var(--ash);">Paiement</td><td>PayPal — bac à sable</td></tr>' +
+    '<tr><td style="color:var(--ash);">Mode</td><td style="color:var(--or);">Débutant</td></tr>' +
+    '</tbody></table></div>' +
+    '<div class="panel"><div class="panel-title">Passer en <em>automatique</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Phase 2, quand le volume le justifiera</div>' +
+    '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
+    '<p><b style="color:var(--or);">I.</b> Souscrire une API Suno (≈ 0,08 € par titre)</p>' +
+    '<p><b style="color:var(--or);">II.</b> Renseigner les variables sur Vercel</p>' +
+    '<p><b style="color:var(--or);">III.</b> Activer la composition automatique</p>' +
+    '<p style="color:var(--ash); font-size:0.85rem; margin-top:1rem;">Les fonctions serveur sont déjà écrites dans le dossier <code style="color:var(--or);">/api</code>. Tant que le volume reste inférieur à dix hommages par jour, le mode manuel garantit une qualité supérieure.</p>' +
+    '</div></div>' +
+    '<div class="panel"><div class="panel-title">Accès <em>maître</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Sécurité</div>' +
+    '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">L\\'identifiant maître ouvre toutes les fonctions. Il est défini dans <code style="color:var(--or);">assets/js/auth.js</code>.</p>' +
+    '<p style="font-size:0.85rem; color:var(--amber); margin-top:1rem;">Avant l\\'ouverture au public : changez ce mot de passe et passez en base Supabase, afin que l\\'accès ne repose plus sur du code côté navigateur.</p></div>' +
+    '<div class="panel"><div class="panel-title">Actions <em>rapides</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Outils</div>' +
+    '<button class="btn btn-outline" style="width:100%; margin-bottom:0.8rem;" onclick="exportCSV()">Exporter les commandes (CSV)</button>' +
+    '<button class="btn btn-outline" style="width:100%;" onclick="window.open(\\'index.html\\')">Voir le site public</button></div>' +
+    '</div>';
+}
+
+function exportCSV() {
+  var head = ['Référence','Date','Défunt','Offre','Montant','Statut','Agence','Contact','Email'];
+  var rows = ORDERS.map(function(o){
+    return [o.ref, new Date(o.created_at).toLocaleDateString('fr-FR'), o.defunt, o.offer, o.price, (ST[o.status]||{}).label || o.status, o.agence || '', o.user_name, o.user_email]
+      .map(function(v){ return '"' + String(v == null ? '' : v).replace(/"/g,'""') + '"'; }).join(';');
+  });
+  var csv = head.join(';') + '\n' + rows.join('\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'melodia-commandes.csv'; a.click();
+  window.melodiaToast('Export CSV téléchargé.');
+}
+
+if (U) boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offres et tarifs — Melodia Funèbre</title>
+<meta name="description" content="Essentiel 149 €, Prestige 299 €, Mémorial 499 €. Hommage musical original livré en 24 heures, sans droits SACEM.">
+<link rel="icon" href="assets/img/logo-melodia.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR&components=buttons" data-namespace="paypal_sdk"></script>
+</head>
+<body>
+<nav class="nav at-top">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <img src="assets/img/logo-melodia.jpg" alt="Melodia Funèbre" class="nav-logo">
+      <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="processus.html">Processus</a>
+      <a href="demos.html">Écouter</a>
+      <a href="offres.html">Offres</a>
+      <a href="agences.html">Agences</a>
+      <a href="contact.html">Contact</a>
+      <a href="compte.html" class="nav-cta">Mon compte</a>
+    </div>
+    <button class="nav-burger" aria-label="Ouvrir le menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="nav-mobile">
+  <a href="processus.html">Processus</a>
+  <a href="demos.html">Écouter</a>
+  <a href="offres.html">Offres</a>
+  <a href="agences.html">Agences</a>
+  <a href="contact.html">Contact</a>
+  <a href="compte.html">Mon compte</a>
+</div>
+
+<main>
+
+  <section class="section" style="padding-top:9rem; padding-bottom:0;">
+    <div class="wrap">
+      <div class="eyebrow reveal in">Offres et tarifs</div>
+      <h1 class="h-hero reveal in reveal-d1">Trois façons<br>de dire <em>adieu.</em></h1>
+      <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Paiement sécurisé, entretien sous vingt-quatre heures, aucun droit de diffusion à régler.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="grid-3">
+        <div class="card price reveal">
+          <div class="price-name">Essentiel</div>
+          <div class="price-amount">149<span>€</span></div>
+          <p class="price-desc">L'hommage sobre et juste, pour l'essentiel du souvenir.</p>
+          <ul><li>Une œuvre originale (2-3 min)</li><li>Entretien téléphonique de 5 min</li><li>Paroles biographiques uniques</li><li>Livraison sous 24 heures</li><li>MP3 320 kbps</li><li>Droits d'usage à vie</li></ul>
+          <button class="btn btn-outline" onclick="openOrder('Essentiel',149)">Commander</button>
+        </div>
+        <div class="card price featured reveal reveal-d1">
+          <span class="price-tag">Le plus choisi</span>
+          <div class="price-name">Prestige</div>
+          <div class="price-amount">299<span>€</span></div>
+          <p class="price-desc">L'hommage complet : plus de choix, plus de sérénité.</p>
+          <ul><li>Tout Essentiel, et :</li><li>Deux versions au choix</li><li>Une révision offerte</li><li>Version instrumentale</li><li>Paroles imprimables (PDF)</li><li>WAV sans perte sur demande</li></ul>
+          <button class="btn btn-gold" onclick="openOrder('Prestige',299)">Commander</button>
+        </div>
+        <div class="card price reveal reveal-d2">
+          <div class="price-name">Mémorial</div>
+          <div class="price-amount">499<span>€</span></div>
+          <p class="price-desc">L'héritage sonore complet, transmis aux générations.</p>
+          <ul><li>Tout Prestige, et :</li><li>Mini-album de trois titres</li><li>Révisions illimitées</li><li>Livret souvenir imprimé</li><li>Priorité urgence six heures</li><li>Accompagnement dédié</li></ul>
+          <button class="btn btn-outline" onclick="openOrder('Mémorial',499)">Commander</button>
+        </div>
+      </div>
+      <p class="center reveal" style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--dust); margin-top:2.5rem;">
+        Paiement sécurisé PayPal et carte · Rétractation 14 jours · TVA non applicable, art. 293 B du CGI
+      </p>
+    </div>
+  </section>
+
+  <!-- FORMULAIRE DE COMMANDE -->
+  <section class="section" id="commander" style="border-top:1px solid var(--line-soft); display:none;">
+    <div class="wrap" style="max-width:680px;">
+      <div class="center" style="margin-bottom:2.5rem;">
+        <div class="eyebrow">Votre commande</div>
+        <h2 class="h-xl">Offre <em id="ord-offer">Prestige</em> — <span id="ord-price">299</span> €</h2>
+      </div>
+      <div class="card">
+        <div id="ord-msg" class="form-msg"></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label" for="ord-defunt">Prénom du défunt *</label><input class="field-input" id="ord-defunt" placeholder="Maurice"></div>
+          <div class="field"><label class="field-label" for="ord-style">Style musical</label><select class="field-select" id="ord-style"><option>Chanson française</option><option>Folk acoustique</option><option>Classique piano</option><option>Jazz doux</option><option>Bossa nova</option><option>Gospel</option></select></div>
+        </div>
+        <div class="field"><label class="field-label" for="ord-traits">Trois traits de caractère *</label><input class="field-input" id="ord-traits" placeholder="têtu, généreux, taquin"></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label" for="ord-metier">Métier ou passion</label><input class="field-input" id="ord-metier" placeholder="pêcheur"></div>
+          <div class="field"><label class="field-label" for="ord-habitude">Habitude quotidienne</label><input class="field-input" id="ord-habitude" placeholder="sifflait en marchant"></div>
+        </div>
+        <div class="field"><label class="field-label" for="ord-anecdote">Anecdote qui le résume</label><textarea class="field-area" id="ord-anecdote" placeholder="Il a appris à pêcher à ses quatre petits-enfants…"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label" for="ord-name">Votre nom *</label><input class="field-input" id="ord-name" placeholder="Prénom Nom"></div>
+          <div class="field"><label class="field-label" for="ord-email">Votre email *</label><input class="field-input" id="ord-email" type="email" placeholder="vous@email.fr"></div>
+        </div>
+        <label style="display:flex; align-items:center; gap:0.8rem; color:var(--bone); font-size:0.9rem; margin-bottom:1.8rem; cursor:pointer;"><input type="checkbox" id="ord-urgence" style="accent-color:var(--or); width:17px; height:17px;">Urgence — cérémonie sous 48 heures</label>
+        <div id="paypal-zone" style="min-height:46px;"></div>
+        <button class="btn btn-outline" style="width:100%; margin-top:1rem;" onclick="sendOrder(false)">Enregistrer et régler plus tard</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="confirm" style="display:none;">
+    <div class="wrap center" style="max-width:600px;">
+      <img src="assets/img/logo-melodia.jpg" alt="" style="height:120px; margin:0 auto 2rem;">
+      <h2 class="h-xl">Commande <em>reçue.</em></h2>
+      <p class="lead" style="margin:1.4rem auto 0.6rem;">Référence <b id="confirm-ref" style="color:var(--or);"></b></p>
+      <p style="color:var(--ash); margin-bottom:2.4rem;">Nous vous appelons sous vingt-quatre heures pour l'entretien, puis la composition commence.</p>
+      <a href="index.html" class="btn btn-outline">Retour à l'accueil</a>
+    </div>
+  </section>
+
+  <section class="section" style="border-top:1px solid var(--line-soft);">
+    <div class="wrap center reveal">
+      <h2 class="h-xl">Une question avant<br>de <em>commander ?</em></h2>
+      <p class="lead" style="margin:1.6rem auto 2.4rem;">Nous décrochons personnellement, sept jours sur sept pour les urgences.</p>
+      <div class="hero-actions"><a href="tel:+33784101696" class="btn btn-gold">07 84 10 16 96</a><a href="contact.html" class="btn btn-outline">Écrire</a></div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <img src="assets/img/logo-melodia.jpg" alt="Melodia Funèbre" class="footer-logo">
+        <p class="footer-tag">Maison française de composition musicale personnalisée pour cérémonies funéraires.</p>
+        <p class="footer-baseline">Écoute · Respect · Accompagnement<br>Harmonie · Mémoire</p>
+      </div>
+      <div>
+        <h4>Découvrir</h4>
+        <ul class="footer-links">
+          <li><a href="processus.html">Le processus</a></li>
+          <li><a href="demos.html">Écouter</a></li>
+          <li><a href="offres.html">Offres &amp; tarifs</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Professionnels</h4>
+        <ul class="footer-links">
+          <li><a href="agences.html">Espace agences</a></li>
+          <li><a href="compte.html">Connexion partenaire</a></li>
+          <li><a href="compte.html">Créer un compte</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:contact@melodia-funebre.fr">contact@melodia-funebre.fr</a></li>
+          <li><a href="tel:+33784101696">07 84 10 16 96</a></li>
+          <li><a href="contact.html">Nous écrire</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Melodia Funèbre — Tous droits réservés</span>
+      <span class="gold">Fondateur : Maxime Charavet · Hyper AI Engine™</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+var ORD = { offer: 'Prestige', price: 299 };
+function openOrder(offer, price) {
+  ORD = { offer: offer, price: price };
+  document.getElementById('ord-offer').textContent = offer;
+  document.getElementById('ord-price').textContent = price;
+  document.getElementById('commander').style.display = 'block';
+  document.getElementById('commander').scrollIntoView({ behavior: 'smooth' });
+}
+async function sendOrder(paid, pid) {
+  var m = document.getElementById('ord-msg');
+  var defunt = document.getElementById('ord-defunt').value.trim();
+  var name = document.getElementById('ord-name').value.trim();
+  var email = document.getElementById('ord-email').value.trim();
+  if (!defunt || !name || !email) { m.className = 'form-msg err'; m.textContent = 'Les champs marqués d\'une étoile sont requis.'; return; }
+  try {
+    var o = await window.MelodiaDB.create({
+      offer: ORD.offer, price: ORD.price, defunt: defunt, name: name, email: email,
+      traits: document.getElementById('ord-traits').value.trim(),
+      metier: document.getElementById('ord-metier').value.trim(),
+      habitude: document.getElementById('ord-habitude').value.trim(),
+      anecdote: document.getElementById('ord-anecdote').value.trim(),
+      style: document.getElementById('ord-style').value,
+      urgence: document.getElementById('ord-urgence').checked,
+      paid: !!paid, paypal_id: pid || ''
+    });
+    document.getElementById('commander').style.display = 'none';
+    document.getElementById('confirm-ref').textContent = o.ref;
+    document.getElementById('confirm').style.display = 'block';
+    document.getElementById('confirm').scrollIntoView({ behavior: 'smooth' });
+  } catch (err) { m.className = 'form-msg err'; m.textContent = err.message; }
+}
+if (typeof paypal_sdk !== 'undefined') {
+  paypal_sdk.Buttons({
+    style: { layout: 'horizontal', color: 'gold', shape: 'rect', height: 46, tagline: false },
+    createOrder: function (d, a) { return a.order.create({ purchase_units: [{ description: 'Melodia ' + ORD.offer, amount: { currency_code: 'EUR', value: ORD.price + '.00' } }] }); },
+    onApprove: function (d, a) { return a.order.capture().then(function (x) { sendOrder(true, x.id); }); },
+    onError: function () { window.melodiaToast('Paiement interrompu — vous pouvez enregistrer et régler plus tard.'); }
+  }).render('#paypal-zone');
+}
+</script>
+</body>
+</html>
