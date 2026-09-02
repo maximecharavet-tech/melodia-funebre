@@ -58,6 +58,7 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/atelier-music.js"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 if (U && U.role !== 'master') location.href = 'dashboard-partenaire.html';
@@ -97,6 +98,7 @@ function go(v) {
   document.getElementById('head-title').innerHTML = H[1];
   document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, systeme:vSysteme })[v]();
   if (v === 'atelier') restoreAtelier();
+  if (v === 'systeme') majEtatSuno();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -118,11 +120,13 @@ function orderCard(o) {
     '<div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">' +
     '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span>' +
     (next ? '<button class="btn btn-gold btn-sm" onclick="advance(\'' + o.ref + '\',\'' + next + '\')">→ ' + ST[next].label + '</button>' : '') +
-    '<button class="btn btn-outline btn-sm" onclick=\'loadBrief(' + JSON.stringify(JSON.stringify(o)) + ')\'>Composer</button>' +
+    '<button class="btn btn-outline btn-sm" onclick="loadBrief(\'' + esc(o.ref) + '\')">Composer</button>' +
     '</div></div>' + timeline(o.status) +
     '<div class="o-brief"><b style="color:var(--bone);">Brief —</b> Style : ' + esc(o.style || '—') + ' · Traits : ' + esc(o.traits || '—') + ' · Métier : ' + esc(o.metier || '—') + ' · Habitude : ' + esc(o.habitude || '—') +
     (o.anecdote ? '<br><b style="color:var(--bone);">Anecdote —</b> ' + esc(o.anecdote) : '') +
-    '<br><b style="color:var(--bone);">Contact —</b> ' + esc(o.user_name) + ' · ' + esc(o.user_email) + '</div></div>';
+    '<br><b style="color:var(--bone);">Contact —</b> ' + esc(o.user_name) + ' · ' + esc(o.user_email) + '</div>' +
+    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio></div>' : '') +
+    '</div>';
 }
 
 async function advance(ref, status) {
@@ -132,8 +136,10 @@ async function advance(ref, status) {
   go('commandes');
 }
 
-function loadBrief(json) {
-  var o = JSON.parse(json);
+function loadBrief(ref) {
+  var o = ORDERS.filter(function (x) { return x.ref === ref; })[0];
+  if (!o) { window.melodiaToast('Commande introuvable.'); return; }
+  window.MELODIA_ATELIER_REF = o.ref;   /* cible du rattachement de l'audio */
   go('atelier');
   setTimeout(function(){
     ['defunt','traits','metier','habitude','anecdote'].forEach(function(k){
@@ -142,6 +148,18 @@ function loadBrief(json) {
     var s = document.getElementById('at-style'); if (s && o.style) s.value = o.style;
     window.melodiaToast('Brief de ' + o.defunt + ' chargé dans l\'atelier.');
   }, 60);
+}
+
+/* Interroge le serveur : la composition automatique est-elle branchée ? */
+async function majEtatSuno() {
+  var c = document.getElementById('sys-suno');
+  if (!c) return;
+  try {
+    var cfg = await window.MelodiaAI.musicConfig();
+    c.innerHTML = cfg.configured
+      ? '<span style="color:var(--green);">API Suno active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
+      : '<span style="color:var(--amber);">Manuelle</span> — clés Suno non renseignées';
+  } catch (e) { c.textContent = 'Indéterminé'; }
 }
 
 /* ═══ VUES ═══ */
@@ -199,14 +217,15 @@ function vAtelier() {
     '<textarea class="field-area" id="at-lyrics" style="min-height:230px; font-family:var(--ff-d); font-size:1.05rem; line-height:1.8;" placeholder="Les paroles apparaîtront ici…"></textarea>' +
     '<div class="field" style="margin-top:1.1rem;"><label class="field-label">Direction musicale (Style of Music)</label>' +
     '<textarea class="field-area" id="at-style-prompt" style="min-height:60px; font-family:var(--ff-m); font-size:0.76rem;" placeholder="french chanson, warm male voice, acoustic guitar, accordion, 72 BPM…"></textarea></div>' +
-    '<button class="btn btn-silver" style="width:100%;" onclick="toSuno()">Copier et ouvrir Suno</button>' +
-    '<p style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.12em; color:var(--dust); margin-top:0.9rem; text-align:center;">SUNO PRO · MODE CUSTOM · COLLEZ PAROLES ET STYLE</p></div></div></div>';
+    '<p style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.12em; color:var(--dust); margin-top:0.9rem; text-align:center;">RELISEZ ET CORRIGEZ AVANT DE COMPOSER</p></div></div></div>' +
+    '<div id="at-music" style="margin-top:1.4rem;"></div>';
 }
 
 function restoreAtelier() {
   if (AI.lyrics) document.getElementById('at-lyrics').value = AI.lyrics;
   if (AI.style) document.getElementById('at-style-prompt').value = AI.style;
   if (AI.title) document.getElementById('at-title-h').innerHTML = '« <em>' + esc(AI.title) + '</em> »';
+  if (window.MelodiaAtelier) window.MelodiaAtelier.mount();
 }
 
 async function genLyrics() {
@@ -241,14 +260,6 @@ function copyLyrics() {
   var l = document.getElementById('at-lyrics').value;
   if (navigator.clipboard) navigator.clipboard.writeText(l);
   window.melodiaToast('Paroles copiées.');
-}
-
-function toSuno() {
-  var l = document.getElementById('at-lyrics').value;
-  var s = document.getElementById('at-style-prompt').value;
-  if (!l) { window.melodiaToast('Écrivez d\'abord les paroles.'); return; }
-  window.MelodiaAI.sunoExport(AI.title || 'Hommage Melodia', l, s);
-  window.melodiaToast('Copié — dans Suno : mode Custom, collez paroles et style.');
 }
 
 function vPartenaires() {
@@ -325,7 +336,7 @@ function vSysteme() {
     '<table class="tbl"><tbody>' +
     '<tr><td style="color:var(--ash);">Base de données</td><td>' + (window.MelodiaDB.mode === 'supabase' ? '<span style="color:var(--green);">Supabase (production)</span>' : '<span style="color:var(--amber);">Locale (démonstration)</span>') + '</td></tr>' +
     '<tr><td style="color:var(--ash);">Rédaction des paroles</td><td><span style="color:var(--green);">Active</span></td></tr>' +
-    '<tr><td style="color:var(--ash);">Composition musicale</td><td>Suno Pro — manuelle</td></tr>' +
+    '<tr><td style="color:var(--ash);">Composition musicale</td><td id="sys-suno">Vérification…</td></tr>' +
     '<tr><td style="color:var(--ash);">Paiement</td><td>PayPal — bac à sable</td></tr>' +
     '<tr><td style="color:var(--ash);">Mode</td><td style="color:var(--or);">Débutant</td></tr>' +
     '</tbody></table></div>' +

@@ -82,3 +82,16 @@
   .dash-burger { display: grid; width: 42px; height: 42px; border: 1px solid var(--line); color: var(--or); place-items: center; }
   .tl { flex-wrap: wrap; gap: 0.4rem; }
 }
+
+/* ═══ Lecteur audio natif — accord avec le thème sombre ═══
+   color-scheme demande au navigateur de peindre ses propres contrôles
+   en sombre, plutôt que d'inverser les couleurs au filtre. */
+audio {
+  width: 100%;
+  height: 40px;
+  color-scheme: dark;
+  border-radius: 100px;
+  background: var(--surface-2, #101018);
+  border: 1px solid var(--line-soft, rgba(255,255,255,.06));
+}
+audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }

@@ -108,6 +108,45 @@ Pour la production :
 2. Dans `offres.html`, remplacer `client-id=sb` par votre Client ID
 3. `git push` → redéploiement automatique
 
+## 🎵 Composition musicale — API Suno
+
+La composition se déclenche depuis **Console maître → Atelier de composition → « Composer la musique »**. La clé reste côté serveur : elle ne descend jamais dans le navigateur.
+
+### Configurer
+
+Vercel → Settings → **Environment Variables**, puis redéployer :
+
+| Variable | Obligatoire | Exemple |
+|---|---|---|
+| `SUNO_API_URL` | oui | `https://api.sunoapi.org` (sans slash final) |
+| `SUNO_API_KEY` | oui | la clé fournie par la passerelle |
+| `SUNO_MODEL` | non | `V4_5` par défaut — aussi `V3_5`, `V4`, `V4_5PLUS`, `V5` |
+| `SUNO_CALLBACK_URL` | non | uniquement si votre passerelle l'exige |
+
+Suno ne publie pas d'API officielle : ces variables visent une **passerelle** au format v1 (api.sunoapi.org, PiAPI, ou une instance `suno-api` auto-hébergée). Changer de fournisseur ne demande que de changer `SUNO_API_URL` et la clé.
+
+Tant que les deux variables ne sont pas renseignées, l'atelier le dit en clair, désactive le bouton et laisse l'**export manuel** vers suno.com opérationnel. Rien ne casse.
+
+### Le circuit
+
+```
+Atelier → paroles + direction musicale
+   → POST /api/generate-music   → identifiant de tâche
+   → GET  /api/music-status     → interrogé toutes les 5 s (60 à 180 s)
+   → 2 versions : écoute, téléchargement, « Attacher » à la commande
+```
+
+- **Suivi en direct** : file d'attente → paroles acceptées → première version → terminé.
+- **Reprise** : si vous fermez l'onglet pendant la composition, l'atelier reprend le suivi à la réouverture (jusqu'à une heure).
+- **Échecs** : refus du filtre de contenu, échec de génération ou panne du service sont remontés en clair et interrompent le suivi.
+- **Attacher** enregistre l'œuvre sur la commande (`audio_url`, `audio_title`, `suno_task_id`) : elle devient lisible depuis la fiche, en console maître comme dans l'espace de l'agence.
+
+> Les liens audio des passerelles Suno expirent au bout de quelques semaines. Téléchargez le fichier retenu et archivez-le.
+
+### Vérifier l'état
+
+`/api/music-config` indique si la composition automatique est branchée, sans jamais exposer la clé. La vue **Système** de la console affiche cet état.
+
 ## 🎛 Console admin — pipeline IA complet
 
 `/dashboard-master.html` — console de pilotage avec KPIs, suivi des commandes, prospection, et surtout **l'Atelier de composition** :
@@ -127,7 +166,7 @@ Le site encaisse, VOUS composez a la main. Zero risque, qualite maximale :
 
 1. **Le client commande** sur `/commande` : choix de l'offre -> brief 5 questions -> creation de compte -> paiement PayPal (ou "payer plus tard")
 2. **La commande apparait** dans la console admin (onglet Commandes) avec tout le brief
-3. **Vous composez** : onglet Atelier -> bouton "Generer paroles" -> bouton "Suno MANUEL" (tout est copie, suno.com s'ouvre, vous collez en mode Custom avec votre abonnement Suno Pro 10$/mois)
+3. **Vous composez** : onglet Atelier -> "Ecrire les paroles" -> "Composer la musique" (API Suno, 60 a 180 s, deux versions a ecouter puis a attacher a la commande). Sans cles Suno configurees, le bouton "Export manuel" copie tout et ouvre suno.com.
 4. **Vous livrez** le MP3 par email au client, puis cliquez le bouton de statut suivant : Recue -> Brief valide -> En composition -> Livree
 5. **Le client suit** chaque etape en temps reel dans son espace `/compte`
 
@@ -153,7 +192,8 @@ create table orders (
   offer text, price int, defunt text,
   traits text, metier text, habitude text, anecdote text, style text,
   urgence boolean default false,
-  paypal_id text, paid boolean default false
+  paypal_id text, paid boolean default false,
+  audio_url text, audio_title text, suno_task_id text
 );
 alter table orders enable row level security;
 create policy "insert pour tous" on orders for insert with check (true);

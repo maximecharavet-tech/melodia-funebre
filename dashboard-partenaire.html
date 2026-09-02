@@ -112,7 +112,9 @@ function orderCard(o) {
     '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' · ' + eur(o.price) + ' · marge ' + eur(Math.round(o.price * 0.6)) + '</div></div>' +
     '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span></div>' +
     timeline(o.status) +
-    '<div class="o-brief">Style : ' + esc(o.style || '—') + ' · ' + esc(o.traits || '—') + (o.metier ? ' · ' + esc(o.metier) : '') + '</div></div>';
+    '<div class="o-brief">Style : ' + esc(o.style || '—') + ' · ' + esc(o.traits || '—') + (o.metier ? ' · ' + esc(o.metier) : '') + '</div>' +
+    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio></div>' : '') +
+    '</div>';
 }
 
 function vAccueil() {

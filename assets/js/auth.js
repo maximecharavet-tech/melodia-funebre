@@ -174,6 +174,28 @@
       return true;
     },
 
+    /** Rattache l'oeuvre composee a la commande (ecoute par la famille) */
+    async setAudio(ref, audio) {
+      var patch = {
+        audio_url: audio.url || '',
+        audio_title: audio.title || '',
+        suno_task_id: audio.taskId || ''
+      };
+      if (HAS_SB) {
+        try {
+          await sb('/rest/v1/orders?ref=eq.' + encodeURIComponent(ref), { method: 'PATCH', body: JSON.stringify(patch) });
+        } catch (e) {
+          /* Les colonnes doivent exister cote Supabase : message explicite plutot qu'echec muet */
+          throw new Error('Supabase a refuse l\'enregistrement. Ajoutez les colonnes audio_url, audio_title et suno_task_id a la table orders (voir README).');
+        }
+        return true;
+      }
+      var all = LS.get('melodia_orders', []);
+      var o = all.filter(function (x) { return x.ref === ref; })[0];
+      if (o) { o.audio_url = patch.audio_url; o.audio_title = patch.audio_title; o.suno_task_id = patch.suno_task_id; LS.set('melodia_orders', all); }
+      return true;
+    },
+
     async partners() {
       if (HAS_SB) return [];
       var users = LS.get('melodia_users', {});
@@ -221,6 +243,86 @@
       if (a < 0 || b < 0) throw new Error('Réponse illisible — relancez.');
       var o = JSON.parse(raw.slice(a, b + 1));
       return { title: o.title || ('Hommage à ' + brief.defunt), lyrics: (o.lyrics || '').replace(/\\n/g, '\n'), style_prompt: o.style_prompt || '' };
+    },
+
+    /* ═══ Composition musicale via l'API Suno ═══
+       Le circuit passe par nos fonctions serveur : la cle n'atteint
+       jamais le navigateur. */
+
+    /** Verifie si la composition automatique est branchee cote serveur */
+    async musicConfig() {
+      try {
+        var r = await fetch('/api/music-config');
+        if (!r.ok) return { configured: false };
+        return await r.json();
+      } catch (e) { return { configured: false, offline: true }; }
+    },
+
+    /** Lance une composition. Renvoie { taskId }. */
+    async music(payload) {
+      var r = await fetch('/api/generate-music', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: payload.title || 'Hommage Melodia',
+          lyrics: payload.lyrics || '',
+          style_prompt: payload.style_prompt || '',
+          instrumental: !!payload.instrumental,
+          negative_tags: payload.negative_tags || '',
+          vocal_gender: payload.vocal_gender || ''
+        })
+      });
+      var d = null;
+      try { d = await r.json(); } catch (e) { d = {}; }
+      if (!r.ok) {
+        var err = new Error(d.error || 'La composition n\'a pas pu demarrer.');
+        err.code = d.code;
+        err.hint = d.hint;
+        throw err;
+      }
+      return d;
+    },
+
+    /** Etat d'une composition en cours */
+    async musicStatus(taskId) {
+      var r = await fetch('/api/music-status?taskId=' + encodeURIComponent(taskId));
+      var d = null;
+      try { d = await r.json(); } catch (e) { d = {}; }
+      if (!r.ok) throw new Error(d.error || 'Suivi indisponible.');
+      return d;
+    },
+
+    /**
+     * Interroge le service jusqu'a obtention des titres.
+     * onTick(etat) est appele a chaque passage pour l'affichage.
+     * Suno met typiquement 60 a 180 secondes.
+     */
+    async musicPoll(taskId, onTick, options) {
+      var opt = options || {};
+      var intervalle = opt.interval || 5000;
+      var limite = opt.timeout || 420000;      /* 7 minutes */
+      var debut = Date.now();
+      var echecsReseau = 0;
+
+      while (Date.now() - debut < limite) {
+        if (opt.signal && opt.signal.aborted) throw new Error('Composition interrompue.');
+        var etat;
+        try {
+          etat = await this.musicStatus(taskId);
+          echecsReseau = 0;
+        } catch (e) {
+          /* Une coupure passagere ne doit pas annuler une composition en cours */
+          if (++echecsReseau >= 4) throw e;
+          await new Promise(function (r) { setTimeout(r, intervalle); });
+          continue;
+        }
+        etat.elapsed = Math.round((Date.now() - debut) / 1000);
+        if (onTick) onTick(etat);
+        if (etat.failed) { var er = new Error(etat.error || 'La composition a echoue.'); er.failed = true; throw er; }
+        if (etat.done) return etat;
+        await new Promise(function (r) { setTimeout(r, intervalle); });
+      }
+      throw new Error('La composition depasse le delai attendu. Le titre peut encore arriver : rouvrez l\'atelier dans quelques minutes.');
     },
 
     sunoExport(title, lyrics, style) {

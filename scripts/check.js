@@ -6,10 +6,11 @@ const files = [
   'contact.html', 'compte.html', 'dashboard-partenaire.html', 'dashboard-master.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html',
   'assets/css/style.css', 'assets/css/dashboard.css',
-  'assets/js/main.js', 'assets/js/player.js', 'assets/js/order.js',
+  'assets/js/main.js', 'assets/js/player.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
   'assets/js/auth.js', 'assets/js/config.js',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-anime.mp4',
   'audio/maurice.mp3', 'audio/monique.mp3', 'audio/sergio.mp3',
+  'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
   'vercel.json', 'robots.txt', 'sitemap.xml'
 ];
 
