@@ -1141,3 +1141,177 @@ body.intro-open { overflow: hidden; }
   .intro-line { transform: scaleX(1) !important; }
   .intro-wave span { height: 10px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — reprise complète
+   Le tunnel de commande imposait ses colonnes en style en ligne, ce
+   qu'aucune media query ne peut défaire : la colonne tombait à 170 px
+   et le texte se brisait à deux mots par ligne. La mise en page passe
+   désormais par une classe, et tout ce bloc affine la lecture au doigt.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Mise en page du tunnel — pilotable par media query */
+.wz-layout {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 2.4rem;
+  align-items: start;
+}
+
+/* Indication de défilement des tableaux larges */
+.scroll-hint {
+  display: none;
+  margin-top: 0.8rem;
+  text-align: center;
+  font-family: var(--ff-m);
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+.section-light .scroll-hint { color: var(--ivory-dim); }
+
+/* Descriptions des cartes de choix : c'était du monospace capitalisé et
+   très espacé pour des phrases entières — illisible dès qu'on réduit. */
+.choice-sub {
+  font-family: var(--ff-b);
+  font-size: 0.83rem;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.5;
+  color: var(--ash);
+  margin-top: 0.4rem;
+}
+.choice.selected .choice-sub { color: var(--bone); }
+
+@media (max-width: 1024px) {
+  .wz-layout { grid-template-columns: 1fr; gap: 1.3rem; }
+
+  /* Le récapitulatif passe en tête, condensé : le visiteur garde le prix
+     sous les yeux sans qu'un pavé s'intercale avant la première question. */
+  .wz-recap {
+    order: -1;
+    position: static;
+    padding: 1.1rem 1.3rem;
+  }
+  .wz-recap-head { margin-bottom: 0.8rem; padding-bottom: 0.7rem; }
+  .wz-recap .wz-line { display: none; }
+  .wz-recap .wz-line:first-of-type { display: flex; }
+  .wz-recap > div:last-child { display: none; }
+  .wz-total { margin-top: 0.7rem; padding-top: 0.8rem; }
+  .wz-total b { font-size: 1.8rem; }
+}
+
+@media (max-width: 860px) {
+  .scroll-hint { display: block; }
+
+  /* Le poster transparaît trop derrière un texte qui prend toute la
+     largeur : on assombrit franchement sous petit écran. */
+  .hero-video::after {
+    background:
+      linear-gradient(180deg, rgba(4, 4, 7, 0.92) 0%, rgba(4, 4, 7, 0.5) 32%,
+                      rgba(4, 4, 7, 0.78) 68%, var(--ink) 100%);
+  }
+  .hero-video { min-height: 92svh; padding-top: 6rem; }
+
+  /* Les libellés longs ne tiennent pas avec 0.24em d'interlettrage */
+  .btn { letter-spacing: 0.15em; white-space: normal; line-height: 1.35; }
+  .btn-lg { padding: 1rem 1.6rem; font-size: 0.62rem; }
+
+  .eyebrow { letter-spacing: 0.24em; }
+  .eyebrow::before, .eyebrow::after { width: 18px; }
+
+  /* Les consoles restent des outils de bureau, mais ne doivent pas
+     déborder si elles sont ouvertes depuis un téléphone. */
+  .compare { min-width: 520px; }
+}
+
+@media (max-width: 640px) {
+  /* Les pages dépassaient 12 000 px de haut : on resserre le rythme
+     vertical, sans écraser la respiration éditoriale. */
+  :root {
+    --sp-section: clamp(2.8rem, 8vw, 4rem);
+    --sp-section-sm: clamp(1.8rem, 5vw, 2.6rem);
+  }
+
+  .h-hero { line-height: 1.06; }
+  .lead { font-size: 1rem; line-height: 1.65; }
+  .card { padding: 1.4rem 1.2rem; }
+  .acte { padding: 1.5rem 1.2rem; }
+
+  /* Le trait d'union des listes tarifaires mangeait la largeur utile */
+  .price ul li { font-size: 0.9rem; }
+  .price-desc { min-height: 0; margin-bottom: 1.2rem; }
+
+  /* Bandeau de réassurance : en colonne, il devenait une liste interminable */
+  .trust-strip { gap: 0.7rem 1.2rem; }
+  .trust-item { font-size: 0.5rem; letter-spacing: 0.12em; }
+
+  /* Étapes du tunnel : six pastilles tiennent, pas six libellés */
+  .wz-progress { gap: 0.2rem; margin-bottom: 1.8rem; }
+  .wz-dot { width: 23px; height: 23px; font-size: 0.55rem; }
+  .wz-node::before { top: 11px; }
+  .wz-title { font-size: 1.45rem; }
+  .wz-sub { font-size: 0.88rem; margin-bottom: 1.4rem; }
+  .wz-actions { flex-wrap: wrap; gap: 0.6rem; }
+  .wz-actions .btn { flex: 1 1 auto; }
+  .wz-actions .btn-gold { margin-left: 0; }
+
+  /* Champs : 16px minimum, sinon iOS zoome à la mise au point */
+  .field-input, .field-area, .field-select { font-size: 16px; padding: 0.8rem 0.9rem; }
+  .field { margin-bottom: 1.1rem; }
+
+  .quote-band p { font-size: 1.35rem; }
+  .stat { padding: 1.3rem 0.6rem; }
+  .stat-label { font-size: 0.46rem; letter-spacing: 0.16em; }
+
+  /* Lecteur : la ligne de titre et la durée se marchaient dessus */
+  .player { padding: 1.1rem; }
+  .pt-title { font-size: 1rem; }
+  .pt-time { font-size: 0.55rem; }
+  .player-track { gap: 0.7rem; padding: 0.65rem 0.5rem; }
+
+  .footer-links a { padding: 0.15rem 0; display: inline-block; }
+  .prose h2 { font-size: 1.45rem; }
+}
+
+@media (max-width: 400px) {
+  /* Dernier palier : le mono très espacé finit par casser les mots */
+  .price-name, .stat-label, .mono, .card .mono { letter-spacing: 0.14em; }
+  .btn { font-size: 0.56rem; letter-spacing: 0.12em; padding: 0.85rem 1rem; }
+  .h-hero { font-size: clamp(2.3rem, 11vw, 3rem); }
+  .intro-claim { font-size: 1.2rem; }
+}
+
+/* Mentions et notes de bas de bloc — en classe, donc ajustables sur mobile */
+.note {
+  font-family: var(--ff-m);
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dust);
+  line-height: 1.9;
+}
+.section-light .note { color: var(--ivory-dim); }
+
+/* Sur téléphone, un argument de réassurance à 8 px ne se lit pas :
+   on relève le plancher et on desserre l'interlettrage. */
+@media (max-width: 640px) {
+  .note { font-size: 0.64rem; letter-spacing: 0.09em; line-height: 1.7; }
+  .trust-item { font-size: 0.62rem; letter-spacing: 0.07em; }
+  .trust-item svg { width: 14px; height: 14px; }
+  .badge { font-size: 0.58rem; letter-spacing: 0.1em; padding: 0.4rem 0.8rem; }
+  .price-tag { font-size: 0.56rem; letter-spacing: 0.1em; }
+  .step-time, .card .mono { font-size: 0.58rem; letter-spacing: 0.1em; }
+  .footer-baseline, .footer-bottom { font-size: 0.58rem; letter-spacing: 0.08em; line-height: 1.9; }
+  .player-head { font-size: 0.6rem; letter-spacing: 0.14em; }
+  .field-label { font-size: 0.6rem; letter-spacing: 0.12em; }
+  .wz-recap-head, .wz-total span { font-size: 0.6rem; letter-spacing: 0.12em; }
+  .compare thead th { font-size: 0.6rem; letter-spacing: 0.08em; }
+  .intro-hint { font-size: 0.56rem; letter-spacing: 0.14em; }
+}
+
+/* Cartes de choix : titre et description sur deux lignes distinctes.
+   Elles étaient toutes deux en ligne, donc collées bout à bout. */
+.choice-title, .choice-sub { display: block; }
+.choice-title { padding-right: 1.6rem; }
