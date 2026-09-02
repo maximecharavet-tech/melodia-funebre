@@ -158,8 +158,13 @@
     } else { counters.forEach(run); }
   }
 
-  /* ═══ FAQ ═══ */
+  /* ═══ FAQ ═══
+     Extraite en fonction : la couche de contenu peut reconstruire la
+     liste, il faut alors rebrancher les accordéons. */
+  function initFaq() {
   $$('.faq-q').forEach(function (btn, i) {
+    if (btn.dataset.lie === '1') return;
+    btn.dataset.lie = '1';
     var item = btn.closest('.faq-item');
     var panel = $('.faq-a', item);
     if (!panel) return;
@@ -181,6 +186,8 @@
       }
     });
   });
+  }
+  initFaq();
   /* Recalcule la hauteur si la fenêtre change de largeur */
   window.addEventListener('resize', function () {
     $$('.faq-item.open .faq-a').forEach(function (p) { p.style.maxHeight = p.scrollHeight + 'px'; });
@@ -218,10 +225,12 @@
   }
 
   /* ═══ CARROUSEL ═══ */
+  function initCarousel() {
   $$('.carousel').forEach(function (car) {
     var track = $('.carousel-track', car);
     var slides = $$('.carousel-slide', car);
     if (!track || slides.length < 2) return;
+    if (car._minuteur) clearInterval(car._minuteur);
     var idx = 0, timer = null;
     var dotsWrap = $('.carousel-dots', car);
 
@@ -252,6 +261,7 @@
     var restart = function () {
       clearInterval(timer);
       if (!REDUCED) timer = setInterval(function () { go(idx + 1); }, 6500);
+      car._minuteur = timer;
     };
     car.addEventListener('mouseenter', function () { clearInterval(timer); });
     car.addEventListener('mouseleave', restart);
@@ -267,7 +277,10 @@
     }, { passive: true });
 
     restart();
+    car.dataset.lie = '1';
   });
+  }
+  initCarousel();
 
   /* ═══ BANDEAU DÉFILANT ═══ */
   $$('.marquee-track').forEach(function (track) {
@@ -327,6 +340,9 @@
     [rVol, rPrice].forEach(function (r) { if (r) r.addEventListener('input', update); });
     update();
   }
+
+  /* Rebranchements utilisés par la couche de contenu */
+  window.MelodiaUI = { initFaq: initFaq, initCarousel: initCarousel };
 
   /* ═══ ANNÉE COURANTE ═══ */
   $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });

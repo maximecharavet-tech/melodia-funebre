@@ -137,8 +137,11 @@
       var u = window.MelodiaAuth.current();
       var rec = {
         ref: uid(), created_at: new Date().toISOString(), status: 'recue',
-        user_email: (u && u.email) || o.email || '', user_name: (u && u.name) || o.name || '',
-        agence: (u && u.agence) || o.agence || '',
+        /* Les coordonnées transmises l'emportent sur celles du compte connecté :
+           une commande saisie par le fondateur ou par une agence pour une
+           famille doit être rattachée à cette famille, pas à qui la saisit. */
+        user_email: o.email || (u && u.email) || '', user_name: o.name || (u && u.name) || '',
+        agence: o.agence || (u && u.agence) || '',
         offer: o.offer, price: o.price, defunt: o.defunt,
         traits: o.traits || '', metier: o.metier || '', habitude: o.habitude || '',
         anecdote: o.anecdote || '', style: o.style || '',

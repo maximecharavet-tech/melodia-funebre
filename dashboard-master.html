@@ -23,6 +23,7 @@
     <button class="side-item active" data-v="accueil"><span class="ico">◈</span>Vue générale</button>
     <button class="side-item" data-v="commandes"><span class="ico">♪</span>Commandes<span class="side-badge" id="badge-cmd">0</span></button>
     <button class="side-item" data-v="atelier"><span class="ico">✦</span>Atelier de composition</button>
+    <button class="side-item" data-v="proprietaire"><span class="ico">✎</span>Mode propriétaire</button>
     <div class="side-label">Développement</div>
     <button class="side-item" data-v="partenaires"><span class="ico">◇</span>Partenaires</button>
     <button class="side-item" data-v="finances"><span class="ico">€</span>Finances</button>
@@ -59,6 +60,7 @@
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/atelier-music.js"></script>
+<script src="assets/js/proprietaire.js"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 if (U && U.role !== 'master') location.href = 'dashboard-partenaire.html';
@@ -100,12 +102,14 @@ function go(v) {
     partenaires: ['Réseau', 'Agences <em>partenaires</em>'],
     finances: ['Comptabilité', 'Vue <em>financière</em>'],
     prospection: ['Croissance', 'Plan de <em>prospection</em>'],
+    proprietaire: ['Contrôle total', 'Mode <em>propriétaire</em>'],
     systeme: ['Configuration', 'Le <em>système</em>']
   }[v];
   document.getElementById('head-eyebrow').textContent = H[0];
   document.getElementById('head-title').innerHTML = H[1];
-  document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, systeme:vSysteme })[v]();
+  document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, proprietaire:vProprietaire, systeme:vSysteme })[v]();
   if (v === 'atelier') restoreAtelier();
+  if (v === 'proprietaire' && window.MelodiaOwner) window.MelodiaOwner.mount();
   if (v === 'systeme') majEtatMusique();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -336,6 +340,12 @@ function vProspection() {
     '<p style="font-family:var(--ff-d); font-style:italic; font-size:1.1rem; line-height:1.75; color:var(--bone);">« Une famille de votre ville écrivait récemment que la musique de la cérémonie n\'avait rien à voir avec son père. Nous composons une œuvre originale pour chaque défunt, en 24 heures, sans droit SACEM — avec 60 % de marge pour votre agence. Souhaitez-vous écouter ? »</p>' +
     '<div style="margin-top:1.6rem; font-family:var(--ff-m); font-size:0.56rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--or-patina);">Taux de réponse visé : 10 à 15 %</div></div>' +
     '</div>';
+}
+
+/* Le mode propriétaire vit dans son propre module : la console est trop
+   fragile en concaténation de chaînes pour accueillir un éditeur complet. */
+function vProprietaire() {
+  return '<div id="own-root"></div>';
 }
 
 function vSysteme() {
