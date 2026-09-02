@@ -31,9 +31,13 @@ melodia-funebre/
 │   ├── js/player.js       Lecteur audio avec spectre réel (Web Audio API)
 │   ├── js/order.js        Tunnel de commande, récapitulatif vivant, brouillon sauvegardé
 │   ├── js/atelier-music.js  Atelier : export vers Suno et rattachement de l'hommage
+│   ├── js/content.js        Applique le contenu éditable sur les pages
+│   ├── js/proprietaire.js   Mode propriétaire : édition du site, clients, publication
 │   ├── js/auth.js         Comptes et sessions (localStorage ou Supabase)
 │   └── js/config.js       Configuration Supabase (vide = mode démo)
 ├── audio/              3 démos MP3 (Maurice, Monique, Sergio)
+├── assets/data/content.json  Contenu éditable depuis le mode propriétaire
+├── build/              Générateur des pages (npm run build)
 ├── scripts/check.js    Vérifie les fichiers et les liens internes
 ├── scripts/serve-lan.js  Serveur local accessible depuis un téléphone du réseau
 ├── vercel.json         Config hébergement (cache, sécurité, clean URLs)
@@ -107,21 +111,66 @@ Il est pensé pour ne jamais retenir personne :
 - **sans JavaScript, il ne s'affiche pas** — impossible de rester bloqué devant ;
 - **le contenu du site est déjà dans la page** derrière lui : le seuil est un calque, pas une redirection, donc rien n'est masqué aux moteurs de recherche.
 
-### Modifier le message
+### Modifier le message, ou retirer le seuil
 
-Éditez `index.html`, bloc `<p class="intro-claim">` :
+Depuis la console : **Mode propriétaire → Réglages**. Le message accepte le HTML simple (`<br>` pour un retour à la ligne, `<em>…</em>` pour l'or), et une case permet de désactiver le seuil entièrement.
 
-```html
-<p class="intro-claim">Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
-```
-
-Le texte entre `<em>` s'affiche en or.
+Le message par défaut, lui, est dans `build/p-index.js`.
 
 > ⚠️ **Sur l'allégation « premier site mondial »** — en France, une allégation de supériorité absolue doit pouvoir être prouvée : à défaut, elle relève de la pratique commerciale trompeuse (article L121-2 du Code de la consommation), et un concurrent comme la DGCCRF peut la contester. Formulations défendables sans démonstration : *« La première maison française dédiée à la musique personnalisée pour funérailles »*, ou *« Une maison dédiée à la musique personnalisée pour funérailles »*.
 
-### Le retirer
+## ✎ Mode propriétaire
 
-Dans `index.html`, supprimez le bloc `<div class="intro" id="intro">…</div>` ainsi que le petit script `sessionStorage` de l'en-tête. Rien d'autre n'en dépend.
+**Console maître → Mode propriétaire.** La main sur le contenu du site sans ouvrir une ligne de code.
+
+### Ce qui est éditable
+
+| Onglet | Ce que vous changez | Où ça apparaît |
+|---|---|---|
+| **Musiques** | Les hommages d'exemple : titre, personne, style, fichier audio, récit, brief de départ | Lecteur de l'accueil et page Écouter |
+| **Tarifs** | Prix, intitulés, phrase de présentation, étiquette, liste des prestations | Accueil et page Offres |
+| **Témoignages** | Texte, signature, nombre d'étoiles | Carrousel de l'accueil |
+| **Questions** | Questions et réponses | Accueil, et résultats enrichis Google |
+| **Réglages** | Téléphone, email, message du seuil d'entrée | Toutes les pages |
+| **Clients** | Créer une commande à la main, consulter les clients | Onglet Commandes |
+| **Publication** | Aperçu, téléchargement, sauvegarde | — |
+
+Chaque entrée se réordonne (↑ ↓), se masque sans être supprimée (◉ / ◌) et se supprime.
+
+### Comment ça marche
+
+Le site lit `assets/data/content.json`. La console édite ce fichier :
+
+1. **Vous modifiez** — chaque frappe est enregistrée dans un brouillon local. Rien n'est visible du public à ce stade, et l'en-tête indique le nombre de blocs non publiés.
+2. **Vous vérifiez** — *Publication → Voir l'aperçu sur le site* applique votre brouillon sur le vrai site, pour vous seul et sur cet appareil. Un bandeau jaune le rappelle en permanence.
+3. **Vous publiez** — *Télécharger content.json*, puis sur GitHub : ouvrez `assets/data/content.json`, cliquez sur le crayon, remplacez tout, *Commit changes*. Le site se redéploie seul.
+
+Le bouton *Restaurer une sauvegarde* réimporte un fichier téléchargé précédemment : c'est votre filet de sécurité.
+
+### Ajouter une musique d'exemple
+
+1. Déposez le MP3 dans le dossier `audio/` du dépôt (GitHub → dossier `audio` → *Add file* → *Upload files*).
+2. Console → Mode propriétaire → Musiques → **Ajouter**.
+3. Renseignez le titre, la personne, le style, et dans *Fichier audio* : `audio/le-nom-du-fichier.mp3`.
+4. Aperçu, puis publication.
+
+Un lien complet vers un MP3 hébergé ailleurs fonctionne aussi.
+
+### Si rien ne s'affiche
+
+La couche de contenu ne casse jamais le site : si `content.json` est absent, illisible ou vide, le HTML d'origine reste affiché. Une entrée sans fichier audio est simplement ignorée par le lecteur.
+
+## 🏗 Générer les pages
+
+Les pages HTML sont **produites** à partir de `build/` : une seule navigation, un seul pied de page, un seul en-tête pour tout le site.
+
+```bash
+npm run build
+```
+
+La commande reprend au passage le contenu publié dans `assets/data/content.json`, pour que le HTML servi corresponde à ce qui est en ligne — meilleur pour le référencement.
+
+> Modifier directement un fichier `.html` fonctionne, mais la prochaine génération écrasera la retouche. Le bon endroit est `build/`.
 
 ## 🛡 Ce qui est en place côté production
 

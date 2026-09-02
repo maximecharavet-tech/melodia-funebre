@@ -1,0 +1,43 @@
+<script>
+var TITLES = { login: 'Accès à votre <em>tableau de bord</em>', signup: 'Créer un <em>compte partenaire</em>', forgot: 'Réinitialiser le <em>mot de passe</em>' };
+function showView(v) {
+  ['login','signup','forgot'].forEach(function (x) { document.getElementById('view-' + x).style.display = (x === v) ? 'block' : 'none'; });
+  document.getElementById('auth-title').innerHTML = TITLES[v];
+  msg('');
+}
+function msg(t, ok) {
+  var m = document.getElementById('msg');
+  m.className = 'form-msg' + (t ? (ok ? ' ok' : ' err') : '');
+  m.textContent = t || '';
+}
+async function doLogin(e) {
+  e.preventDefault();
+  try {
+    await window.MelodiaAuth.login(document.getElementById('li-id').value, document.getElementById('li-pw').value);
+    location.href = window.MelodiaAuth.home();
+  } catch (err) { msg(err.message); }
+  return false;
+}
+async function doSignup(e) {
+  e.preventDefault();
+  try {
+    await window.MelodiaAuth.signup({
+      name: document.getElementById('su-name').value.trim(),
+      email: document.getElementById('su-email').value,
+      password: document.getElementById('su-pw').value,
+      agence: document.getElementById('su-agence').value.trim(),
+      ville: document.getElementById('su-ville').value.trim(),
+      tel: document.getElementById('su-tel').value.trim()
+    });
+    location.href = window.MelodiaAuth.home();
+  } catch (err) { msg(err.message); }
+  return false;
+}
+async function doForgot(e) {
+  e.preventDefault();
+  try { msg(await window.MelodiaAuth.resetPassword(document.getElementById('fg-email').value), true); }
+  catch (err) { msg(err.message); }
+  return false;
+}
+if (window.MelodiaAuth.current()) location.href = window.MelodiaAuth.home();
+</script>

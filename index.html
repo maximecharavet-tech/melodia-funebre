@@ -260,8 +260,8 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
         <h2 class="h-xl">Trois façons de dire <em>adieu.</em></h2>
       </div>
       <div class="grid-3">
-        <div class="card price card-lift reveal">
-          
+        <div class="card price card-lift reveal" data-offer-id="essentiel">
+          <span class="price-tag" style="display:none"></span>
           <div class="price-name">Essentiel</div>
           <div class="price-amount">149<span>€</span></div>
           <div class="price-note">TVA non applicable · art. 293 B du CGI</div>
@@ -278,7 +278,7 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
           </ul>
           <a href="offres.html" class="btn btn-outline btn-block">Choisir Essentiel</a>
         </div>
-        <div class="card price card-lift featured reveal">
+        <div class="card price card-lift featured reveal" data-offer-id="prestige">
           <span class="price-tag">Le plus choisi</span>
           <div class="price-name">Prestige</div>
           <div class="price-amount">299<span>€</span></div>
@@ -295,8 +295,8 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
           </ul>
           <a href="offres.html" class="btn btn-gold btn-block">Choisir Prestige</a>
         </div>
-        <div class="card price card-lift reveal">
-          
+        <div class="card price card-lift reveal" data-offer-id="memorial">
+          <span class="price-tag" style="display:none"></span>
           <div class="price-name">Mémorial</div>
           <div class="price-amount">499<span>€</span></div>
           <div class="price-note">TVA non applicable · art. 293 B du CGI</div>
@@ -414,6 +414,7 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
         <h2 class="h-xl">Ce que les familles<br>nous <em>demandent.</em></h2>
       </div>
       <div class="reveal">
+      <div id="faq-list">
       <div class="faq-item">
         <button class="faq-q" type="button">Combien de temps faut-il vraiment pour recevoir l'hommage ?</button>
         <div class="faq-a"><div class="faq-a-inner">Vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. En cas de cérémonie imminente, notre priorité six heures permet une livraison le jour même : appelez-nous directement au 07 84 10 16 96, nous décrochons sept jours sur sept.</div></div>
@@ -445,6 +446,7 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
       <div class="faq-item">
         <button class="faq-q" type="button">Travaillez-vous avec les pompes funèbres ?</button>
         <div class="faq-a"><div class="faq-a-inner">Oui, et c'est une part importante de notre activité. Les agences partenaires conservent 60 % du montant sur chaque hommage, sans investissement ni charge technique. La page Agences comporte un simulateur de revenus.</div></div>
+      </div>
       </div>
       </div>
       <div class="center reveal" style="margin-top:2.5rem;">
@@ -515,6 +517,7 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
   <a href="tel:+33784101696" class="btn btn-outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg> Appeler</a>
   <a href="offres.html" class="btn btn-gold">Commander</a>
 </div>
+<script src="assets/js/content.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/player.js"></script>
 
