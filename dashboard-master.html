@@ -70,6 +70,14 @@ function logout(){window.MelodiaAuth.logout();location.href='compte.html';}
 var ORDERS = [], PARTNERS = [], FLOW = window.MELODIA_FLOW, ST = window.MELODIA_STATUS;
 var AI = { title:'', lyrics:'', style:'' };
 
+/* Rechargement des commandes depuis la base, appelé après une écriture
+   faite ailleurs (rattachement d'un hommage par l'atelier) : sans cela,
+   les fiches continuent d'afficher la copie chargée au démarrage. */
+window.MELODIA_REFRESH = async function () {
+  ORDERS = await window.MelodiaDB.all();
+  return ORDERS;
+};
+
 async function boot() {
   await window.MelodiaDB.seedIfEmpty();
   ORDERS = await window.MelodiaDB.all();
@@ -125,7 +133,7 @@ function orderCard(o) {
     '<div class="o-brief"><b style="color:var(--bone);">Brief —</b> Style : ' + esc(o.style || '—') + ' · Traits : ' + esc(o.traits || '—') + ' · Métier : ' + esc(o.metier || '—') + ' · Habitude : ' + esc(o.habitude || '—') +
     (o.anecdote ? '<br><b style="color:var(--bone);">Anecdote —</b> ' + esc(o.anecdote) : '') +
     '<br><b style="color:var(--bone);">Contact —</b> ' + esc(o.user_name) + ' · ' + esc(o.user_email) + '</div>' +
-    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio></div>' : '') +
+    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + (/\.(mp3|m4a|wav|ogg|flac)(\?|#|$)/i.test(o.audio_url)    ? '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio>'    : '<a class="btn btn-outline btn-sm" href="' + esc(o.audio_url) + '" target="_blank" rel="noopener">Ouvrir l\'hommage</a>') + '</div>' : '') +
     '</div>';
 }
 
@@ -158,7 +166,7 @@ async function majEtatMusique() {
     var cfg = await window.MelodiaAI.musicConfig();
     c.innerHTML = cfg.configured
       ? '<span style="color:var(--green);">API ' + esc(cfg.engine || 'Mureka') + ' active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
-      : '<span style="color:var(--amber);">Manuelle</span> — clé Mureka non renseignée';
+      : '<span style="color:var(--or);">Manuelle</span> — Suno, votre abonnement';
   } catch (e) { c.textContent = 'Indéterminé'; }
 }
 
@@ -181,7 +189,7 @@ function vAccueil() {
     '<div style="font-size:0.92rem; color:var(--bone); line-height:2;">' +
     '<p><b style="color:var(--or);">I.</b> La commande arrive (site ou espace partenaire) → statut <i>Reçue</i></p>' +
     '<p><b style="color:var(--or);">II.</b> Vous appelez la famille pour valider → <i>Brief validé</i></p>' +
-    '<p><b style="color:var(--or);">III.</b> Atelier → paroles + direction musicale → « Composer la musique » (Mureka) → <i>En composition</i></p>' +
+    '<p><b style="color:var(--or);">III.</b> Atelier → paroles → « Copier le brief et ouvrir Suno » → coller le lien → <i>En composition</i></p>' +
     '<p><b style="color:var(--or);">IV.</b> Vous envoyez le fichier à la famille → <i>Livrée</i></p>' +
     '<p style="color:var(--ash); font-size:0.85rem; margin-top:0.8rem;">Chaque changement de statut est visible instantanément par le client dans son espace.</p>' +
     '</div></div>';
@@ -287,7 +295,7 @@ function vFinances() {
     '<div class="kpi"><div class="kpi-label">CA total</div><div class="kpi-value">' + ca + '<span class="u"> €</span></div><div class="kpi-foot">Toutes commandes</div></div>' +
     '<div class="kpi"><div class="kpi-label">Encaissé</div><div class="kpi-value">' + paid + '<span class="u"> €</span></div><div class="kpi-foot">Paiements confirmés</div></div>' +
     '<div class="kpi"><div class="kpi-label">CA du mois</div><div class="kpi-value">' + caMois + '<span class="u"> €</span></div><div class="kpi-foot">' + duMois.length + ' commande(s)</div></div>' +
-    '<div class="kpi"><div class="kpi-label">Coût production</div><div class="kpi-value">' + cout + '<span class="u"> €</span></div><div class="kpi-foot">≈ 1 € par hommage (Mureka)</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Coût production</div><div class="kpi-value">' + cout + '<span class="u"> €</span></div><div class="kpi-foot">abonnement Suno</div></div>' +
     '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Détail des <em>commandes</em></div><div class="panel-sub">Base de facturation</div></div></div>' +
     '<table class="tbl"><thead><tr><th>Référence</th><th>Date</th><th>Défunt</th><th>Offre</th><th>Montant</th><th>Marge agence</th><th>Net maison</th></tr></thead><tbody>' +
@@ -342,7 +350,7 @@ function vSysteme() {
     '</tbody></table></div>' +
     '<div class="panel"><div class="panel-title">Passer en <em>automatique</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Phase 2, quand le volume le justifiera</div>' +
     '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
-    '<p><b style="color:var(--or);">I.</b> Créer une clé sur platform.mureka.ai</p>' +
+    '<p><b style="color:var(--or);">I.</b> Choisir un service musical avec API (Mureka, ElevenLabs Music…)</p>' +
     '<p><b style="color:var(--or);">II.</b> Renseigner les variables sur Vercel</p>' +
     '<p><b style="color:var(--or);">III.</b> Activer la composition automatique</p>' +
     '<p style="color:var(--ash); font-size:0.85rem; margin-top:1rem;">Les fonctions serveur sont déjà écrites dans le dossier <code style="color:var(--or);">/api</code>. Tant que le volume reste inférieur à dix hommages par jour, le mode manuel garantit une qualité supérieure.</p>' +

@@ -23,13 +23,14 @@ melodia-funebre/
 ├── dashboard-partenaire.html  Espace agence partenaire
 ├── mentions-legales.html · cgv.html · confidentialite.html
 ├── 404.html            Page d'erreur, avec liens de rattrapage
-├── api/                Fonctions serverless (paroles, musique Mureka)
+├── api/                Fonctions serverless (paroles, musique — automatisation)
 ├── assets/
 │   ├── css/style.css      Design system v4 (sombre + sections ivoire, responsive)
 │   ├── css/dashboard.css  Styles des consoles
 │   ├── js/main.js         Nav, révélations, compteurs, FAQ, carrousel, modales, simulateur
 │   ├── js/player.js       Lecteur audio avec spectre réel (Web Audio API)
 │   ├── js/order.js        Tunnel de commande, récapitulatif vivant, brouillon sauvegardé
+│   ├── js/atelier-music.js  Atelier : export vers Suno et rattachement de l'hommage
 │   ├── js/auth.js         Comptes et sessions (localStorage ou Supabase)
 │   └── js/config.js       Configuration Supabase (vide = mode démo)
 ├── audio/              3 démos MP3 (Maurice, Monique, Sergio)
@@ -108,7 +109,7 @@ Il est pensé pour ne jamais retenir personne :
 
 ### Modifier le message
 
-Dans `scripts/`… non : le message est dans la partition de génération. En pratique, éditez directement `index.html`, bloc `<p class="intro-claim">` :
+Éditez `index.html`, bloc `<p class="intro-claim">` :
 
 ```html
 <p class="intro-claim">Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
@@ -180,16 +181,28 @@ Pour la production :
 2. Dans `offres.html`, remplacer `client-id=sb` par votre Client ID
 3. `git push` → redéploiement automatique
 
-## 🎵 Composition musicale — API Mureka
+## 🎵 La composition musicale
 
-La composition se déclenche depuis **Console maître → Atelier de composition → « Composer la musique »**. La clé reste côté serveur : elle ne descend jamais dans le navigateur.
+### Aujourd'hui : Suno, en manuel
 
-Mureka ([mureka.ai](https://www.mureka.ai/), SkyworkAI) a été retenu parce qu'il expose une **API publique avec clé** — ce que Suno ne propose pas.
+C'est le circuit en service. Il ne demande aucune clé, aucune configuration, et fonctionne dès maintenant avec votre abonnement Suno.
 
-### Configurer
+Depuis **Console maître → Commandes → « Composer »** sur une commande :
 
-1. Créez un compte sur [platform.mureka.ai](https://platform.mureka.ai/) → onglet **API Keys** → générer une clé
-2. Vercel → Settings → **Environment Variables**, puis redéployer :
+1. **Écrire les paroles** — le bouton de gauche rédige titre, paroles et direction musicale à partir du brief. Relisez et corrigez : c'est votre texte.
+2. **« Copier le brief et ouvrir Suno »** — titre, style et paroles partent dans le presse-papiers, Suno s'ouvre. Sur place : **Create** → onglet **Custom** → collez les paroles dans *Lyrics* et le style dans *Style of Music*.
+3. **Rattacher l'hommage terminé** — revenez dans l'atelier et collez le lien de la chanson. Dans Suno : **⋯ → Share → Copy link**. Un lien direct vers un `.mp3` fonctionne aussi, et devient alors écoutable dans la fiche.
+4. **Avancer le statut** — Reçue → Brief validé → En composition → Livrée. La famille suit chaque étape depuis son espace.
+
+L'hommage rattaché apparaît ensuite dans la fiche de commande, en console maître comme dans l'espace de l'agence.
+
+> Téléchargez toujours le MP3 depuis Suno et archivez-le : les liens de partage ne sont pas éternels.
+
+### Demain : l'automatisation
+
+Le circuit automatique est **déjà écrit et testé**. Il se réveille tout seul le jour où une clé est renseignée : un second bloc apparaît alors dans l'atelier, et compose sans quitter la console.
+
+L'implémentation actuelle vise **Mureka** ([platform.mureka.ai](https://platform.mureka.ai/)), retenu parce qu'il expose une API publique avec clé — ce que Suno ne propose pas.
 
 | Variable | Obligatoire | Valeur |
 |---|---|---|
@@ -197,33 +210,15 @@ Mureka ([mureka.ai](https://www.mureka.ai/), SkyworkAI) a été retenu parce qu'
 | `MUREKA_API_URL` | non | `https://api.mureka.ai` par défaut |
 | `MUREKA_MODEL` | non | `auto` par défaut |
 
-Tant que `MUREKA_API_KEY` n'est pas renseignée, l'atelier le dit en clair, désactive le bouton et laisse l'**export manuel** vers mureka.ai opérationnel. Rien ne casse.
+À renseigner dans Vercel → Settings → Environment Variables, puis **Redeploy**. Rien d'autre à changer : l'atelier bascule de lui-même.
 
-### Le circuit
+Le circuit : `POST /api/generate-music` → identifiant de tâche → `GET /api/music-status` interrogé toutes les 5 s → versions à écouter, télécharger et attacher. Les échecs (modération, génération, clé invalide) sont remontés en clair et interrompent le suivi. Une composition survit à un rechargement de page.
 
-```
-Atelier → paroles + direction musicale
-   → POST /api/generate-music   → POST api.mureka.ai/v1/song/generate      → id de tâche
-   → GET  /api/music-status     → GET  api.mureka.ai/v1/song/query/{id}    → toutes les 5 s
-   → versions rendues : écoute, téléchargement, « Attacher » à la commande
-```
+Pour changer de fournisseur, seuls les deux fichiers `api/generate-music.js` et `api/music-status.js` sont concernés — les noms de champs audio y sont normalisés de façon large, et les statuts reconnus par famille.
 
-- **Direction musicale** : Mureka ne prend pas de champs séparés pour la voix ou les exclusions. `/api/generate-music` compose une description unique à partir du style, du choix de voix et des styles à éviter — par exemple `french chanson, acoustic, male vocal, avoid: heavy drums`.
-- **Instrumental** : la case à cocher bascule sur `/v1/instrumental/generate`, sans paroles.
-- **Suivi en direct** : préparation → file d'attente → écriture → terminé, avec le temps écoulé.
-- **Reprise** : si vous fermez l'onglet pendant la composition, l'atelier reprend le suivi à la réouverture (jusqu'à une heure).
-- **Échecs** : refus de modération, échec de génération, dépassement de délai ou clé invalide sont remontés en clair et interrompent le suivi.
-- **Attacher** enregistre l'œuvre sur la commande (`audio_url`, `audio_title`, `music_task_id`) : elle devient lisible depuis la fiche, en console maître comme dans l'espace de l'agence.
+### Vérifier le mode en cours
 
-> Les liens audio expirent au bout de quelques semaines. Téléchargez le fichier retenu et archivez-le.
-
-### Vérifier l'état
-
-`/api/music-config` indique si la composition automatique est branchée, sans jamais exposer la clé (seule une empreinte du type `mk-…99` est renvoyée). La vue **Système** de la console affiche cet état.
-
-### Changer de fournisseur
-
-Le code ne suppose rien au-delà du contrat Mureka v1. Les noms de champs audio sont normalisés de façon large (`mp3_url`, `url`, `audio_url`, `flac_url`), et les statuts terminaux sont reconnus par famille. Pour une passerelle compatible, seule `MUREKA_API_URL` change.
+`/api/music-config` indique si une clé est présente, sans jamais l'exposer. La vue **Système** de la console affiche le mode actif.
 
 ## 🎛 Console admin — pipeline IA complet
 
@@ -232,8 +227,8 @@ Le code ne suppose rien au-delà du contrat Mureka v1. Les noms de champs audio 
 ```
 Brief famille (5 questions)
    → ① Rédaction : titre + paroles + direction musicale
-   → ② Mureka : réalisation musicale (plusieurs versions audio)
-   → Écoute, téléchargement et rattachement à la commande, dans la console
+   → ② Suno : réalisation musicale, avec votre abonnement
+   → ③ Rattachement du lien à la commande, dans la console
 ```
 
 *(Console exclue de l'indexation Google via robots.txt.)*
@@ -244,11 +239,11 @@ Le site encaisse, VOUS composez a la main. Zero risque, qualite maximale :
 
 1. **Le client commande** sur `/commande` : choix de l'offre -> brief 5 questions -> creation de compte -> paiement PayPal (ou "payer plus tard")
 2. **La commande apparait** dans la console admin (onglet Commandes) avec tout le brief
-3. **Vous composez** : onglet Atelier -> "Ecrire les paroles" -> "Composer la musique" (API Mureka, 30 a 120 s, plusieurs versions a ecouter puis a attacher a la commande). Sans cle Mureka configuree, le bouton "Export manuel" copie tout et ouvre mureka.ai.
+3. **Vous composez** : onglet Atelier -> "Ecrire les paroles" -> "Copier le brief et ouvrir Suno" -> vous composez dans Suno avec votre abonnement -> vous revenez coller le lien et cliquez "Attacher a la commande".
 4. **Vous livrez** le MP3 par email au client, puis cliquez le bouton de statut suivant : Recue -> Brief valide -> En composition -> Livree
 5. **Le client suit** chaque etape en temps reel dans son espace `/compte`
 
-La composition est automatique des que `MUREKA_API_KEY` est renseignee. Sans elle, tout le reste du workflow fonctionne et seule la realisation musicale se fait a la main.
+La realisation musicale se fait a la main dans Suno. Tout le reste - commande, brief, paroles, suivi, facturation - est automatise. La composition passera en automatique le jour ou une cle API sera renseignee, sans autre changement.
 
 ## COMPTES & COMMANDES : 2 modes
 
@@ -290,7 +285,7 @@ Le site fonctionne **sans aucune cle API** grace a une architecture 100 % gratui
 | Besoin | Solution | Cout | Cle requise |
 |---|---|---|---|
 | **Paroles + titre + prompt melodie** | [Pollinations.ai](https://pollinations.ai) (GPT via `text.pollinations.ai/openai`) | 0 EUR illimite | Aucune |
-| **Musique chantee** | **API Mureka** - composition automatique depuis l'atelier, plusieurs versions par titre | selon l'offre Mureka | `MUREKA_API_KEY` |
+| **Musique chantee** | **Suno**, en manuel depuis l'atelier (export en un clic, puis rattachement du lien) | votre abonnement Suno | Aucune |
 
 La redaction des paroles ne coute rien et ne demande aucune cle. Seule la realisation musicale est facturee, par Mureka, a la composition.
 
