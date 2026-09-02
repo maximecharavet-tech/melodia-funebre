@@ -1,0 +1,16 @@
+{
+  "name": "melodia-funebre",
+  "version": "1.0.0",
+  "description": "Site Melodia Funèbre — Composition musicale personnalisée par IA pour cérémonies funéraires",
+  "author": "Maxime Charavet",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve . -l 3000",
+    "dev:lan": "node scripts/serve-lan.js",
+    "dev:python": "python3 -m http.server 3000",
+    "check": "node scripts/check.js",
+    "deploy": "npx vercel --prod",
+    "dev:full": "npx vercel dev"
+  }
+}
