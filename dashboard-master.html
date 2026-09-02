@@ -117,8 +117,8 @@ function orderCard(o) {
     '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' ' + eur(o.price) + ' · ' + (o.paid ? 'payé' : 'non payé') + ' · ' + esc(o.agence || o.user_name) + '</div></div>' +
     '<div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">' +
     '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span>' +
-    (next ? '<button class="btn btn-gold btn-sm" onclick="advance(\\'' + o.ref + '\\',\\'' + next + '\\')">→ ' + ST[next].label + '</button>' : '') +
-    '<button class="btn btn-outline btn-sm" onclick=\\'loadBrief(' + JSON.stringify(JSON.stringify(o)) + ')\\'>Composer</button>' +
+    (next ? '<button class="btn btn-gold btn-sm" onclick="advance(\'' + o.ref + '\',\'' + next + '\')">→ ' + ST[next].label + '</button>' : '') +
+    '<button class="btn btn-outline btn-sm" onclick=\'loadBrief(' + JSON.stringify(JSON.stringify(o)) + ')\'>Composer</button>' +
     '</div></div>' + timeline(o.status) +
     '<div class="o-brief"><b style="color:var(--bone);">Brief —</b> Style : ' + esc(o.style || '—') + ' · Traits : ' + esc(o.traits || '—') + ' · Métier : ' + esc(o.metier || '—') + ' · Habitude : ' + esc(o.habitude || '—') +
     (o.anecdote ? '<br><b style="color:var(--bone);">Anecdote —</b> ' + esc(o.anecdote) : '') +
@@ -140,7 +140,7 @@ function loadBrief(json) {
       var el = document.getElementById('at-' + k); if (el) el.value = o[k] || '';
     });
     var s = document.getElementById('at-style'); if (s && o.style) s.value = o.style;
-    window.melodiaToast('Brief de ' + o.defunt + ' chargé dans l\\'atelier.');
+    window.melodiaToast('Brief de ' + o.defunt + ' chargé dans l\'atelier.');
   }, 60);
 }
 
@@ -151,13 +151,13 @@ function vAccueil() {
   var encours = ORDERS.filter(function(o){return o.status!=='livree';});
   var urgentes = ORDERS.filter(function(o){return o.urgence && o.status!=='livree';}).length;
   return '<div class="kpi-grid">' +
-    '<div class="kpi"><div class="kpi-label">Chiffre d\\'affaires</div><div class="kpi-value">' + ca + '<span class="u"> €</span></div><div class="kpi-foot">Toutes commandes</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Chiffre d\'affaires</div><div class="kpi-value">' + ca + '<span class="u"> €</span></div><div class="kpi-foot">Toutes commandes</div></div>' +
     '<div class="kpi"><div class="kpi-label">Hommages livrés</div><div class="kpi-value">' + livrees + '</div><div class="kpi-foot">Familles accompagnées</div></div>' +
     '<div class="kpi"><div class="kpi-label">En production</div><div class="kpi-value">' + encours.length + '</div><div class="kpi-foot">' + urgentes + ' urgence(s)</div></div>' +
     '<div class="kpi"><div class="kpi-label">Partenaires</div><div class="kpi-value">' + PARTNERS.length + '</div><div class="kpi-foot">Agences inscrites</div></div>' +
     '</div>' +
-    '<div class="panel"><div class="panel-head"><div><div class="panel-title">À <em>traiter</em></div><div class="panel-sub">Commandes en attente d\\'action</div></div>' +
-    '<button class="btn btn-outline btn-sm" onclick="go(\\'commandes\\')">Tout voir</button></div>' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">À <em>traiter</em></div><div class="panel-sub">Commandes en attente d\'action</div></div>' +
+    '<button class="btn btn-outline btn-sm" onclick="go(\'commandes\')">Tout voir</button></div>' +
     (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune commande en attente.</p>') + '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Le <em>workflow</em></div><div class="panel-sub">Mode débutant — composition manuelle</div></div></div>' +
     '<div style="font-size:0.92rem; color:var(--bone); line-height:2;">' +
@@ -246,7 +246,7 @@ function copyLyrics() {
 function toSuno() {
   var l = document.getElementById('at-lyrics').value;
   var s = document.getElementById('at-style-prompt').value;
-  if (!l) { window.melodiaToast('Écrivez d\\'abord les paroles.'); return; }
+  if (!l) { window.melodiaToast('Écrivez d\'abord les paroles.'); return; }
   window.MelodiaAI.sunoExport(AI.title || 'Hommage Melodia', l, s);
   window.melodiaToast('Copié — dans Suno : mode Custom, collez paroles et style.');
 }
@@ -261,8 +261,8 @@ function vPartenaires() {
     '<div class="panel"><div class="panel-title">Objectif <em>réseau</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Trajectoire commerciale</div>' +
     '<table class="tbl"><thead><tr><th>Horizon</th><th>Agences</th><th>Hommages / mois</th><th>CA mensuel</th></tr></thead><tbody>' +
     '<tr><td>Fin de trimestre</td><td>5</td><td>6</td><td>1 800 €</td></tr>' +
-    '<tr><td>Fin d\\'année 1</td><td>50</td><td>120</td><td>24 000 €</td></tr>' +
-    '<tr><td>Fin d\\'année 2</td><td>180</td><td>450</td><td>90 000 €</td></tr>' +
+    '<tr><td>Fin d\'année 1</td><td>50</td><td>120</td><td>24 000 €</td></tr>' +
+    '<tr><td>Fin d\'année 2</td><td>180</td><td>450</td><td>90 000 €</td></tr>' +
     '</tbody></table></div>';
 }
 
@@ -288,8 +288,8 @@ function vFinances() {
     '<div class="panel"><div class="panel-title">Rappel <em>fiscal</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Auto-entrepreneur</div>' +
     '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
     '<p>Cotisations URSSAF prestations de services : 21,2 % du CA encaissé.</p>' +
-    '<p>Versement libératoire de l\\'impôt (si opté) : 2,2 % supplémentaires.</p>' +
-    '<p>TVA non applicable — article 293 B du CGI, jusqu\\'à 39 100 € de CA.</p>' +
+    '<p>Versement libératoire de l\'impôt (si opté) : 2,2 % supplémentaires.</p>' +
+    '<p>TVA non applicable — article 293 B du CGI, jusqu\'à 39 100 € de CA.</p>' +
     '<p style="color:var(--ash);">Déclaration trimestrielle : provisionnez environ 25 % de chaque encaissement.</p>' +
     '</div></div>';
 }
@@ -313,8 +313,8 @@ function vProspection() {
     '<tr><td style="color:var(--or);">J+18</td><td>Message LinkedIn</td></tr>' +
     '<tr><td style="color:var(--or);">J+21</td><td>Email de clôture</td></tr>' +
     '</tbody></table></div>' +
-    '<div class="panel"><div class="panel-title">Argument <em>d\\'ouverture</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Premier contact</div>' +
-    '<p style="font-family:var(--ff-d); font-style:italic; font-size:1.1rem; line-height:1.75; color:var(--bone);">« Une famille de votre ville écrivait récemment que la musique de la cérémonie n\\'avait rien à voir avec son père. Nous composons une œuvre originale pour chaque défunt, en 24 heures, sans droit SACEM — avec 60 % de marge pour votre agence. Souhaitez-vous écouter ? »</p>' +
+    '<div class="panel"><div class="panel-title">Argument <em>d\'ouverture</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Premier contact</div>' +
+    '<p style="font-family:var(--ff-d); font-style:italic; font-size:1.1rem; line-height:1.75; color:var(--bone);">« Une famille de votre ville écrivait récemment que la musique de la cérémonie n\'avait rien à voir avec son père. Nous composons une œuvre originale pour chaque défunt, en 24 heures, sans droit SACEM — avec 60 % de marge pour votre agence. Souhaitez-vous écouter ? »</p>' +
     '<div style="margin-top:1.6rem; font-family:var(--ff-m); font-size:0.56rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--or-patina);">Taux de réponse visé : 10 à 15 %</div></div>' +
     '</div>';
 }
@@ -337,11 +337,11 @@ function vSysteme() {
     '<p style="color:var(--ash); font-size:0.85rem; margin-top:1rem;">Les fonctions serveur sont déjà écrites dans le dossier <code style="color:var(--or);">/api</code>. Tant que le volume reste inférieur à dix hommages par jour, le mode manuel garantit une qualité supérieure.</p>' +
     '</div></div>' +
     '<div class="panel"><div class="panel-title">Accès <em>maître</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Sécurité</div>' +
-    '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">L\\'identifiant maître ouvre toutes les fonctions. Il est défini dans <code style="color:var(--or);">assets/js/auth.js</code>.</p>' +
-    '<p style="font-size:0.85rem; color:var(--amber); margin-top:1rem;">Avant l\\'ouverture au public : changez ce mot de passe et passez en base Supabase, afin que l\\'accès ne repose plus sur du code côté navigateur.</p></div>' +
+    '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">L\'identifiant maître ouvre toutes les fonctions. Il est défini dans <code style="color:var(--or);">assets/js/auth.js</code>.</p>' +
+    '<p style="font-size:0.85rem; color:var(--amber); margin-top:1rem;">Avant l\'ouverture au public : changez ce mot de passe et passez en base Supabase, afin que l\'accès ne repose plus sur du code côté navigateur.</p></div>' +
     '<div class="panel"><div class="panel-title">Actions <em>rapides</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Outils</div>' +
     '<button class="btn btn-outline" style="width:100%; margin-bottom:0.8rem;" onclick="exportCSV()">Exporter les commandes (CSV)</button>' +
-    '<button class="btn btn-outline" style="width:100%;" onclick="window.open(\\'index.html\\')">Voir le site public</button></div>' +
+    '<button class="btn btn-outline" style="width:100%;" onclick="window.open(\'index.html\')">Voir le site public</button></div>' +
     '</div>';
 }
 

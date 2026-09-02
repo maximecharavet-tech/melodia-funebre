@@ -12,27 +12,32 @@ Fondateur : **Maxime Charavet** · Powered by **Hyper AI Engine™**
 
 ```
 melodia-funebre/
-├── index.html          Accueil — hero, manifeste, démos, offres, témoignages
-├── processus.html      Le processus de A à Z + FAQ
-├── demos.html          Bibliothèque d'écoute (3 hommages) + styles
-├── offres.html         Tarifs + paiement PayPal + tableau comparatif
-├── agences.html        Espace B2B pompes funèbres + formulaire partenariat
-├── contact.html        Contact + urgences + FAQ rapide
+├── index.html          Accueil — couverture, preuve, comparatif, offres, témoignages, FAQ
+├── processus.html      Chronologie en 7 étapes, les 5 questions, engagements
+├── demos.html          Écoute des 3 hommages + « du brief à la chanson »
+├── offres.html         Tarifs, comparatif détaillé et tunnel de commande en 6 étapes
+├── agences.html        Espace B2B + simulateur de revenus partenaire
+├── contact.html        Contact, urgences, formulaire
 ├── compte.html         Connexion / inscription (familles et agences)
 ├── dashboard-master.html      Console de pilotage (KPIs + Atelier IA)
 ├── dashboard-partenaire.html  Espace agence partenaire
+├── mentions-legales.html · cgv.html · confidentialite.html
 ├── api/                Fonctions serverless (paroles ChatGPT, musique Suno)
 ├── assets/
-│   ├── css/style.css      Design system complet (responsive)
+│   ├── css/style.css      Design system v4 (sombre + sections ivoire, responsive)
 │   ├── css/dashboard.css  Styles des consoles
-│   ├── js/main.js         Nav mobile, player audio, animations, FAQ
+│   ├── js/main.js         Nav, révélations, compteurs, FAQ, carrousel, modales, simulateur
+│   ├── js/player.js       Lecteur audio avec spectre réel (Web Audio API)
+│   ├── js/order.js        Tunnel de commande, récapitulatif vivant, brouillon sauvegardé
 │   ├── js/auth.js         Comptes et sessions (localStorage ou Supabase)
 │   └── js/config.js       Configuration Supabase (vide = mode démo)
 ├── audio/              3 démos MP3 (Maurice, Monique, Sergio)
+├── scripts/check.js    Vérifie les fichiers et les liens internes
+├── scripts/serve-lan.js  Serveur local accessible depuis un téléphone du réseau
 ├── vercel.json         Config hébergement (cache, sécurité, clean URLs)
-├── robots.txt          SEO (admin exclu de l'indexation)
+├── robots.txt          SEO (consoles exclues de l'indexation)
 ├── sitemap.xml         Plan du site pour Google
-└── .github/workflows/  Déploiement automatique
+└── .github/workflows/  Validation + déploiement automatique
 ```
 
 ## 🖥 Tester en local
@@ -49,7 +54,13 @@ npm run dev
 # → http://localhost:3000  (sans les fonctions /api)
 ```
 
-**Option 3 — Python (aucune installation) :**
+**Option 3 — Tester depuis un téléphone (même Wi-Fi) :**
+```bash
+npm run dev:lan
+# → affiche l'adresse http://192.168.x.x:3000 à saisir sur le mobile
+```
+
+**Option 4 — Python (aucune installation) :**
 ```bash
 python3 -m http.server 3000
 ```

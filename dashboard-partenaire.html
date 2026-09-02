@@ -121,17 +121,17 @@ function vAccueil() {
   var marge = Math.round(ca * 0.6);
   var encours = ORDERS.filter(function(o){return o.status!=='livree';});
   return '<div class="kpi-grid">' +
-    '<div class="kpi"><div class="kpi-label">Commandes</div><div class="kpi-value">' + ORDERS.length + '</div><div class="kpi-foot">Depuis l\\'ouverture</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Commandes</div><div class="kpi-value">' + ORDERS.length + '</div><div class="kpi-foot">Depuis l\'ouverture</div></div>' +
     '<div class="kpi"><div class="kpi-label">Hommages livrés</div><div class="kpi-value">' + livrees + '</div><div class="kpi-foot">Familles accompagnées</div></div>' +
     '<div class="kpi"><div class="kpi-label">Votre marge</div><div class="kpi-value">' + marge + '<span class="u"> €</span></div><div class="kpi-foot">60 % du volume</div></div>' +
     '<div class="kpi"><div class="kpi-label">En cours</div><div class="kpi-value">' + encours.length + '</div><div class="kpi-foot">Compositions actives</div></div>' +
     '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Compositions <em>en cours</em></div><div class="panel-sub">Suivi en temps réel</div></div>' +
-    '<button class="btn btn-outline btn-sm" onclick="go(\\'commandes\\')">Tout voir</button></div>' +
-    (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune composition en cours. <a href="#" onclick="go(\\'nouvelle\\');return false;" style="color:var(--or);">Lancer une commande →</a></p>') +
+    '<button class="btn btn-outline btn-sm" onclick="go(\'commandes\')">Tout voir</button></div>' +
+    (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune composition en cours. <a href="#" onclick="go(\'nouvelle\');return false;" style="color:var(--or);">Lancer une commande →</a></p>') +
     '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Votre <em>argumentaire</em></div><div class="panel-sub">À présenter aux familles</div></div></div>' +
-    '<p style="color:var(--bone); font-family:var(--ff-d); font-size:1.15rem; line-height:1.7; font-style:italic;">« Nous pouvons créer un hommage musical unique pour [Prénom] — une œuvre originale composée à partir de sa vie, de ses gestes, de ce qui faisait sa personne. Souhaitez-vous l\\'écouter ? »</p>' +
+    '<p style="color:var(--bone); font-family:var(--ff-d); font-size:1.15rem; line-height:1.7; font-style:italic;">« Nous pouvons créer un hommage musical unique pour [Prénom] — une œuvre originale composée à partir de sa vie, de ses gestes, de ce qui faisait sa personne. Souhaitez-vous l\'écouter ? »</p>' +
     '<div class="grid-3" style="margin-top:1.8rem; gap:1rem;">' +
     '<div><div class="kpi-label">Marge agence</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">60 %</div></div>' +
     '<div><div class="kpi-label">Droits SACEM</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">0 €</div></div>' +
@@ -198,15 +198,15 @@ function vRessources() {
     '</tbody></table></div>' +
     '<div class="panel"><div class="panel-title">Objections <em>fréquentes</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Réponses éprouvées</div>' +
     '<div style="font-size:0.9rem; color:var(--bone); line-height:1.8;">' +
-    '<p><b style="color:var(--paper);">« C\\'est cher »</b><br>149 € sur un budget moyen de 3 500 € : quatre pour cent, pour l\\'unique objet que la famille gardera.</p>' +
-    '<p style="margin-top:1.2rem;"><b style="color:var(--paper);">« L\\'IA, c\\'est froid »</b><br>Le brief vient de vous, la supervision est humaine. Seule la réalisation est assistée — le résultat fait pleurer, jamais l\\'inverse.</p>' +
+    '<p><b style="color:var(--paper);">« C\'est cher »</b><br>149 € sur un budget moyen de 3 500 € : quatre pour cent, pour l\'unique objet que la famille gardera.</p>' +
+    '<p style="margin-top:1.2rem;"><b style="color:var(--paper);">« L\'IA, c\'est froid »</b><br>Le brief vient de vous, la supervision est humaine. Seule la réalisation est assistée — le résultat fait pleurer, jamais l\'inverse.</p>' +
     '<p style="margin-top:1.2rem;"><b style="color:var(--paper);">« Et si ça ne plaît pas ? »</b><br>Une révision est offerte dès Prestige, illimitées en Mémorial.</p>' +
     '</div></div>' +
     '<div class="panel"><div class="panel-title">Démonstrations à <em>faire écouter</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Trois hommages réels</div>' +
     '<div class="player"><div class="player-head">Sélectionnez un hommage</div><div class="player-list"></div><div class="player-progress"><div class="player-progress-fill"></div></div><div class="player-wave"></div></div></div>' +
     '<div class="panel"><div class="panel-title">Le <em>déroulé</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Ce que vous dites, ce que nous faisons</div>' +
     '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
-    '<p><b style="color:var(--or);">I.</b> Vous proposez l\\'hommage à la famille.</p>' +
+    '<p><b style="color:var(--or);">I.</b> Vous proposez l\'hommage à la famille.</p>' +
     '<p><b style="color:var(--or);">II.</b> Vous saisissez le brief ici (3 minutes).</p>' +
     '<p><b style="color:var(--or);">III.</b> Nous appelons pour valider, puis composons.</p>' +
     '<p><b style="color:var(--or);">IV.</b> Livraison sous 24 h, suivi visible ici.</p>' +

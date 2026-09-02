@@ -1,107 +1,275 @@
-/* ═══ MELODIA — Interactions du site ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   MELODIA — Interactions du site (v4)
+   Navigation · révélations · compteurs · FAQ · carrousel ·
+   barre CTA mobile · modales · calculateur partenaire
+   ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
-  /* Nav : transparence en haut de page */
-  var nav = document.querySelector('.nav');
-  if (nav && document.querySelector('.hero-video')) {
-    var onScroll = function () { nav.classList.toggle('at-top', window.scrollY < 60); };
-    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* ═══ NAVIGATION ═══ */
+  var nav = $('.nav');
+  if (nav) {
+    var hasHero = !!$('.hero-video');
+    var last = 0;
+    var onScroll = function () {
+      var y = window.scrollY;
+      if (hasHero) nav.classList.toggle('at-top', y < 60);
+      /* La barre s'efface quand on descend, revient dès qu'on remonte */
+      nav.classList.toggle('hidden', y > 400 && y > last && !$('.nav-mobile.open'));
+      last = y;
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  /* Nav mobile */
-  var burger = document.querySelector('.nav-burger');
-  var mob = document.querySelector('.nav-mobile');
+  var burger = $('.nav-burger');
+  var mob = $('.nav-mobile');
   if (burger && mob) {
-    burger.addEventListener('click', function () { mob.classList.toggle('open'); });
-    mob.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { mob.classList.remove('open'); }); });
+    var setMenu = function (open) {
+      mob.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+    burger.setAttribute('aria-expanded', 'false');
+    burger.addEventListener('click', function () { setMenu(!mob.classList.contains('open')); });
+    $$('a', mob).forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && mob.classList.contains('open')) { setMenu(false); burger.focus(); }
+    });
   }
 
-  /* Lien actif */
-  var page = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.nav-links a').forEach(function (a) {
-    if (a.getAttribute('href') === page) a.classList.add('active');
+  /* Lien actif — gère aussi les URL propres de Vercel (/offres) */
+  var file = location.pathname.split('/').pop() || 'index.html';
+  var page = file.replace(/\.html$/, '') || 'index';
+  $$('.nav-links a, .nav-mobile a').forEach(function (a) {
+    var href = (a.getAttribute('href') || '').replace(/\.html$/, '').replace(/^\//, '');
+    if (href && href === page) a.classList.add('active');
   });
 
-  /* Révélation au défilement */
-  var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  /* ═══ RÉVÉLATION AU DÉFILEMENT ═══ */
+  var reveals = $$('.reveal:not(.in)');
+  if (REDUCED) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
 
-  /* FAQ */
-  document.querySelectorAll('.faq-q').forEach(function (b) {
-    b.addEventListener('click', function () {
-      var item = b.closest('.faq-item'), a = item.querySelector('.faq-a'), open = item.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(function (o) { o.classList.remove('open'); o.querySelector('.faq-a').style.maxHeight = '0'; });
-      if (!open) { item.classList.add('open'); a.style.maxHeight = a.scrollHeight + 'px'; }
+    /* Décalage automatique dans les grilles : effet de cascade sans classe à écrire */
+    $$('.grid-2, .grid-3, .grid-4, .steps').forEach(function (grid) {
+      $$('.reveal', grid).forEach(function (el, i) {
+        if (!/reveal-d\d/.test(el.className)) el.style.transitionDelay = Math.min(i * 0.08, 0.4) + 's';
+      });
+    });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ═══ COMPTEURS ═══ */
+  var counters = $$('[data-count]');
+  if (counters.length) {
+    var run = function (el) {
+      var target = parseFloat(el.getAttribute('data-count'));
+      var suffix = el.getAttribute('data-suffix') || '';
+      var prefix = el.getAttribute('data-prefix') || '';
+      if (REDUCED) { el.textContent = prefix + target + suffix; return; }
+      var dur = 1500, t0 = performance.now();
+      var tick = function (now) {
+        var p = Math.min((now - t0) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        var val = target % 1 === 0 ? Math.round(target * eased) : (target * eased).toFixed(1);
+        el.textContent = prefix + val + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    if ('IntersectionObserver' in window) {
+      var cio = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { run(e.target); cio.unobserve(e.target); } });
+      }, { threshold: 0.5 });
+      counters.forEach(function (el) { cio.observe(el); });
+    } else { counters.forEach(run); }
+  }
+
+  /* ═══ FAQ ═══ */
+  $$('.faq-q').forEach(function (btn, i) {
+    var item = btn.closest('.faq-item');
+    var panel = $('.faq-a', item);
+    if (!panel) return;
+    if (!panel.id) panel.id = 'faq-panel-' + i;
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', panel.id);
+    btn.addEventListener('click', function () {
+      var open = item.classList.contains('open');
+      /* Accordéon : une seule réponse ouverte à la fois */
+      $$('.faq-item.open').forEach(function (o) {
+        o.classList.remove('open');
+        $('.faq-a', o).style.maxHeight = '0';
+        $('.faq-q', o).setAttribute('aria-expanded', 'false');
+      });
+      if (!open) {
+        item.classList.add('open');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+      }
     });
   });
+  /* Recalcule la hauteur si la fenêtre change de largeur */
+  window.addEventListener('resize', function () {
+    $$('.faq-item.open .faq-a').forEach(function (p) { p.style.maxHeight = p.scrollHeight + 'px'; });
+  });
 
-  /* Notification */
+  /* ═══ NOTIFICATION ═══ */
   window.melodiaToast = function (msg) {
-    var t = document.querySelector('.toast');
-    if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
+    var t = $('.toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.className = 'toast';
+      t.setAttribute('role', 'status');
+      t.setAttribute('aria-live', 'polite');
+      document.body.appendChild(t);
+    }
     t.textContent = msg;
     requestAnimationFrame(function () { t.classList.add('show'); });
-    clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('show'); }, 4200);
+    clearTimeout(t._h);
+    t._h = setTimeout(function () { t.classList.remove('show'); }, 4200);
   };
 
-  /* Lecteur audio */
-  var player = document.querySelector('.player');
-  if (player) {
-    var tracks = [
-      { t: 'Le Papi Pêcheur', s: 'Chanson française · Hommage à Maurice', f: 'audio/maurice.mp3' },
-      { t: 'Le Jardin du Temps', s: 'Folk acoustique · Hommage à Monique', f: 'audio/monique.mp3' },
-      { t: 'Saudade Noite', s: 'Bossa nova · Hommage à Sergio', f: 'audio/sergio.mp3' }
-    ];
-    var audio = new Audio(), cur = -1, playing = false;
-    var list = player.querySelector('.player-list');
-    var fill = player.querySelector('.player-progress-fill');
-    var prog = player.querySelector('.player-progress');
-    var wave = player.querySelector('.player-wave');
-    var bars = [];
-    if (wave) { for (var i = 0; i < 40; i++) { var b = document.createElement('span'); b.className = 'pw-bar'; wave.appendChild(b); bars.push(b); } }
-    var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-    var PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-    function fmt(s) { if (!isFinite(s)) return '1:00'; var m = Math.floor(s / 60), r = Math.floor(s % 60); return m + ':' + String(r).padStart(2, '0'); }
-    function draw() {
-      list.innerHTML = '';
-      tracks.forEach(function (tr, i) {
-        var row = document.createElement('div');
-        row.className = 'player-track' + (i === cur ? ' active' : '');
-        row.innerHTML = '<button class="pt-btn" aria-label="Lire">' + (i === cur && playing ? PAUSE : PLAY) + '</button>'
-          + '<div class="pt-meta"><div class="pt-title">' + tr.t + '</div><div class="pt-sub">' + tr.s + '</div></div>'
-          + '<div class="pt-time">' + (i === cur ? fmt(audio.currentTime) + ' / ' + fmt(audio.duration) : '1:00') + '</div>';
-        row.addEventListener('click', function () { toggle(i); });
-        list.appendChild(row);
-      });
-    }
-    function toggle(i) {
-      if (cur === i) {
-        if (playing) { audio.pause(); playing = false; player.classList.remove('playing'); }
-        else { audio.play(); playing = true; player.classList.add('playing'); }
-      } else { cur = i; audio.src = tracks[i].f; audio.play(); playing = true; player.classList.add('playing'); }
-      draw();
-    }
-    audio.addEventListener('timeupdate', function () {
-      if (fill && audio.duration) fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
-      var el = list.querySelector('.player-track.active .pt-time');
-      if (el) el.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
-    });
-    audio.addEventListener('ended', function () { toggle((cur + 1) % tracks.length); });
-    if (prog) prog.addEventListener('click', function (e) {
-      if (!audio.duration) return;
-      var r = prog.getBoundingClientRect();
-      audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
-    });
-    var tick = 0;
-    setInterval(function () {
-      if (!bars.length) return; tick++;
-      bars.forEach(function (bar, i) {
-        bar.style.height = playing ? (2 + Math.abs(Math.sin((tick + i * 2) * 0.24) * Math.cos((tick + i) * 0.1)) * 22) + 'px' : '2px';
-      });
-    }, 150);
-    draw();
+  /* ═══ BARRE CTA MOBILE ═══ */
+  var sticky = $('.sticky-cta');
+  if (sticky) {
+    document.body.classList.add('has-sticky-cta');
+    var footer = $('.footer');
+    var onCta = function () {
+      var past = window.scrollY > 620;
+      /* On l'escamote au-dessus du pied de page pour ne pas masquer les mentions */
+      var nearFoot = footer && footer.getBoundingClientRect().top < window.innerHeight - 40;
+      sticky.classList.toggle('show', past && !nearFoot);
+    };
+    onCta();
+    window.addEventListener('scroll', onCta, { passive: true });
   }
+
+  /* ═══ CARROUSEL ═══ */
+  $$('.carousel').forEach(function (car) {
+    var track = $('.carousel-track', car);
+    var slides = $$('.carousel-slide', car);
+    if (!track || slides.length < 2) return;
+    var idx = 0, timer = null;
+    var dotsWrap = $('.carousel-dots', car);
+
+    var go = function (i) {
+      idx = (i + slides.length) % slides.length;
+      track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+      if (dotsWrap) $$('.carousel-dot', dotsWrap).forEach(function (d, k) {
+        d.classList.toggle('active', k === idx);
+        d.setAttribute('aria-selected', k === idx ? 'true' : 'false');
+      });
+    };
+
+    if (dotsWrap) {
+      dotsWrap.innerHTML = '';
+      slides.forEach(function (_, k) {
+        var d = document.createElement('button');
+        d.className = 'carousel-dot' + (k === 0 ? ' active' : '');
+        d.type = 'button';
+        d.setAttribute('aria-label', 'Témoignage ' + (k + 1));
+        d.addEventListener('click', function () { go(k); restart(); });
+        dotsWrap.appendChild(d);
+      });
+    }
+    var prev = $('.carousel-prev', car), next = $('.carousel-next', car);
+    if (prev) prev.addEventListener('click', function () { go(idx - 1); restart(); });
+    if (next) next.addEventListener('click', function () { go(idx + 1); restart(); });
+
+    var restart = function () {
+      clearInterval(timer);
+      if (!REDUCED) timer = setInterval(function () { go(idx + 1); }, 6500);
+    };
+    car.addEventListener('mouseenter', function () { clearInterval(timer); });
+    car.addEventListener('mouseleave', restart);
+
+    /* Balayage au doigt */
+    var x0 = null;
+    car.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    car.addEventListener('touchend', function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 45) { go(dx < 0 ? idx + 1 : idx - 1); restart(); }
+      x0 = null;
+    }, { passive: true });
+
+    restart();
+  });
+
+  /* ═══ BANDEAU DÉFILANT ═══ */
+  $$('.marquee-track').forEach(function (track) {
+    /* On duplique le contenu pour que la boucle soit invisible */
+    track.innerHTML = track.innerHTML + track.innerHTML;
+  });
+
+  /* ═══ MODALES ═══ */
+  var lastFocus = null;
+  window.melodiaModal = function (id, open) {
+    var m = document.getElementById(id);
+    if (!m) return;
+    if (open) {
+      lastFocus = document.activeElement;
+      m.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      var f = m.querySelector('input, button, select, textarea, a[href]');
+      if (f) setTimeout(function () { f.focus(); }, 60);
+    } else {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+      if (lastFocus) lastFocus.focus();
+    }
+  };
+  $$('.modal').forEach(function (m) {
+    m.addEventListener('click', function (e) { if (e.target === m) window.melodiaModal(m.id, false); });
+    $$('.modal-close, [data-modal-close]', m).forEach(function (b) {
+      b.addEventListener('click', function () { window.melodiaModal(m.id, false); });
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var open = $('.modal.open');
+    if (open) window.melodiaModal(open.id, false);
+  });
+
+  /* ═══ CALCULATEUR PARTENAIRE ═══ */
+  var calc = $('[data-calc]');
+  if (calc) {
+    var rVol = $('#calc-volume', calc);
+    var rPrice = $('#calc-price', calc);
+    var MARGE = 0.6; /* 60 % reversés à l'agence */
+    var euro = function (n) { return n.toLocaleString('fr-FR') + ' €'; };
+    var update = function () {
+      var vol = parseInt(rVol.value, 10);
+      var price = parseInt(rPrice.value, 10);
+      /* Hypothèse affichée : environ une famille sur quatre retient l'hommage */
+      var taux = 0.25;
+      var ventes = Math.round(vol * taux);
+      var moisNet = Math.round(ventes * price * MARGE);
+      $('#calc-volume-val', calc).textContent = vol + ' obsèques / mois';
+      $('#calc-price-val', calc).textContent = euro(price);
+      $('#calc-out-ventes', calc).textContent = ventes;
+      $('#calc-out-mois', calc).textContent = euro(moisNet);
+      $('#calc-out-an', calc).textContent = euro(moisNet * 12);
+    };
+    [rVol, rPrice].forEach(function (r) { if (r) r.addEventListener('input', update); });
+    update();
+  }
+
+  /* ═══ ANNÉE COURANTE ═══ */
+  $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();
