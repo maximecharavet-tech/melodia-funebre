@@ -1,0 +1,24 @@
+{
+  "name": "Melodia Funèbre",
+  "short_name": "Melodia",
+  "description": "Composition musicale personnalisée pour cérémonies funéraires. Une œuvre originale par défunt, livrée en 24 heures.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#040407",
+  "theme_color": "#040407",
+  "categories": ["music", "lifestyle"],
+  "icons": [
+    { "src": "/assets/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/img/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/img/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Commander un hommage", "url": "/offres", "icons": [{ "src": "/assets/img/icons/icon-96.png", "sizes": "96x96" }] },
+    { "name": "Écouter les démonstrations", "url": "/demos", "icons": [{ "src": "/assets/img/icons/icon-96.png", "sizes": "96x96" }] },
+    { "name": "Espace agences", "url": "/agences", "icons": [{ "src": "/assets/img/icons/icon-96.png", "sizes": "96x96" }] }
+  ]
+}

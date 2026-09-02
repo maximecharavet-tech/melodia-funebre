@@ -22,6 +22,7 @@ melodia-funebre/
 ├── dashboard-master.html      Console de pilotage (KPIs + Atelier IA)
 ├── dashboard-partenaire.html  Espace agence partenaire
 ├── mentions-legales.html · cgv.html · confidentialite.html
+├── 404.html            Page d'erreur, avec liens de rattrapage
 ├── api/                Fonctions serverless (paroles, musique Mureka)
 ├── assets/
 │   ├── css/style.css      Design system v4 (sombre + sections ivoire, responsive)
@@ -35,6 +36,9 @@ melodia-funebre/
 ├── scripts/check.js    Vérifie les fichiers et les liens internes
 ├── scripts/serve-lan.js  Serveur local accessible depuis un téléphone du réseau
 ├── vercel.json         Config hébergement (cache, sécurité, clean URLs)
+├── site.webmanifest    Installation sur l'écran d'accueil (PWA)
+├── favicon.ico         + jeu d'icônes dans assets/img/icons/
+├── .env.example        Modèle des variables d'environnement
 ├── robots.txt          SEO (consoles exclues de l'indexation)
 ├── sitemap.xml         Plan du site pour Google
 └── .github/workflows/  Validation + déploiement automatique
@@ -89,6 +93,46 @@ bash scripts/push-github.sh https://github.com/VOTRE_USER/melodia-funebre.git
 Le workflow `.github/workflows/deploy.yml` valide le HTML à chaque push et peut déployer via l'API Vercel. Pour l'activer, ajoutez 3 secrets dans GitHub → Settings → Secrets :
 - `VERCEL_TOKEN` (vercel.com/account/tokens)
 - `VERCEL_ORG_ID` et `VERCEL_PROJECT_ID` (fichier `.vercel/project.json` après `vercel link`)
+
+## 🛡 Ce qui est en place côté production
+
+Tout est déclaré dans `vercel.json` et appliqué à chaque déploiement.
+
+### Sécurité
+
+| En-tête | Valeur | Rôle |
+|---|---|---|
+| `Strict-Transport-Security` | 2 ans, sous-domaines inclus | Force HTTPS, y compris en première visite |
+| `X-Frame-Options` + `frame-ancestors 'none'` | — | Empêche l'encapsulation du site dans une iframe tierce |
+| `X-Content-Type-Options` | `nosniff` | Interdit la réinterprétation des types de fichiers |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | Limite ce qui fuit vers les sites tiers |
+| `Permissions-Policy` | caméra, micro, géoloc. refusés | Paiement autorisé pour PayPal seulement |
+| `Content-Security-Policy` | `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` | Ferme les vecteurs d'injection les plus courants |
+
+> La CSP est volontairement limitée à ces directives : le site charge PayPal, Google Fonts et un service de rédaction externes, et une politique `script-src` stricte les casserait. Pour la durcir, listez ces origines et testez en `Content-Security-Policy-Report-Only` avant de basculer.
+
+### Performance
+
+- **Vidéo de couverture chargée sous condition.** Le fichier pèse 5,3 Mo. Il n'est chargé que sur grand écran, ou sur mobile explicitement en 4G rapide — jamais en mode économie de données ni en mouvement réduit. Sur téléphone, l'affiche du poster tient le rôle : **5,3 Mo épargnés à chaque visite mobile**.
+- **Cache long** sur les images, l'audio et les icônes (un an, `immutable`), plus court sur CSS et JS avec revalidation en arrière-plan.
+- **Calcul à Paris** (`regions: ["cdg1"]`) : les fonctions `/api` s'exécutent au plus près des visiteurs français.
+- **`maxDuration` à 30 s** sur les fonctions, la composition musicale pouvant être lente à répondre.
+
+### Référencement et partage
+
+- Balises Open Graph et Twitter sur chaque page, avec une **image de partage 1200 × 630** dédiée (`assets/img/og-melodia.jpg`) au lieu d'un logo carré.
+- URL canoniques, `sitemap.xml`, `robots.txt` excluant les consoles.
+- Données structurées JSON-LD : `LocalBusiness`, `Service` avec les trois offres, `FAQPage`.
+- Redirections en place pour les anciens liens : `/admin`, `/commande`, `/tarifs`, `/ecouter`.
+- **Page 404** sur mesure, avec les liens de rattrapage vers les pages principales.
+
+### Installation sur téléphone
+
+`site.webmanifest` rend le site installable sur l'écran d'accueil (Android et iOS) : icônes 192/512 et icône *maskable*, couleur de thème, et trois raccourcis directs — Commander, Écouter, Espace agences.
+
+### Mesure d'audience
+
+Les scripts Vercel **Analytics** et **Speed Insights** sont inclus. Ils restent inertes tant que vous n'activez pas ces fonctionnalités dans le tableau de bord Vercel (onglets Analytics et Speed Insights du projet). Aucun cookie, aucune bannière de consentement nécessaire.
 
 ## 🌐 Domaine melodia-funebre.fr (OVH)
 

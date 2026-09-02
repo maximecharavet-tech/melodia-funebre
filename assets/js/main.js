@@ -50,6 +50,30 @@
     if (href && href === page) a.classList.add('active');
   });
 
+  /* ═══ VIDÉO DE COUVERTURE — chargement conditionnel ═══
+     Le fichier pèse plus de 5 Mo. Le charger systématiquement revient à
+     imposer ce poids à chaque visiteur mobile, en données cellulaires,
+     pour un fond décoratif. On ne le charge donc que si le contexte s'y
+     prête ; sinon l'affiche du poster tient le rôle. */
+  var heroVideo = $('.hero-video video[data-src]');
+  if (heroVideo) {
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+    var economieDonnees = conn.saveData === true;
+    var reseauLent = /2g/.test(conn.effectiveType || '');
+    var grandEcran = window.matchMedia('(min-width: 900px)').matches;
+    /* Sur petit écran, on exige un réseau explicitement rapide.
+       Sans l'API Network Information (Safari), on s'abstient. */
+    var mobileRapide = conn.effectiveType === '4g' && (conn.downlink === undefined || conn.downlink >= 5);
+
+    if (!REDUCED && !economieDonnees && !reseauLent && (grandEcran || mobileRapide)) {
+      heroVideo.src = heroVideo.getAttribute('data-src');
+      heroVideo.removeAttribute('data-src');
+      var lancer = function () { var pr = heroVideo.play(); if (pr && pr.catch) pr.catch(function () {}); };
+      if (heroVideo.readyState >= 2) lancer();
+      else heroVideo.addEventListener('loadeddata', lancer, { once: true });
+    }
+  }
+
   /* ═══ RÉVÉLATION AU DÉFILEMENT ═══ */
   var reveals = $$('.reveal:not(.in)');
   if (REDUCED) {
