@@ -326,11 +326,21 @@
       throw new Error('La composition depasse le delai attendu. Le titre peut encore arriver : rouvrez l\'atelier dans quelques minutes.');
     },
 
-    /** Repli sans cle : tout est copie, l'editeur Mureka s'ouvre */
+    /**
+     * Mode manuel : le brief est copie dans le presse-papiers et Suno
+     * s'ouvre. C'est le circuit courant, tant que la composition n'est
+     * pas automatisee.
+     */
     manualExport(title, lyrics, style) {
-      var t = 'TITRE : ' + title + '\n\nSTYLE :\n' + style + '\n\nPAROLES :\n' + lyrics;
-      if (navigator.clipboard) navigator.clipboard.writeText(t);
-      window.open('https://www.mureka.ai/', '_blank', 'noopener');
+      var t = 'TITRE\n' + title
+        + '\n\nSTYLE OF MUSIC (a coller dans le champ Style)\n' + style
+        + '\n\nLYRICS (a coller dans le champ Lyrics, mode Custom)\n' + lyrics;
+      var ouvrir = function () { window.open('https://suno.com/create', '_blank', 'noopener'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(t).then(ouvrir, ouvrir);
+      }
+      ouvrir();
+      return Promise.resolve();
     }
   };
 })();

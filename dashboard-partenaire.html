@@ -113,7 +113,7 @@ function orderCard(o) {
     '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span></div>' +
     timeline(o.status) +
     '<div class="o-brief">Style : ' + esc(o.style || '—') + ' · ' + esc(o.traits || '—') + (o.metier ? ' · ' + esc(o.metier) : '') + '</div>' +
-    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio></div>' : '') +
+    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + (/\.(mp3|m4a|wav|ogg|flac)(\?|#|$)/i.test(o.audio_url)    ? '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio>'    : '<a class="btn btn-outline btn-sm" href="' + esc(o.audio_url) + '" target="_blank" rel="noopener">Ouvrir l\'hommage</a>') + '</div>' : '') +
     '</div>';
 }
 
