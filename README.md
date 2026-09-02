@@ -22,7 +22,7 @@ melodia-funebre/
 ├── dashboard-master.html      Console de pilotage (KPIs + Atelier IA)
 ├── dashboard-partenaire.html  Espace agence partenaire
 ├── mentions-legales.html · cgv.html · confidentialite.html
-├── api/                Fonctions serverless (paroles ChatGPT, musique Suno)
+├── api/                Fonctions serverless (paroles, musique Mureka)
 ├── assets/
 │   ├── css/style.css      Design system v4 (sombre + sections ivoire, responsive)
 │   ├── css/dashboard.css  Styles des consoles
@@ -108,44 +108,50 @@ Pour la production :
 2. Dans `offres.html`, remplacer `client-id=sb` par votre Client ID
 3. `git push` → redéploiement automatique
 
-## 🎵 Composition musicale — API Suno
+## 🎵 Composition musicale — API Mureka
 
 La composition se déclenche depuis **Console maître → Atelier de composition → « Composer la musique »**. La clé reste côté serveur : elle ne descend jamais dans le navigateur.
 
+Mureka ([mureka.ai](https://www.mureka.ai/), SkyworkAI) a été retenu parce qu'il expose une **API publique avec clé** — ce que Suno ne propose pas.
+
 ### Configurer
 
-Vercel → Settings → **Environment Variables**, puis redéployer :
+1. Créez un compte sur [platform.mureka.ai](https://platform.mureka.ai/) → onglet **API Keys** → générer une clé
+2. Vercel → Settings → **Environment Variables**, puis redéployer :
 
-| Variable | Obligatoire | Exemple |
+| Variable | Obligatoire | Valeur |
 |---|---|---|
-| `SUNO_API_URL` | oui | `https://api.sunoapi.org` (sans slash final) |
-| `SUNO_API_KEY` | oui | la clé fournie par la passerelle |
-| `SUNO_MODEL` | non | `V4_5` par défaut — aussi `V3_5`, `V4`, `V4_5PLUS`, `V5` |
-| `SUNO_CALLBACK_URL` | non | uniquement si votre passerelle l'exige |
+| `MUREKA_API_KEY` | oui | la clé du tableau de bord Mureka |
+| `MUREKA_API_URL` | non | `https://api.mureka.ai` par défaut |
+| `MUREKA_MODEL` | non | `auto` par défaut |
 
-Suno ne publie pas d'API officielle : ces variables visent une **passerelle** au format v1 (api.sunoapi.org, PiAPI, ou une instance `suno-api` auto-hébergée). Changer de fournisseur ne demande que de changer `SUNO_API_URL` et la clé.
-
-Tant que les deux variables ne sont pas renseignées, l'atelier le dit en clair, désactive le bouton et laisse l'**export manuel** vers suno.com opérationnel. Rien ne casse.
+Tant que `MUREKA_API_KEY` n'est pas renseignée, l'atelier le dit en clair, désactive le bouton et laisse l'**export manuel** vers mureka.ai opérationnel. Rien ne casse.
 
 ### Le circuit
 
 ```
 Atelier → paroles + direction musicale
-   → POST /api/generate-music   → identifiant de tâche
-   → GET  /api/music-status     → interrogé toutes les 5 s (60 à 180 s)
-   → 2 versions : écoute, téléchargement, « Attacher » à la commande
+   → POST /api/generate-music   → POST api.mureka.ai/v1/song/generate      → id de tâche
+   → GET  /api/music-status     → GET  api.mureka.ai/v1/song/query/{id}    → toutes les 5 s
+   → versions rendues : écoute, téléchargement, « Attacher » à la commande
 ```
 
-- **Suivi en direct** : file d'attente → paroles acceptées → première version → terminé.
+- **Direction musicale** : Mureka ne prend pas de champs séparés pour la voix ou les exclusions. `/api/generate-music` compose une description unique à partir du style, du choix de voix et des styles à éviter — par exemple `french chanson, acoustic, male vocal, avoid: heavy drums`.
+- **Instrumental** : la case à cocher bascule sur `/v1/instrumental/generate`, sans paroles.
+- **Suivi en direct** : préparation → file d'attente → écriture → terminé, avec le temps écoulé.
 - **Reprise** : si vous fermez l'onglet pendant la composition, l'atelier reprend le suivi à la réouverture (jusqu'à une heure).
-- **Échecs** : refus du filtre de contenu, échec de génération ou panne du service sont remontés en clair et interrompent le suivi.
-- **Attacher** enregistre l'œuvre sur la commande (`audio_url`, `audio_title`, `suno_task_id`) : elle devient lisible depuis la fiche, en console maître comme dans l'espace de l'agence.
+- **Échecs** : refus de modération, échec de génération, dépassement de délai ou clé invalide sont remontés en clair et interrompent le suivi.
+- **Attacher** enregistre l'œuvre sur la commande (`audio_url`, `audio_title`, `music_task_id`) : elle devient lisible depuis la fiche, en console maître comme dans l'espace de l'agence.
 
-> Les liens audio des passerelles Suno expirent au bout de quelques semaines. Téléchargez le fichier retenu et archivez-le.
+> Les liens audio expirent au bout de quelques semaines. Téléchargez le fichier retenu et archivez-le.
 
 ### Vérifier l'état
 
-`/api/music-config` indique si la composition automatique est branchée, sans jamais exposer la clé. La vue **Système** de la console affiche cet état.
+`/api/music-config` indique si la composition automatique est branchée, sans jamais exposer la clé (seule une empreinte du type `mk-…99` est renvoyée). La vue **Système** de la console affiche cet état.
+
+### Changer de fournisseur
+
+Le code ne suppose rien au-delà du contrat Mureka v1. Les noms de champs audio sont normalisés de façon large (`mp3_url`, `url`, `audio_url`, `flac_url`), et les statuts terminaux sont reconnus par famille. Pour une passerelle compatible, seule `MUREKA_API_URL` change.
 
 ## 🎛 Console admin — pipeline IA complet
 
@@ -153,9 +159,9 @@ Atelier → paroles + direction musicale
 
 ```
 Brief famille (5 questions)
-   → ① ChatGPT (gpt-4o) : titre + paroles + prompt mélodie
-   → ② Suno : réalisation musicale (2 versions audio)
-   → Écoute + téléchargement MP3 directement dans la console
+   → ① Rédaction : titre + paroles + direction musicale
+   → ② Mureka : réalisation musicale (plusieurs versions audio)
+   → Écoute, téléchargement et rattachement à la commande, dans la console
 ```
 
 *(Console exclue de l'indexation Google via robots.txt.)*
@@ -166,11 +172,11 @@ Le site encaisse, VOUS composez a la main. Zero risque, qualite maximale :
 
 1. **Le client commande** sur `/commande` : choix de l'offre -> brief 5 questions -> creation de compte -> paiement PayPal (ou "payer plus tard")
 2. **La commande apparait** dans la console admin (onglet Commandes) avec tout le brief
-3. **Vous composez** : onglet Atelier -> "Ecrire les paroles" -> "Composer la musique" (API Suno, 60 a 180 s, deux versions a ecouter puis a attacher a la commande). Sans cles Suno configurees, le bouton "Export manuel" copie tout et ouvre suno.com.
+3. **Vous composez** : onglet Atelier -> "Ecrire les paroles" -> "Composer la musique" (API Mureka, 30 a 120 s, plusieurs versions a ecouter puis a attacher a la commande). Sans cle Mureka configuree, le bouton "Export manuel" copie tout et ouvre mureka.ai.
 4. **Vous livrez** le MP3 par email au client, puis cliquez le bouton de statut suivant : Recue -> Brief valide -> En composition -> Livree
 5. **Le client suit** chaque etape en temps reel dans son espace `/compte`
 
-Quand le volume le justifiera, activez la **phase 2** (API Suno payante ~0,08 EUR/chanson, deja codee dans /api) pour l'automatisation totale.
+La composition est automatique des que `MUREKA_API_KEY` est renseignee. Sans elle, tout le reste du workflow fonctionne et seule la realisation musicale se fait a la main.
 
 ## COMPTES & COMMANDES : 2 modes
 
@@ -193,7 +199,7 @@ create table orders (
   traits text, metier text, habitude text, anecdote text, style text,
   urgence boolean default false,
   paypal_id text, paid boolean default false,
-  audio_url text, audio_title text, suno_task_id text
+  audio_url text, audio_title text, music_task_id text
 );
 alter table orders enable row level security;
 create policy "insert pour tous" on orders for insert with check (true);
@@ -212,13 +218,9 @@ Le site fonctionne **sans aucune cle API** grace a une architecture 100 % gratui
 | Besoin | Solution | Cout | Cle requise |
 |---|---|---|---|
 | **Paroles + titre + prompt melodie** | [Pollinations.ai](https://pollinations.ai) (GPT via `text.pollinations.ai/openai`) | 0 EUR illimite | Aucune |
-| **Musique chantee** | **Suno gratuit** - 10 chansons/jour offertes, export 1-clic (paroles + style copies -> suno.com/create s'ouvre) | 0 EUR (10/jour) | Compte Suno gratuit |
+| **Musique chantee** | **API Mureka** - composition automatique depuis l'atelier, plusieurs versions par titre | selon l'offre Mureka | `MUREKA_API_KEY` |
 
-Ou ca marche :
-- **Page publique `/atelier`** : les familles testent le generateur gratuitement -> argument commercial massif
-- **Console admin** : bouton "Generer - GRATUIT" (Pollinations) puis "Suno GRATUIT - copier + ouvrir"
-
-Aucune API de musique **chantee** n'est reellement gratuite en illimite - le combo Pollinations (texte illimite) + Suno web (10 titres/jour) est le seul pipeline 0 EUR complet. Au-dela de 10 chansons/jour, passez a l'API payante ci-dessous (~0,08 EUR/chanson, deja codee).
+La redaction des paroles ne coute rien et ne demande aucune cle. Seule la realisation musicale est facturee, par Mureka, a la composition.
 
 ## 🔑 Configuration des API payantes (option automatisation totale) (obligatoire pour l'atelier)
 
@@ -229,26 +231,25 @@ Sur **vercel.com → votre projet → Settings → Environment Variables**, ajou
 | Variable | Valeur | Où l'obtenir |
 |---|---|---|
 | `OPENAI_API_KEY` | `sk-...` | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) (≈ 0,01 €/chanson en gpt-4o) |
-| `SUNO_API_URL` | `https://api.sunoapi.org` | Voir section Musique ci-dessous |
-| `SUNO_API_KEY` | votre clé | Idem |
+| `MUREKA_API_KEY` | votre clé | [platform.mureka.ai](https://platform.mureka.ai/) → onglet API Keys |
+| `MUREKA_API_URL` | `https://api.mureka.ai` | Facultatif — valeur par défaut |
+| `MUREKA_MODEL` | `auto` | Facultatif — valeur par défaut |
 
 Puis **Redeploy**. En local : `npx vercel dev` (lance le site + les fonctions API sur localhost:3000). Le simple `python3 -m http.server` sert les pages mais **pas** les fonctions `/api`.
 
-## 🎵 Choix du service musical : Suno et alternatives
+## 🎵 Pourquoi Mureka, et les alternatives
 
-Suno n'expose pas d'API publique directe — on passe par un service compatible. Les endpoints du projet (`/api/generate-music`, `/api/music-status`) suivent le format le plus répandu et fonctionnent tel quel avec :
+Le critère décisif a été l'existence d'une **API publique avec clé**, condition d'une composition automatique depuis la console.
 
-| Service | Type | Qualité voix FR | Prix indicatif | Verdict |
-|---|---|---|---|---|
-| **sunoapi.org** | API Suno tierce (recommandé) | ★★★★★ (moteur Suno V4.5) | ~0,08 $/chanson | ✅ **Le choix par défaut** — même qualité que Suno.com, API stable |
-| **PiAPI** (piapi.ai) | API Suno/Udio tierce | ★★★★★ | ~0,10 $/chanson | ✅ Bonne alternative, aussi compatible Udio |
-| **suno-api self-hosted** (github.com/gcui-art/suno-api) | Proxy de votre compte Suno 10 $/mois | ★★★★★ | inclus dans l'abo Suno | ✅ Le moins cher si volume élevé, mais maintenance à votre charge |
-| **ElevenLabs Music** | API **officielle** | ★★★★ | ~0,50 $/min | ✅ Plan B sérieux : contrat commercial clair, entreprise établie — adaptez juste l'endpoint |
-| **Mureka AI** | API officielle | ★★★ (accent en FR) | ~0,05 $/chanson | ⚠ Correct mais français moins naturel |
-| **Udio** | Pas d'API officielle | ★★★★★ | 10 $/mois manuel | ⚠ Excellent mais workflow manuel uniquement |
-| **Stable Audio** | API officielle | Instrumental seulement | — | ❌ Pas de voix chantée : inadapté |
+| Service | API publique | Voix chantée | Verdict |
+|---|---|---|---|
+| **Mureka** (mureka.ai) | ✅ officielle, clé en libre-service | ✅ | ✅ **Le choix retenu** — API documentée, tarif à la composition |
+| **ElevenLabs Music** | ✅ officielle | ✅ | ✅ Plan B sérieux : entreprise établie, contrat commercial clair |
+| **Suno** | ❌ aucune API officielle | ✅ | ⚠ Passerelles tierces uniquement, sans engagement du fournisseur |
+| **Udio** | ❌ | ✅ | ⚠ Excellent, mais workflow manuel uniquement |
+| **Stable Audio** | ✅ | ❌ instrumental seul | ❌ Inadapté à un hommage chanté |
 
-**Ma recommandation** : démarrez avec **sunoapi.org** (qualité Suno, zéro maintenance, ~0,08 $/chanson → marge intacte). Si un jour vous voulez un contrat 100 % officiel pour rassurer des grands comptes, basculez sur **ElevenLabs Music** — seule la fonction `/api/generate-music.js` sera à adapter (~20 lignes).
+**À vérifier lors de vos premiers essais** : la prononciation du français, et notamment celle du prénom du défunt — c'est le point le plus sensible pour un hommage. Si le rendu ne convient pas, la direction musicale (« Style ») est le levier principal ; ElevenLabs Music reste le repli, seule la fonction `api/generate-music.js` étant à adapter.
 
 ---
 

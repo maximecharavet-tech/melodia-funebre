@@ -1,95 +1,112 @@
 // ═══════════════════════════════════════════════════════════════
-// /api/music-status — Suivi d'une composition (interrogation périodique)
-// GET /api/music-status?taskId=xxx
-// Mêmes variables d'environnement que /api/generate-music.
+// /api/music-status — Suivi d'une composition Mureka
+// GET /api/music-status?taskId=xxx&kind=song|instrumental
 // ═══════════════════════════════════════════════════════════════
 
 const TIMEOUT_MS = 20000;
+const DEFAUT_URL = 'https://api.mureka.ai';
 
-// Statuts terminaux en échec renvoyés par les passerelles Suno
+// Statuts terminaux, en échec, renvoyés par Mureka
 const ECHECS = {
-  CREATE_TASK_FAILED: 'La création de la tâche a échoué côté service.',
-  GENERATE_AUDIO_FAILED: 'La génération audio a échoué. Reformulez la direction musicale et relancez.',
-  CALLBACK_EXCEPTION: 'Le service a rencontré une erreur interne pendant la composition.',
-  SENSITIVE_WORD_ERROR: 'Les paroles ont été refusées par le filtre de contenu du service. Reformulez le passage en cause.',
-  FAILED: 'La composition a échoué.',
-  ERROR: 'La composition a échoué.'
+  FAILED: 'La composition a échoué chez Mureka.',
+  FAILURE: 'La composition a échoué chez Mureka.',
+  ERROR: 'La composition a échoué chez Mureka.',
+  TIMEOUTED: 'Mureka a dépassé son propre délai de génération.',
+  TIMEOUT: 'Mureka a dépassé son propre délai de génération.',
+  CANCELLED: 'La composition a été annulée.',
+  CANCELED: 'La composition a été annulée.'
 };
+
+// Statuts terminaux, en succès
+const SUCCES = ['SUCCEEDED', 'SUCCESS', 'COMPLETED', 'COMPLETE', 'FINISHED'];
+
+// Libellés d'attente, pour l'affichage
+const ATTENTE = ['PREPARING', 'QUEUED', 'PENDING', 'RUNNING', 'PROCESSING', 'STREAMING'];
+
+/** Les passerelles nomment l'audio de plusieurs façons : on ratisse large. */
+function extraireTitres(rec) {
+  const listes = [rec.choices, rec.results, rec.songs, rec.clips, rec.data, rec.output];
+  const items = listes.find(l => Array.isArray(l) && l.length) || [];
+  return items.map((t, i) => {
+    const url = t.mp3_url || t.url || t.audio_url || t.audioUrl || t.flac_url || t.wav_url || '';
+    const ms = t.duration_milliseconds || t.durationMilliseconds || null;
+    return {
+      id: t.id || t.song_id || String(i),
+      title: t.title || '',
+      audio_url: url,
+      flac_url: t.flac_url || '',
+      image_url: t.image_url || t.cover_url || '',
+      duration: ms ? Math.round(ms / 1000) : (t.duration || null),
+      tags: t.tags || t.genres || ''
+    };
+  }).filter(t => t.audio_url);
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'GET uniquement' });
 
-  const base = (process.env.SUNO_API_URL || '').replace(/\/+$/, '');
-  const key = process.env.SUNO_API_KEY;
-  if (!base || !key) {
+  const base = (process.env.MUREKA_API_URL || DEFAUT_URL).replace(/\/+$/, '');
+  const key = process.env.MUREKA_API_KEY;
+  if (!key) {
     return res.status(503).json({ error: 'Composition automatique non configurée.', code: 'NOT_CONFIGURED' });
   }
 
-  const taskId = (req.query || {}).taskId;
+  const { taskId, kind } = req.query || {};
   if (!taskId) return res.status(400).json({ error: 'taskId requis' });
 
+  const famille = kind === 'instrumental' ? 'instrumental' : 'song';
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
 
   try {
     const r = await fetch(
-      `${base}/api/v1/generate/record-info?taskId=${encodeURIComponent(taskId)}`,
+      `${base}/v1/${famille}/query/${encodeURIComponent(taskId)}`,
       { headers: { 'Authorization': `Bearer ${key}` }, signal: ctrl.signal }
     );
-    const text = await r.text();
+    const texte = await r.text();
     let data;
-    try { data = JSON.parse(text); } catch (e) { data = { raw: text }; }
+    try { data = JSON.parse(texte); } catch (e) { data = { raw: texte }; }
+
     if (!r.ok) {
-      return res.status(r.status).json({ error: data.msg || 'Erreur de statut', code: 'PROVIDER_ERROR', detail: data });
+      const msg = data.error?.message || data.message || data.msg || `Mureka a répondu ${r.status}.`;
+      return res.status(r.status).json({ error: typeof msg === 'string' ? msg : JSON.stringify(msg), code: 'PROVIDER_ERROR' });
     }
 
     const rec = data.data || data;
-    const status = String(rec.status || rec.state || rec.taskStatus || 'PENDING').toUpperCase();
-
-    // Les formats diffèrent d'une passerelle à l'autre : on ratisse large.
-    const items = rec.response?.sunoData || rec.response?.data || rec.sunoData
-      || rec.clips || (Array.isArray(rec.data) ? rec.data : []) || [];
-
-    const tracks = (Array.isArray(items) ? items : []).map(t => ({
-      id: t.id || t.clip_id || '',
-      title: t.title || '',
-      audio_url: t.audioUrl || t.audio_url || t.sourceAudioUrl || t.source_audio_url || '',
-      stream_url: t.streamAudioUrl || t.stream_audio_url || t.sourceStreamAudioUrl || '',
-      image_url: t.imageUrl || t.image_url || t.sourceImageUrl || '',
-      duration: t.duration || null,
-      tags: t.tags || ''
-    })).filter(t => t.audio_url || t.stream_url);
+    const status = String(rec.status || rec.state || 'preparing').toUpperCase();
+    const tracks = extraireTitres(rec);
 
     // Un échec doit interrompre l'interrogation, sinon le client tourne à vide
-    const echec = ECHECS[status] || (/FAIL|ERROR|EXCEPTION/.test(status) ? ECHECS.FAILED : null);
+    const echec = ECHECS[status];
     if (echec) {
+      const detail = rec.failed_reason || rec.error_message || rec.message || '';
       return res.status(200).json({
         status, done: false, failed: true,
-        error: echec + (rec.errorMessage ? ' (' + rec.errorMessage + ')' : ''),
+        error: echec + (detail ? ' (' + detail + ')' : ''),
         tracks
       });
     }
 
-    // SUCCESS = les deux titres sont prêts ; FIRST_SUCCESS = le premier est écoutable
-    const done = /^(SUCCESS|COMPLETE|COMPLETED)$/.test(status) && tracks.length > 0;
-    const partiel = /FIRST_SUCCESS|TEXT_SUCCESS/.test(status);
+    const done = SUCCES.includes(status) && tracks.length > 0;
 
     return res.status(200).json({
       status,
       done,
       failed: false,
-      partial: partiel && !done,
-      playable: tracks.some(t => t.audio_url || t.stream_url),
+      waiting: ATTENTE.includes(status),
+      partial: !done && tracks.length > 0,
+      playable: tracks.length > 0,
       tracks
     });
   } catch (err) {
-    const aborted = err.name === 'AbortError';
-    return res.status(aborted ? 504 : 500).json({
-      error: aborted ? 'Le service musical n\'a pas répondu.' : 'Échec du suivi : ' + err.message,
-      code: aborted ? 'TIMEOUT' : 'FETCH_FAILED'
+    const coupe = err.name === 'AbortError';
+    return res.status(coupe ? 504 : 500).json({
+      error: coupe ? 'Mureka n\'a pas répondu.' : 'Échec du suivi : ' + err.message,
+      code: coupe ? 'TIMEOUT' : 'FETCH_FAILED'
     });
   } finally {
     clearTimeout(timer);

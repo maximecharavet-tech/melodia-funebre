@@ -179,20 +179,20 @@
       var patch = {
         audio_url: audio.url || '',
         audio_title: audio.title || '',
-        suno_task_id: audio.taskId || ''
+        music_task_id: audio.taskId || ''
       };
       if (HAS_SB) {
         try {
           await sb('/rest/v1/orders?ref=eq.' + encodeURIComponent(ref), { method: 'PATCH', body: JSON.stringify(patch) });
         } catch (e) {
           /* Les colonnes doivent exister cote Supabase : message explicite plutot qu'echec muet */
-          throw new Error('Supabase a refuse l\'enregistrement. Ajoutez les colonnes audio_url, audio_title et suno_task_id a la table orders (voir README).');
+          throw new Error('Supabase a refuse l\'enregistrement. Ajoutez les colonnes audio_url, audio_title et music_task_id a la table orders (voir README).');
         }
         return true;
       }
       var all = LS.get('melodia_orders', []);
       var o = all.filter(function (x) { return x.ref === ref; })[0];
-      if (o) { o.audio_url = patch.audio_url; o.audio_title = patch.audio_title; o.suno_task_id = patch.suno_task_id; LS.set('melodia_orders', all); }
+      if (o) { o.audio_url = patch.audio_url; o.audio_title = patch.audio_title; o.music_task_id = patch.music_task_id; LS.set('melodia_orders', all); }
       return true;
     },
 
@@ -230,7 +230,7 @@
       var p = 'Tu es un parolier français spécialisé dans les hommages funéraires respectueux et émouvants, et un directeur artistique musical.\n\n'
         + 'Défunt : ' + brief.defunt + ' · Traits : ' + (brief.traits || '-') + ' · Métier/passion : ' + (brief.metier || '-')
         + ' · Habitude : ' + (brief.habitude || '-') + ' · Anecdote : ' + (brief.anecdote || '-') + ' · Style : ' + (brief.style || 'Chanson française') + '\n\n'
-        + 'Réponds UNIQUEMENT en JSON strict sans backticks : {"title":"titre poétique 3-5 mots","lyrics":"[Couplet 1]\\n4 vers\\n\\n[Refrain]\\n4 vers\\n\\n[Couplet 2]\\n4 vers","style_prompt":"prompt EN ANGLAIS pour Suno : genre, voix, instruments, tempo BPM, ambiance, 15-25 mots"}\n'
+        + 'Réponds UNIQUEMENT en JSON strict sans backticks : {"title":"titre poétique 3-5 mots","lyrics":"[Couplet 1]\\n4 vers\\n\\n[Refrain]\\n4 vers\\n\\n[Couplet 2]\\n4 vers","style_prompt":"description EN ANGLAIS pour Mureka : genre, voix, instruments, tempo BPM, ambiance, 15-25 mots"}\n'
         + 'Paroles : ton respectueux jamais pleurnichard, images concrètes de sa vraie vie, zéro cliché, vers chantables de 8-10 syllabes, rimes, le prénom apparaît au moins 2 fois.';
       var r = await fetch('https://text.pollinations.ai/openai', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -245,7 +245,7 @@
       return { title: o.title || ('Hommage à ' + brief.defunt), lyrics: (o.lyrics || '').replace(/\\n/g, '\n'), style_prompt: o.style_prompt || '' };
     },
 
-    /* ═══ Composition musicale via l'API Suno ═══
+    /* ═══ Composition musicale via l'API Mureka ═══
        Le circuit passe par nos fonctions serveur : la cle n'atteint
        jamais le navigateur. */
 
@@ -283,9 +283,10 @@
       return d;
     },
 
-    /** Etat d'une composition en cours */
-    async musicStatus(taskId) {
-      var r = await fetch('/api/music-status?taskId=' + encodeURIComponent(taskId));
+    /** Etat d'une composition en cours (kind : 'song' ou 'instrumental') */
+    async musicStatus(taskId, kind) {
+      var r = await fetch('/api/music-status?taskId=' + encodeURIComponent(taskId)
+        + '&kind=' + encodeURIComponent(kind || 'song'));
       var d = null;
       try { d = await r.json(); } catch (e) { d = {}; }
       if (!r.ok) throw new Error(d.error || 'Suivi indisponible.');
@@ -295,7 +296,7 @@
     /**
      * Interroge le service jusqu'a obtention des titres.
      * onTick(etat) est appele a chaque passage pour l'affichage.
-     * Suno met typiquement 60 a 180 secondes.
+     * Mureka met typiquement 30 a 120 secondes.
      */
     async musicPoll(taskId, onTick, options) {
       var opt = options || {};
@@ -308,7 +309,7 @@
         if (opt.signal && opt.signal.aborted) throw new Error('Composition interrompue.');
         var etat;
         try {
-          etat = await this.musicStatus(taskId);
+          etat = await this.musicStatus(taskId, opt.kind);
           echecsReseau = 0;
         } catch (e) {
           /* Une coupure passagere ne doit pas annuler une composition en cours */
@@ -325,10 +326,11 @@
       throw new Error('La composition depasse le delai attendu. Le titre peut encore arriver : rouvrez l\'atelier dans quelques minutes.');
     },
 
-    sunoExport(title, lyrics, style) {
-      var t = 'TITRE : ' + title + '\n\nSTYLE OF MUSIC :\n' + style + '\n\nLYRICS (mode Custom) :\n' + lyrics;
+    /** Repli sans cle : tout est copie, l'editeur Mureka s'ouvre */
+    manualExport(title, lyrics, style) {
+      var t = 'TITRE : ' + title + '\n\nSTYLE :\n' + style + '\n\nPAROLES :\n' + lyrics;
       if (navigator.clipboard) navigator.clipboard.writeText(t);
-      window.open('https://suno.com/create', '_blank', 'noopener');
+      window.open('https://www.mureka.ai/', '_blank', 'noopener');
     }
   };
 })();

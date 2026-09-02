@@ -1,15 +1,15 @@
 /* ═══════════════════════════════════════════════════════════════
-   MELODIA — Atelier : composition musicale par l'API Suno
+   MELODIA — Atelier : composition musicale par l'API Mureka
    Monté dans la console maître, sous le brief et les paroles.
 
    Le circuit : /api/generate-music renvoie un identifiant de tâche,
    puis /api/music-status est interrogé jusqu'à obtention des titres.
-   La clé Suno reste côté serveur, jamais dans le navigateur.
+   La clé Mureka reste côté serveur, jamais dans le navigateur.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
-  var CLE_TACHE = 'melodia_suno_task';
+  var CLE_TACHE = 'melodia_music_task';
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) {
     return String(s == null ? '' : s)
@@ -33,8 +33,9 @@
   function panneau() {
     var etatCfg = !config ? 'Vérification…'
       : config.configured
-        ? '<span style="color:var(--green);">API Suno branchée</span> · ' + esc(config.provider) + ' · modèle ' + esc(config.model)
-        : '<span style="color:var(--amber);">API Suno non configurée</span> — export manuel disponible';
+        ? '<span style="color:var(--green);">API ' + esc(config.engine || 'Mureka') + ' branchée</span> · '
+          + esc(config.provider) + ' · modèle ' + esc(config.model)
+        : '<span style="color:var(--amber);">API ' + esc((config && config.engine) || 'Mureka') + ' non configurée</span> — export manuel disponible';
 
     return '' +
       '<div class="panel">' +
@@ -47,7 +48,7 @@
         '<div class="field-row" style="margin-bottom:1rem;">' +
           '<div class="field"><label class="field-label" for="mus-voix">Voix</label>' +
             '<select class="field-select" id="mus-voix">' +
-              '<option value="">Laisser Suno décider</option>' +
+              '<option value="">Laisser Mureka décider</option>' +
               '<option value="m">Masculine</option>' +
               '<option value="f">Féminine</option>' +
             '</select></div>' +
@@ -63,7 +64,7 @@
         '<div id="mus-suivi" style="display:none; margin-top:1.3rem;"></div>' +
         '<div id="mus-titres" style="margin-top:1.3rem;"></div>' +
         '<p style="font-family:var(--ff-m); font-size:.5rem; letter-spacing:.14em; color:var(--dust); margin-top:1.1rem; text-align:center;">' +
-          'SUNO · MODE CUSTOM · 2 VERSIONS PAR COMPOSITION · 60 À 180 SECONDES</p>' +
+          'MUREKA · PAROLES IMPOSÉES · PLUSIEURS VERSIONS PAR COMPOSITION · 30 À 120 SECONDES</p>' +
       '</div>';
   }
 
@@ -82,9 +83,13 @@
   }
 
   var LIBELLES = {
-    PENDING: 'En file d\'attente chez Suno…',
-    TEXT_SUCCESS: 'Paroles acceptées, la musique s\'écrit…',
-    FIRST_SUCCESS: 'Première version prête, la seconde arrive…',
+    PREPARING: 'Mureka prépare la composition…',
+    QUEUED: 'En file d\'attente chez Mureka…',
+    PENDING: 'En file d\'attente chez Mureka…',
+    RUNNING: 'La musique s\'écrit…',
+    PROCESSING: 'La musique s\'écrit…',
+    STREAMING: 'Premiers extraits disponibles…',
+    SUCCEEDED: 'Composition terminée.',
     SUCCESS: 'Composition terminée.'
   };
 
@@ -126,7 +131,7 @@
             '<audio controls preload="none" style="width:100%;" src="' + esc(url) + '"></audio>' +
           '</div>';
       }).join('') +
-      (partiel ? '' : '<p style="font-size:.78rem; color:var(--ash); line-height:1.6;">Les liens fournis par Suno expirent au bout de quelques semaines : téléchargez le fichier retenu et archivez-le.</p>');
+      (partiel ? '' : '<p style="font-size:.78rem; color:var(--ash); line-height:1.6;">Les liens fournis par Mureka expirent au bout de quelques semaines : téléchargez le fichier retenu et archivez-le.</p>');
 
     Array.prototype.forEach.call(z.querySelectorAll('[data-attacher]'), function (b) {
       b.addEventListener('click', function () { attacher(b.getAttribute('data-attacher'), b.getAttribute('data-titre')); });
@@ -165,7 +170,7 @@
     if (!titre || /^Les paroles$/i.test(titre)) titre = 'Hommage Melodia';
 
     var go = $('mus-go'), stop = $('mus-stop');
-    go.disabled = true; go.textContent = 'Envoi à Suno…';
+    go.disabled = true; go.textContent = 'Envoi à Mureka…';
     message('');
     $('mus-titres').innerHTML = '';
 
@@ -179,11 +184,11 @@
         vocal_gender: ($('mus-voix') || {}).value || ''
       });
 
-      etatCourant = { taskId: lancement.taskId, title: titre, ref: window.MELODIA_ATELIER_REF || '', startedAt: Date.now() };
+      etatCourant = { taskId: lancement.taskId, kind: lancement.kind || 'song', title: titre, ref: window.MELODIA_ATELIER_REF || '', startedAt: Date.now() };
       sauver(etatCourant);
       go.textContent = 'Composition en cours…';
       stop.style.display = '';
-      await surveiller(lancement.taskId);
+      await surveiller(lancement.taskId, lancement.kind);
     } catch (e) {
       message(e.message + (e.hint ? ' ' + e.hint : ''), 'err');
       suivi('');
@@ -194,17 +199,17 @@
 
   var abandon = null;
 
-  async function surveiller(taskId) {
+  async function surveiller(taskId, kind) {
     var go = $('mus-go'), stop = $('mus-stop');
     enCours = true;
     abandon = { aborted: false };
     try {
-      var fin = await window.MelodiaAI.musicPoll(taskId, afficherSuivi, { signal: abandon });
+      var fin = await window.MelodiaAI.musicPoll(taskId, afficherSuivi, { signal: abandon, kind: kind || 'song' });
       suivi('');
       afficherTitres(fin.tracks, false);
       message('Composition terminée : écoutez, puis attachez la version retenue à la commande.', 'ok');
       /* On oublie la reprise au rechargement, mais on garde la tâche en mémoire :
-         « Attacher » doit encore pouvoir consigner l'identifiant Suno. */
+         « Attacher » doit encore pouvoir consigner l'identifiant Mureka. */
       sauver(null);
     } catch (e) {
       suivi('');
@@ -228,21 +233,21 @@
     $('mus-go').addEventListener('click', composer);
     $('mus-stop').addEventListener('click', function () {
       if (abandon) abandon.aborted = true;
-      message('Suivi interrompu. La composition continue chez Suno : rouvrez l\'atelier pour la récupérer.', 'info');
+      message('Suivi interrompu. La composition continue chez Mureka : rouvrez l\'atelier pour la récupérer.', 'info');
     });
     $('mus-manuel').addEventListener('click', function () {
       var l = ($('at-lyrics') || {}).value || '';
       if (!l.trim()) { message('Écrivez d\'abord les paroles.', 'err'); return; }
       var titreEl = $('at-title-h');
-      window.MelodiaAI.sunoExport(
+      window.MelodiaAI.manualExport(
         titreEl ? titreEl.textContent.replace(/[«»]/g, '').trim() : 'Hommage Melodia',
         l, ($('at-style-prompt') || {}).value || ''
       );
-      message('Paroles et direction musicale copiées. Dans Suno : mode Custom, collez les deux champs.', 'info');
+      message('Paroles et direction musicale copiées. Collez-les dans l\'éditeur Mureka qui vient de s\'ouvrir.', 'info');
     });
 
     if (!config.configured) {
-      message('La composition automatique n\'est pas encore branchée. Renseignez SUNO_API_URL et SUNO_API_KEY dans Vercel → Settings → Environment Variables, puis redéployez. En attendant, le bouton « Export manuel » reste opérationnel.', 'info');
+      message('La composition automatique n\'est pas encore branchée. Renseignez MUREKA_API_KEY dans Vercel → Settings → Environment Variables, puis redéployez. En attendant, le bouton « Export manuel » reste opérationnel.', 'info');
       $('mus-go').disabled = true;
       return;
     }
@@ -257,7 +262,7 @@
       $('mus-go').disabled = true;
       $('mus-go').textContent = 'Composition en cours…';
       $('mus-stop').style.display = '';
-      surveiller(reprise.taskId);
+      surveiller(reprise.taskId, reprise.kind);
     }
   }
 
