@@ -1018,3 +1018,126 @@ ul { list-style: none; }
   font-family: var(--ff-m); font-size: 0.82em;
 }
 .legal-date { font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust); margin-bottom: 2.5rem; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SEUIL D'ENTRÉE — l'ouverture avant le site
+   Pensé comme un seuil de maison, pas comme un écran publicitaire :
+   sobre, court, franchissable au premier geste.
+   ═══════════════════════════════════════════════════════════════ */
+.intro {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--ink);
+  display: grid; place-items: center;
+  padding: var(--pad);
+  text-align: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+/* Décidé avant le premier rendu par le script d'en-tête : pas de clignotement
+   pour qui a déjà franchi le seuil dans cette session. */
+html.intro-off .intro { display: none !important; }
+body.intro-open { overflow: hidden; }
+
+.intro::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, rgba(201, 168, 76, 0.09), transparent 62%);
+}
+.intro-inner { position: relative; z-index: 2; max-width: 640px; }
+
+/* Ligne d'horizon, tracée depuis le centre */
+.intro-line {
+  height: 1px; width: min(420px, 76vw); margin: 0 auto 2.6rem;
+  background: linear-gradient(90deg, transparent, var(--or-patina) 30%, var(--or) 50%, var(--or-patina) 70%, transparent);
+  transform: scaleX(0); transform-origin: center;
+  animation: introLigne 1s var(--ease-out) 0.15s forwards;
+}
+@keyframes introLigne { to { transform: scaleX(1); } }
+
+/* Médaillon */
+.intro-logo {
+  width: clamp(130px, 26vw, 190px); height: clamp(130px, 26vw, 190px);
+  border-radius: 50%; object-fit: cover; margin: 0 auto 2rem;
+  border: 1px solid var(--line-strong);
+  opacity: 0; transform: scale(1.1);
+  animation: introLogo 1.4s var(--ease-out) 0.35s forwards, introHalo 4.5s ease-in-out 1.8s infinite;
+}
+@keyframes introLogo { to { opacity: 1; transform: scale(1); } }
+@keyframes introHalo {
+  0%, 100% { box-shadow: 0 0 34px rgba(201, 168, 76, 0.13); }
+  50% { box-shadow: 0 0 60px rgba(201, 168, 76, 0.28); }
+}
+
+/* Nom de la maison — l'interlettrage se resserre en apparaissant */
+.intro-name {
+  font-family: var(--ff-m); font-size: clamp(0.56rem, 1.7vw, 0.7rem);
+  text-transform: uppercase; color: var(--or-patina);
+  letter-spacing: 0.75em; text-indent: 0.75em;
+  opacity: 0;
+  animation: introNom 1.3s var(--ease-out) 1s forwards;
+}
+@keyframes introNom {
+  from { opacity: 0; letter-spacing: 0.75em; }
+  to { opacity: 1; letter-spacing: 0.34em; }
+}
+
+/* Signature musicale : le même motif que le lecteur du site */
+.intro-wave {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 4px; height: 22px; margin: 1.7rem 0 2rem;
+  opacity: 0; animation: introFondu 1s ease 1.5s forwards;
+}
+.intro-wave span {
+  width: 2px; height: 3px; border-radius: 2px; background: var(--or-deep);
+  animation: introBarre 1.5s ease-in-out infinite;
+}
+@keyframes introBarre {
+  0%, 100% { height: 3px; background: var(--or-deep); }
+  50% { height: 20px; background: var(--or-patina); }
+}
+
+.intro-claim {
+  font-family: var(--ff-d); font-weight: 300;
+  font-size: clamp(1.25rem, 3.4vw, 2rem); line-height: 1.35;
+  color: var(--paper);
+  opacity: 0; transform: translateY(14px);
+  animation: introMonte 1.1s var(--ease-out) 1.9s forwards;
+}
+.intro-claim em {
+  font-style: italic;
+  background: var(--or-grad); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--or);
+}
+@keyframes introMonte { to { opacity: 1; transform: none; } }
+
+.intro-actions {
+  margin-top: 2.8rem;
+  opacity: 0; animation: introFondu 0.9s ease 2.6s forwards;
+}
+@keyframes introFondu { to { opacity: 1; } }
+.intro-hint {
+  display: block; margin-top: 1.4rem;
+  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--dust);
+}
+
+/* Sortie : le voile se lève */
+.intro.leaving {
+  opacity: 0; transform: scale(1.05);
+  transition: opacity 0.85s var(--ease), transform 1.3s var(--ease);
+  pointer-events: none;
+}
+
+/* Sans JavaScript, le seuil ne doit pas emprisonner le visiteur */
+.no-js .intro { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-line, .intro-logo, .intro-name, .intro-wave, .intro-wave span,
+  .intro-claim, .intro-actions {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    letter-spacing: 0.34em;
+  }
+  .intro-line { transform: scaleX(1) !important; }
+  .intro-wave span { height: 10px; }
+}

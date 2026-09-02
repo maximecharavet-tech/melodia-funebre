@@ -10,6 +10,40 @@
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
+  /* ═══ SEUIL D'ENTRÉE ═══
+     Affiché une seule fois par session, franchissable au premier geste,
+     et refermé de lui-même : personne ne doit rester bloqué devant. */
+  var intro = $('#intro');
+  if (intro) {
+    document.body.classList.add('intro-open');
+    /* Marqué dès l'affichage : un rechargement pendant l'animation ne le rejoue pas. */
+    try { sessionStorage.setItem('melodia_intro', '1'); } catch (e) {}
+
+    var sortiIntro = false;
+    var franchir = function () {
+      if (sortiIntro) return;
+      sortiIntro = true;
+      intro.classList.add('leaving');
+      document.body.classList.remove('intro-open');
+      setTimeout(function () { if (intro.parentNode) intro.parentNode.removeChild(intro); }, 1400);
+    };
+
+    intro.addEventListener('click', franchir);
+    document.addEventListener('keydown', function (e) {
+      if (sortiIntro) return;
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); franchir(); }
+    });
+    /* Un défilement vaut aussi franchissement : le visiteur veut déjà entrer. */
+    window.addEventListener('wheel', franchir, { passive: true, once: true });
+    window.addEventListener('touchmove', franchir, { passive: true, once: true });
+
+    /* Sans animation, on ne fait pas patienter devant un écran fixe. */
+    setTimeout(franchir, REDUCED ? 3500 : 5200);
+    /* Pas de mise au point automatique sur « Entrer » : elle dessine un liseré
+       de focus inutile, alors que la touche Entrée, Espace ou Échap franchit
+       déjà le seuil, et que le bouton reste atteignable à la tabulation. */
+  }
+
   /* ═══ NAVIGATION ═══ */
   var nav = $('.nav');
   if (nav) {

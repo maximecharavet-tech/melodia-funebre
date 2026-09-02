@@ -9,7 +9,7 @@ const files = [
   'assets/js/main.js', 'assets/js/player.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
   'assets/js/auth.js', 'assets/js/config.js',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-anime.mp4',
-  'assets/img/og-melodia.jpg', 'favicon.ico', 'site.webmanifest',
+  'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
   'audio/maurice.mp3', 'audio/monique.mp3', 'audio/sergio.mp3',

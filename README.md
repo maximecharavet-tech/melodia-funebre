@@ -94,6 +94,34 @@ Le workflow `.github/workflows/deploy.yml` valide le HTML à chaque push et peut
 - `VERCEL_TOKEN` (vercel.com/account/tokens)
 - `VERCEL_ORG_ID` et `VERCEL_PROJECT_ID` (fichier `.vercel/project.json` après `vercel link`)
 
+## 🚪 Le seuil d'entrée
+
+La page d'accueil s'ouvre sur une animation : filet d'or, logo, nom de la maison, signature musicale, puis le message.
+
+Il est pensé pour ne jamais retenir personne :
+
+- **une seule fois par session** — un visiteur qui revient ou navigue entre les pages ne le revoit pas ;
+- **franchissable au premier geste** — clic, touche (Entrée, Espace, Échap), ou simple défilement ;
+- **il se referme seul** au bout de 5 secondes (3,5 s si le visiteur a demandé un mouvement réduit) ;
+- **sans JavaScript, il ne s'affiche pas** — impossible de rester bloqué devant ;
+- **le contenu du site est déjà dans la page** derrière lui : le seuil est un calque, pas une redirection, donc rien n'est masqué aux moteurs de recherche.
+
+### Modifier le message
+
+Dans `scripts/`… non : le message est dans la partition de génération. En pratique, éditez directement `index.html`, bloc `<p class="intro-claim">` :
+
+```html
+<p class="intro-claim">Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
+```
+
+Le texte entre `<em>` s'affiche en or.
+
+> ⚠️ **Sur l'allégation « premier site mondial »** — en France, une allégation de supériorité absolue doit pouvoir être prouvée : à défaut, elle relève de la pratique commerciale trompeuse (article L121-2 du Code de la consommation), et un concurrent comme la DGCCRF peut la contester. Formulations défendables sans démonstration : *« La première maison française dédiée à la musique personnalisée pour funérailles »*, ou *« Une maison dédiée à la musique personnalisée pour funérailles »*.
+
+### Le retirer
+
+Dans `index.html`, supprimez le bloc `<div class="intro" id="intro">…</div>` ainsi que le petit script `sessionStorage` de l'en-tête. Rien d'autre n'en dépend.
+
 ## 🛡 Ce qui est en place côté production
 
 Tout est déclaré dans `vercel.json` et appliqué à chaque déploiement.
