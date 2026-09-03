@@ -313,8 +313,12 @@
         return '<div class="o-row" style="padding:.9rem 0;border-bottom:1px solid var(--line-soft);">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">' +
             '<div style="min-width:0;flex:1;">' +
-              '<div class="o-name" style="font-size:1.05rem;">' + esc(e.nom) + (e.enseigne && e.enseigne !== e.nom ? ' <span style="color:var(--ash);font-size:.85rem;">· ' + esc(e.enseigne) + '</span>' : '') + '</div>' +
+              '<div class="o-name" style="font-size:1.05rem;">' + esc(e.nom) + (e.enseigne && e.enseigne !== e.nom ? ' <span style="color:var(--ash);font-size:.85rem;">· ' + esc(e.enseigne) + '</span>' : '') +
+              // Une enseigne de plusieurs agences ne se démarche pas comme une
+              // maison de famille : la décision se prend ailleurs qu'au comptoir
+              (e.etablissements > 1 ? ' <span class="pill pill-reseau">' + e.etablissements + ' agences</span>' : '') + '</div>' +
               '<div class="o-meta">' + esc([e.adresse, e.cp, e.ville].filter(Boolean).join(' · ')) +
+              (e.agence ? ' <span style="color:var(--ash);">(agence)</span>' : '') +
               (e.dirigeant ? ' · <span style="color:var(--or-patina);">' + esc(e.dirigeant) + '</span>' : '') + '</div>' +
             '</div>' +
             (deja ? '<span class="pill" style="color:var(--green);border-color:rgba(74,222,128,.35);">Déjà suivie</span>'

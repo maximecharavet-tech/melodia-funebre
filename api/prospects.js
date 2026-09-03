@@ -21,8 +21,31 @@ const SOURCE = process.env.PROSPECTS_API_URL || 'https://recherche-entreprises.a
 const NAF = '96.03Z';
 const TIMEOUT_MS = 15000;
 
-function normaliser(e) {
-  const s = e.siege || {};
+/* Département d'un code postal : Corse (2A/2B) et outre-mer compris. */
+function departementDe(cp) {
+  cp = String(cp || '');
+  if (/^9[78]/.test(cp)) return cp.slice(0, 3);   // 971 à 978
+  if (/^20/.test(cp)) return parseInt(cp, 10) < 20200 ? '2A' : '2B';
+  return cp.slice(0, 2);
+}
+
+/* L'annuaire cherche dans tous les établissements mais ne renvoie que le
+   siège de l'entreprise. Une enseigne nationale trouvée sur le Rhône
+   afficherait donc l'adresse de son siège parisien — inutilisable pour un
+   commercial qui veut écrire à l'agence du coin. On retient donc
+   l'établissement qui a réellement répondu au critère, dans le département
+   demandé quand il y en a un. */
+function etablissementRetenu(e, dep) {
+  const liste = (e.matching_etablissements || []).filter(Boolean);
+  if (dep) {
+    const local = liste.find((et) => departementDe(et.code_postal) === dep);
+    if (local) return local;
+  }
+  return liste[0] || e.siege || {};
+}
+
+function normaliser(e, dep) {
+  const s = etablissementRetenu(e, dep);
   const ville = s.libelle_commune || '';
   const cp = s.code_postal || '';
   const adresse = [s.numero_voie, s.type_voie, s.libelle_voie]
@@ -33,18 +56,25 @@ function normaliser(e) {
   const dirigeant = [d.prenoms, d.nom].filter(Boolean).join(' ').trim()
     || d.denomination || '';
 
+  const enseigne = (s.liste_enseignes || [])[0] || '';
+  const siege = (e.siege || {}).siret;
+
   return {
     siren: e.siren || '',
-    siret: s.siret || '',
+    siret: s.siret || siege || '',
     nom: e.nom_complet || e.nom_raison_sociale || 'Sans nom',
-    enseigne: (s.liste_enseignes || [])[0] || '',
+    enseigne: enseigne,
     adresse: adresse,
     cp: cp,
     ville: ville,
-    departement: cp.slice(0, 2),
+    departement: departementDe(cp),
     dirigeant: dirigeant,
     effectif: e.tranche_effectif_salarie || '',
     creation: e.date_creation || '',
+    // Une enseigne nationale se démarche autrement qu'une maison de famille
+    etablissements: e.nombre_etablissements_ouverts || e.nombre_etablissements || 1,
+    // Vrai quand l'adresse affichée est une agence, non le siège
+    agence: Boolean(s.siret && siege && s.siret !== siege),
     // Ni téléphone ni email : l'annuaire public n'en publie pas.
     // Le collaborateur les complète au fil de sa recherche.
     email: '',
@@ -100,7 +130,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const resultats = (data.results || []).map(normaliser);
+    const resultats = (data.results || []).map((e) => normaliser(e, dep ? dep.toUpperCase() : ''));
     // L'annuaire est stable au jour le jour : une journée de cache au bord suffit
     res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
     return res.status(200).json({
