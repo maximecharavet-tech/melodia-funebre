@@ -5,7 +5,8 @@
 // (recherche-entreprises.api.gouv.fr) : données ouvertes, sans clé,
 // alimentées par la base SIRENE de l'INSEE.
 //
-// Code NAF retenu : 9603Z — « Services funéraires ».
+// Code NAF retenu : 96.03Z — « Services funéraires ».
+// L'annuaire attend le format pointé (96.03Z) et refuse 9603Z.
 //
 //   GET /api/prospects?departement=69&page=1
 //   GET /api/prospects?q=roblot&departement=69
@@ -17,7 +18,7 @@
 
 /* Surchargeable pour les essais ; en production, l'annuaire de l'État. */
 const SOURCE = process.env.PROSPECTS_API_URL || 'https://recherche-entreprises.api.gouv.fr/search';
-const NAF = '9603Z';
+const NAF = '96.03Z';
 const TIMEOUT_MS = 15000;
 
 function normaliser(e) {
