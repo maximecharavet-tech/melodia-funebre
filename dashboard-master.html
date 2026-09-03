@@ -59,6 +59,7 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/livraison.js"></script>
 <script src="assets/js/atelier-music.js"></script>
 <script src="assets/js/proprietaire.js"></script>
 <script>
@@ -137,7 +138,9 @@ function orderCard(o) {
     '<div class="o-brief"><b style="color:var(--bone);">Brief —</b> Style : ' + esc(o.style || '—') + ' · Traits : ' + esc(o.traits || '—') + ' · Métier : ' + esc(o.metier || '—') + ' · Habitude : ' + esc(o.habitude || '—') +
     (o.anecdote ? '<br><b style="color:var(--bone);">Anecdote —</b> ' + esc(o.anecdote) : '') +
     '<br><b style="color:var(--bone);">Contact —</b> ' + esc(o.user_name) + ' · ' + esc(o.user_email) + '</div>' +
-    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + (/\.(mp3|m4a|wav|ogg|flac)(\?|#|$)/i.test(o.audio_url)    ? '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio>'    : '<a class="btn btn-outline btn-sm" href="' + esc(o.audio_url) + '" target="_blank" rel="noopener">Ouvrir l\'hommage</a>') + '</div>' : '') +
+    (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + (/^local:/.test(o.audio_url)
+       ? '<span class="pill" style="color:var(--amber); border-color:rgba(251,191,36,.35);">Fichier sur l\'appareil du fondateur</span>'
+       : /\.(mp3|m4a|wav|ogg|flac)(\?|#|$)/i.test(o.audio_url)    ? '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio>'    : '<a class="btn btn-outline btn-sm" href="' + esc(o.audio_url) + '" target="_blank" rel="noopener">Ouvrir l\'hommage</a>') + '</div>' : '') +
     '</div>';
 }
 

@@ -41,6 +41,9 @@
       ? '<span style="color:var(--green);">Automatique</span> · ' + esc(config.engine || 'API') + ' · ' + esc(config.model)
       : '<span style="color:var(--or);">Mode manuel</span> · Suno, votre abonnement';
 
+    var stock = window.MelodiaLivraison;
+    var distant = stock && stock.mode === 'supabase';
+
     var blocManuel =
       '<div style="border:1px solid var(--line-strong); border-radius:6px; padding:1.3rem; background:rgba(201,168,76,.04);">' +
         '<div class="mono" style="color:var(--or-patina); margin-bottom:1rem;">Étape 1 — composer sur Suno</div>' +
@@ -48,24 +51,34 @@
           'Le bouton copie le titre, la direction musicale et les paroles, puis ouvre Suno. ' +
           'Sur place : <b style="color:var(--paper);">Create</b> → onglet <b style="color:var(--paper);">Custom</b> → ' +
           'collez les paroles dans <b style="color:var(--paper);">Lyrics</b> et le style dans ' +
-          '<b style="color:var(--paper);">Style of Music</b>.</p>' +
+          '<b style="color:var(--paper);">Style of Music</b>. Puis téléchargez le MP3.</p>' +
         '<button class="btn btn-gold" style="width:100%;" id="mus-suno">Copier le brief et ouvrir Suno</button>' +
 
-        '<div class="mono" style="color:var(--or-patina); margin:1.8rem 0 1rem;">Étape 2 — rattacher l\'hommage terminé</div>' +
-        '<p style="font-size:.9rem; color:var(--bone); line-height:1.7; margin-bottom:1rem;">' +
-          'Une fois la chanson prête, collez son lien ici. Dans Suno : <b style="color:var(--paper);">⋯</b> → ' +
-          '<b style="color:var(--paper);">Share</b> → <b style="color:var(--paper);">Copy link</b>. ' +
-          'Un lien direct vers un fichier .mp3 fonctionne aussi, et devient alors écoutable dans la fiche.</p>' +
-        '<div class="field" style="margin-bottom:.9rem;">' +
-          '<input class="field-input" id="mus-lien" type="url" placeholder="https://suno.com/song/… ou https://…/hommage.mp3">' +
+        '<div class="mono" style="color:var(--or-patina); margin:1.8rem 0 1rem;">Étape 2 — déposer le MP3</div>' +
+        '<div class="depot" id="mus-depot" tabindex="0" role="button" aria-label="Déposer le fichier audio">' +
+          '<div class="depot-ico">♪</div>' +
+          '<div class="depot-txt">Glissez le MP3 ici, ou <u>choisissez un fichier</u></div>' +
+          '<div class="depot-sub">' + (distant
+            ? 'Envoyé sur votre stockage : le client obtient un lien permanent.'
+            : 'Conservé sur cet appareil, à joindre au courriel. Activez Supabase pour un lien permanent.') + '</div>' +
+          '<input type="file" id="mus-fichier" accept="audio/*,.mp3,.m4a,.wav,.flac" hidden>' +
         '</div>' +
-        '<div class="field" style="margin-bottom:1rem;">' +
+        '<div id="mus-progres" class="depot-progres" hidden><div class="depot-barre"><span></span></div><div class="depot-pct">0 %</div></div>' +
+
+        '<details style="margin-top:1rem;">' +
+          '<summary style="cursor:pointer; font-family:var(--ff-m); font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ash);">Ou rattacher un lien</summary>' +
+          '<div style="margin-top:.9rem;">' +
+            '<div class="field" style="margin-bottom:.7rem;">' +
+              '<input class="field-input" id="mus-lien" type="url" placeholder="https://suno.com/song/… ou https://…/hommage.mp3">' +
+            '</div>' +
+            '<button class="btn btn-outline btn-sm" id="mus-attacher">Rattacher ce lien</button>' +
+          '</div>' +
+        '</details>' +
+        '<div class="field" style="margin:1rem 0 0;">' +
           '<input class="field-input" id="mus-lien-titre" placeholder="Titre de l\'hommage (facultatif)">' +
         '</div>' +
-        '<button class="btn btn-outline" style="width:100%;" id="mus-attacher">Attacher à la commande</button>' +
-        '<p style="font-size:.78rem; color:var(--ash); margin-top:.9rem; line-height:1.6;">' +
-          'Pensez aussi à télécharger le MP3 depuis Suno et à l\'archiver : les liens de partage ne sont pas éternels.</p>' +
-      '</div>';
+      '</div>' +
+      '<div id="mus-livraison" style="margin-top:1.2rem;"></div>';
 
     var blocAuto = auto ?
       '<div style="margin-top:1.4rem; border:1px solid var(--line-soft); border-radius:6px; padding:1.3rem;">' +
@@ -201,16 +214,124 @@
     var ok = await attacher(url, titre);
     if (ok) {
       /* Aperçu immédiat, pour vérifier qu'on a collé le bon lien */
-      $('mus-titres').innerHTML =
-        '<div class="mono" style="margin-bottom:.7rem;">Hommage rattaché</div>' +
-        '<div style="border:1px solid var(--line-strong); border-radius:6px; padding:1rem;">' +
-          '<div style="font-family:var(--ff-d); font-size:1.1rem; color:var(--paper); margin-bottom:.7rem;">' +
-            esc(titre || 'Hommage') + '</div>' +
-          (estAudio(url)
-            ? '<audio controls preload="none" style="width:100%;" src="' + esc(url) + '"></audio>'
-            : '<a class="btn btn-outline btn-sm" href="' + esc(url) + '" target="_blank" rel="noopener">Ouvrir le lien</a>') +
-        '</div>';
+      await apercuRattache(url, titre);
     }
+  }
+
+  /* ═══ Dépôt du fichier ═══ */
+  async function deposerFichier(fichier) {
+    var ref = window.MELODIA_ATELIER_REF;
+    if (!ref) {
+      message('Ouvrez d\'abord une commande depuis l\'onglet Commandes (bouton « Composer »).', 'err');
+      return;
+    }
+    var stock = window.MelodiaLivraison;
+    var souci = stock.verifier(fichier);
+    if (souci) { message(souci, 'err'); return; }
+
+    var zone = $('mus-progres');
+    var barre = zone.querySelector('span');
+    var pct = zone.querySelector('.depot-pct');
+    zone.hidden = false;
+    barre.style.width = '0%'; pct.textContent = '0 %';
+    message('Envoi de « ' + fichier.name +' » (' + (fichier.size / 1048576).toFixed(1) + ' Mo)…', 'info');
+
+    try {
+      var res = await stock.deposer(fichier, ref, function (p) {
+        barre.style.width = p + '%';
+        pct.textContent = p + ' %';
+      });
+      var titre = ($('mus-lien-titre').value || '').trim();
+      if (!titre) {
+        var h = $('at-title-h');
+        titre = h ? h.textContent.replace(/[«»]/g, '').trim() : '';
+        if (/^Les paroles$/i.test(titre)) titre = fichier.name.replace(/\.[a-z0-9]+$/i, '');
+      }
+      var ok = await attacher(res.url, titre);
+      zone.hidden = true;
+      if (ok) {
+        message(res.local
+          ? 'MP3 enregistré sur cet appareil et rattaché à la commande. Il est à joindre au courriel de livraison ci-dessous.'
+          : 'MP3 envoyé et rattaché à la commande. Le client dispose d\'un lien permanent.', 'ok');
+        await apercuRattache(res.url, titre);
+      }
+    } catch (e) {
+      zone.hidden = true;
+      message(e.message, 'err');
+    }
+  }
+
+  /* ═══ Aperçu de l'hommage rattaché ═══ */
+  async function apercuRattache(url, titre) {
+    var z = $('mus-titres');
+    if (!z) return;
+    var stock = window.MelodiaLivraison;
+    var local = stock.estLocal(url);
+    var lecture = await stock.urlEcoute(url);
+
+    z.innerHTML =
+      '<div class="mono" style="margin-bottom:.7rem;">Hommage rattaché' + (local ? ' · sur cet appareil' : '') + '</div>' +
+      '<div style="border:1px solid var(--line-strong); border-radius:6px; padding:1rem;">' +
+        '<div style="font-family:var(--ff-d); font-size:1.1rem; color:var(--paper); margin-bottom:.7rem;">' +
+          esc(titre || 'Hommage') + '</div>' +
+        (lecture && (local || estAudio(url))
+          ? '<audio controls preload="none" style="width:100%;" src="' + esc(lecture) + '"></audio>'
+          : '<a class="btn btn-outline btn-sm" href="' + esc(url) + '" target="_blank" rel="noopener">Ouvrir le lien</a>') +
+      '</div>';
+    await rendreLivraison();
+  }
+
+  /* ═══ Livraison au client ═══ */
+  async function rendreLivraison() {
+    var hote = $('mus-livraison');
+    if (!hote) return;
+    var ref = window.MELODIA_ATELIER_REF;
+    var cmd = (window.ORDERS || []).filter(function (o) { return o.ref === ref; })[0];
+    if (!cmd || !cmd.audio_url) { hote.innerHTML = ''; return; }
+
+    var stock = window.MelodiaLivraison;
+    var lettre = stock.composer(cmd, cmd.audio_url);
+
+    hote.innerHTML =
+      '<div style="border:1px solid var(--line-strong); border-radius:6px; padding:1.3rem;">' +
+        '<div class="mono" style="color:var(--or-patina); margin-bottom:.9rem;">Étape 3 — livrer à la famille</div>' +
+        '<div class="wz-line" style="padding:.3rem 0;"><span>Destinataire</span><b>' + esc(cmd.user_email || '—') + '</b></div>' +
+        '<div class="wz-line" style="padding:.3rem 0; margin-bottom:1rem;"><span>Commande</span><b>' + esc(cmd.ref) + ' · ' + esc(cmd.defunt || '') + '</b></div>' +
+        (lettre.local
+          ? '<div class="form-msg info" style="display:block; margin-bottom:1rem;">Le fichier est sur cet appareil : téléchargez-le, puis joignez-le au message.</div>'
+          : '') +
+        '<div class="field">' +
+          '<label class="field-label" for="liv-corps">Message — modifiable avant envoi</label>' +
+          '<textarea class="field-area" id="liv-corps" style="min-height:260px; font-size:.88rem; line-height:1.7;">' + esc(lettre.corps) + '</textarea>' +
+        '</div>' +
+        '<div style="display:flex; gap:.7rem; flex-wrap:wrap;">' +
+          (lettre.local ? '<button class="btn btn-outline" id="liv-dl">Télécharger le MP3</button>' : '') +
+          '<button class="btn btn-gold" id="liv-envoi" style="flex:1; min-width:180px;">Ouvrir ma messagerie</button>' +
+          '<button class="btn btn-ghost" id="liv-copie">Copier le message</button>' +
+        '</div>' +
+        '<p style="font-size:.78rem; color:var(--ash); margin-top:.9rem; line-height:1.6;">' +
+          'Après envoi, pensez à passer la commande au statut <b style="color:var(--bone);">Livrée</b> depuis l\'onglet Commandes.</p>' +
+      '</div>';
+
+    var envoi = $('liv-envoi');
+    envoi.addEventListener('click', function () {
+      stock.ouvrirMessagerie(cmd.user_email, lettre.sujet, $('liv-corps').value);
+      message('Votre messagerie s\'ouvre avec le message pré-rempli.', 'info');
+    });
+    $('liv-copie').addEventListener('click', function () {
+      if (navigator.clipboard) navigator.clipboard.writeText($('liv-corps').value);
+      message('Message copié.', 'ok');
+    });
+    var dl = $('liv-dl');
+    if (dl) dl.addEventListener('click', async function () {
+      var enr = await stock.lireLocal(ref);
+      if (!enr) { message('Fichier introuvable sur cet appareil — redéposez-le.', 'err'); return; }
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(enr.blob);
+      a.download = enr.nom || (ref + '.mp3');
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+    });
   }
 
   /* ═══ Composition automatique ═══ */
@@ -293,6 +414,34 @@
 
     $('mus-attacher').addEventListener('click', attacherLien);
     $('mus-lien').addEventListener('keydown', function (e) { if (e.key === 'Enter') attacherLien(); });
+
+    /* Zone de dépôt : clic, clavier et glisser-déposer */
+    var depot = $('mus-depot'), champFichier = $('mus-fichier');
+    depot.addEventListener('click', function () { champFichier.click(); });
+    depot.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); champFichier.click(); }
+    });
+    champFichier.addEventListener('change', function () {
+      if (champFichier.files[0]) deposerFichier(champFichier.files[0]);
+      champFichier.value = '';
+    });
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      depot.addEventListener(ev, function (e) { e.preventDefault(); depot.classList.add('over'); });
+    });
+    ['dragleave', 'drop'].forEach(function (ev) {
+      depot.addEventListener(ev, function (e) { e.preventDefault(); depot.classList.remove('over'); });
+    });
+    depot.addEventListener('drop', function (e) {
+      var f = e.dataTransfer && e.dataTransfer.files[0];
+      if (f) deposerFichier(f);
+    });
+
+    /* Si la commande a déjà un hommage, on reprend au bon endroit */
+    var refOuverte = window.MELODIA_ATELIER_REF;
+    if (refOuverte) {
+      var dejaLa = (window.ORDERS || []).filter(function (o) { return o.ref === refOuverte; })[0];
+      if (dejaLa && dejaLa.audio_url) apercuRattache(dejaLa.audio_url, dejaLa.audio_title);
+    }
 
     if (config.configured) {
       $('mus-go').addEventListener('click', composer);
