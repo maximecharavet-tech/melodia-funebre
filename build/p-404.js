@@ -1,4 +1,4 @@
-const { ICON, TEL, TEL_HREF } = require('./gen.js');
+const { ICON } = require('./gen.js');
 module.exports = {
   file: '404.html',
   title: 'Page introuvable | Melodia Funèbre',

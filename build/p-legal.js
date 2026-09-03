@@ -1,4 +1,4 @@
-const { ICON, TEL, TEL_HREF, MAIL, SITE } = require('./gen.js');
+const { ICON, MAIL, SITE } = require('./gen.js');
 
 const F = t => `<span class="tofill">${t}</span>`;
 

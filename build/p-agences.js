@@ -1,4 +1,4 @@
-const { ICON, TEL, TEL_HREF, MAIL } = require('./gen.js');
+const { ICON, MAIL } = require('./gen.js');
 const P = require('./parts.js');
 
 const FAQ_B2B = [

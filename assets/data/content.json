@@ -2,9 +2,7 @@
   "version": 1,
   "updated": "2026-09-02T20:46:07.726Z",
   "contact": {
-    "telHref": "+33784101696",
-    "email": "contact@melodia-funebre.fr",
-    "telInterne": "07 84 10 16 96"
+    "email": "contact@melodia-funebre.fr"
   },
   "intro": {
     "enabled": true,

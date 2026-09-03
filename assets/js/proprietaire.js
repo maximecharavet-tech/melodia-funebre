@@ -314,9 +314,9 @@
         '<div class="panel-sub" style="margin-bottom:1.4rem;">Le numéro n\'est plus affiché sur le site — les visiteurs demandent à être rappelés. Il sert à votre signature de livraison.</div>' +
         '<div class="field-row">' +
           '<div class="field"><label class="field-label">Votre numéro (interne)</label>' +
-            '<input class="field-input" id="rg-tel" value="' + esc(c.telInterne || c.tel || '') + '" placeholder="07 84 10 16 96"></div>' +
+            '<input class="field-input" id="rg-tel" value="' + esc(c.telInterne || c.tel || '') + '" placeholder="06 00 00 00 00"></div>' +
           '<div class="field"><label class="field-label">Format international</label>' +
-            '<input class="field-input" id="rg-telhref" value="' + esc(c.telHref || '') + '" placeholder="+33784101696">' +
+            '<input class="field-input" id="rg-telhref" value="' + esc(c.telHref || '') + '" placeholder="+33600000000">' +
             '<div class="field-hint">Sans espace. Non publié : conservé pour vos courriels de livraison.</div></div>' +
         '</div>' +
         '<div class="field"><label class="field-label">Adresse email</label>' +

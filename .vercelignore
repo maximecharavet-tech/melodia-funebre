@@ -1,0 +1,13 @@
+# Fichiers présents dans le dépôt mais qui n'ont rien à faire en ligne.
+# Tout ce qui est à la racine d'un site statique est servi tel quel : sans
+# cette liste, la maquette d'origine et le générateur seraient consultables.
+
+# Maquette d'origine : ancien tarif, ancienne charte, et le numéro personnel
+# du fondateur en lien « tel: ». Conservée pour mémoire, jamais publiée.
+archive/
+
+# Générateur des pages et outils de développement : les pages qu'ils
+# produisent sont committées, eux n'ont pas à être téléchargeables.
+build/
+scripts/
+.github/
