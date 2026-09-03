@@ -160,3 +160,33 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .own-row { flex-wrap: wrap; }
   .own-acts { width: 100%; justify-content: flex-end; }
 }
+
+/* ═══ Zone de dépôt du MP3 ═══ */
+.depot {
+  border: 1px dashed var(--line-strong); border-radius: 8px;
+  padding: 1.8rem 1.2rem; text-align: center; cursor: pointer;
+  background: rgba(255,255,255,.015);
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.depot:hover, .depot:focus-visible { border-color: var(--or); background: var(--or-soft); }
+.depot.over { border-color: var(--or); background: rgba(201,168,76,.12); transform: scale(1.01); }
+.depot-ico {
+  font-family: var(--ff-d); font-size: 2rem; color: var(--or-patina);
+  line-height: 1; margin-bottom: .6rem;
+}
+.depot-txt { font-size: .95rem; color: var(--paper); }
+.depot-txt u { color: var(--or); text-underline-offset: 3px; }
+.depot-sub { font-size: .78rem; color: var(--ash); margin-top: .45rem; line-height: 1.5; }
+
+.depot-progres { margin-top: .9rem; display: flex; align-items: center; gap: .8rem; }
+.depot-barre {
+  flex: 1; height: 4px; border-radius: 100px; background: rgba(255,255,255,.08); overflow: hidden;
+}
+.depot-barre span {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--or-patina), var(--or-bright));
+  transition: width .2s ease;
+}
+.depot-pct {
+  font-family: var(--ff-m); font-size: .6rem; color: var(--or); flex: none; min-width: 3.2em; text-align: right;
+}

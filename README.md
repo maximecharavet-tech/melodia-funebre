@@ -31,6 +31,7 @@ melodia-funebre/
 │   ├── js/player.js       Lecteur audio avec spectre réel (Web Audio API)
 │   ├── js/order.js        Tunnel de commande, récapitulatif vivant, brouillon sauvegardé
 │   ├── js/atelier-music.js  Atelier : export vers Suno et rattachement de l'hommage
+│   ├── js/livraison.js      Dépôt du MP3 et courriel de livraison
 │   ├── js/content.js        Applique le contenu éditable sur les pages
 │   ├── js/proprietaire.js   Mode propriétaire : édition du site, clients, publication
 │   ├── js/auth.js         Comptes et sessions (localStorage ou Supabase)
@@ -240,12 +241,45 @@ Depuis **Console maître → Commandes → « Composer »** sur une commande :
 
 1. **Écrire les paroles** — le bouton de gauche rédige titre, paroles et direction musicale à partir du brief. Relisez et corrigez : c'est votre texte.
 2. **« Copier le brief et ouvrir Suno »** — titre, style et paroles partent dans le presse-papiers, Suno s'ouvre. Sur place : **Create** → onglet **Custom** → collez les paroles dans *Lyrics* et le style dans *Style of Music*.
-3. **Rattacher l'hommage terminé** — revenez dans l'atelier et collez le lien de la chanson. Dans Suno : **⋯ → Share → Copy link**. Un lien direct vers un `.mp3` fonctionne aussi, et devient alors écoutable dans la fiche.
-4. **Avancer le statut** — Reçue → Brief validé → En composition → Livrée. La famille suit chaque étape depuis son espace.
+3. **Déposer le MP3** — téléchargez la chanson depuis Suno, puis glissez le fichier dans la zone de dépôt de l'atelier. Un lien de partage reste accepté, dans le repli *Ou rattacher un lien*.
+4. **Livrer la famille** — l'étape 3 compose le courriel, que vous relisez avant de l'envoyer.
+5. **Avancer le statut** — Reçue → Brief validé → En composition → Livrée. La famille suit chaque étape depuis son espace.
 
 L'hommage rattaché apparaît ensuite dans la fiche de commande, en console maître comme dans l'espace de l'agence.
 
 > Téléchargez toujours le MP3 depuis Suno et archivez-le : les liens de partage ne sont pas éternels.
+
+### Déposer le MP3 et livrer la famille
+
+Une fois la chanson téléchargée depuis Suno, **glissez le MP3 dans la zone de dépôt** de l'atelier. Plus besoin de coller un lien — le champ reste disponible, replié, pour les cas où vous préférez un lien.
+
+Le dépôt fonctionne dans deux modes, choisis automatiquement :
+
+| Mode | Condition | Ce que reçoit la famille |
+|---|---|---|
+| **Lien permanent** | Supabase configuré | Un lien à ouvrir depuis n'importe quel appareil, sans pièce jointe lourde |
+| **Sur l'appareil** | Aucune configuration | Le fichier reste dans ce navigateur ; vous le joignez au courriel |
+
+Dans les deux cas, l'étape 3 de l'atelier **compose le courriel de livraison** : destinataire, objet, message rappelant les droits d'usage et la possibilité de reprise, référence de commande. Le texte est modifiable avant envoi, et le bouton ouvre votre messagerie pré-remplie.
+
+> Le fichier est envoyé **directement du navigateur au stockage**, sans passer par une fonction serveur : la limite de 4,5 Mo des fonctions Vercel ne s'applique donc pas. Plafond retenu : 40 Mo.
+
+### Activer le lien permanent (Supabase Storage)
+
+Trois minutes, et vos clients n'ont plus de pièce jointe à recevoir.
+
+1. [supabase.com](https://supabase.com) → votre projet → **Storage** → **New bucket**
+2. Nom : `hommages` — cochez **Public bucket**
+3. **SQL Editor**, exécutez :
+
+```sql
+create policy "depot hommages" on storage.objects
+  for insert to anon with check (bucket_id = 'hommages');
+```
+
+4. Renseignez `SUPABASE_URL` et `SUPABASE_ANON_KEY` dans `assets/js/config.js`
+
+> ⚠️ Cette règle autorise l'envoi avec la clé publique du projet, donc techniquement par quiconque la lit dans le code du site. C'est acceptable pour démarrer ; dès que vous aurez activé l'authentification Supabase, remplacez `to anon` par `to authenticated` pour réserver le dépôt aux comptes connectés.
 
 ### Demain : l'automatisation
 
