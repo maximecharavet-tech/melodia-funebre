@@ -41,7 +41,7 @@ melodia-funebre/
 │   └── js/config.js       Configuration Supabase (vide = mode démo)
 ├── audio/              3 démos MP3 (Maurice, Monique, Sergio)
 ├── assets/data/content.json  Contenu éditable depuis le mode propriétaire
-├── build/              Générateur des pages (npm run build)
+├── build/              Générateur des pages (npm run pages)
 ├── scripts/check.js    Vérifie les fichiers et les liens internes
 ├── scripts/serve-lan.js  Serveur local accessible depuis un téléphone du réseau
 ├── vercel.json         Config hébergement (cache, sécurité, clean URLs)
