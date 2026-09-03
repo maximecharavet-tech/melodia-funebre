@@ -7,7 +7,7 @@ const FAQ_B2B = [
   { q: "Qui parle à la famille ?", a: "Vous restez l'interlocuteur de la famille. Vous pouvez soit saisir le brief vous-même en trois minutes depuis votre espace, soit nous transmettre le contact pour que nous menions l'entretien de cinq minutes à votre place, en votre nom." },
   { q: "Que se passe-t-il si la famille n'est pas satisfaite ?", a: "Nous reprenons la composition à nos frais. Si la famille refuse malgré tout l'œuvre, elle n'est pas facturée — et votre agence n'avance rien. Le risque commercial est intégralement de notre côté." },
   { q: "Combien de temps pour démarrer ?", a: "Vingt minutes. Vous créez votre compte partenaire, vous recevez le kit de présentation, et la première composition est offerte pour que vous puissiez la présenter à une famille avant tout engagement." },
-  { q: "Y a-t-il une exclusivité territoriale ?", a: "Nous limitons volontairement le nombre d'agences partenaires par bassin de population, pour que le service reste un vrai facteur de différenciation. Appelez-nous pour connaître la disponibilité de votre secteur." }
+  { q: "Y a-t-il une exclusivité territoriale ?", a: "Nous limitons volontairement le nombre d'agences partenaires par bassin de population, pour que le service reste un vrai facteur de différenciation. Demandez à être rappelé pour connaître la disponibilité de votre secteur." }
 ];
 
 module.exports = {
