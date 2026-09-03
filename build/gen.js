@@ -4,10 +4,9 @@ const path = require('path');
 const OUT = process.argv[2] || '.';
 
 const SITE = 'https://melodia-funebre.fr';
-/* Conservé pour les données structurées et le pied de page interne :
-   le numéro n'est plus affiché publiquement, on demande un rappel. */
-const TEL = '07 84 10 16 96';
-const TEL_HREF = '+33784101696';
+/* Aucun numéro dans le site : la famille demande à être rappelée. Le
+   numéro ne doit pas non plus revenir par les données structurées, qui
+   sont lues par les moteurs et publiées en clair. */
 const MAIL = 'contact@melodia-funebre.fr';
 
 const NAVITEMS = [
@@ -62,7 +61,7 @@ ${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta prop
 <link rel="manifest" href="/site.webmanifest">
 <meta name="apple-mobile-web-app-title" content="Melodia">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="format-detection" content="telephone=yes">
+<meta name="format-detection" content="telephone=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -202,4 +201,4 @@ ${p.inline || ''}
 </html>`;
 }
 
-module.exports = { page, ICON, SITE, TEL, TEL_HREF, MAIL, head, nav, footer };
+module.exports = { page, ICON, SITE, MAIL, head, nav, footer };

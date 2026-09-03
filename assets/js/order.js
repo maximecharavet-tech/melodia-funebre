@@ -245,7 +245,7 @@
       if (conf) { conf.style.display = 'block'; conf.scrollIntoView({ behavior: 'smooth' }); }
     } catch (err) {
       if (msg) { msg.className = 'form-msg err'; msg.textContent = 'Envoi impossible : ' + err.message; }
-      if (window.melodiaToast) window.melodiaToast('L\'envoi a échoué. Appelez-nous au 07 84 10 16 96.');
+      if (window.melodiaToast) window.melodiaToast('L\'envoi a échoué. Écrivez-nous à contact@melodia-funebre.fr, nous reprenons la commande avec vous.');
     } finally {
       if (btn) { btn.classList.remove('is-loading'); btn.disabled = false; }
     }

@@ -1,4 +1,4 @@
-const { ICON, TEL, TEL_HREF } = require('./gen.js');
+const { ICON } = require('./gen.js');
 const P = require('./parts.js');
 const { OFFERS, FAQ, STYLES } = require('./data.js');
 

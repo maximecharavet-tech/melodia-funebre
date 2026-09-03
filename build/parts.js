@@ -1,5 +1,5 @@
 /* Blocs réutilisables entre pages */
-const { ICON, TEL, TEL_HREF, SITE } = require('./gen.js');
+const { ICON, SITE } = require('./gen.js');
 const { OFFERS, TESTIS, FAQ, STYLES } = require('./data.js');
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -109,7 +109,7 @@ const jsonldOrg = {
   name: 'Melodia Funèbre',
   description: "Maison française de composition musicale personnalisée pour cérémonies funéraires. Une œuvre originale par défunt, livrée en 24 heures, sans droits SACEM.",
   url: SITE,
-  telephone: '+33784101696',
+  /* Pas de « telephone » : ces données sont publiques et indexées. */
   email: 'contact@melodia-funebre.fr',
   image: SITE + '/assets/img/logo-melodia.jpg',
   logo: SITE + '/assets/img/logo-melodia.jpg',

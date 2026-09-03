@@ -196,7 +196,7 @@
         '',
         'Maxime Charavet',
         'Melodia Funèbre',
-        (window.MELODIA_TEL || '07 84 10 16 96'),
+        'contact@melodia-funebre.fr',
         'Référence ' + (commande.ref || '')
       );
       return {
