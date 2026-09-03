@@ -87,11 +87,15 @@ export default async function handler(req, res) {
     let data; try { data = JSON.parse(texte); } catch (e) { data = null; }
 
     if (!r.ok || !data) {
+      /* On relaie le motif exact : sans lui, un 400 est indéboguable */
+      var motif = (data && (data.erreur || data.error || data.message || data.detail)) || texte.slice(0, 300);
       return res.status(r.status === 429 ? 429 : 502).json({
         error: r.status === 429
           ? 'L\'annuaire public limite temporairement les requêtes. Réessayez dans un instant.'
           : 'L\'annuaire public a répondu ' + r.status + '.',
-        code: 'SOURCE_ERROR'
+        code: 'SOURCE_ERROR',
+        motif: motif,
+        requete: params.toString()
       });
     }
 
