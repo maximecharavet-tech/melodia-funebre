@@ -44,12 +44,34 @@ function etablissementRetenu(e, dep) {
   return liste[0] || e.siege || {};
 }
 
+/* Le siège détaille la voie champ par champ ; les autres établissements ne
+   donnent qu'une adresse complète, code postal et commune compris. Comme la
+   fiche affiche déjà la ville, on retire cette queue pour ne pas la lire deux
+   fois. */
+function voie(s) {
+  const detail = [s.numero_voie, s.type_voie, s.libelle_voie].filter(Boolean).join(' ').trim();
+  if (detail) return detail;
+
+  let a = String(s.adresse || '').trim();
+  const queues = [
+    [s.code_postal, s.libelle_commune].filter(Boolean).join(' '),
+    s.libelle_commune,
+    s.code_postal
+  ].filter(Boolean);
+  for (const q of queues) {
+    if (a.length > q.length && a.toUpperCase().endsWith(String(q).toUpperCase())) {
+      a = a.slice(0, a.length - String(q).length);
+      break;
+    }
+  }
+  return a.replace(/[\s,]+$/, '').trim();
+}
+
 function normaliser(e, dep) {
   const s = etablissementRetenu(e, dep);
   const ville = s.libelle_commune || '';
   const cp = s.code_postal || '';
-  const adresse = [s.numero_voie, s.type_voie, s.libelle_voie]
-    .filter(Boolean).join(' ') || s.adresse || '';
+  const adresse = voie(s);
 
   // Le dirigeant, quand il est publié, vaut mieux qu'un « Bonjour »
   const d = (e.dirigeants || [])[0] || {};
