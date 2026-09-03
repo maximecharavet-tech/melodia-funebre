@@ -51,6 +51,8 @@
 .o-meta { font-family: var(--ff-m); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--ash); margin-top: 4px; text-transform: uppercase; }
 .o-brief { font-size: 0.85rem; color: var(--ash); margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line-soft); line-height: 1.75; }
 .pill { font-family: var(--ff-m); font-size: 0.53rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.35rem 0.8rem; border: 1px solid; white-space: nowrap; }
+/* Enseigne à plusieurs agences : la décision se prend au siège */
+.pill-reseau { display: inline-block; vertical-align: middle; margin-left: 0.5rem; color: var(--or-patina); border-color: rgba(197, 164, 106, 0.32); }
 
 .tl { display: flex; gap: 0; margin-top: 1rem; }
 .tl-s { flex: 1; text-align: center; position: relative; }
