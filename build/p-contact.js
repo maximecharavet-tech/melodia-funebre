@@ -4,8 +4,8 @@ const { FAQ } = require('./data.js');
 
 module.exports = {
   file: 'contact.html',
-  title: 'Nous contacter — 7 j/7 pour les urgences | Melodia Funèbre',
-  desc: "Joignez Melodia Funèbre par téléphone au 07 84 10 16 96 ou par email. Urgences traitées sept jours sur sept, réponse sous deux heures ouvrées.",
+  title: 'Nous contacter — rappel sous 2 h ouvrées | Melodia Funèbre',
+  desc: "Demandez à être rappelé par Melodia Funèbre, ou écrivez-nous. Urgences traitées sept jours sur sept, réponse sous deux heures ouvrées.",
   body: `
   <section class="section" style="padding-top:9rem;padding-bottom:0;">
     <div class="wrap">
@@ -22,10 +22,10 @@ ${P.urgency()}
       <div class="grid-3">
         <div class="card card-gold card-lift reveal">
           <div class="card-icon">${ICON.phone}</div>
-          <h3 class="h-lg">Par téléphone</h3>
-          <p>Le plus rapide, et de loin. Sept jours sur sept pour les urgences funéraires.</p>
-          <a href="tel:${TEL_HREF}" class="btn btn-gold btn-block" style="margin-top:1.4rem;">${TEL}</a>
-          <div class="mono" style="margin-top:1rem;text-align:center;">Lun – Ven 9 h – 19 h · Urgences 7 j/7</div>
+          <h3 class="h-lg">Être rappelé</h3>
+          <p>Le plus rapide, et de loin. Vous laissez vos coordonnées, nous rappelons — sept jours sur sept pour les urgences funéraires.</p>
+          <button type="button" class="btn btn-gold btn-block" style="margin-top:1.4rem;" data-rappel>Être rappelé</button>
+          <div class="mono" style="margin-top:1rem;text-align:center;">Rappel sous 2 h ouvrées · Urgences 7 j/7</div>
         </div>
         <div class="card card-lift reveal">
           <div class="card-icon">${ICON.pen}</div>
@@ -91,7 +91,7 @@ ${P.faq([FAQ[0], FAQ[1], FAQ[3], FAQ[6]])}
       <h2 class="h-xl">Le temps <em>presse ?</em></h2>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Un appel de trois minutes, et la composition peut démarrer aujourd'hui.</p>
       <div class="hero-actions">
-        <a href="tel:${TEL_HREF}" class="btn btn-gold btn-lg">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-gold btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
         <a href="offres.html" class="btn btn-outline btn-lg">Commander en ligne</a>
       </div>
     </div>

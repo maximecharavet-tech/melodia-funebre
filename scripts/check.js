@@ -3,11 +3,11 @@ const fs = require('fs');
 
 const files = [
   'index.html', 'processus.html', 'demos.html', 'offres.html', 'agences.html',
-  'contact.html', 'compte.html', 'dashboard-partenaire.html', 'dashboard-master.html',
+  'contact.html', 'compte.html', 'dashboard-partenaire.html', 'dashboard-master.html', 'dashboard-commercial.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
   'assets/css/style.css', 'assets/css/dashboard.css',
   'assets/js/main.js', 'assets/js/player.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
-  'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/livraison.js', 'assets/data/content.json',
+  'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
   'assets/js/auth.js', 'assets/js/config.js',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-anime.mp4',
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'favicon.ico', 'site.webmanifest',

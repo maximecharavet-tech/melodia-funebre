@@ -16,7 +16,7 @@ module.exports = {
       </p>
       <div class="hero-actions reveal in reveal-d3" style="justify-content:center;">
         <a href="index.html" class="btn btn-gold btn-lg">Retour à l'accueil</a>
-        <a href="tel:${TEL_HREF}" class="btn btn-outline btn-lg">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
       <div class="reveal in reveal-d4" style="margin-top:3.5rem;">
         <hr class="rule-gold" style="max-width:340px; margin:0 auto 2rem;">

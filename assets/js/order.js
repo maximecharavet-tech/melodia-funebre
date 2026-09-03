@@ -221,6 +221,20 @@
         anecdote: briefComplet(), style: state.style,
         urgence: !!state.urgence, paid: !!paid, paypal_id: pid || ''
       });
+      /* Prévenir la maison : sans cet appel, la commande resterait dans le
+         navigateur du client et personne ne la verrait. On n'attend pas la
+         réponse — la confirmation ne doit pas dépendre du courriel. */
+      fetch('/api/lead', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'commande', ref: order.ref,
+          nom: state.name, email: state.email, tel: state.tel,
+          defunt: state.defunt, offre: state.offer + ' · ' + euro(priceOf()),
+          urgent: !!state.urgence,
+          message: briefComplet(), page: location.pathname
+        })
+      }).catch(function () {});
+
       try { localStorage.removeItem(DRAFT); } catch (e) {}
       var ref = $('#confirm-ref');
       if (ref) ref.textContent = order.ref;

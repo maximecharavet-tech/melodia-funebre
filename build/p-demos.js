@@ -84,7 +84,7 @@ ${P.urgency()}
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Trois mots, un souvenir, et nous nous occupons du reste.</p>
       <div class="hero-actions">
         <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
-        <a href="tel:${TEL_HREF}" class="btn btn-outline btn-lg">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>
   </section>`

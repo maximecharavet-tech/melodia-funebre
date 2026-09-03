@@ -2,9 +2,9 @@
   "version": 1,
   "updated": "2026-09-02T20:46:07.726Z",
   "contact": {
-    "tel": "07 84 10 16 96",
     "telHref": "+33784101696",
-    "email": "contact@melodia-funebre.fr"
+    "email": "contact@melodia-funebre.fr",
+    "telInterne": "07 84 10 16 96"
   },
   "intro": {
     "enabled": true,
@@ -133,7 +133,7 @@
       "id": "faq-1",
       "visible": true,
       "q": "Combien de temps faut-il vraiment pour recevoir l'hommage ?",
-      "a": "Vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. En cas de cérémonie imminente, notre priorité six heures permet une livraison le jour même : appelez-nous directement au 07 84 10 16 96, nous décrochons sept jours sur sept."
+      "a": "Vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. En cas de cérémonie imminente, notre priorité six heures permet une livraison le jour même : demandez à être rappelé en cochant l'urgence, nous répondons sept jours sur sept."
     },
     {
       "id": "faq-2",

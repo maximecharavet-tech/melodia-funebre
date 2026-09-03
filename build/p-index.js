@@ -220,7 +220,7 @@ ${P.faq(null, true)}
       </div>
       <div class="center reveal" style="margin-top:2.5rem;">
         <p class="lead" style="margin-bottom:1.4rem;">Une question qui n'est pas ici ?</p>
-        <div class="hero-actions"><a href="tel:${TEL_HREF}" class="btn btn-outline">${ICON.phone} ${TEL}</a><a href="contact.html" class="btn btn-ghost">Nous écrire</a></div>
+        <div class="hero-actions"><button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button><a href="contact.html" class="btn btn-ghost">Nous écrire</a></div>
       </div>
     </div>
   </section>
@@ -232,7 +232,7 @@ ${P.faq(null, true)}
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape. Et si l'œuvre ne vous touche pas, nous la reprenons.</p>
       <div class="hero-actions">
         <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
-        <a href="tel:${TEL_HREF}" class="btn btn-outline btn-lg">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>
   </section>`

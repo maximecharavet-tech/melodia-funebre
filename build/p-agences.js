@@ -138,7 +138,7 @@ ${P.faq(FAQ_B2B)}
       <h2 class="h-xl">Votre secteur est-il<br>encore <em>libre ?</em></h2>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Nous limitons le nombre d'agences partenaires par bassin de population. Un appel de trois minutes suffit à le savoir.</p>
       <div class="hero-actions">
-        <a href="tel:${TEL_HREF}" class="btn btn-gold btn-lg">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-gold btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
         <a href="mailto:${MAIL}?subject=Partenariat%20agence" class="btn btn-outline btn-lg">Écrire au fondateur</a>
       </div>
     </div>

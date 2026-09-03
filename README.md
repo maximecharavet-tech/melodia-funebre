@@ -21,6 +21,7 @@ melodia-funebre/
 ├── compte.html         Connexion / inscription (familles et agences)
 ├── dashboard-master.html      Console de pilotage (KPIs + Atelier IA)
 ├── dashboard-partenaire.html  Espace agence partenaire
+├── dashboard-commercial.html  Console de prospection des collaborateurs
 ├── mentions-legales.html · cgv.html · confidentialite.html
 ├── 404.html            Page d'erreur, avec liens de rattrapage
 ├── api/                Fonctions serverless (paroles, musique — automatisation)
@@ -32,6 +33,8 @@ melodia-funebre/
 │   ├── js/order.js        Tunnel de commande, récapitulatif vivant, brouillon sauvegardé
 │   ├── js/atelier-music.js  Atelier : export vers Suno et rattachement de l'hommage
 │   ├── js/livraison.js      Dépôt du MP3 et courriel de livraison
+│   ├── js/rappel.js         Demande de rappel, en place du téléphone
+│   ├── js/commercial.js     Console commerciale : annuaire, fiches, courriels
 │   ├── js/content.js        Applique le contenu éditable sur les pages
 │   ├── js/proprietaire.js   Mode propriétaire : édition du site, clients, publication
 │   ├── js/auth.js         Comptes et sessions (localStorage ou Supabase)
@@ -119,6 +122,91 @@ Depuis la console : **Mode propriétaire → Réglages**. Le message accepte le 
 Le message par défaut, lui, est dans `build/p-index.js`.
 
 > ⚠️ **Sur l'allégation « premier site mondial »** — en France, une allégation de supériorité absolue doit pouvoir être prouvée : à défaut, elle relève de la pratique commerciale trompeuse (article L121-2 du Code de la consommation), et un concurrent comme la DGCCRF peut la contester. Formulations défendables sans démonstration : *« La première maison française dédiée à la musique personnalisée pour funérailles »*, ou *« Une maison dédiée à la musique personnalisée pour funérailles »*.
+
+## ☎ Le rappel à la place du téléphone
+
+Le numéro n'est plus affiché nulle part sur le site. Chaque bouton d'appel est devenu **« Être rappelé »** : la famille laisse son nom, son numéro, le meilleur moment, et coche l'urgence si la cérémonie approche.
+
+Vous restez maître de qui vous rappelez, et une demande urgente vous est signalée comme telle.
+
+### Recevoir les demandes
+
+Sans configuration, la demande ouvre la messagerie du visiteur avec un message pré-rempli : rien n'est perdu, mais il faut qu'il clique une fois de plus. Pour recevoir directement les demandes **et les commandes** dans votre boîte :
+
+1. Créez un compte sur [resend.com](https://resend.com) (offre gratuite : 3 000 courriels par mois)
+2. Vérifiez votre domaine, puis créez une clé d'API
+3. Vercel → Settings → Environment Variables :
+
+| Variable | Exemple |
+|---|---|
+| `RESEND_API_KEY` | `re_…` |
+| `LEAD_TO` | `contact@melodia-funebre.fr` |
+| `LEAD_FROM` | `Melodia <notifications@melodia-funebre.fr>` |
+
+4. **Redeploy**
+
+> ⚠️ **À faire en priorité.** Sans cela, une commande passée sur le site est enregistrée dans le navigateur du client et **vous ne la voyez jamais**. C'est le trou le plus coûteux du dispositif actuel.
+
+## ◎ Console commerciale et collaborateurs
+
+**Console maître → Console commerciale**, ou directement `/dashboard-commercial.html`.
+
+### Trouver les pompes funèbres
+
+L'onglet **Rechercher** interroge l'annuaire public des entreprises de l'État (base SIRENE de l'INSEE), filtré sur le code NAF **9603Z — Services funéraires**. Aucune clé, aucun abonnement : ce sont des données ouvertes.
+
+Vous cherchez par département, éventuellement par nom ou ville, et vous ajoutez les agences à votre portefeuille — une par une, ou toute la page.
+
+> L'annuaire public ne publie **ni téléphone ni email**. Le collaborateur les complète sur la fiche au fil de sa recherche : site de l'agence, page Contact, annuaires professionnels.
+
+### Travailler les fiches
+
+Chaque fiche porte l'email, le téléphone, l'interlocuteur, des notes libres et un statut :
+
+`À contacter` → `Contacté` → `Relancé` → `Intéressé` → `Démo offerte` → `Partenaire`, ou `Sans suite`.
+
+Trois modèles de courriel sont prêts, personnalisés avec le nom de l'agence, la ville et l'interlocuteur : **premier contact**, **relance**, **composition offerte**. Ils s'ouvrent dans la messagerie du collaborateur — l'envoi part donc de sa propre adresse, ce qui vaut mieux pour la délivrabilité. **Le statut avance tout seul** à l'envoi.
+
+Le tableau de bord affiche le pipeline, le taux de conversion et une estimation du chiffre mensuel que le réseau représente.
+
+> **Cadre légal.** La prospection entre professionnels est autorisée en France sans accord préalable, à trois conditions : le message concerne leur activité, votre identité est claire, et un moyen de refuser figure dans le message. Les trois modèles comportent la ligne de refus. Une agence qui répond « STOP » doit être passée en *Sans suite* immédiatement et ne plus jamais être recontactée.
+
+### Créer un collaborateur
+
+**Mode propriétaire → Collaborateurs.** Nom, email, mot de passe, secteur. Vous lui transmettez ses identifiants ; il se connecte sur `/compte` et arrive directement sur sa console.
+
+Le tableau de l'équipe affiche, pour chacun : fiches suivies, agences contactées, partenaires signés. Vous pouvez ouvrir la console commerciale vous-même : en tant que fondateur, vous voyez **toutes** les fiches, avec un filtre par collaborateur.
+
+Un compte désactivé ne peut plus ouvrir de session.
+
+> ⚠️ **En base locale, les comptes créés n'existent que dans votre navigateur** — un collaborateur ne pourra pas se connecter depuis sa propre machine. C'est le second motif d'activer Supabase, avec le partage des commandes.
+
+### Tables Supabase à créer
+
+```sql
+create table collaborateurs (
+  id text primary key,
+  nom text, email text unique not null,
+  role text default 'commercial',
+  secteur text, tel text,
+  actif boolean default true,
+  created_at timestamptz default now()
+);
+
+create table prospects (
+  siret text primary key,
+  siren text, nom text, enseigne text,
+  adresse text, cp text, ville text, departement text,
+  dirigeant text, effectif text, creation text,
+  email text, tel text,
+  statut text default 'nouveau',
+  notes text,
+  owner text, owner_nom text,
+  dernier_contact timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+```
 
 ## ✎ Mode propriétaire
 

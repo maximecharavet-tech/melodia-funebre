@@ -221,7 +221,7 @@ ${offerChoices}
       <p style="color:var(--ash);margin-bottom:2.4rem;max-width:46ch;margin-left:auto;margin-right:auto;">Nous vous appelons sous deux heures ouvrées pour l'entretien de cinq minutes. La composition démarre juste après.</p>
       <div class="hero-actions" style="justify-content:center;">
         <a href="compte.html" class="btn btn-gold">Suivre ma commande</a>
-        <a href="tel:${TEL_HREF}" class="btn btn-outline">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>
   </section>

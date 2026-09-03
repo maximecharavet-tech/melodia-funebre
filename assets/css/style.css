@@ -1315,3 +1315,11 @@ body.intro-open { overflow: hidden; }
    Elles étaient toutes deux en ligne, donc collées bout à bout. */
 .choice-title, .choice-sub { display: block; }
 .choice-title { padding-right: 1.6rem; }
+
+/* Lien « Être rappelé » dans le pied de page : même allure que ses voisins */
+.lien-rappel {
+  color: var(--ash); font-size: 0.86rem; font: inherit; padding: 0;
+  text-align: left; transition: color var(--t-fast), padding-left var(--t-fast);
+}
+.footer-links .lien-rappel { font-size: 0.86rem; }
+.lien-rappel:hover { color: var(--or); padding-left: 4px; }
