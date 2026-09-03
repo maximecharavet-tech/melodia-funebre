@@ -153,7 +153,7 @@ Sans configuration, la demande ouvre la messagerie du visiteur avec un message p
 
 ### Trouver les pompes funèbres
 
-L'onglet **Rechercher** interroge l'annuaire public des entreprises de l'État (base SIRENE de l'INSEE), filtré sur le code NAF **9603Z — Services funéraires**. Aucune clé, aucun abonnement : ce sont des données ouvertes.
+L'onglet **Rechercher** interroge l'annuaire public des entreprises de l'État (base SIRENE de l'INSEE), filtré sur le code NAF **96.03Z — Services funéraires**. Aucune clé, aucun abonnement : ce sont des données ouvertes.
 
 Vous cherchez par département, éventuellement par nom ou ville, et vous ajoutez les agences à votre portefeuille — une par une, ou toute la page.
 
