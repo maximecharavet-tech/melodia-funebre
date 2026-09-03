@@ -18,7 +18,7 @@ ${prose}
       <div style="margin-top:3.5rem;padding-top:2rem;border-top:1px solid var(--line-soft);">
         <div class="hero-actions">
           <a href="contact.html" class="btn btn-outline">Une question ?</a>
-          <a href="tel:${TEL_HREF}" class="btn btn-ghost">${ICON.phone} ${TEL}</a>
+          <button type="button" class="btn btn-ghost" data-rappel>${ICON.phone} Être rappelé</button>
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@ Siège social : ${F('[adresse complète]')}<br>
 SIRET : ${F('[numéro SIRET]')}<br>
 Numéro de TVA : TVA non applicable, article 293 B du Code général des impôts<br>
 Directeur de la publication : Maxime Charavet<br>
-Téléphone : <a href="tel:${TEL_HREF}">${TEL}</a><br>
+Téléphone : <button type="button" class="lien-rappel" data-rappel>Être rappelé</button><br>
 Email : <a href="mailto:${MAIL}">${MAIL}</a></p>
 
 <h2>Hébergement</h2>
@@ -114,7 +114,7 @@ const cgv = legal(
 <p>Les éléments biographiques confiés lors de l'entretien servent exclusivement à la composition de l'œuvre. Ils ne font l'objet d'aucune diffusion, publication ni cession à des tiers. Une œuvre ne peut être présentée en démonstration qu'avec l'accord écrit exprès de la famille.</p>
 
 <h2>Article 10 — Réclamations et litiges</h2>
-<p>Toute réclamation peut être adressée à <a href="mailto:${MAIL}">${MAIL}</a> ou au <a href="tel:${TEL_HREF}">${TEL}</a>.</p>
+<p>Toute réclamation peut être adressée à <a href="mailto:${MAIL}">${MAIL}</a> ou au <button type="button" class="lien-rappel" data-rappel>Être rappelé</button>.</p>
 <p>Conformément à l'article L. 612-1 du Code de la consommation, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d'un litige : ${F('[médiateur à désigner — adhésion obligatoire pour les professionnels vendant aux consommateurs]')}.</p>
 <p>La plateforme européenne de règlement en ligne des litiges est accessible à l'adresse <a href="https://ec.europa.eu/consumers/odr" rel="noopener">ec.europa.eu/consumers/odr</a>.</p>
 <p>À défaut de résolution amiable, le litige relève des tribunaux français compétents.</p>`
@@ -127,7 +127,7 @@ const confid = legal(
   'Politique de confidentialité',
   "Ce que nous collectons, pourquoi, combien de temps nous le conservons, et comment exercer vos droits.",
   `<h2>Responsable du traitement</h2>
-<p>Melodia Funèbre, représentée par Maxime Charavet — <a href="mailto:${MAIL}">${MAIL}</a>, <a href="tel:${TEL_HREF}">${TEL}</a>, ${F('[adresse du siège]')}.</p>
+<p>Melodia Funèbre, représentée par Maxime Charavet — <a href="mailto:${MAIL}">${MAIL}</a>, <button type="button" class="lien-rappel" data-rappel>Être rappelé</button>, ${F('[adresse du siège]')}.</p>
 
 <h2>Données collectées</h2>
 <table>

@@ -19,7 +19,7 @@ const TESTIS = [
 
 const FAQ = [
   { q: "Combien de temps faut-il vraiment pour recevoir l'hommage ?",
-    a: "Vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. En cas de cérémonie imminente, notre priorité six heures permet une livraison le jour même : appelez-nous directement au 07 84 10 16 96, nous décrochons sept jours sur sept." },
+    a: "Vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. En cas de cérémonie imminente, notre priorité six heures permet une livraison le jour même : demandez à être rappelé en cochant l'urgence, nous répondons sept jours sur sept." },
   { q: "Faut-il payer des droits SACEM pour diffuser la chanson ?",
     a: "Non, et c'est une différence importante. Chaque œuvre est composée spécialement pour vous et vous est cédée avec ses droits d'usage. Vous pouvez la diffuser en cérémonie, la copier pour la famille, la conserver et la transmettre, sans aucune déclaration ni redevance." },
   { q: "Que se passe-t-il si la chanson ne nous touche pas ?",

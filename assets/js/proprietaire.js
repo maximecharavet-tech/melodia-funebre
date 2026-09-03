@@ -99,6 +99,7 @@
     { id: 'faq', l: 'Questions' },
     { id: 'reglages', l: 'Réglages' },
     { id: 'clients', l: 'Clients' },
+    { id: 'equipe', l: 'Collaborateurs' },
     { id: 'publication', l: 'Publication' }
   ];
 
@@ -159,6 +160,7 @@
     if (SCHEMAS[etat.section]) rendreListe(corps, SCHEMAS[etat.section]);
     else if (etat.section === 'reglages') rendreReglages(corps);
     else if (etat.section === 'clients') rendreClients(corps);
+    else if (etat.section === 'equipe') rendreEquipe(corps);
     else rendrePublication(corps);
   }
 
@@ -309,13 +311,13 @@
     hote.innerHTML =
       '<div class="panel">' +
         '<div class="panel-title">Coordonnées</div>' +
-        '<div class="panel-sub" style="margin-bottom:1.4rem;">Reprises sur toutes les pages, y compris les boutons d\'appel.</div>' +
+        '<div class="panel-sub" style="margin-bottom:1.4rem;">Le numéro n\'est plus affiché sur le site — les visiteurs demandent à être rappelés. Il sert à votre signature de livraison.</div>' +
         '<div class="field-row">' +
-          '<div class="field"><label class="field-label">Téléphone affiché</label>' +
-            '<input class="field-input" id="rg-tel" value="' + esc(c.tel || '') + '" placeholder="07 84 10 16 96"></div>' +
-          '<div class="field"><label class="field-label">Téléphone composé</label>' +
+          '<div class="field"><label class="field-label">Votre numéro (interne)</label>' +
+            '<input class="field-input" id="rg-tel" value="' + esc(c.telInterne || c.tel || '') + '" placeholder="07 84 10 16 96"></div>' +
+          '<div class="field"><label class="field-label">Format international</label>' +
             '<input class="field-input" id="rg-telhref" value="' + esc(c.telHref || '') + '" placeholder="+33784101696">' +
-            '<div class="field-hint">Format international, sans espace : c\'est lui qui est réellement appelé.</div></div>' +
+            '<div class="field-hint">Sans espace. Non publié : conservé pour vos courriels de livraison.</div></div>' +
         '</div>' +
         '<div class="field"><label class="field-label">Adresse email</label>' +
           '<input class="field-input" id="rg-email" value="' + esc(c.email || '') + '"></div>' +
@@ -342,7 +344,7 @@
       el.addEventListener('input', function () { appliquer(el.type === 'checkbox' ? el.checked : el.value); sauver(); majIndicateur(); });
       el.addEventListener('change', function () { appliquer(el.type === 'checkbox' ? el.checked : el.value); sauver(); majIndicateur(); });
     };
-    lier('rg-tel', function (v) { c.tel = v; });
+    lier('rg-tel', function (v) { c.telInterne = v; });
     lier('rg-telhref', function (v) { c.telHref = v; });
     lier('rg-email', function (v) { c.email = v; });
     lier('rg-claim', function (v) { i.claim = v; });
@@ -447,6 +449,91 @@
       message('Création impossible : ' + e.message, 'err');
     } finally {
       btn.disabled = false; btn.textContent = 'Créer la commande';
+    }
+  }
+
+  /* ═══ Collaborateurs commerciaux ═══ */
+  async function rendreEquipe(hote) {
+    hote.innerHTML = '<div class="status-live" style="display:inline-flex;">Chargement de l\'équipe…</div>';
+    var equipe = await window.MelodiaTeam.liste();
+    var prospects = await window.MelodiaProspects.all();
+
+    /* Chiffres par collaborateur : c'est là que se lit le travail réel */
+    var parPersonne = {};
+    prospects.forEach(function (pr) {
+      var k = (pr.owner || '').toLowerCase();
+      if (!parPersonne[k]) parPersonne[k] = { total: 0, contactes: 0, partenaires: 0 };
+      parPersonne[k].total++;
+      if (pr.statut && pr.statut !== 'nouveau') parPersonne[k].contactes++;
+      if (pr.statut === 'partenaire') parPersonne[k].partenaires++;
+    });
+
+    hote.innerHTML =
+      '<div class="panel">' +
+        '<div class="panel-title">Créer un <em>collaborateur</em></div>' +
+        '<div class="panel-sub" style="margin-bottom:1.4rem;">Il accède à la console commerciale et travaille son propre portefeuille. Vous voyez tout.</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label class="field-label">Nom *</label><input class="field-input" id="eq-nom" placeholder="Julie Lambert"></div>' +
+          '<div class="field"><label class="field-label">Email *</label><input class="field-input" id="eq-email" type="email" placeholder="julie@melodia-funebre.fr"></div>' +
+        '</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label class="field-label">Mot de passe *</label><input class="field-input" id="eq-pw" placeholder="6 caractères minimum"></div>' +
+          '<div class="field"><label class="field-label">Secteur</label><input class="field-input" id="eq-secteur" placeholder="Rhône-Alpes"></div>' +
+        '</div>' +
+        '<button class="btn btn-gold" style="width:100%;" id="eq-creer">Créer le compte</button>' +
+        '<p style="font-size:.8rem;color:var(--ash);margin-top:.9rem;line-height:1.6;">' +
+          'Transmettez-lui l\'adresse et le mot de passe : il se connecte sur <b style="color:var(--bone);">/compte</b> et arrive directement sur sa console.</p>' +
+      '</div>' +
+
+      '<div class="panel" style="margin-top:1.2rem;">' +
+        '<div class="panel-head"><div><div class="panel-title">L\'<em>équipe</em></div>' +
+          '<div class="panel-sub">' + equipe.length + ' collaborateur' + (equipe.length > 1 ? 's' : '') + ' · ' + prospects.length + ' fiches au total</div></div>' +
+          '<button class="btn btn-outline btn-sm" onclick="window.open(\'dashboard-commercial.html\')">Ouvrir la console commerciale</button></div>' +
+        (equipe.length ?
+          '<table class="tbl"><thead><tr><th>Collaborateur</th><th>Secteur</th><th>Fiches</th><th>Contactées</th><th>Partenaires</th><th></th></tr></thead><tbody>' +
+          equipe.map(function (c) {
+            var st = parPersonne[(c.email || '').toLowerCase()] || { total: 0, contactes: 0, partenaires: 0 };
+            return '<tr>' +
+              '<td><div style="color:var(--paper);">' + esc(c.nom || c.name) + '</div>' +
+              '<div style="color:var(--dust);font-size:.8rem;">' + esc(c.email) + '</div></td>' +
+              '<td style="color:var(--ash);">' + esc(c.secteur || '—') + '</td>' +
+              '<td>' + st.total + '</td>' +
+              '<td>' + st.contactes + '</td>' +
+              '<td style="color:' + (st.partenaires ? 'var(--green)' : 'var(--ash)') + ';">' + st.partenaires + '</td>' +
+              '<td style="text-align:right;"><button class="own-mini danger" data-suppr-eq="' + esc(c.email) + '" title="Supprimer le compte">✕</button></td>' +
+            '</tr>';
+          }).join('') + '</tbody></table>'
+          : '<p style="color:var(--ash);font-size:.9rem;">Aucun collaborateur pour l\'instant.</p>') +
+        (window.MelodiaTeam.mode === 'local' ?
+          '<div class="form-msg info" style="display:block;margin-top:1.2rem;">' +
+          'Base locale : les comptes créés ici n\'existent que dans ce navigateur. Pour qu\'un collaborateur se connecte depuis sa propre machine, activez Supabase (voir README).</div>' : '') +
+      '</div>';
+
+    $('eq-creer').addEventListener('click', creerCollaborateur);
+    Array.prototype.forEach.call(hote.querySelectorAll('[data-suppr-eq]'), function (b) {
+      b.addEventListener('click', async function () {
+        if (!confirm('Supprimer le compte de ' + b.dataset.supprEq + ' ?\n\nSes fiches de prospection sont conservées.')) return;
+        await window.MelodiaTeam.supprimer(b.dataset.supprEq);
+        rendreEquipe(hote);
+      });
+    });
+  }
+
+  async function creerCollaborateur() {
+    var v = function (id) { var e = $(id); return e ? e.value.trim() : ''; };
+    var btn = $('eq-creer');
+    btn.disabled = true; btn.textContent = 'Création…';
+    try {
+      var c = await window.MelodiaTeam.creer({
+        nom: v('eq-nom'), email: v('eq-email'), pw: v('eq-pw'), secteur: v('eq-secteur')
+      });
+      message('Compte créé pour ' + c.nom + '. Transmettez-lui son adresse et son mot de passe.', 'ok');
+      ['eq-nom', 'eq-email', 'eq-pw', 'eq-secteur'].forEach(function (id) { $(id).value = ''; });
+      rendreEquipe($('own-corps'));
+    } catch (e) {
+      message(e.message, 'err');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Créer le compte';
     }
   }
 

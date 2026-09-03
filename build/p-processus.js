@@ -144,7 +144,7 @@ ${P.faq(FAQ.slice(0, 5))}
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Trois minutes pour commander, cinq pour l'entretien. Le reste, c'est notre travail.</p>
       <div class="hero-actions">
         <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
-        <a href="tel:${TEL_HREF}" class="btn btn-outline btn-lg">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>
   </section>`

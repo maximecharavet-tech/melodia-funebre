@@ -4,6 +4,8 @@ const path = require('path');
 const OUT = process.argv[2] || '.';
 
 const SITE = 'https://melodia-funebre.fr';
+/* Conservé pour les données structurées et le pied de page interne :
+   le numéro n'est plus affiché publiquement, on demande un rappel. */
 const TEL = '07 84 10 16 96';
 const TEL_HREF = '+33784101696';
 const MAIL = 'contact@melodia-funebre.fr';
@@ -96,7 +98,7 @@ ${mlinks}
   <a href="compte.html">Mon compte</a>
   <div class="nav-mobile-cta">
     <a href="offres.html" class="btn btn-gold">Commander un hommage</a>
-    <a href="tel:${TEL_HREF}" class="btn btn-outline">${ICON.phone} ${TEL}</a>
+    <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
   </div>
 </div>`;
 }
@@ -131,7 +133,7 @@ function footer() {
         <h4>Contact</h4>
         <ul class="footer-links">
           <li><a href="mailto:${MAIL}">${MAIL}</a></li>
-          <li><a href="tel:${TEL_HREF}">${TEL}</a></li>
+          <li><button type="button" class="lien-rappel" data-rappel>Être rappelé</button></li>
           <li><a href="contact.html">Nous écrire</a></li>
         </ul>
       </div>
@@ -151,7 +153,7 @@ function footer() {
 
 function stickyCta() {
   return `<div class="sticky-cta">
-  <a href="tel:${TEL_HREF}" class="btn btn-outline">${ICON.phone} Appeler</a>
+  <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
   <a href="offres.html" class="btn btn-gold">Commander</a>
 </div>`;
 }
@@ -178,7 +180,7 @@ function intro() {
 
 function page(p) {
   /* content.js d'abord : il pose window.MELODIA_TRACKS avant le lecteur */
-  const scripts = ['assets/js/content.js', 'assets/js/main.js'].concat(p.scripts || []);
+  const scripts = ['assets/js/content.js', 'assets/js/main.js', 'assets/js/rappel.js'].concat(p.scripts || []);
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>

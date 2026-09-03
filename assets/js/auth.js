@@ -70,7 +70,13 @@
       var users = LS.get('melodia_users', {});
       var u = users[email];
       if (!u || u.pw !== hash(password)) throw new Error('Identifiant ou mot de passe incorrect.');
-      var user = { id: u.id, name: u.name, email: u.email, role: u.role || 'partner', agence: u.agence || '' };
+      /* Un compte désactivé par le fondateur ne doit plus ouvrir de session */
+      if (u.actif === false) throw new Error('Ce compte a été désactivé. Contactez la maison.');
+      var user = {
+        id: u.id, name: u.name || u.nom, email: u.email,
+        role: u.role || 'partner', agence: u.agence || '',
+        secteur: u.secteur || '', tel: u.tel || ''
+      };
       LS.set('melodia_user', user);
       return user;
     },
@@ -117,7 +123,15 @@
       if (!u) { location.href = 'compte.html'; return null; }
       return u;
     },
-    home: function () { return this.isMaster() ? 'dashboard-master.html' : 'dashboard-partenaire.html'; }
+    isCommercial: function () { var u = this.current(); return !!u && u.role === 'commercial'; },
+
+    home: function () {
+      var u = this.current();
+      if (!u) return 'compte.html';
+      if (u.role === 'master') return 'dashboard-master.html';
+      if (u.role === 'commercial') return 'dashboard-commercial.html';
+      return 'dashboard-partenaire.html';
+    }
   };
 
   /* ═══ DONNÉES ═══ */
@@ -224,6 +238,147 @@
           habitude: x.habitude, anecdote: x.anecdote, style: x.style, urgence: false, paid: true, paypal_id: ''
         };
       }));
+    }
+  };
+
+  /* ═══ ÉQUIPE COMMERCIALE ═══
+     Les comptes collaborateurs sont créés par le fondateur depuis sa
+     console. Ils partagent le magasin des comptes, distingués par leur
+     rôle. */
+  window.MelodiaTeam = {
+    mode: HAS_SB ? 'supabase' : 'local',
+
+    async liste() {
+      if (HAS_SB) {
+        try { return await sb('/rest/v1/collaborateurs?order=created_at.desc'); }
+        catch (e) { return []; }
+      }
+      var users = LS.get('melodia_users', {});
+      return Object.keys(users)
+        .map(function (k) { return users[k]; })
+        .filter(function (u) { return u.role === 'commercial'; });
+    },
+
+    async creer(data) {
+      var email = (data.email || '').trim().toLowerCase();
+      if (!data.nom || !email || !data.pw) throw new Error('Nom, email et mot de passe sont requis.');
+      if (data.pw.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.');
+      if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email)) throw new Error('Adresse email invalide.');
+
+      var fiche = {
+        id: uid(), nom: data.nom, name: data.nom, email: email,
+        role: 'commercial', secteur: data.secteur || '',
+        tel: data.tel || '', actif: true, created_at: new Date().toISOString()
+      };
+
+      if (HAS_SB) {
+        var rows = await sb('/rest/v1/collaborateurs', {
+          method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(fiche)
+        });
+        return (rows && rows[0]) || fiche;
+      }
+      var users = LS.get('melodia_users', {});
+      if (users[email]) throw new Error('Un compte existe déjà avec cette adresse.');
+      users[email] = Object.assign({}, fiche, { pw: hash(data.pw) });
+      LS.set('melodia_users', users);
+      return fiche;
+    },
+
+    async basculer(email, actif) {
+      var users = LS.get('melodia_users', {});
+      if (users[email]) { users[email].actif = !!actif; LS.set('melodia_users', users); }
+      if (HAS_SB) {
+        try { await sb('/rest/v1/collaborateurs?email=eq.' + encodeURIComponent(email), { method: 'PATCH', body: JSON.stringify({ actif: !!actif }) }); } catch (e) {}
+      }
+      return true;
+    },
+
+    async supprimer(email) {
+      var users = LS.get('melodia_users', {});
+      delete users[email];
+      LS.set('melodia_users', users);
+      if (HAS_SB) {
+        try { await sb('/rest/v1/collaborateurs?email=eq.' + encodeURIComponent(email), { method: 'DELETE' }); } catch (e) {}
+      }
+      return true;
+    }
+  };
+
+  /* ═══ PROSPECTS ═══
+     Chaque collaborateur travaille ses propres fiches ; le fondateur
+     voit l'ensemble. */
+  var STATUTS = ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'refus'];
+  window.MELODIA_PROSPECT_STATUTS = {
+    nouveau: { label: 'À contacter', color: '#8e8878' },
+    contacte: { label: 'Contacté', color: '#38bdf8' },
+    relance: { label: 'Relancé', color: '#a78bfa' },
+    interesse: { label: 'Intéressé', color: '#fbbf24' },
+    demo_offerte: { label: 'Démo offerte', color: '#e3c977' },
+    partenaire: { label: 'Partenaire', color: '#4ade80' },
+    refus: { label: 'Sans suite', color: '#5d5a51' }
+  };
+
+  window.MelodiaProspects = {
+    mode: HAS_SB ? 'supabase' : 'local',
+    STATUTS: STATUTS,
+
+    _local: function () { return LS.get('melodia_prospects', []); },
+    _ecrire: function (l) { LS.set('melodia_prospects', l); },
+
+    /** Fiches du collaborateur connecté — toutes, pour le fondateur */
+    async mine() {
+      var u = window.MelodiaAuth.current();
+      if (!u) return [];
+      if (u.role === 'master') return this.all();
+      if (HAS_SB) {
+        try { return await sb('/rest/v1/prospects?owner=eq.' + encodeURIComponent(u.email) + '&order=updated_at.desc'); }
+        catch (e) { return []; }
+      }
+      var mail = (u.email || '').toLowerCase();
+      return this._local().filter(function (p) { return (p.owner || '').toLowerCase() === mail; });
+    },
+
+    async all() {
+      if (HAS_SB) {
+        try { return await sb('/rest/v1/prospects?order=updated_at.desc'); } catch (e) { return []; }
+      }
+      return this._local();
+    },
+
+    /** Ajoute ou met à jour une fiche, identifiée par son SIRET */
+    async enregistrer(p) {
+      var u = window.MelodiaAuth.current();
+      var fiche = Object.assign({
+        owner: p.owner || (u && u.email) || '',
+        owner_nom: p.owner_nom || (u && u.name) || '',
+        statut: 'nouveau',
+        notes: '',
+        created_at: new Date().toISOString()
+      }, p);
+      fiche.updated_at = new Date().toISOString();
+      if (!fiche.siret) fiche.siret = fiche.siren || uid();
+
+      if (HAS_SB) {
+        var rows = await sb('/rest/v1/prospects', {
+          method: 'POST',
+          headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
+          body: JSON.stringify(fiche)
+        });
+        return (rows && rows[0]) || fiche;
+      }
+      var l = this._local();
+      var i = l.findIndex(function (x) { return x.siret === fiche.siret; });
+      if (i >= 0) l[i] = Object.assign(l[i], fiche); else l.unshift(fiche);
+      this._ecrire(l);
+      return fiche;
+    },
+
+    async supprimer(siret) {
+      if (HAS_SB) {
+        try { await sb('/rest/v1/prospects?siret=eq.' + encodeURIComponent(siret), { method: 'DELETE' }); } catch (e) {}
+      }
+      this._ecrire(this._local().filter(function (p) { return p.siret !== siret; }));
+      return true;
     }
   };
 

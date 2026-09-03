@@ -190,3 +190,32 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .depot-pct {
   font-family: var(--ff-m); font-size: .6rem; color: var(--or); flex: none; min-width: 3.2em; text-align: right;
 }
+
+/* ═══ Console commerciale ═══ */
+.pipeline { display: flex; gap: .4rem; align-items: stretch; }
+.pl-seg {
+  border: 1px solid; border-radius: 6px; padding: .9rem .5rem; text-align: center;
+  min-width: 0; transition: transform .2s;
+}
+.pl-seg:hover { transform: translateY(-2px); }
+.pl-n { font-family: var(--ff-d); font-size: 1.7rem; line-height: 1; }
+.pl-l {
+  font-family: var(--ff-m); font-size: .46rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ash); margin-top: .5rem; line-height: 1.4;
+}
+.pl-p { font-family: var(--ff-m); font-size: .5rem; color: var(--dust); margin-top: .3rem; }
+
+.fiche-detail {
+  border-top: 1px solid var(--line-soft); margin-top: .8rem; padding-top: .2rem;
+  animation: ownOuvre .25s cubic-bezier(.22,1,.36,1);
+}
+.fiche-detail[hidden] { display: none; }
+
+@media (max-width: 860px) {
+  .pipeline { flex-wrap: wrap; }
+  .pl-seg { flex: 1 1 30% !important; }
+}
+@media (max-width: 560px) {
+  .pl-seg { flex: 1 1 45% !important; }
+  .pl-n { font-size: 1.4rem; }
+}

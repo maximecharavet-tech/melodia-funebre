@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Console commerciale — Melodia Funèbre</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+<div class="dash">
+  <aside class="side" id="side">
+    <a href="index.html" class="side-brand">
+      <img src="assets/img/logo-melodia.jpg" alt="">
+      <span><span class="n">Melodia</span><span class="s">Console commerciale</span></span>
+    </a>
+    <div class="side-label">Prospection</div>
+    <button class="side-item active" data-v="accueil"><span class="ico">◈</span>Tableau de bord</button>
+    <button class="side-item" data-v="recherche"><span class="ico">◎</span>Rechercher</button>
+    <button class="side-item" data-v="prospects"><span class="ico">♪</span>Mes prospects<span class="side-badge" id="badge-pro">0</span></button>
+    <div class="side-label">Ressources</div>
+    <button class="side-item" data-v="modeles"><span class="ico">✎</span>Modèles de courriel</button>
+    <button class="side-item" data-v="argumentaire"><span class="ico">◇</span>Argumentaire</button>
+    <div class="side-foot">
+      <div class="side-user">
+        <div class="side-avatar" id="u-initial">—</div>
+        <div style="min-width:0;">
+          <div class="side-uname" id="u-name">—</div>
+          <div class="side-urole" id="u-role">Collaborateur</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" onclick="logout()">Déconnexion</button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-top">
+      <div style="display:flex; gap:1rem; align-items:flex-start;">
+        <button class="dash-burger" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+        <div>
+          <div class="dash-eyebrow" id="head-eyebrow">Prospection</div>
+          <h1 class="dash-title" id="head-title">Tableau de <em>bord</em></h1>
+        </div>
+      </div>
+      <div class="pill" id="mode-badge">—</div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/commercial.js"></script>
+</body>
+</html>

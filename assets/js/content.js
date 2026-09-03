@@ -135,16 +135,7 @@
   function appliquerContact(c) {
     if (!c.contact) return;
     var t = c.contact;
-    if (t.telHref) {
-      $$('a[href^="tel:"]').forEach(function (a) {
-        a.setAttribute('href', 'tel:' + t.telHref);
-        /* On ne remplace que si le libellé était bien le numéro */
-        if (t.tel && /[0-9]{2}[\s.]?[0-9]{2}/.test(a.textContent)) {
-          var svg = a.querySelector('svg');
-          a.innerHTML = (svg ? svg.outerHTML + ' ' : '') + esc(t.tel);
-        }
-      });
-    }
+    /* Le numéro n'apparaît plus sur le site : on ne met à jour que l'email. */
     if (t.email) {
       $$('a[href^="mailto:"]').forEach(function (a) {
         var sujet = (a.getAttribute('href').split('?')[1] || '');

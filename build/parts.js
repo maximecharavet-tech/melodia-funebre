@@ -96,7 +96,7 @@ function urgency() {
       <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.2rem;text-align:center;">
         <span class="badge badge-urgent">Cérémonie imminente</span>
         <p style="color:var(--bone);font-size:.95rem;margin:0;">Obsèques dans moins de 72 heures ? Nous composons en priorité, livraison possible en 6 heures.</p>
-        <a href="tel:${TEL_HREF}" class="btn btn-gold btn-sm">${ICON.phone} ${TEL}</a>
+        <button type="button" class="btn btn-gold btn-sm" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>
   </section>`;
