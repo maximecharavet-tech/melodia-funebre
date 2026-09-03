@@ -254,10 +254,12 @@ La couche de contenu ne casse jamais le site : si `content.json` est absent, ill
 Les pages HTML sont **produites** à partir de `build/` : une seule navigation, un seul pied de page, un seul en-tête pour tout le site.
 
 ```bash
-npm run build
+npm run pages
 ```
 
 La commande reprend au passage le contenu publié dans `assets/data/content.json`, pour que le HTML servi corresponde à ce qui est en ligne — meilleur pour le référencement.
+
+> Le script s'appelle `pages` et non `build` à dessein : Vercel détecte automatiquement un script nommé `build`, l'exécute au déploiement, puis exige un dossier de sortie `public/`. Ce site n'en a pas — les pages sont générées sur place, à la racine. Renommer le script rend au projet son fonctionnement statique.
 
 > Modifier directement un fichier `.html` fonctionne, mais la prochaine génération écrasera la retouche. Le bon endroit est `build/`.
 
