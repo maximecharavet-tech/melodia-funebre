@@ -1349,6 +1349,32 @@ body.intro-open { overflow: hidden; }
   font-family: var(--ff-d); font-size: 1.3rem; color: var(--ash);
 }
 
+/* ─── Bandeau : ce que contient la vitrine, et l'écoute intégrale ─── */
+.cat-barre {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 1.4rem;
+  margin-bottom: 1.8rem;
+}
+.cat-compte {
+  margin: 0; font-family: var(--ff-m); font-size: 0.56rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust);
+}
+.cat-compte span { color: var(--or-patina); }
+
+.cat-barre .btn { display: inline-flex; align-items: center; gap: 0.65rem; }
+
+/* Petit égaliseur dans le bouton : il s'anime pendant la lecture */
+.cat-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.cat-eq span {
+  width: 2px; height: 4px; border-radius: 2px;
+  background: currentColor; opacity: 0.75;
+}
+.en-lecture .cat-eq span { animation: catEq 0.9s ease-in-out infinite; }
+.en-lecture .cat-eq span:nth-child(2) { animation-delay: 0.15s; }
+.en-lecture .cat-eq span:nth-child(3) { animation-delay: 0.3s; }
+.en-lecture .cat-eq span:nth-child(4) { animation-delay: 0.45s; }
+@keyframes catEq { 0%, 100% { height: 3px; } 50% { height: 12px; } }
+
 /* ─── Filtres par registre ─── */
 .cat-filtres {
   display: flex; flex-wrap: wrap; justify-content: center;
@@ -1381,22 +1407,52 @@ body.intro-open { overflow: hidden; }
   overflow: hidden;
   transition: border-color var(--t-mid), transform var(--t-mid) var(--ease), box-shadow var(--t-mid);
 }
-.oeuvre:hover {
-  border-color: var(--line-strong);
-  transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+/* Entrée en cascade — le décalage est posé par catalogue.js sur les
+   fiches qui apparaissent ensemble, quel que soit le nombre de colonnes. */
+.oeuvre {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out),
+              border-color var(--t-mid), box-shadow var(--t-mid);
 }
+.oeuvre.vu { opacity: 1; transform: none; }
+
+.oeuvre.vu:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
+}
+.oeuvre:hover .oeuvre-sceau { border-color: var(--or); }
+
 .oeuvre.actif {
   border-color: var(--or-patina);
-  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.14), 0 18px 46px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.16), 0 20px 50px rgba(0, 0, 0, 0.55);
 }
 /* Filet d'or sur la tranche : on repère l'hommage en cours d'un coup d'œil */
 .oeuvre.actif::before {
   content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 2px;
-  background: var(--or-grad);
+  z-index: 2; background: var(--or-grad);
+}
+/* Une lueur traverse lentement la fiche qui joue */
+.oeuvre.joue::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(201, 168, 76, 0.07) 50%, transparent 62%);
+  background-size: 260% 100%;
+  animation: oeuvreLueur 3.6s linear infinite;
+}
+@keyframes oeuvreLueur { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+
+/* Le sceau bat au rythme de l'écoute — écho de l'anneau du seuil d'entrée */
+.oeuvre.joue .oeuvre-sceau {
+  border-color: var(--or);
+  animation: oeuvreSceau 2.4s ease-in-out infinite;
+}
+@keyframes oeuvreSceau {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.28); }
+  70% { box-shadow: 0 0 0 9px rgba(201, 168, 76, 0); }
 }
 
 .oeuvre-haut {
+  position: relative; z-index: 2;
   display: flex; align-items: center; gap: 0.9rem;
   padding: 1.2rem 1.4rem;
   border-bottom: 1px solid var(--line-soft);
@@ -1450,7 +1506,7 @@ body.intro-open { overflow: hidden; }
 }
 .oeuvre.actif .oeuvre-duree { color: var(--or-patina); }
 
-.oeuvre-corps { padding: 1.4rem; flex: 1; }
+.oeuvre-corps { position: relative; z-index: 2; padding: 1.4rem; flex: 1; }
 .oeuvre-style {
   font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--or-patina);
@@ -1607,7 +1663,11 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .oeuvre, .oeuvre:hover { transform: none; transition: border-color var(--t-fast); }
+  .oeuvre, .oeuvre.vu, .oeuvre.vu:hover {
+    opacity: 1; transform: none; transition: border-color var(--t-fast);
+  }
   .oeuvre.joue .oeuvre-onde span { animation: none; height: 9px; background: var(--or-patina); }
+  .oeuvre.joue::after, .oeuvre.joue .oeuvre-sceau, .cat-eq span { animation: none; }
+  .en-lecture .cat-eq span { height: 8px; }
   .ecoute { animation: none; }
 }

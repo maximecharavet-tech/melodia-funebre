@@ -38,30 +38,45 @@ const FAQ = [
 
 const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde'];
 
-/* Le catalogue des réalisations. Le propriétaire en ajoute depuis sa
-   console : les entrées suivantes ne sont que le point de départ, servi
-   en HTML pour le référencement. */
+/* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
+   foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
+   propriétaire ajoute ses musiques depuis sa console, pas ici. */
 const TRACKS = [
-  { id: 'demo-1', title: 'Le Papi Pêcheur', who: 'Maurice, 78 ans', lieu: 'Nantes',
-    style: 'Chanson française', file: 'audio/maurice.mp3',
+  { id: "demo-4", title: "Jean, Paris", who: "Jean, 40 ans", lieu: "Paris",
+    style: "Gospel", file: "audio/jean.mp3",
+    story: "Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de ce qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.",
+    lyrics: "Paris peut bien continuer sans toi\nMais il manque quelque chose dans ses rues\nUne lumière, un rire, une voix",
+    brief: "parisien · supporter · aimant" },
+  { id: "demo-5", title: "Peppe, tesoro", who: "Giuseppe, 80 ans", lieu: "",
+    style: "Musique du monde", file: "audio/giuseppe.mp3",
+    story: "Il avait quitté le Sud pour l'usine et gardé le Sud dans l'assiette. Il n'a jamais dit « je t'aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu'il n'a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.",
+    lyrics: "Ton prénom tient dans deux langues\nCelle du village et celle d'ici",
+    brief: "taiseux · nourricier · fidèle" },
+  { id: "demo-6", title: "Le vent connaît ton nom", who: "Chantal, 79 ans", lieu: "",
+    style: "Piano classique", file: "audio/chantal.mp3",
+    story: "Elle aimait les chansons, celles qui font partir l'âme bien avant les pieds. Elle est partie vers le Sud, et la vie y a posé Orlando sur son chemin. Sa famille a demandé que sa foi y soit, et un Ave Maria. Flûte amérindienne, harpe, violoncelles, chœur.",
+    lyrics: "Le vent connaît ton nom,\nIl le murmure aux montagnes,\nIl le confie aux étoiles.",
+    brief: "voyageuse · douce · croyante" },
+  { id: "demo-7", title: "Personne n'oublie ton rire", who: "Odette, super mamie", lieu: "",
+    style: "Gospel", file: "audio/odette.mp3",
+    story: "Elle cuisinait sans balance, juste à l'œil, et les fêtes attendaient ses plats plutôt que l'inverse. Elle repartait la valise trop pleine et revenait avec le soleil dans la voix. Paul, Thomas, Virginie et Nolan ont grandi à sa table. Orgue Hammond et chœur gospel.",
+    lyrics: "personne n'oublie ton rire\nIl arrivait avant toi dans la pièce",
+    brief: "généreuse · rieuse · voyageuse" },
+  { id: "demo-1", title: "Le Papi Pêcheur", who: "Maurice, 78 ans", lieu: "Nantes",
+    style: "Chanson française", file: "audio/maurice.mp3",
     story: "Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.",
     lyrics: "Quatre paires de mains sur la même canne\nQuatre silences appris au bord de l'eau",
-    brief: 'patient · taquin · silencieux' },
-  { id: 'demo-2', title: 'Le Jardin du Temps', who: 'Monique, 75 ans', lieu: 'Avignon',
-    style: 'Folk acoustique', file: 'audio/monique.mp3',
+    brief: "patient · taquin · silencieux" },
+  { id: "demo-2", title: "Le Jardin du Temps", who: "Monique, 75 ans", lieu: "Avignon",
+    style: "Folk acoustique", file: "audio/monique.mp3",
     story: "Jardinière d'Avignon. Roses anciennes, jasmin blanc, les mains dans la terre à chaque printemps. Sa fille voulait « quelque chose qui sente le matin ». Voix féminine, cordes chaleureuses, guitare en arpèges.",
     lyrics: "Elle a planté tout ce qu'elle n'a pas dit\nEt le jasmin lui répond chaque avril",
-    brief: 'douce · obstinée · matinale' },
-  { id: 'demo-3', title: 'Saudade Noite', who: 'Sergio, 69 ans', lieu: 'Marseille',
-    style: 'Bossa nova', file: 'audio/sergio.mp3',
+    brief: "douce · obstinée · matinale" },
+  { id: "demo-3", title: "Saudade Noite", who: "Sergio, 69 ans", lieu: "Marseille",
+    style: "Bossa nova", file: "audio/sergio.mp3",
     story: "Brésilien de Marseille, danseur infatigable. Sa famille voulait de la joie, pas des larmes : « il aurait détesté qu'on pleure ». Guitare nylon, brosses sur la caisse claire, une dernière samba pour la route.",
     lyrics: "Ne pleurez pas, mettez la musique plus fort\nJ'ai encore un pas de danse à vous apprendre",
-    brief: 'joyeux · bruyant · généreux' },
-  { id: 'demo-4', title: 'Jean, Paris', who: 'Jean, 40 ans', lieu: 'Paris',
-    style: 'Gospel', file: 'audio/jean.mp3',
-    story: "Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a d'abord parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de l'évidence qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.",
-    lyrics: "Paris peut bien continuer sans toi\nMais il manque quelque chose dans ses rues\nUne lumière, un rire, une voix",
-    brief: 'parisien · supporter · aimant' }
+    brief: "joyeux · bruyant · généreux" }
 ];
 
 module.exports = { OFFERS, TESTIS, FAQ, STYLES, TRACKS };

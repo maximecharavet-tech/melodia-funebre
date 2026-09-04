@@ -37,6 +37,19 @@ module.exports = {
 
 ${P.marquee()}
 
+  <!-- ═══ LA VITRINE ═══ -->
+  <section class="section" id="vitrine">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Nos réalisations</div>
+        <h2 class="h-xl">Écoutez ce que<br>nous <em>composons.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:64ch;">Voici nos hommages, tous réunis. Chacun est né d'un entretien de cinq minutes avec une famille : rien n'a été pris dans un catalogue, tout a été écrit pour eux. La personne est décrite à côté de sa chanson.</p>
+      </div>
+${P.vitrineBarre()}
+${P.oeuvres()}
+    </div>
+  </section>
+
   <!-- ═══ LE PROBLÈME ═══ -->
   <section class="section">
     <div class="wrap">
@@ -91,21 +104,6 @@ ${P.urgency()}
       </div>
       <div class="center reveal" style="margin-top:3rem;">
         <a href="processus.html" class="btn btn-outline">Le processus en détail</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ CATALOGUE DES RÉALISATIONS ═══ -->
-  <section class="section">
-    <div class="wrap">
-      <div class="center reveal" style="margin-bottom:3.2rem;">
-        <div class="eyebrow">Nos réalisations</div>
-        <h2 class="h-xl">Des vies entières,<br>en <em>trois minutes.</em></h2>
-        <p class="lead" style="margin:1.6rem auto 0;max-width:64ch;">Chacun de ces hommages est né d'un entretien de cinq minutes avec une famille. Rien n'a été pris dans un catalogue : tout a été écrit pour eux, à partir de trois mots et d'un souvenir. Écoutez, la personne est décrite à côté.</p>
-      </div>
-${P.oeuvres('apercu')}
-      <div class="center reveal" style="margin-top:2.8rem;">
-        <a href="demos.html" class="btn btn-gold">Le catalogue complet</a>
       </div>
     </div>
   </section>
