@@ -28,7 +28,8 @@ if (fs.existsSync(fichierContenu)) {
     if (c.demos) {
       data.TRACKS.length = 0;
       visibles(c.demos).forEach(d => data.TRACKS.push({
-        title: d.title, who: d.who, style: d.style, file: d.audio, story: d.story, brief: d.brief
+        id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
+        file: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief
       }));
     }
     if (c.offers) {

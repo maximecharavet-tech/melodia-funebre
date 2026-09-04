@@ -38,16 +38,30 @@ const FAQ = [
 
 const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde'];
 
+/* Le catalogue des réalisations. Le propriétaire en ajoute depuis sa
+   console : les entrées suivantes ne sont que le point de départ, servi
+   en HTML pour le référencement. */
 const TRACKS = [
-  { title: 'Le Papi Pêcheur', who: 'Maurice, 78 ans', style: 'Chanson française', file: 'audio/maurice.mp3',
+  { id: 'demo-1', title: 'Le Papi Pêcheur', who: 'Maurice, 78 ans', lieu: 'Nantes',
+    style: 'Chanson française', file: 'audio/maurice.mp3',
     story: "Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.",
+    lyrics: "Quatre paires de mains sur la même canne\nQuatre silences appris au bord de l'eau",
     brief: 'patient · taquin · silencieux' },
-  { title: 'Le Jardin du Temps', who: 'Monique, 75 ans', style: 'Folk acoustique', file: 'audio/monique.mp3',
+  { id: 'demo-2', title: 'Le Jardin du Temps', who: 'Monique, 75 ans', lieu: 'Avignon',
+    style: 'Folk acoustique', file: 'audio/monique.mp3',
     story: "Jardinière d'Avignon. Roses anciennes, jasmin blanc, les mains dans la terre à chaque printemps. Sa fille voulait « quelque chose qui sente le matin ». Voix féminine, cordes chaleureuses, guitare en arpèges.",
+    lyrics: "Elle a planté tout ce qu'elle n'a pas dit\nEt le jasmin lui répond chaque avril",
     brief: 'douce · obstinée · matinale' },
-  { title: 'Saudade Noite', who: 'Sergio, 69 ans', style: 'Bossa nova', file: 'audio/sergio.mp3',
+  { id: 'demo-3', title: 'Saudade Noite', who: 'Sergio, 69 ans', lieu: 'Marseille',
+    style: 'Bossa nova', file: 'audio/sergio.mp3',
     story: "Brésilien de Marseille, danseur infatigable. Sa famille voulait de la joie, pas des larmes : « il aurait détesté qu'on pleure ». Guitare nylon, brosses sur la caisse claire, une dernière samba pour la route.",
-    brief: 'joyeux · bruyant · généreux' }
+    lyrics: "Ne pleurez pas, mettez la musique plus fort\nJ'ai encore un pas de danse à vous apprendre",
+    brief: 'joyeux · bruyant · généreux' },
+  { id: 'demo-4', title: 'Jean, Paris', who: 'Jean, 40 ans', lieu: 'Paris',
+    style: 'Gospel', file: 'audio/jean.mp3',
+    story: "Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a d'abord parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de l'évidence qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.",
+    lyrics: "Paris peut bien continuer sans toi\nMais il manque quelque chose dans ses rues\nUne lumière, un rire, une voix",
+    brief: 'parisien · supporter · aimant' }
 ];
 
 module.exports = { OFFERS, TESTIS, FAQ, STYLES, TRACKS };
