@@ -2,7 +2,7 @@
 const fs = require('fs');
 
 const files = [
-  'index.html', 'processus.html', 'demos.html', 'offres.html', 'agences.html',
+  'index.html', 'processus.html', 'demos.html', 'rites.html', 'offres.html', 'agences.html',
   'contact.html', 'compte.html', 'dashboard-partenaire.html', 'dashboard-master.html', 'dashboard-commercial.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
   'assets/css/style.css', 'assets/css/dashboard.css',

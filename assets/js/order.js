@@ -26,6 +26,7 @@
     defunt: '', age: '', lien: '',
     traits: '', metier: '', habitude: '', anecdote: '',
     style: 'Chanson française', ambiance: 'Douce et lumineuse', voix: 'Peu importe',
+    rite: '', texte: '',
     name: '', email: '', tel: '', consent: false
   };
 
@@ -113,12 +114,12 @@
       saveDraft();
     });
   }
-  ['defunt', 'age', 'lien', 'traits', 'metier', 'habitude', 'anecdote', 'name', 'email', 'tel'].forEach(function (k) {
+  ['defunt', 'age', 'lien', 'traits', 'metier', 'habitude', 'anecdote', 'texte', 'name', 'email', 'tel'].forEach(function (k) {
     bind('o-' + k, k);
   });
   bind('o-consent', 'consent');
   bind('o-urgence', 'urgence');
-  ['style', 'ambiance', 'voix'].forEach(function (k) { bind('o-' + k, k); });
+  ['style', 'ambiance', 'voix', 'rite'].forEach(function (k) { bind('o-' + k, k); });
 
   /* Cartes de choix (offre) */
   $$('[data-offer]', wizard).forEach(function (btn) {
@@ -203,6 +204,12 @@
     if (state.lien) extra.push('Lien avec la famille : ' + state.lien);
     if (state.ambiance) extra.push('Ambiance souhaitée : ' + state.ambiance);
     if (state.voix) extra.push('Voix : ' + state.voix);
+    /* Le rite conditionne ce qui est composable : il doit remonter en
+       tête du brief, pas se perdre au milieu des préférences. */
+    if (state.rite) lignes.unshift('RITE : cérémonie ' + state.rite.toLowerCase() +
+      '. Vérifier ce que la tradition admet avant de composer.');
+    if (state.texte) lignes.push('Texte confié par la famille : ' + state.texte +
+      '\n(à soumettre au célébrant avant toute mise en musique)');
     if (state.tel) extra.push('Téléphone : ' + state.tel);
     if (extra.length) lignes.push('— ' + extra.join(' · '));
     return lignes.join('\n\n');

@@ -12,6 +12,7 @@ const MAIL = 'contact@melodia-funebre.fr';
 const NAVITEMS = [
   ['processus.html', 'Processus'],
   ['demos.html', 'Écouter'],
+  ['rites.html', 'Rites'],
   ['offres.html', 'Offres'],
   ['agences.html', 'Agences'],
   ['contact.html', 'Contact']
@@ -121,6 +122,7 @@ function footer() {
         <ul class="footer-links">
           <li><a href="processus.html">Le processus</a></li>
           <li><a href="demos.html">Écouter les hommages</a></li>
+          <li><a href="rites.html">L'hommage selon le rite</a></li>
           <li><a href="offres.html">Offres &amp; tarifs</a></li>
           <li><a href="index.html#faq">Questions fréquentes</a></li>
         </ul>

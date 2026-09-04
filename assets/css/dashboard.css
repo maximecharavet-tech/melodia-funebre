@@ -389,3 +389,35 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   font-size: 0.9rem; line-height: 1.75; color: var(--ash);
   max-width: 74ch;
 }
+
+/* ─── Fiches des traditions religieuses ─── */
+.pill-culte {
+  color: var(--cyan); border-color: rgba(56, 189, 248, 0.35);
+  margin-left: 0.5rem; vertical-align: middle;
+}
+.trad { margin-bottom: 1rem; }
+.trad-tete {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
+}
+.trad-nom { font-family: var(--ff-d); font-size: 1.35rem; color: var(--paper); }
+.trad-bloc { margin-bottom: 0.9rem; }
+.trad-label {
+  display: block; font-family: var(--ff-m); font-size: 0.54rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--green); margin-bottom: 0.4rem;
+}
+.trad-eviter .trad-label { color: var(--red); }
+.trad-bloc p {
+  margin: 0; font-size: 0.93rem; line-height: 1.75; color: var(--bone);
+  padding-left: 0.9rem; border-left: 1px solid var(--line-soft);
+}
+.trad-eviter p { border-left-color: rgba(248, 113, 113, 0.3); }
+.trad-cible {
+  padding-top: 0.8rem; border-top: 1px solid var(--line-soft);
+  font-size: 0.86rem; color: var(--ash); line-height: 1.7;
+}
+.trad-cible .mono {
+  font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dust); display: block; margin-bottom: 0.25rem;
+}

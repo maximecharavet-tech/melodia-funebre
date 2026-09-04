@@ -18,7 +18,7 @@ jobs:
 
       - name: Vérifier le HTML (balises équilibrées)
         run: |
-          for f in index.html processus.html demos.html offres.html agences.html contact.html compte.html dashboard-partenaire.html dashboard-master.html mentions-legales.html cgv.html confidentialite.html 404.html; do
+          for f in index.html processus.html demos.html rites.html offres.html agences.html contact.html compte.html dashboard-partenaire.html dashboard-master.html mentions-legales.html cgv.html confidentialite.html 404.html; do
             python3 -c "
           c = open('$f', encoding='utf-8').read()
           assert c.count('<!DOCTYPE') == 1, 'DOCTYPE'

@@ -5,7 +5,10 @@
 // (recherche-entreprises.api.gouv.fr) : données ouvertes, sans clé,
 // alimentées par la base SIRENE de l'INSEE.
 //
-// Code NAF retenu : 96.03Z — « Services funéraires ».
+// Deux familles de prospects, deux codes NAF :
+//   96.03Z  Services funéraires — pompes funèbres, crématoriums
+//   94.91Z  Organisations religieuses — diocèses, paroisses, associations
+//           cultuelles, mosquées, synagogues, temples
 // L'annuaire attend le format pointé (96.03Z) et refuse 9603Z.
 //
 //   GET /api/prospects?departement=69&page=1
@@ -18,7 +21,10 @@
 
 /* Surchargeable pour les essais ; en production, l'annuaire de l'État. */
 const SOURCE = process.env.PROSPECTS_API_URL || 'https://recherche-entreprises.api.gouv.fr/search';
-const NAF = '96.03Z';
+const NAF = {
+  funeraire: '96.03Z',
+  culte: '94.91Z'
+};
 const TIMEOUT_MS = 15000;
 
 /* Département d'un code postal : Corse (2A/2B) et outre-mer compris. */
@@ -110,7 +116,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'GET uniquement' });
 
-  const { departement, q, page, per_page } = req.query || {};
+  const { departement, q, page, per_page, type } = req.query || {};
+  const famille = NAF[type] ? type : 'funeraire';
   const dep = String(departement || '').trim();
   if (!dep && !q) {
     return res.status(400).json({ error: 'Indiquez au moins un département ou une recherche.' });
@@ -120,7 +127,7 @@ export default async function handler(req, res) {
   }
 
   const params = new URLSearchParams({
-    activite_principale: NAF,
+    activite_principale: NAF[famille],
     etat_administratif: 'A',            // établissements en activité seulement
     page: String(Math.max(1, parseInt(page, 10) || 1)),
     per_page: String(Math.min(25, Math.max(1, parseInt(per_page, 10) || 25)))
@@ -157,6 +164,7 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
     return res.status(200).json({
       resultats: resultats,
+      type: famille,
       total: data.total_results || resultats.length,
       page: data.page || 1,
       pages: data.total_pages || 1,

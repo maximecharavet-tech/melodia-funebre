@@ -156,6 +156,25 @@ ${offerChoices}
               <label class="field-label" for="o-voix">Voix</label>
               <select class="field-select" id="o-voix"><option>Peu importe</option><option>Voix masculine</option><option>Voix féminine</option><option>Instrumental seul, sans voix</option></select>
             </div>
+            <div class="field">
+              <label class="field-label" for="o-rite">Cérémonie religieuse ?</label>
+              <select class="field-select" id="o-rite">
+                <option value="">Cérémonie civile, sans rite religieux</option>
+                <option>Catholique</option>
+                <option>Protestante</option>
+                <option>Orthodoxe</option>
+                <option>Juive</option>
+                <option>Musulmane</option>
+                <option>Autre tradition</option>
+                <option>Je ne sais pas encore</option>
+              </select>
+              <div class="field-hint">La musique doit s'accorder au rite : certaines traditions n'en admettent pas, et nous vous le dirons franchement. <a href="rites.html" style="color:var(--or-patina);">Ce que nous proposons selon le rite</a></div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="o-texte">Un texte, un verset ou une prière qui comptait</label>
+              <input class="field-input" id="o-texte" placeholder="Le psaume 23, une sourate, un poème…">
+              <div class="field-hint">Facultatif. S'il est cité, il devient la colonne de l'œuvre. Nous le soumettons au célébrant avant tout.</div>
+            </div>
             <div class="wz-actions"><button type="button" class="btn btn-ghost" data-wz-prev>${ICON.arrowL} Retour</button><button type="button" class="btn btn-gold" data-wz-next>Continuer</button></div>
           </div>
 

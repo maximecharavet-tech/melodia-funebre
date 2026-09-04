@@ -217,6 +217,129 @@
   };
 
   /* ═══════════════════════════════════════════════════════════
+     MODÈLES POUR LES COMMUNAUTÉS RELIGIEUSES
+
+     Un diocèse, une mosquée ou une synagogue ne s'aborde pas comme
+     une agence funéraire. Ils ne cherchent pas une marge : ils
+     gardent un rite, et parfois financent des œuvres. Le premier
+     message doit donc prouver qu'on connaît leur tradition — sinon
+     il ne sera pas lu deux fois.
+     ═══════════════════════════════════════════════════════════ */
+  var MODELES_CULTE = {
+
+    culte_contact: {
+      nom: 'Communauté — premier contact',
+      culte: true,
+      quand: 'Premier message à une paroisse, un diocèse, une mosquée, une synagogue, un temple.',
+      etape: 'contacte',
+      lien: { texte: 'Ce que nous proposons selon le rite', url: SITE + '/rites' },
+      objet: function (p) { return 'Une musique qui respecte le rite — et qui finance vos œuvres'; },
+      titre: function () { return 'La musique sert le rite, jamais l\'inverse'; },
+      texte: function (p) {
+        return [
+          'Bonjour,',
+
+          'Les familles vous demandent souvent une musique qui ressemble vraiment au ' +
+          'défunt, et le répertoire ne le permet pas toujours. Nous composons cette ' +
+          'pièce : une œuvre originale écrite à partir de ce que la famille raconte, ' +
+          'livrée en vingt-quatre heures.',
+
+          'Avant tout autre chose : nous ne composons pas de la même façon pour toutes ' +
+          'les traditions, et il y a des rites où nous ne composons pas du tout. ' +
+          'La prière funéraire musulmane n\'a pas de musique. L\'office orthodoxe ' +
+          'n\'admet pas d\'instrument. L\'enterrement juif traditionnel non plus. ' +
+          'Nous le disons avant de proposer quoi que ce soit — vous jugerez sur cette ' +
+          'page, qui détaille tradition par tradition ce que nous faisons et ce que ' +
+          'nous refusons de faire.',
+
+          'Si votre rite le permet :',
+
+          '· vous restez l\'interlocuteur de la famille et le garant de la célébration\n' +
+          '· le texte et l\'enregistrement vous sont soumis avant la cérémonie\n' +
+          '· 60 % du montant vous reviennent, affectables en totalité à vos œuvres\n' +
+          '· la première composition est offerte, sans contrepartie',
+
+          'Nous parlons volontiers avec vous et votre trésorier de la forme que prend ' +
+          'ce reversement selon votre statut — don, convention, ou association ' +
+          'd\'entraide adossée à la vôtre.',
+
+          'Auriez-vous quelques minutes à m\'accorder ?'
+        ].join('\n\n');
+      }
+    },
+
+    culte_oeuvres: {
+      nom: 'Communauté — les œuvres',
+      culte: true,
+      quand: 'Quand l\'interlocuteur a marqué de l\'intérêt et veut comprendre le reversement.',
+      etape: 'interesse',
+      lien: { texte: 'Écouter un hommage', url: SITE + '/demos' },
+      objet: function (p) { return 'Comme convenu — le détail du reversement'; },
+      titre: function () { return 'Ce que vos œuvres recevraient'; },
+      texte: function (p) {
+        return [
+          'Bonjour,',
+
+          'Merci du temps que vous m\'avez accordé. Voici par écrit ce dont nous ' +
+          'avons parlé.',
+
+          'Sur chaque hommage proposé par vos soins, 60 % du montant vous reviennent : ' +
+          '89 € sur l\'offre à 149 €, 179 € sur celle à 299 €, 299 € sur celle à 499 €. ' +
+          'Vous nous désignez l\'affectation — entraide, aumônerie, entretien du lieu, ' +
+          'action caritative — et nous versons là, avec un relevé pour votre ' +
+          'comptabilité.',
+
+          'Vous n\'avancez rien et ne vous engagez sur aucun volume. Si une seule ' +
+          'famille en bénéficie cette année, c\'est très bien ainsi.',
+
+          'Sur la forme juridique : une association cultuelle relevant de la loi de ' +
+          '1905 a un objet limité à l\'exercice du culte. Selon votre statut, le ' +
+          'reversement prend la forme d\'un don, d\'une convention de partenariat, ou ' +
+          'passe par l\'association d\'entraide adossée à la vôtre. Nous en parlons ' +
+          'avec votre trésorier avant tout engagement — c\'est plus simple de le ' +
+          'régler au début.',
+
+          'La première composition reste offerte, pour que vous jugiez sur pièce.'
+        ].join('\n\n');
+      }
+    },
+
+    culte_respect: {
+      nom: 'Communauté — quand le rite ne s\'y prête pas',
+      culte: true,
+      quand: 'Quand la tradition n\'admet pas de musique. À envoyer quand même : c\'est ce message qui fait revenir les gens.',
+      etape: 'contacte',
+      lien: { texte: 'Ce que nous proposons selon le rite', url: SITE + '/rites' },
+      objet: function (p) { return 'Nous ne proposerons pas de musique — voici pourquoi'; },
+      titre: function () { return 'Ce n\'est pas notre place, et nous le disons'; },
+      texte: function (p) {
+        return [
+          'Bonjour,',
+
+          'Je vous écris moins pour vous proposer quelque chose que pour vous dire ' +
+          'ce que nous ne ferons pas.',
+
+          'Nous composons des hommages musicaux pour les familles endeuillées. Dans ' +
+          'votre tradition, la cérémonie funéraire ne comporte pas de musique, et ' +
+          'nous n\'essaierons pas de l\'y introduire. Nous ne mettons pas non plus ' +
+          'en musique un texte sacré : la récitation appartient à ceux dont c\'est ' +
+          'la charge.',
+
+          'Ce que nous pouvons offrir, si une famille le demande et hors du rite :',
+
+          '· un hommage parlé, sans musique, écrit à partir de ses mots\n' +
+          '· un récit de vie remis aux proches, à garder et à transmettre\n' +
+          '· rien du tout, si c\'est la bonne réponse',
+
+          'Je vous laisse mes coordonnées au cas où une famille vous poserait la ' +
+          'question. Si ce n\'est jamais le cas, ce message n\'aura rien coûté qu\'une ' +
+          'minute de votre temps — et j\'en suis désolé.'
+        ].join('\n\n');
+      }
+    }
+  };
+
+  /* ═══════════════════════════════════════════════════════════
      SCRIPT D'APPEL
      Un appel réussi ne récite rien. Ce script donne les points de
      passage et les mots exacts qui fonctionnent — le collaborateur
@@ -458,6 +581,90 @@
     ]
   };
 
+  /* ═══════════════════════════════════════════════════════════
+     LES TRADITIONS, POUR LE COLLABORATEUR
+     À lire avant de décrocher. Se tromper de rite au téléphone ferme
+     une porte pour de bon — et à juste titre.
+     ═══════════════════════════════════════════════════════════ */
+  var TRADITIONS = [
+    {
+      nom: 'Catholique',
+      tenue: 'La musique a sa place',
+      dire: 'La pièce s\'ajoute aux chants de la liturgie, pour l\'entrée, l\'offertoire, la communion ou le dernier adieu. Elle est soumise au célébrant avant la cérémonie.',
+      eviter: 'Ne dites jamais qu\'elle remplacera un chant propre à l\'office. Elle s\'y ajoute.',
+      cible: 'Paroisses, doyennés, services diocésains des funérailles, aumôneries.'
+    },
+    {
+      nom: 'Protestante',
+      tenue: 'Terrain le plus favorable',
+      dire: 'Le culte d\'action de grâce laisse une large place au témoignage. Une composition sur le verset qui accompagnait la vie du défunt y trouve naturellement sa place.',
+      eviter: 'Le message revient au pasteur. Nous accompagnons, nous ne prêchons pas.',
+      cible: 'Églises réformées, luthériennes, évangéliques, Union protestante.'
+    },
+    {
+      nom: 'Orthodoxe',
+      tenue: 'Voix seule, aucun instrument',
+      dire: 'L\'office est chanté a cappella. Nous proposons une pièce purement vocale, ou rien pendant l\'office — et une composition pour le repas de mémoire.',
+      eviter: 'Ne proposez jamais d\'instrument. C\'est le meilleur moyen de ne pas être rappelé.',
+      cible: 'Paroisses grecques, russes, roumaines, serbes ; métropoles.'
+    },
+    {
+      nom: 'Juive',
+      tenue: 'Pas de musique à l\'enterrement',
+      dire: 'L\'enterrement traditionnel n\'a pas de musique instrumentale. Ce que nous proposons concerne la chiva, la azkara, un dévoilement de stèle — avec l\'accord du rabbin.',
+      eviter: 'Ne parlez jamais de « mettre le El Malé Rahamim en musique ». Il est cantillé par l\'officiant, ce n\'est pas une chanson.',
+      cible: 'Synagogues, consistoires, sociétés d\'entraide (hevra kaddisha).'
+    },
+    {
+      nom: 'Musulmane',
+      tenue: 'Aucune musique — et on le dit d\'emblée',
+      dire: 'La salat al-janaza n\'a ni chant ni instrument, et la récitation coranique n\'est pas de la musique. Nous proposons un hommage parlé, hors du rite, si la famille le demande.',
+      eviter: 'Ne proposez jamais de mise en musique du Coran, sous aucune forme, même « respectueuse ». Utilisez le modèle « quand le rite ne s\'y prête pas ».',
+      cible: 'Mosquées, associations cultuelles, carrés confessionnels, pompes funèbres musulmanes.'
+    },
+    {
+      nom: 'Civile et laïque',
+      tenue: 'Toute liberté',
+      dire: 'Rien n\'est prescrit : c\'est le moment où une œuvre écrite pour la personne prend le plus de place, faute d\'un rite qui la porte.',
+      eviter: 'Ne reprenez jamais une œuvre existante : droits à payer, et émotion empruntée.',
+      cible: 'Officiants de cérémonies civiles, crématoriums, associations funéraires laïques.'
+    }
+  ];
+
+  /* Objections propres aux communautés religieuses */
+  var OBJECTIONS_CULTE = [
+    {
+      objection: 'Nous ne faisons pas de commerce.',
+      cache: 'La crainte, légitime, de mêler l\'argent au sacré.',
+      reponse: 'Vous ne vendez rien. Vous signalez à une famille qu\'un service existe, et vous restez le garant du rite. La part qui revient à la communauté est un reversement que vous affectez à vos œuvres — nous en fixons la forme avec votre trésorier.',
+      relance: 'Vos œuvres d\'entraide, aujourd\'hui, comment sont-elles financées ?'
+    },
+    {
+      objection: 'La musique n\'a pas sa place dans notre rite.',
+      cache: 'Souvent c\'est exact. C\'est le moment de le reconnaître.',
+      reponse: 'Vous avez raison, et nous le disons sur notre site avant qu\'on nous le demande. Dans ce cas nous ne proposons pas de musique : un hommage parlé, hors de la cérémonie, si une famille le souhaite — ou rien du tout.',
+      relance: 'Vous arrive-t-il que des familles demandent quelque chose de personnel, et que vous n\'ayez rien à leur proposer ?'
+    },
+    {
+      objection: 'C\'est de l\'intelligence artificielle. C\'est déplacé pour un enterrement.',
+      cache: 'La crainte d\'un artifice là où l\'on attend du recueillement.',
+      reponse: 'La réalisation est assistée, et je ne vous le cacherai pas. Mais les mots viennent de la famille, tout est relu et corrigé à la main, et rien ne part sans avoir été écouté. Surtout : vous recevez le texte et l\'enregistrement avant la cérémonie. Si cela ne convient pas, vous dites non et l\'affaire s\'arrête.',
+      relance: 'Voulez-vous en écouter un et me dire ce que vous en pensez ?'
+    },
+    {
+      objection: 'Je dois en référer à l\'évêché / au conseil / au recteur.',
+      cache: 'C\'est presque toujours vrai. La décision est rarement individuelle.',
+      reponse: 'Bien sûr. Je vous envoie une page qui explique le principe, les conditions et ce que nous ne faisons pas selon les traditions — de quoi présenter les choses sans avoir à me citer.',
+      relance: 'À votre avis, qu\'est-ce qui les fera hésiter en premier ? Autant que je vous donne la réponse tout de suite.'
+    },
+    {
+      objection: 'Les familles n\'ont pas les moyens.',
+      cache: 'Une préoccupation pastorale réelle, pas une objection commerciale.',
+      reponse: 'Alors ne le proposez pas à celles-là. Et si une famille modeste y tient vraiment, dites-le nous : nous nous arrangerons. Ce n\'est pas ce qui nous fera vivre.',
+      relance: 'Sur les familles que vous accompagnez, combien vous parlent du défunt avec des détails, des habitudes, des phrases à lui ?'
+    }
+  ];
+
   /* Chiffres à connaître par cœur — les seuls à citer */
   var CHIFFRES = [
     ['Part reversée à l\'agence', '60 %'],
@@ -484,8 +691,11 @@
   window.MELODIA_VENTE = {
     SITE: SITE,
     MODELES: MODELES,
+    MODELES_CULTE: MODELES_CULTE,
     SCRIPT: SCRIPT,
     OBJECTIONS: OBJECTIONS,
+    OBJECTIONS_CULTE: OBJECTIONS_CULTE,
+    TRADITIONS: TRADITIONS,
     PLAN: PLAN,
     CHIFFRES: CHIFFRES,
     BRIEF: BRIEF
