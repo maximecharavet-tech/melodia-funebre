@@ -1969,7 +1969,13 @@ body.a-ecoute { padding-bottom: 5rem; }
   .wz-dot { font-size: 0.72rem; }
   .wz-recap-head, .wz-total span { font-size: 0.75rem; letter-spacing: 0.11em; }
   .check { font-size: 0.92rem; }
-  .lien-bascule { font-size: 0.78rem; letter-spacing: 0.09em; }
+  /* « Mot de passe oublié » et « Créer un compte » sont les deux
+     seules sorties de l'écran de connexion : 32 px de haut, on les
+     manquait au pouce. */
+  .lien-bascule {
+    font-size: 0.78rem; letter-spacing: 0.09em;
+    display: inline-flex; align-items: center; min-height: 44px;
+  }
   .auth-note { font-size: 0.72rem; letter-spacing: 0.09em; }
 
   /* ─── Tableaux comparatifs et juridiques ─── */
