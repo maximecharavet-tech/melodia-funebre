@@ -2042,7 +2042,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   /* Curseur du simulateur : le rail garde ses 3 px, mais le champ
      lui-même monte à 40 px de haut. Il faut alors dessiner le rail
      nous-mêmes et recentrer la pastille dessus. */
-  .calc-range { height: 40px; background: transparent; }
+  .calc-range { height: 44px; background: transparent; }
   .calc-range::-webkit-slider-runnable-track {
     height: 3px; border-radius: 100px; background: rgba(255, 255, 255, 0.12);
   }
@@ -2174,8 +2174,10 @@ body.a-ecoute { padding-bottom: 5rem; }
 
   /* Le voile de la barre de navigation ne tient que si le flou du
      fond est rendu. Android le coupe en économie d'énergie, et le
-     texte de la page transparaissait alors sous le logo. */
-  .nav { background: rgba(4, 4, 7, 0.95); }
+     texte de la page transparaissait alors sous le logo. Sur
+     téléphone la barre devient pleine : le voile est une élégance de
+     grand écran, la lisibilité n'est pas négociable. */
+  .nav { background: var(--ink); }
 }
 
 @media (max-width: 720px) {
