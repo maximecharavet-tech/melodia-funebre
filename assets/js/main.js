@@ -85,7 +85,10 @@
     var last = 0;
     var onScroll = function () {
       var y = window.scrollY;
-      if (hasHero) nav.classList.toggle('at-top', y < 60);
+      /* Sans bandeau vidéo, la barre n'est jamais transparente : la
+         condition doit rester dans la bascule, sinon la classe posée
+         au gabarit ne serait jamais retirée sur ces pages. */
+      nav.classList.toggle('at-top', hasHero && y < 60);
       /* La barre s'efface quand on descend, revient dès qu'on remonte */
       nav.classList.toggle('hidden', y > 400 && y > last && !$('.nav-mobile.open'));
       last = y;

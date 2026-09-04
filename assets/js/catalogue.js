@@ -48,12 +48,30 @@
     return m + ':' + String(r).padStart(2, '0');
   }
 
-  /* Le sceau porte l'initiale de la personne : chaque fiche se
-     distingue sans qu'aucune photo ne soit demandée à la famille. */
+  /* Le sceau porte le portrait de la personne quand il y en a un, et
+     son initiale sinon. Le repli n'est pas un pis-aller : une famille
+     n'a pas toujours de photo qu'elle accepte de voir publiée, et une
+     fiche sans visage doit rester aussi soignée que les autres. */
   function initiale(o) {
     var source = (o.who || o.title || '').trim();
     return source ? source.charAt(0).toUpperCase() : '♪';
   }
+
+  function sceau(o) {
+    if (o.photo) {
+      /* Le portrait est décoratif : le nom est déjà écrit juste en
+         dessous, un texte de remplacement ne ferait que le répéter
+         aux lecteurs d'écran. L'initiale reste dans le nœud, cachée :
+         c'est elle qui reprend la place si l'image ne charge pas. */
+      return '<div class="oeuvre-sceau oeuvre-sceau-photo" aria-hidden="true" ' +
+        '>' +
+        '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async" ' +
+        'width="120" height="120"><span>' + esc(initiale(o)) + '</span></div>';
+    }
+    return '<div class="oeuvre-sceau" aria-hidden="true"><span>' + esc(initiale(o)) + '</span></div>';
+  }
+
+
 
   /* ─── Données ─── */
   function lireDonnees() {
@@ -191,7 +209,7 @@
     var idDetail = 'oe-detail-' + i;
     art.innerHTML =
       '<div class="oeuvre-haut">' +
-        '<div class="oeuvre-sceau" aria-hidden="true"><span>' + esc(initiale(o)) + '</span></div>' +
+        sceau(o) +
         '<button type="button" class="oeuvre-lire" data-lire="' + i + '" ' +
           'aria-label="Écouter ' + esc(o.title) + '">' + PLAY + '</button>' +
         '<div class="oeuvre-onde" aria-hidden="true">' + onde + '</div>' +
@@ -199,6 +217,7 @@
       '</div>' +
       '<div class="oeuvre-corps">' +
         '<div class="oeuvre-style">' + esc(o.style || 'Composition originale') + lieu + '</div>' +
+        (o.mention ? '<div class="oeuvre-mention">' + esc(o.mention) + '</div>' : '') +
         '<h3 class="oeuvre-titre"><em>' + esc(o.title || 'Sans titre') + '</em></h3>' +
         (o.who ? '<div class="oeuvre-qui">Pour ' + esc(o.who) + '</div>' : '') +
         '<button type="button" class="oeuvre-plus" data-plus aria-expanded="false" ' +

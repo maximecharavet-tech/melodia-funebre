@@ -78,12 +78,16 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
 <noscript><style>.intro{display:none!important}</style></noscript>` : ''}`;
 }
 
-function nav() {
+/* « at-top » rend la barre transparente, pour que le bandeau vidéo de
+   l'accueil se donne en entier. Sur une page sans bandeau, il n'y a
+   rien à laisser voir : le texte défilait sous le logo, illisible.
+   La classe n'est donc posée que là où elle a un sens. */
+function nav(surBandeau) {
   const links = NAVITEMS.map(([h, l]) => `      <a href="${h}">${l}</a>`).join('\n');
   const mlinks = NAVITEMS.map(([h, l]) => `  <a href="${h}">${l}</a>`).join('\n');
   return `<a class="skip-link" href="#main">Aller au contenu</a>
 <div class="grain" aria-hidden="true"></div>
-<nav class="nav at-top">
+<nav class="nav${surBandeau ? ' at-top' : ''}">
   <div class="nav-inner">
     <a href="index.html" class="nav-brand" aria-label="Melodia Funèbre, accueil">
       <img src="assets/img/logo-melodia.jpg" alt="" class="nav-logo" width="40" height="40">
@@ -213,7 +217,7 @@ function page(p) {
 ${head(p)}
 </head>
 <body>
-${p.intro ? intro() + '\n' : ''}${nav()}
+${p.intro ? intro() + '\n' : ''}${nav(/hero-video/.test(p.body || ''))}
 <main id="main">
 ${p.body}
 </main>

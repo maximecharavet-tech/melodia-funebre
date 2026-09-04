@@ -95,13 +95,16 @@ function oeuvres() {
     const lieu = t.lieu ? ` · ${esc(t.lieu)}` : '';
     return `        <article class="oeuvre reveal" data-oeuvre="${i}" data-style="${esc(t.style)}">
           <div class="oeuvre-haut">
-            <div class="oeuvre-sceau" aria-hidden="true"><span>${esc(initiale)}</span></div>
+            ${t.photo
+              ? `<div class="oeuvre-sceau oeuvre-sceau-photo" aria-hidden="true"><img src="${esc(t.photo)}" alt="" loading="lazy" decoding="async" width="120" height="120"><span>${esc(initiale)}</span></div>`
+              : `<div class="oeuvre-sceau" aria-hidden="true"><span>${esc(initiale)}</span></div>`}
             <button type="button" class="oeuvre-lire" data-lire="${i}" aria-label="Écouter ${esc(t.title)}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
             <div class="oeuvre-onde" aria-hidden="true">${barres}</div>
             <span class="oeuvre-duree" data-duree>—:—</span>
           </div>
           <div class="oeuvre-corps">
             <div class="oeuvre-style">${esc(t.style)}${lieu}</div>
+${t.mention ? `            <div class="oeuvre-mention">${esc(t.mention)}</div>\n` : ''}
             <h3 class="oeuvre-titre"><em>${esc(t.title)}</em></h3>
             <div class="oeuvre-qui">Pour ${esc(t.who)}</div>
             <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-${i}"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -122,12 +125,27 @@ ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</bl
   const donnees = liste.map(t => ({
     id: t.id, title: t.title, who: t.who, lieu: t.lieu,
     style: t.style, audio: t.file, story: t.story,
-    lyrics: t.lyrics, brief: t.brief
+    lyrics: t.lyrics, brief: t.brief, photo: t.photo || '', mention: t.mention || ''
   }));
+
+  /* Mention des portraits — posée par le gabarit, donc impossible à
+     oublier sur l'une des pages où le catalogue apparaît, et absente
+     tant qu'aucune fiche ne porte de portrait.
+
+     Elle dit ce qui est : ces visages sont des illustrations. Un site
+     de composition funéraire qui présente ses réalisations engage la
+     confiance de familles endeuillées ; laisser croire qu'on regarde
+     la photographie d'un défunt réel, sans que ce soit le cas, serait
+     une tromperie sur ce que la maison a effectivement fait. La ligne
+     coûte peu et met le catalogue à l'abri. */
+  const avecPortrait = liste.some(t => t.photo);
+  const mention = avecPortrait
+    ? `\n      <p class="note center catalogue-mention">Portraits d'illustration — une famille nous confie des mots, pas toujours un visage.</p>`
+    : '';
 
   return `      <div class="catalogue" data-catalogue>
 ${fiches}
-      </div>
+      </div>${mention}
       <script type="application/json" id="oeuvres-data">${JSON.stringify(donnees).replace(/</g, '\\u003c')}</script>`;
 }
 

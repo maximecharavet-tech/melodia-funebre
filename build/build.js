@@ -29,7 +29,8 @@ if (fs.existsSync(fichierContenu)) {
       data.TRACKS.length = 0;
       visibles(c.demos).forEach(d => data.TRACKS.push({
         id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
-        file: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief
+        file: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief,
+        photo: d.photo || '', mention: d.mention || ''
       }));
     }
     if (c.offers) {
