@@ -21,7 +21,6 @@
   if (!grille) return;
 
   var REDUIT = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var APERCU = grille.getAttribute('data-catalogue') === 'apercu';
   var BARRES = 20;
 
   var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
@@ -174,7 +173,7 @@
   /* ─── Rendu des fiches ─── */
   function fiche(o, i) {
     var art = document.createElement('article');
-    art.className = 'oeuvre reveal in';
+    art.className = 'oeuvre';
     art.setAttribute('data-oeuvre', String(i));
     if (o.style) art.setAttribute('data-style', o.style);
 
@@ -217,6 +216,29 @@
     });
     peindre();
     observerDurees();
+    animerEntree();
+  }
+
+  /* Les fiches montent en cascade à l'approche de l'écran. Le décalage
+     est calculé sur celles qui entrent ensemble : la vague suit donc la
+     largeur réelle de la grille, sans rien savoir du nombre de colonnes. */
+  var oeilEntree = null;
+  function animerEntree() {
+    if (REDUIT || !('IntersectionObserver' in window)) {
+      cartes.forEach(function (c) { if (c) c.classList.add('vu'); });
+      return;
+    }
+    if (oeilEntree) oeilEntree.disconnect();
+    oeilEntree = new IntersectionObserver(function (entrees) {
+      var rang = 0;
+      entrees.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.style.transitionDelay = (rang++ * 0.08).toFixed(2) + 's';
+        e.target.classList.add('vu');
+        oeilEntree.unobserve(e.target);
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+    visibles.forEach(function (i) { if (cartes[i]) oeilEntree.observe(cartes[i]); });
   }
 
   /* Peint l'état de lecture sur les fiches et la barre */
@@ -236,12 +258,13 @@
       if (d) d.textContent = fmt(durees[i]);
     });
 
-    if (!barre) return;
+    if (!barre) { majBoutonTout(); return; }
     var o = OEUVRES[cur];
     if (o) {
       bTitre.textContent = o.title || 'Hommage';
       bQui.textContent = [o.who, o.style].filter(Boolean).join(' · ');
     }
+    majBoutonTout();
     bLire.innerHTML = joue ? PAUSE : PLAY;
     bLire.setAttribute('aria-label', joue ? 'Mettre en pause' : 'Reprendre la lecture');
     barre.classList.toggle('joue', joue);
@@ -370,7 +393,7 @@
   var filtreActif = '';
 
   function rendreFiltres() {
-    if (!hoteFiltres || APERCU) return;
+    if (!hoteFiltres) return;
     var styles = [];
     OEUVRES.forEach(function (o) {
       if (o.style && styles.indexOf(o.style) === -1) styles.push(o.style);
@@ -417,7 +440,22 @@
       if (filtreActif && o.style !== filtreActif) return;
       visibles.push(i);
     });
-    if (APERCU) visibles = visibles.slice(0, 3);
+  }
+
+  /* ─── « Tout écouter » : la vitrine en une touche ─── */
+  var boutonTout = document.querySelector('[data-tout-ecouter]');
+  if (boutonTout) {
+    boutonTout.addEventListener('click', function () {
+      if (joue) { arreter(); return; }
+      if (cur >= 0) { basculer(cur); return; }
+      if (visibles.length) basculer(visibles[0]);
+    });
+  }
+  function majBoutonTout() {
+    if (!boutonTout) return;
+    boutonTout.classList.toggle('en-lecture', joue);
+    var t = boutonTout.querySelector('[data-libelle]');
+    if (t) t.textContent = joue ? 'Arrêter l\'écoute' : 'Tout écouter';
   }
 
   /* ─── Compteurs affichés ailleurs sur la page ─── */
@@ -445,6 +483,7 @@
     rendreFiltres();
     majCompteurs();
     grille.classList.toggle('est-vide', !visibles.length);
+    majBoutonTout();
   }
 
   window.addEventListener('pagehide', function () {

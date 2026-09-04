@@ -85,8 +85,8 @@ ${STYLES.map(s => `    <span class="marquee-item">${s}</span>`).join('\n')}
    personne, et le catalogue reste lisible si le JavaScript ne charge
    pas. catalogue.js reprend ensuite ces fiches pour l'écoute, et les
    remonte quand le propriétaire ajoute une musique depuis sa console. */
-function oeuvres(mode) {
-  const liste = mode === 'apercu' ? TRACKS.slice(0, 3) : TRACKS;
+function oeuvres() {
+  const liste = TRACKS;
   const barres = Array.from({ length: 20 },
     (_, b) => `<span style="animation-delay:${(b * 0.07).toFixed(2)}s"></span>`).join('');
 
@@ -122,15 +122,24 @@ ${t.lyrics ? `            <blockquote class="oeuvre-vers">${esc(t.lyrics)}</bloc
     lyrics: t.lyrics, brief: t.brief
   }));
 
-  return `      <div class="catalogue" data-catalogue="${mode === 'apercu' ? 'apercu' : 'complet'}">
+  return `      <div class="catalogue" data-catalogue>
 ${fiches}
       </div>
       <script type="application/json" id="oeuvres-data">${JSON.stringify(donnees).replace(/</g, '\\u003c')}</script>`;
 }
 
-/* Barre de filtres — remplie par catalogue.js selon les styles présents */
-function filtres() {
-  return `      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical" hidden></div>`;
+/* Bandeau de la vitrine : ce qu'elle contient, et l'écoute intégrale.
+   Le compte et les filtres sont remplis par catalogue.js d'après le
+   contenu publié — ils suivent donc les ajouts faits en console. */
+function vitrineBarre() {
+  return `      <div class="cat-barre reveal">
+        <p class="cat-compte"><span data-catalogue-libelle>${TRACKS.length} hommages</span> composés à ce jour</p>
+        <button type="button" class="btn btn-gold" data-tout-ecouter>
+          <span class="cat-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span data-libelle>Tout écouter</span>
+        </button>
+      </div>
+      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical" hidden></div>`;
 }
 
 /* Bandeau urgence — le chemin le plus rentable du site */
@@ -184,4 +193,4 @@ const jsonldService = {
   }))
 };
 
-module.exports = { pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, filtres, urgency, esc, jsonldOrg, jsonldFaq, jsonldService };
+module.exports = { pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, urgency, esc, jsonldOrg, jsonldFaq, jsonldService };

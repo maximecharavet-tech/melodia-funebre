@@ -66,6 +66,11 @@ ${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta prop
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>
+/* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
+   pour les révéler, la page se servirait presque vide. On les rétablit. */
+.reveal,.oeuvre{opacity:1!important;transform:none!important}
+</style></noscript>
 ${p.jsonld ? '<script type="application/ld+json">' + JSON.stringify(p.jsonld) + '</script>' : ''}${p.intro ? `
 <script>/* Avant le premier rendu : le seuil ne se rejoue pas dans la même session. */
 try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.className+=' intro-off';}catch(e){}</script>

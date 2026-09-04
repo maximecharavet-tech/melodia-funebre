@@ -32,6 +32,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>
+/* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
+   pour les révéler, la page se servirait presque vide. On les rétablit. */
+.reveal,.oeuvre{opacity:1!important;transform:none!important}
+</style></noscript>
 <script type="application/ld+json">[{"@context":"https://schema.org","@type":"LocalBusiness","@id":"https://melodia-funebre.fr/#organisation","name":"Melodia Funèbre","description":"Maison française de composition musicale personnalisée pour cérémonies funéraires. Une œuvre originale par défunt, livrée en 24 heures, sans droits SACEM.","url":"https://melodia-funebre.fr","email":"contact@melodia-funebre.fr","image":"https://melodia-funebre.fr/assets/img/logo-melodia.jpg","logo":"https://melodia-funebre.fr/assets/img/logo-melodia.jpg","founder":{"@type":"Person","name":"Maxime Charavet"},"areaServed":{"@type":"Country","name":"France"},"priceRange":"149€ – 499€"},{"@context":"https://schema.org","@type":"Service","serviceType":"Composition musicale personnalisée pour cérémonie funéraire","provider":{"@id":"https://melodia-funebre.fr/#organisation"},"areaServed":{"@type":"Country","name":"France"},"offers":[{"@type":"Offer","name":"Essentiel","price":"149","priceCurrency":"EUR","description":"L'hommage sobre et juste, pour l'essentiel du souvenir.","availability":"https://schema.org/InStock","url":"https://melodia-funebre.fr/offres"},{"@type":"Offer","name":"Prestige","price":"299","priceCurrency":"EUR","description":"L'hommage complet : plus de choix, plus de sérénité.","availability":"https://schema.org/InStock","url":"https://melodia-funebre.fr/offres"},{"@type":"Offer","name":"Mémorial","price":"499","priceCurrency":"EUR","description":"L'héritage sonore complet, transmis aux générations.","availability":"https://schema.org/InStock","url":"https://melodia-funebre.fr/offres"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Combien de temps faut-il vraiment pour recevoir l'hommage ?","acceptedAnswer":{"@type":"Answer","text":"Vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. En cas de cérémonie imminente, notre priorité six heures permet une livraison le jour même : demandez à être rappelé en cochant l'urgence, nous répondons sept jours sur sept."}},{"@type":"Question","name":"Faut-il payer des droits SACEM pour diffuser la chanson ?","acceptedAnswer":{"@type":"Answer","text":"Non, et c'est une différence importante. Chaque œuvre est composée spécialement pour vous et vous est cédée avec ses droits d'usage. Vous pouvez la diffuser en cérémonie, la copier pour la famille, la conserver et la transmettre, sans aucune déclaration ni redevance."}},{"@type":"Question","name":"Que se passe-t-il si la chanson ne nous touche pas ?","acceptedAnswer":{"@type":"Answer","text":"Nous la reprenons. L'offre Prestige comprend une révision, l'offre Mémorial des révisions illimitées. Sur l'offre Essentiel, une révision est facturée 49 €. À ce jour, aucune famille n'est repartie avec une œuvre qu'elle ne souhaitait pas diffuser."}},{"@type":"Question","name":"Quelles informations devons-nous fournir ?","acceptedAnswer":{"@type":"Answer","text":"Très peu, et rien de difficile : le prénom du défunt, trois traits de caractère, son métier ou sa passion, une habitude quotidienne, et si vous le souhaitez une anecdote. Cinq minutes suffisent. Nous posons les questions, vous n'avez rien à préparer."}},{"@type":"Question","name":"La voix est-elle générée ou chantée ?","acceptedAnswer":{"@type":"Answer","text":"La composition s'appuie sur des outils de création musicale assistée, supervisés à chaque étape par la maison : le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant livraison. Aucun hommage n'est envoyé sans avoir été écouté par un humain."}},{"@type":"Question","name":"Peut-on écouter avant de payer ?","acceptedAnswer":{"@type":"Answer","text":"Vous pouvez écouter les trois hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite."}},{"@type":"Question","name":"Comment se passe le paiement ?","acceptedAnswer":{"@type":"Answer","text":"Par carte bancaire ou PayPal, en paiement sécurisé au moment de la commande. Vous pouvez aussi enregistrer votre commande et régler après l'entretien téléphonique. Rétractation de 14 jours dans les conditions prévues par la loi."}},{"@type":"Question","name":"Travaillez-vous avec les pompes funèbres ?","acceptedAnswer":{"@type":"Answer","text":"Oui, et c'est une part importante de notre activité. Les agences partenaires conservent 60 % du montant sur chaque hommage, sans investissement ni charge technique. La page Agences comporte un simulateur de revenus."}}]}]</script>
 <script>/* Avant le premier rendu : le seuil ne se rejoue pas dans la même session. */
 try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.className+=' intro-off';}catch(e){}</script>
@@ -139,6 +144,177 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
   </div>
 </div>
 
+  <!-- ═══ LA VITRINE ═══ -->
+  <section class="section" id="vitrine">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Nos réalisations</div>
+        <h2 class="h-xl">Écoutez ce que<br>nous <em>composons.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:64ch;">Voici nos hommages, tous réunis. Chacun est né d'un entretien de cinq minutes avec une famille : rien n'a été pris dans un catalogue, tout a été écrit pour eux. La personne est décrite à côté de sa chanson.</p>
+      </div>
+      <div class="cat-barre reveal">
+        <p class="cat-compte"><span data-catalogue-libelle>7 hommages</span> composés à ce jour</p>
+        <button type="button" class="btn btn-gold" data-tout-ecouter>
+          <span class="cat-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span data-libelle>Tout écouter</span>
+        </button>
+      </div>
+      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical" hidden></div>
+      <div class="catalogue" data-catalogue>
+        <article class="oeuvre reveal" data-oeuvre="0" data-style="Gospel">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>J</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="0" aria-label="Écouter Jean, Paris"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Gospel · Paris</div>
+            <h3 class="oeuvre-titre"><em>Jean, Paris</em></h3>
+            <div class="oeuvre-qui">Pour Jean, 40 ans</div>
+            <p class="oeuvre-recit">Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de ce qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.</p>
+            <blockquote class="oeuvre-vers">Paris peut bien continuer sans toi
+Mais il manque quelque chose dans ses rues
+Une lumière, un rire, une voix</blockquote>
+            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« parisien · supporter · aimant »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+        <article class="oeuvre reveal" data-oeuvre="1" data-style="Musique du monde">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>G</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="1" aria-label="Écouter Peppe, tesoro"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Musique du monde</div>
+            <h3 class="oeuvre-titre"><em>Peppe, tesoro</em></h3>
+            <div class="oeuvre-qui">Pour Giuseppe, 80 ans</div>
+            <p class="oeuvre-recit">Il avait quitté le Sud pour l'usine et gardé le Sud dans l'assiette. Il n'a jamais dit « je t'aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu'il n'a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.</p>
+            <blockquote class="oeuvre-vers">Ton prénom tient dans deux langues
+Celle du village et celle d'ici</blockquote>
+            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« taiseux · nourricier · fidèle »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+        <article class="oeuvre reveal" data-oeuvre="2" data-style="Piano classique">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>C</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="2" aria-label="Écouter Le vent connaît ton nom"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Piano classique</div>
+            <h3 class="oeuvre-titre"><em>Le vent connaît ton nom</em></h3>
+            <div class="oeuvre-qui">Pour Chantal, 79 ans</div>
+            <p class="oeuvre-recit">Elle aimait les chansons, celles qui font partir l'âme bien avant les pieds. Elle est partie vers le Sud, et la vie y a posé Orlando sur son chemin. Sa famille a demandé que sa foi y soit, et un Ave Maria. Flûte amérindienne, harpe, violoncelles, chœur.</p>
+            <blockquote class="oeuvre-vers">Le vent connaît ton nom,
+Il le murmure aux montagnes,
+Il le confie aux étoiles.</blockquote>
+            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« voyageuse · douce · croyante »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+        <article class="oeuvre reveal" data-oeuvre="3" data-style="Gospel">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>O</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="3" aria-label="Écouter Personne n'oublie ton rire"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Gospel</div>
+            <h3 class="oeuvre-titre"><em>Personne n'oublie ton rire</em></h3>
+            <div class="oeuvre-qui">Pour Odette, super mamie</div>
+            <p class="oeuvre-recit">Elle cuisinait sans balance, juste à l'œil, et les fêtes attendaient ses plats plutôt que l'inverse. Elle repartait la valise trop pleine et revenait avec le soleil dans la voix. Paul, Thomas, Virginie et Nolan ont grandi à sa table. Orgue Hammond et chœur gospel.</p>
+            <blockquote class="oeuvre-vers">personne n'oublie ton rire
+Il arrivait avant toi dans la pièce</blockquote>
+            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« généreuse · rieuse · voyageuse »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+        <article class="oeuvre reveal" data-oeuvre="4" data-style="Chanson française">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>M</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="4" aria-label="Écouter Le Papi Pêcheur"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Chanson française · Nantes</div>
+            <h3 class="oeuvre-titre"><em>Le Papi Pêcheur</em></h3>
+            <div class="oeuvre-qui">Pour Maurice, 78 ans</div>
+            <p class="oeuvre-recit">Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.</p>
+            <blockquote class="oeuvre-vers">Quatre paires de mains sur la même canne
+Quatre silences appris au bord de l'eau</blockquote>
+            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« patient · taquin · silencieux »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+        <article class="oeuvre reveal" data-oeuvre="5" data-style="Folk acoustique">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>M</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="5" aria-label="Écouter Le Jardin du Temps"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Folk acoustique · Avignon</div>
+            <h3 class="oeuvre-titre"><em>Le Jardin du Temps</em></h3>
+            <div class="oeuvre-qui">Pour Monique, 75 ans</div>
+            <p class="oeuvre-recit">Jardinière d'Avignon. Roses anciennes, jasmin blanc, les mains dans la terre à chaque printemps. Sa fille voulait « quelque chose qui sente le matin ». Voix féminine, cordes chaleureuses, guitare en arpèges.</p>
+            <blockquote class="oeuvre-vers">Elle a planté tout ce qu'elle n'a pas dit
+Et le jasmin lui répond chaque avril</blockquote>
+            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« douce · obstinée · matinale »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+        <article class="oeuvre reveal" data-oeuvre="6" data-style="Bossa nova">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>S</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="6" aria-label="Écouter Saudade Noite"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Bossa nova · Marseille</div>
+            <h3 class="oeuvre-titre"><em>Saudade Noite</em></h3>
+            <div class="oeuvre-qui">Pour Sergio, 69 ans</div>
+            <p class="oeuvre-recit">Brésilien de Marseille, danseur infatigable. Sa famille voulait de la joie, pas des larmes : « il aurait détesté qu'on pleure ». Guitare nylon, brosses sur la caisse claire, une dernière samba pour la route.</p>
+            <blockquote class="oeuvre-vers">Ne pleurez pas, mettez la musique plus fort
+J'ai encore un pas de danse à vous apprendre</blockquote>
+            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« joyeux · bruyant · généreux »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+      </div>
+      <script type="application/json" id="oeuvres-data">[{"id":"demo-4","title":"Jean, Paris","who":"Jean, 40 ans","lieu":"Paris","style":"Gospel","audio":"audio/jean.mp3","story":"Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de ce qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.","lyrics":"Paris peut bien continuer sans toi\nMais il manque quelque chose dans ses rues\nUne lumière, un rire, une voix","brief":"parisien · supporter · aimant"},{"id":"demo-5","title":"Peppe, tesoro","who":"Giuseppe, 80 ans","lieu":"","style":"Musique du monde","audio":"audio/giuseppe.mp3","story":"Il avait quitté le Sud pour l'usine et gardé le Sud dans l'assiette. Il n'a jamais dit « je t'aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu'il n'a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.","lyrics":"Ton prénom tient dans deux langues\nCelle du village et celle d'ici","brief":"taiseux · nourricier · fidèle"},{"id":"demo-6","title":"Le vent connaît ton nom","who":"Chantal, 79 ans","lieu":"","style":"Piano classique","audio":"audio/chantal.mp3","story":"Elle aimait les chansons, celles qui font partir l'âme bien avant les pieds. Elle est partie vers le Sud, et la vie y a posé Orlando sur son chemin. Sa famille a demandé que sa foi y soit, et un Ave Maria. Flûte amérindienne, harpe, violoncelles, chœur.","lyrics":"Le vent connaît ton nom,\nIl le murmure aux montagnes,\nIl le confie aux étoiles.","brief":"voyageuse · douce · croyante"},{"id":"demo-7","title":"Personne n'oublie ton rire","who":"Odette, super mamie","lieu":"","style":"Gospel","audio":"audio/odette.mp3","story":"Elle cuisinait sans balance, juste à l'œil, et les fêtes attendaient ses plats plutôt que l'inverse. Elle repartait la valise trop pleine et revenait avec le soleil dans la voix. Paul, Thomas, Virginie et Nolan ont grandi à sa table. Orgue Hammond et chœur gospel.","lyrics":"personne n'oublie ton rire\nIl arrivait avant toi dans la pièce","brief":"généreuse · rieuse · voyageuse"},{"id":"demo-1","title":"Le Papi Pêcheur","who":"Maurice, 78 ans","lieu":"Nantes","style":"Chanson française","audio":"audio/maurice.mp3","story":"Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.","lyrics":"Quatre paires de mains sur la même canne\nQuatre silences appris au bord de l'eau","brief":"patient · taquin · silencieux"},{"id":"demo-2","title":"Le Jardin du Temps","who":"Monique, 75 ans","lieu":"Avignon","style":"Folk acoustique","audio":"audio/monique.mp3","story":"Jardinière d'Avignon. Roses anciennes, jasmin blanc, les mains dans la terre à chaque printemps. Sa fille voulait « quelque chose qui sente le matin ». Voix féminine, cordes chaleureuses, guitare en arpèges.","lyrics":"Elle a planté tout ce qu'elle n'a pas dit\nEt le jasmin lui répond chaque avril","brief":"douce · obstinée · matinale"},{"id":"demo-3","title":"Saudade Noite","who":"Sergio, 69 ans","lieu":"Marseille","style":"Bossa nova","audio":"audio/sergio.mp3","story":"Brésilien de Marseille, danseur infatigable. Sa famille voulait de la joie, pas des larmes : « il aurait détesté qu'on pleure ». Guitare nylon, brosses sur la caisse claire, une dernière samba pour la route.","lyrics":"Ne pleurez pas, mettez la musique plus fort\nJ'ai encore un pas de danse à vous apprendre","brief":"joyeux · bruyant · généreux"}]</script>
+    </div>
+  </section>
+
   <!-- ═══ LE PROBLÈME ═══ -->
   <section class="section">
     <div class="wrap">
@@ -201,86 +377,6 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
       </div>
       <div class="center reveal" style="margin-top:3rem;">
         <a href="processus.html" class="btn btn-outline">Le processus en détail</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ CATALOGUE DES RÉALISATIONS ═══ -->
-  <section class="section">
-    <div class="wrap">
-      <div class="center reveal" style="margin-bottom:3.2rem;">
-        <div class="eyebrow">Nos réalisations</div>
-        <h2 class="h-xl">Des vies entières,<br>en <em>trois minutes.</em></h2>
-        <p class="lead" style="margin:1.6rem auto 0;max-width:64ch;">Chacun de ces hommages est né d'un entretien de cinq minutes avec une famille. Rien n'a été pris dans un catalogue : tout a été écrit pour eux, à partir de trois mots et d'un souvenir. Écoutez, la personne est décrite à côté.</p>
-      </div>
-      <div class="catalogue" data-catalogue="apercu">
-        <article class="oeuvre reveal" data-oeuvre="0" data-style="Chanson française">
-          <div class="oeuvre-haut">
-            <div class="oeuvre-sceau" aria-hidden="true"><span>M</span></div>
-            <button type="button" class="oeuvre-lire" data-lire="0" aria-label="Écouter Le Papi Pêcheur"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
-            <span class="oeuvre-duree" data-duree>—:—</span>
-          </div>
-          <div class="oeuvre-corps">
-            <div class="oeuvre-style">Chanson française · Nantes</div>
-            <h3 class="oeuvre-titre"><em>Le Papi Pêcheur</em></h3>
-            <div class="oeuvre-qui">Pour Maurice, 78 ans</div>
-            <p class="oeuvre-recit">Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.</p>
-            <blockquote class="oeuvre-vers">Quatre paires de mains sur la même canne
-Quatre silences appris au bord de l'eau</blockquote>
-            <div class="oeuvre-brief">
-              <span class="mono">Les mots de la famille</span>
-              <em>« patient · taquin · silencieux »</em>
-            </div>
-          </div>
-          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
-        </article>
-        <article class="oeuvre reveal" data-oeuvre="1" data-style="Folk acoustique">
-          <div class="oeuvre-haut">
-            <div class="oeuvre-sceau" aria-hidden="true"><span>M</span></div>
-            <button type="button" class="oeuvre-lire" data-lire="1" aria-label="Écouter Le Jardin du Temps"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
-            <span class="oeuvre-duree" data-duree>—:—</span>
-          </div>
-          <div class="oeuvre-corps">
-            <div class="oeuvre-style">Folk acoustique · Avignon</div>
-            <h3 class="oeuvre-titre"><em>Le Jardin du Temps</em></h3>
-            <div class="oeuvre-qui">Pour Monique, 75 ans</div>
-            <p class="oeuvre-recit">Jardinière d'Avignon. Roses anciennes, jasmin blanc, les mains dans la terre à chaque printemps. Sa fille voulait « quelque chose qui sente le matin ». Voix féminine, cordes chaleureuses, guitare en arpèges.</p>
-            <blockquote class="oeuvre-vers">Elle a planté tout ce qu'elle n'a pas dit
-Et le jasmin lui répond chaque avril</blockquote>
-            <div class="oeuvre-brief">
-              <span class="mono">Les mots de la famille</span>
-              <em>« douce · obstinée · matinale »</em>
-            </div>
-          </div>
-          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
-        </article>
-        <article class="oeuvre reveal" data-oeuvre="2" data-style="Bossa nova">
-          <div class="oeuvre-haut">
-            <div class="oeuvre-sceau" aria-hidden="true"><span>S</span></div>
-            <button type="button" class="oeuvre-lire" data-lire="2" aria-label="Écouter Saudade Noite"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
-            <span class="oeuvre-duree" data-duree>—:—</span>
-          </div>
-          <div class="oeuvre-corps">
-            <div class="oeuvre-style">Bossa nova · Marseille</div>
-            <h3 class="oeuvre-titre"><em>Saudade Noite</em></h3>
-            <div class="oeuvre-qui">Pour Sergio, 69 ans</div>
-            <p class="oeuvre-recit">Brésilien de Marseille, danseur infatigable. Sa famille voulait de la joie, pas des larmes : « il aurait détesté qu'on pleure ». Guitare nylon, brosses sur la caisse claire, une dernière samba pour la route.</p>
-            <blockquote class="oeuvre-vers">Ne pleurez pas, mettez la musique plus fort
-J'ai encore un pas de danse à vous apprendre</blockquote>
-            <div class="oeuvre-brief">
-              <span class="mono">Les mots de la famille</span>
-              <em>« joyeux · bruyant · généreux »</em>
-            </div>
-          </div>
-          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
-        </article>
-      </div>
-      <script type="application/json" id="oeuvres-data">[{"id":"demo-1","title":"Le Papi Pêcheur","who":"Maurice, 78 ans","lieu":"Nantes","style":"Chanson française","audio":"audio/maurice.mp3","story":"Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.","lyrics":"Quatre paires de mains sur la même canne\nQuatre silences appris au bord de l'eau","brief":"patient · taquin · silencieux"},{"id":"demo-2","title":"Le Jardin du Temps","who":"Monique, 75 ans","lieu":"Avignon","style":"Folk acoustique","audio":"audio/monique.mp3","story":"Jardinière d'Avignon. Roses anciennes, jasmin blanc, les mains dans la terre à chaque printemps. Sa fille voulait « quelque chose qui sente le matin ». Voix féminine, cordes chaleureuses, guitare en arpèges.","lyrics":"Elle a planté tout ce qu'elle n'a pas dit\nEt le jasmin lui répond chaque avril","brief":"douce · obstinée · matinale"},{"id":"demo-3","title":"Saudade Noite","who":"Sergio, 69 ans","lieu":"Marseille","style":"Bossa nova","audio":"audio/sergio.mp3","story":"Brésilien de Marseille, danseur infatigable. Sa famille voulait de la joie, pas des larmes : « il aurait détesté qu'on pleure ». Guitare nylon, brosses sur la caisse claire, une dernière samba pour la route.","lyrics":"Ne pleurez pas, mettez la musique plus fort\nJ'ai encore un pas de danse à vous apprendre","brief":"joyeux · bruyant · généreux"}]</script>
-      <div class="center reveal" style="margin-top:2.8rem;">
-        <a href="demos.html" class="btn btn-gold">Le catalogue complet</a>
       </div>
     </div>
   </section>

@@ -10,6 +10,54 @@
   },
   "demos": [
     {
+      "id": "demo-4",
+      "visible": true,
+      "title": "Jean, Paris",
+      "who": "Jean, 40 ans",
+      "lieu": "Paris",
+      "style": "Gospel",
+      "audio": "audio/jean.mp3",
+      "story": "Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de ce qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.",
+      "lyrics": "Paris peut bien continuer sans toi\nMais il manque quelque chose dans ses rues\nUne lumière, un rire, une voix",
+      "brief": "parisien · supporter · aimant"
+    },
+    {
+      "id": "demo-5",
+      "visible": true,
+      "title": "Peppe, tesoro",
+      "who": "Giuseppe, 80 ans",
+      "lieu": "",
+      "style": "Musique du monde",
+      "audio": "audio/giuseppe.mp3",
+      "story": "Il avait quitté le Sud pour l'usine et gardé le Sud dans l'assiette. Il n'a jamais dit « je t'aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu'il n'a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.",
+      "lyrics": "Ton prénom tient dans deux langues\nCelle du village et celle d'ici",
+      "brief": "taiseux · nourricier · fidèle"
+    },
+    {
+      "id": "demo-6",
+      "visible": true,
+      "title": "Le vent connaît ton nom",
+      "who": "Chantal, 79 ans",
+      "lieu": "",
+      "style": "Piano classique",
+      "audio": "audio/chantal.mp3",
+      "story": "Elle aimait les chansons, celles qui font partir l'âme bien avant les pieds. Elle est partie vers le Sud, et la vie y a posé Orlando sur son chemin. Sa famille a demandé que sa foi y soit, et un Ave Maria. Flûte amérindienne, harpe, violoncelles, chœur.",
+      "lyrics": "Le vent connaît ton nom,\nIl le murmure aux montagnes,\nIl le confie aux étoiles.",
+      "brief": "voyageuse · douce · croyante"
+    },
+    {
+      "id": "demo-7",
+      "visible": true,
+      "title": "Personne n'oublie ton rire",
+      "who": "Odette, super mamie",
+      "lieu": "",
+      "style": "Gospel",
+      "audio": "audio/odette.mp3",
+      "story": "Elle cuisinait sans balance, juste à l'œil, et les fêtes attendaient ses plats plutôt que l'inverse. Elle repartait la valise trop pleine et revenait avec le soleil dans la voix. Paul, Thomas, Virginie et Nolan ont grandi à sa table. Orgue Hammond et chœur gospel.",
+      "lyrics": "personne n'oublie ton rire\nIl arrivait avant toi dans la pièce",
+      "brief": "généreuse · rieuse · voyageuse"
+    },
+    {
       "id": "demo-1",
       "visible": true,
       "title": "Le Papi Pêcheur",
@@ -44,18 +92,6 @@
       "brief": "joyeux · bruyant · généreux",
       "lieu": "Marseille",
       "lyrics": "Ne pleurez pas, mettez la musique plus fort\nJ'ai encore un pas de danse à vous apprendre"
-    },
-    {
-      "id": "demo-4",
-      "visible": true,
-      "title": "Jean, Paris",
-      "who": "Jean, 40 ans",
-      "lieu": "Paris",
-      "style": "Gospel",
-      "audio": "audio/jean.mp3",
-      "story": "Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a d'abord parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de l'évidence qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.",
-      "lyrics": "Paris peut bien continuer sans toi\nMais il manque quelque chose dans ses rues\nUne lumière, un rire, une voix",
-      "brief": "parisien · supporter · aimant"
     }
   ],
   "offers": [
