@@ -65,7 +65,7 @@
       return {
         id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
         audio: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief,
-        photo: d.photo || ''
+        photo: d.photo || '', mention: d.mention || ''
       };
     });
     if (window.MelodiaCatalogue) window.MelodiaCatalogue.monter(window.MELODIA_OEUVRES);

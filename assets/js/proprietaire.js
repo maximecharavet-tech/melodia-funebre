@@ -44,6 +44,8 @@
           aide: 'Facultatif. Une image carrée déposée dans assets/img/portraits/, ou un lien complet. Laissé vide, le sceau doré à l\'initiale reprend sa place — une famille n\'a pas toujours de photo qu\'elle accepte de voir publiée.' },
         { k: 'lieu', l: 'Ville', t: 'text', ph: 'Nantes',
           aide: 'Facultatif. Affichée à côté du style : elle ancre l\'hommage dans un lieu réel.' },
+        { k: 'mention', l: 'Mention particulière', t: 'text', ph: 'Hommage à une vivante',
+          aide: 'Facultatif. Une étiquette affichée sur la fiche, pour ce qui doit être dit tout de suite : un hommage composé pour une personne vivante, une cérémonie laïque, une commande en urgence. Laissée vide, rien ne s\'affiche.' },
         { k: 'style', l: 'Style musical', t: 'text', ph: 'Chanson française',
           aide: 'Sert aussi de filtre sur la page Écouter. Reprenez un intitulé existant pour regrouper les hommages.' },
         { k: 'audio', l: 'Fichier audio', t: 'text', req: true, ph: 'audio/maurice.mp3',
@@ -55,7 +57,7 @@
         { k: 'brief', l: 'Les mots de la famille', t: 'text', ph: 'patient · taquin · silencieux',
           aide: 'Les trois mots confiés au départ. Affichés en bas de la fiche : c\'est la preuve la plus parlante du service.' }
       ],
-      neuf: function () { return { id: uid('demo'), visible: true, title: '', who: '', lieu: '', style: 'Chanson française', audio: '', photo: '', story: '', lyrics: '', brief: '' }; }
+      neuf: function () { return { id: uid('demo'), visible: true, title: '', who: '', lieu: '', style: 'Chanson française', mention: '', audio: '', photo: '', story: '', lyrics: '', brief: '' }; }
     },
     offers: {
       cle: 'offers',

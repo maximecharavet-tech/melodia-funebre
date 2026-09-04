@@ -36,12 +36,28 @@ const FAQ = [
     a: "Oui, et c'est une part importante de notre activité. Les agences partenaires conservent 60 % du montant sur chaque hommage, sans investissement ni charge technique. La page Agences comporte un simulateur de revenus." }
 ];
 
-const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde'];
+const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer'];
 
 /* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
    propriétaire ajoute ses musiques depuis sa console, pas ici. */
 const TRACKS = [
+  { id: "demo-9", title: "Vers les pâturages d'en haut", who: "Antone, berger du Niolu", lieu: "Corse",
+    style: "Polyphonie corse", file: "audio/antone.mp3",
+    story: "Né dans le Niolu, sous le Monte Cintu. Berger comme son père et son grand-père : à douze ans il connaissait déjà chaque pierre, chaque source, chaque printemps des sentiers. Il a épousé Maria aux yeux noirs, fille de berger elle aussi, et ils ont eu cinq enfants — trois garçons, deux filles, tous nés sous le toit des ancêtres. Quand la maladie l'a cloué au lit, il a demandé qu'on ouvre la fenêtre pour voir le village une dernière fois. Polyphonie à trois voix d'hommes, cetera, pirula et ghiterra ; les couplets sont en corse, les refrains en français.",
+    lyrics: "Oh Antone, enfant du Niolu sauvage\nTu as aimé la terre plus que les hommes\nEt tu t'en es allé comme s'en vont les bergers\nVers les pâturages d'en haut, vers le ciel éternel",
+    brief: "montagnard · fidèle · taiseux" },
+  { id: "demo-10", title: "Vers l'île d'Ys", who: "Yann, marin de Bréhat", lieu: "Bréhat",
+    style: "Celtique", file: "audio/yann.mp3",
+    story: "Né un matin de brume à Bréhat, entre l'écume et les mâts. Son père sentait le sel, sa mère le goémon. À douze ans il montait sur son premier dundee, direction l'Islande. Il a épousé Marie aux cheveux couleur de lin ; ils ont eu quatre enfants, deux filles et deux garçons, et la maison sentait le cidre et le pain noir. Quand la maladie l'a cloué dans son lit, il a demandé qu'on ouvre la fenêtre pour voir la mer une dernière fois. Harpe celtique, bombarde, biniou kozh et violon ; le chant passe du breton au français.",
+    lyrics: "Oh Yann, enfant de la côte de Goëlo\nTu as aimé la mer plus qu'on n'aime les rois\nEt tu t'en es allé comme s'en vont les bateaux\nVers l'île d'Ys, vers le pays d'après",
+    brief: "marin · courageux · fidèle" },
+  { id: "demo-11", title: "Eshet Chayil, femme de valeur", who: "Ruth, 85 ans", lieu: "Paris et Israël",
+    style: "Klezmer", mention: "Composé pour une vivante",
+    file: "audio/ruth.mp3",
+    story: "Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.",
+    lyrics: "Ruth, Eshet Chayil, femme de valeur\nQui trouvera une femme comme toi ?\nTon prix dépasse celui des perles\nTu as marché entre deux terres avec foi",
+    brief: "croyante · debout · rassembleuse" },
   { id: "demo-8", title: "Jusqu'au jour où l'on se retrouve", who: "Jason, 38 ans", lieu: "",
     style: "Piano classique", file: "audio/jason.mp3", photo: "assets/img/portraits/jason.jpg",
     story: "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",

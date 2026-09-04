@@ -104,6 +104,7 @@ function oeuvres() {
           </div>
           <div class="oeuvre-corps">
             <div class="oeuvre-style">${esc(t.style)}${lieu}</div>
+${t.mention ? `            <div class="oeuvre-mention">${esc(t.mention)}</div>\n` : ''}
             <h3 class="oeuvre-titre"><em>${esc(t.title)}</em></h3>
             <div class="oeuvre-qui">Pour ${esc(t.who)}</div>
             <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-${i}"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -124,7 +125,7 @@ ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</bl
   const donnees = liste.map(t => ({
     id: t.id, title: t.title, who: t.who, lieu: t.lieu,
     style: t.style, audio: t.file, story: t.story,
-    lyrics: t.lyrics, brief: t.brief, photo: t.photo || ''
+    lyrics: t.lyrics, brief: t.brief, photo: t.photo || '', mention: t.mention || ''
   }));
 
   /* Mention des portraits — posée par le gabarit, donc impossible à

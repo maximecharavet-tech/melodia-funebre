@@ -2276,23 +2276,30 @@ body.a-ecoute { padding-bottom: 5rem; }
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Le médaillon devient portrait ─── */
+/* Le portrait se pose PAR-DESSUS l'initiale, qui reste dans le sceau.
+   Rien à basculer : si l'image manque, tarde, ou n'est jamais demandée
+   parce qu'elle est en chargement différé hors écran, c'est le sceau
+   doré que l'on voit — et il n'a jamais cessé d'être là. Un premier
+   essai confiait ce repli à un écouteur d'erreur en JavaScript : il ne
+   se déclenchait pas sur les images différées, et trois médaillons
+   restaient vides jusqu'à ce qu'on défile jusqu'à eux. */
 .oeuvre-sceau-photo {
-  overflow: hidden; padding: 0;
-  background: var(--ink-3);
+  position: relative; overflow: hidden; padding: 0;
   border-color: rgba(201, 168, 76, 0.42);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
 }
-.oeuvre-sceau-photo img {
+.oeuvre-sceau-photo > img {
+  position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
   display: block; border-radius: 50%;
+  background: var(--ink-3);
   /* Les portraits viennent de sources diverses : on les ramène à une
      même température pour que la grille ne ressemble pas à un
      trombinoscope. */
   filter: saturate(0.78) contrast(1.04) brightness(0.97);
   transition: filter var(--t-mid) var(--ease), transform var(--t-mid) var(--ease);
 }
-.oeuvre:hover .oeuvre-sceau-photo img,
-.oeuvre.joue .oeuvre-sceau-photo img { filter: saturate(0.95) contrast(1.05); }
+.oeuvre:hover .oeuvre-sceau-photo > img,
+.oeuvre.joue .oeuvre-sceau-photo > img { filter: saturate(0.95) contrast(1.05); }
 
 /* Le halo d'écoute se pose autour du portrait sans le laver */
 .oeuvre.joue .oeuvre-sceau-photo { border-color: var(--or); }
@@ -2359,15 +2366,46 @@ body.a-ecoute { padding-bottom: 5rem; }
 
 @media (prefers-reduced-motion: reduce) {
   .oeuvre::after, .oeuvre.joue::after { transform: none; transition: none; }
-  .oeuvre-sceau-photo img { transition: none; }
+  .oeuvre-sceau-photo > img { transition: none; }
 }
 
 /* Le sceau contient les deux : le portrait et l'initiale. C'est la
    classe qui décide lequel se montre — de sorte qu'un simple retrait
    de classe, quand l'image ne charge pas, rende sa place au sceau
    doré sans qu'aucun nœud ait à être reconstruit. */
-.oeuvre-sceau-photo > span { display: none; }
-.oeuvre-sceau:not(.oeuvre-sceau-photo) > img { display: none; }
+/* Ce couple de règles n'a plus lieu d'être : l'initiale est toujours
+   présente, et le portrait la recouvre quand il arrive. */
 
 /* Mention des portraits : présente, lisible, jamais encombrante. */
 .catalogue-mention { margin-top: 1.6rem; opacity: 0.8; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MENTION D'UNE FICHE
+
+   Tout le catalogue parle de personnes disparues. Quand une œuvre
+   fait exception — un hommage composé pour quelqu'un de vivant, un
+   anniversaire, des noces d'or — il faut le dire à l'endroit et au
+   moment où on le lit, c'est-à-dire sur la fiche elle-même, avant
+   le titre. Sans quoi une famille comprend qu'on lui présente un
+   défunt de plus.
+   ═══════════════════════════════════════════════════════════════ */
+.oeuvre-mention {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  margin: 0 0 0.7rem;
+  font-family: var(--ff-m); font-size: 0.58rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cyan, #38bdf8);
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  background: rgba(56, 189, 248, 0.07);
+  padding: 0.3rem 0.7rem; border-radius: 100px;
+}
+.oeuvre-mention::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; flex: none;
+}
+.section-light .oeuvre-mention {
+  color: #0d6f96; border-color: rgba(13, 111, 150, 0.3); background: rgba(13, 111, 150, 0.06);
+}
+@media (max-width: 720px) {
+  .oeuvre-mention { font-size: 0.72rem; letter-spacing: 0.08em; padding: 0.34rem 0.7rem; }
+}

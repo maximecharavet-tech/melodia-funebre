@@ -30,7 +30,7 @@ if (fs.existsSync(fichierContenu)) {
       visibles(c.demos).forEach(d => data.TRACKS.push({
         id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
         file: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief,
-        photo: d.photo || ''
+        photo: d.photo || '', mention: d.mention || ''
       }));
     }
     if (c.offers) {
