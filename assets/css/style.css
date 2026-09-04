@@ -992,12 +992,63 @@ body.intro-open { overflow: hidden; }
    ondes s'échappent du centre comme un son qui se propage dans une
    salle. Tout est dessiné en CSS et en SVG : le seuil doit s'afficher
    à l'instant même, sans attendre le moindre fichier. */
+/* Scène et film occupent la même case : ils se superposent au pixel
+   près, la place est réservée dès le premier rendu, et le passage de
+   l'un à l'autre ne déplace rien. */
+.intro-visuel {
+  position: relative;
+  display: grid; place-items: center;
+  width: clamp(230px, 54vw, 380px);
+  aspect-ratio: 1040 / 880;
+  margin: 0 auto 1.4rem;
+}
+.intro-visuel > * { grid-area: 1 / 1; position: relative; z-index: 1; }
+
+/* Un halo noir, plus large que le film, posé sous lui. Le noir du film
+   s'y fond au lieu de trancher sur le halo doré de la page : masquer
+   davantage aurait rogné la colombe et la clef de sol. */
+.intro-visuel::before {
+  content: ''; position: absolute; inset: -28%; z-index: 0;
+  background: radial-gradient(ellipse at 50% 50%, #000 42%, rgba(0,0,0,0.55) 62%, transparent 78%);
+  opacity: 0; pointer-events: none;
+  transition: opacity 1.1s var(--ease);
+}
+.intro.film-pret .intro-visuel::before { opacity: 1; }
+
 .intro-scene {
   position: relative;
   width: clamp(150px, 30vw, 210px); height: clamp(150px, 30vw, 210px);
-  margin: 0 auto 2.2rem;
   display: grid; place-items: center;
+  transition: opacity 0.8s var(--ease);
 }
+
+/* Le film du logo. Fond noir sur fond noir : aucun bord ne se voit, et
+   la composition entière — monogramme, colombe, portée, nom — reste
+   visible sans qu'on ait à la recadrer. */
+.intro-film {
+  width: 100%; opacity: 0; pointer-events: none;
+  transition: opacity 1.1s var(--ease);
+  /* Le noir du film n'est pas exactement celui de la page, qui porte un
+     halo doré : sans cela, on verrait un rectangle posé sur le fond. Les
+     bords sont donc estompés — assez au large pour ne rogner ni la
+     colombe, ni la clef de sol, ni le nom en bas de l'image. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 6%, #000 96%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 6%, #000 96%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+.intro-video { display: block; width: 100%; height: auto; }
+
+/* Le nom est déjà dans le film : l'afficher deux fois le dédouble. */
+.intro.film-pret .intro-film { opacity: 1; }
+.intro.film-pret .intro-scene { opacity: 0; }
+/* Le nom porte une animation « forwards » : elle l'emporterait sur une
+   simple opacité. On la coupe en même temps. */
+.intro.film-pret .intro-name { animation: none; opacity: 0; transition: opacity 0.8s var(--ease); }
 
 /* Le médaillon */
 .intro-logo {
@@ -1141,6 +1192,8 @@ body.intro-open { overflow: hidden; }
   .an-arc { opacity: 0.5 !important; }
   /* Les ondes n'ont de sens qu'en mouvement */
   .intro-onde { display: none; }
+  /* Le film n'est pas chargé en mouvement réduit ; on le masque aussi */
+  .intro-film { display: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
