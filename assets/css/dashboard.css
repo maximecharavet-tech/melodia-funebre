@@ -221,3 +221,171 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .pl-seg { flex: 1 1 45% !important; }
   .pl-n { font-size: 1.4rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CONSOLE COMMERCIALE
+   Rédaction du courriel, script d'appel, objections, cibles.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Fenêtre de rédaction ─── */
+.compo {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(4, 4, 7, 0.82);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.2rem;
+  animation: compoFond 0.2s ease;
+}
+@keyframes compoFond { from { opacity: 0; } to { opacity: 1; } }
+
+.compo-boite {
+  width: 100%; max-width: 700px; max-height: 92vh;
+  display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: compoEntre 0.28s var(--ease-out);
+}
+@keyframes compoEntre { from { opacity: 0; transform: translateY(18px) scale(0.985); } to { opacity: 1; transform: none; } }
+
+.compo-tete {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  padding: 1.2rem 1.4rem; border-bottom: 1px solid var(--line-soft);
+}
+.compo-corps { padding: 1.2rem 1.4rem; overflow-y: auto; flex: 1; }
+.compo-pied {
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.7rem;
+  padding: 1rem 1.4rem; border-top: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.015);
+}
+.compo-quand {
+  margin: 0 0 1.1rem; padding: 0.7rem 0.9rem;
+  background: var(--or-soft); border-left: 2px solid var(--or-patina);
+  font-size: 0.86rem; color: var(--bone); line-height: 1.6;
+}
+.compo-note {
+  margin: 0.8rem 0 0; font-size: 0.8rem; color: var(--ash); line-height: 1.7;
+}
+
+/* ─── Objet d'un modèle ─── */
+.modele-objet {
+  font-family: var(--ff-m); font-size: 0.72rem; letter-spacing: 0.06em;
+  color: var(--or-patina); background: var(--or-soft);
+  padding: 0.6rem 0.85rem; margin: 0 0 0.9rem;
+  border-left: 2px solid var(--or-patina);
+}
+
+/* ─── Étapes du script d'appel ─── */
+.etape { padding: 1.1rem 0; border-bottom: 1px solid var(--line-soft); }
+.etape:last-child { border-bottom: 0; padding-bottom: 0; }
+.etape-tete { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.etape-num {
+  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--ff-m); font-size: 0.66rem;
+  color: var(--or); border: 1px solid var(--line-strong); background: var(--or-soft);
+}
+.etape-titre {
+  font-family: var(--ff-d); font-size: 1.24rem; color: var(--paper);
+}
+.etape-duree {
+  margin-left: auto; font-family: var(--ff-m); font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
+}
+.etape-dire {
+  margin: 0.9rem 0 0; padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.025); border-left: 2px solid var(--or);
+  font-family: var(--ff-d); font-style: italic; font-size: 1.06rem;
+  line-height: 1.65; color: var(--or-bright);
+}
+.etape-points {
+  margin: 0.9rem 0 0; padding-left: 1.1rem;
+  font-size: 0.9rem; line-height: 1.85; color: var(--bone);
+}
+.etape-points li { margin-bottom: 0.35rem; }
+.etape-note {
+  margin: 0.9rem 0 0; font-size: 0.84rem; color: var(--ash);
+  line-height: 1.7; font-style: italic;
+}
+
+/* ─── Objections, dépliables ─── */
+.obj { border-bottom: 1px solid var(--line-soft); }
+.obj-q {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  width: 100%; padding: 0.95rem 0; cursor: pointer; background: none; text-align: left;
+  font-family: var(--ff-d); font-size: 1.14rem; color: var(--paper);
+  transition: color var(--t-fast);
+}
+.obj-q:hover { color: var(--or-bright); }
+.obj-q.ouvert { color: var(--or); }
+.obj-q svg { flex: none; width: 17px; height: 17px; color: var(--or-patina); transition: transform var(--t-mid) var(--ease); }
+.obj-q.ouvert svg { transform: rotate(180deg); }
+.obj-r { padding: 0 0 1.2rem; animation: objOuvre 0.3s var(--ease-out); }
+@keyframes objOuvre { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.obj-cache {
+  margin: 0 0 0.8rem; font-size: 0.86rem; color: var(--ash); line-height: 1.7;
+}
+.obj-cache b, .obj-relance b { color: var(--or-patina); }
+.obj-rep {
+  margin: 0 0 0.9rem; padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.025); border-left: 2px solid var(--or-patina);
+  font-size: 0.93rem; line-height: 1.75; color: var(--bone);
+}
+.obj-relance {
+  margin: 0; font-size: 0.9rem; line-height: 1.7; color: var(--bone);
+}
+
+/* ─── Cibles du plan ─── */
+.cible { padding: 0.9rem 0; border-bottom: 1px solid var(--line-soft); }
+.cible:last-child { border-bottom: 0; padding-bottom: 0; }
+.cible-tete { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.cible-titre { font-family: var(--ff-d); font-size: 1.18rem; color: var(--paper); }
+.cible-pourquoi { margin: 0.4rem 0 0; font-size: 0.9rem; line-height: 1.75; color: var(--ash); }
+
+@media (max-width: 720px) {
+  .compo { padding: 0; align-items: flex-end; }
+  .compo-boite { max-width: none; max-height: 100vh; height: 100vh; border-radius: 0; border: 0; }
+  .compo-pied { padding-bottom: calc(1rem + env(safe-area-inset-bottom)); }
+  .compo-pied .btn { flex: 1; }
+  .etape-titre { font-size: 1.12rem; }
+  .etape-duree { margin-left: 0; width: 100%; }
+  .obj-q { font-size: 1.04rem; }
+}
+
+/* Coordonnées d'une fiche : une adresse email en capitales se lit mal
+   et se recopie mal. La ligne garde donc sa casse d'origine. */
+.o-contact {
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: 0.82rem;
+  margin-top: 0.35rem;
+}
+.o-contact a { text-decoration: none; }
+.o-contact a:hover { text-decoration: underline; }
+
+/* Report de la prochaine action : les libellés se coupaient en deux et
+   se chevauchaient dans des boutons calibrés pour une icône. */
+.reports {
+  display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem;
+}
+.report {
+  flex: none; white-space: nowrap; cursor: pointer;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ash);
+  background: transparent; border: 1px solid var(--line-soft);
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.report:hover { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+@media (max-width: 720px) {
+  .report { min-height: 38px; padding: 0.5rem 0.75rem; font-size: 0.62rem; }
+}
+
+/* Le sous-titre d'un panneau est du mono capitalisé très espacé : c'est
+   une étiquette, pas une phrase. Les explications prennent cette classe,
+   en texte courant, sinon elles deviennent illisibles dès deux lignes. */
+.panel-note {
+  margin: 0.5rem 0 1.2rem;
+  font-size: 0.9rem; line-height: 1.75; color: var(--ash);
+  max-width: 74ch;
+}

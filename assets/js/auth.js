@@ -14,6 +14,8 @@
   /* Identifiants maître — mode débutant, prototype local */
   var MASTER_ID = 'mastermax07';
   var MASTER_PW = 'mastermax07';
+  /* L'identifiant sert à se connecter, l'adresse à recevoir les réponses */
+  var MASTER_MAIL = 'contact@melodia-funebre.fr';
 
   var LS = {
     get: function (k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } },
@@ -42,7 +44,7 @@
 
     current: function () {
       var m = LS.get('melodia_master', null);
-      if (m) return { id: 'master', name: 'Maxime Charavet', email: MASTER_ID, role: 'master' };
+      if (m) return { id: 'master', name: 'Maxime Charavet', email: MASTER_MAIL, role: 'master' };
       if (HAS_SB) {
         var s = LS.get('melodia_session', null);
         if (!s || !s.user) return null;
@@ -59,7 +61,7 @@
       // 1) Compte maître
       if (id.toLowerCase() === MASTER_ID && password === MASTER_PW) {
         LS.set('melodia_master', { at: Date.now() });
-        return { id: 'master', name: 'Maxime Charavet', email: MASTER_ID, role: 'master' };
+        return { id: 'master', name: 'Maxime Charavet', email: MASTER_MAIL, role: 'master' };
       }
       var email = id.toLowerCase();
       if (HAS_SB) {
