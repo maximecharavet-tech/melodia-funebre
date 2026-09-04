@@ -1,37 +1,28 @@
 const { ICON } = require('./gen.js');
 const P = require('./parts.js');
-const { TRACKS, STYLES } = require('./data.js');
+const { STYLES } = require('./data.js');
 
 module.exports = {
   file: 'demos.html',
-  title: 'Écouter — Trois hommages composés pour de vraies familles | Melodia Funèbre',
-  desc: "Écoutez trois hommages musicaux composés à partir d'un entretien de cinq minutes : chanson française, folk acoustique, bossa nova. Le brief de départ est indiqué pour chacun.",
-  scripts: ['assets/js/player.js'],
+  title: 'Nos réalisations — Le catalogue des hommages composés | Melodia Funèbre',
+  desc: "Le catalogue des hommages composés par la maison : pour chacun, la personne, son histoire, les mots que sa famille nous avait confiés, et l'œuvre qui en est née — écoutable en ligne.",
+  scripts: ['assets/js/catalogue.js'],
   body: `
   <section class="section" style="padding-top:9rem;padding-bottom:0;">
     <div class="wrap">
-      <div class="eyebrow reveal in">Écouter</div>
-      <h1 class="h-hero reveal in reveal-d1">Trois vies,<br>trois <em>mélodies.</em></h1>
-      <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Chacune de ces œuvres est née d'un entretien de cinq minutes. Rien n'a été choisi dans un catalogue. Pour chaque hommage, nous indiquons les trois mots que la famille nous avait donnés au départ.</p>
+      <div class="eyebrow reveal in">Nos réalisations</div>
+      <h1 class="h-hero reveal in reveal-d1">Des vies entières,<br>en <em>trois minutes.</em></h1>
+      <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;max-width:66ch;">Voici les hommages que la maison a composés. Pour chacun : la personne, son histoire telle que sa famille nous l'a racontée, les trois mots qu'elle nous avait confiés au départ, et l'œuvre qui en est née. Rien n'a été pris dans un catalogue — c'est le catalogue qui est né d'eux.</p>
     </div>
   </section>
 
   <section class="section section-tight">
     <div class="wrap">
-      <div class="grid-2" style="gap:3rem;align-items:start;">
-        ${P.player('Sélectionnez un hommage')}
-        <div id="demos-list">
-${TRACKS.map(t => `          <div class="card card-lift reveal" style="margin-bottom:1.2rem;">
-            <h3 class="h-lg"><em>${t.title}</em></h3>
-            <div class="mono" style="margin:.6rem 0 1rem;">${t.who} · ${t.style}</div>
-            <p>${t.story}</p>
-            <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--line-soft);">
-              <span class="mono" style="color:var(--dust);">Brief de départ</span>
-              <div style="font-family:var(--ff-d);font-style:italic;font-size:1.1rem;color:var(--or-patina);margin-top:.4rem;">« ${t.brief} »</div>
-            </div>
-          </div>`).join('\n')}
-        </div>
-      </div>
+      <p class="center reveal mono" style="color:var(--dust);margin-bottom:1.6rem;">
+        <span data-catalogue-libelle>3 hommages</span> au catalogue
+      </p>
+${P.filtres()}
+${P.oeuvres('complet')}
     </div>
   </section>
 
@@ -41,6 +32,7 @@ ${TRACKS.map(t => `          <div class="card card-lift reveal" style="margin-bo
       <div class="center reveal" style="margin-bottom:3.5rem;">
         <div class="eyebrow">Ce qui se passe entre les deux</div>
         <h2 class="h-xl">De trois mots<br>à <em>trois minutes.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:58ch;">Reprenons le premier hommage du catalogue, celui de Maurice, et suivons le chemin d'un bout à l'autre.</p>
       </div>
       <div class="grid-3">
         <div class="card reveal">

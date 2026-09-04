@@ -32,21 +32,28 @@
   var SCHEMAS = {
     demos: {
       cle: 'demos',
-      titre: 'Musiques d\'exemple',
-      sous: 'Les hommages proposés à l\'écoute sur l\'accueil et la page Écouter.',
+      titre: 'Catalogue des réalisations',
+      sous: 'Les hommages présentés sur l\'accueil, la page Écouter et l\'espace partenaire. Le catalogue grandit à chaque ajout — aucune mise en page n\'est à reprendre.',
       resume: function (d) { return (d.title || 'Sans titre') + (d.who ? ' — ' + d.who : ''); },
-      detail: function (d) { return d.style || ''; },
+      detail: function (d) { return [d.style, d.lieu].filter(Boolean).join(' · '); },
       champs: [
         { k: 'title', l: 'Titre de l\'hommage', t: 'text', req: true, ph: 'Le Papi Pêcheur' },
-        { k: 'who', l: 'Personne', t: 'text', ph: 'Maurice, 78 ans' },
-        { k: 'style', l: 'Style musical', t: 'text', ph: 'Chanson française' },
+        { k: 'who', l: 'La personne', t: 'text', ph: 'Maurice, 78 ans',
+          aide: 'Prénom et âge. L\'initiale devient le sceau de la fiche dans le catalogue.' },
+        { k: 'lieu', l: 'Ville', t: 'text', ph: 'Nantes',
+          aide: 'Facultatif. Affichée à côté du style : elle ancre l\'hommage dans un lieu réel.' },
+        { k: 'style', l: 'Style musical', t: 'text', ph: 'Chanson française',
+          aide: 'Sert aussi de filtre sur la page Écouter. Reprenez un intitulé existant pour regrouper les hommages.' },
         { k: 'audio', l: 'Fichier audio', t: 'text', req: true, ph: 'audio/maurice.mp3',
           aide: 'Un fichier déposé dans le dossier audio/ du site (ex. audio/maurice.mp3), ou un lien complet vers un MP3 hébergé ailleurs.' },
-        { k: 'story', l: 'Le récit', t: 'area', ph: 'Pêcheur en bord de Loire pendant quarante ans…' },
-        { k: 'brief', l: 'Brief de départ', t: 'text', ph: 'patient · taquin · silencieux',
-          aide: 'Les trois mots confiés par la famille. Affichés sous le récit : c\'est la preuve la plus parlante du service.' }
+        { k: 'story', l: 'Le texte sur le défunt', t: 'area', ph: 'Pêcheur en bord de Loire pendant quarante ans…',
+          aide: 'Qui était cette personne, ce que la famille a raconté, ce que vous en avez fait musicalement. C\'est le cœur de la fiche.' },
+        { k: 'lyrics', l: 'Extrait des paroles', t: 'area', ph: 'Quatre paires de mains sur la même canne\nQuatre silences appris au bord de l\'eau',
+          aide: 'Deux ou trois vers, un par ligne. Rien ne montre mieux le travail que les mots eux-mêmes.' },
+        { k: 'brief', l: 'Les mots de la famille', t: 'text', ph: 'patient · taquin · silencieux',
+          aide: 'Les trois mots confiés au départ. Affichés en bas de la fiche : c\'est la preuve la plus parlante du service.' }
       ],
-      neuf: function () { return { id: uid('demo'), visible: true, title: '', who: '', style: 'Chanson française', audio: '', story: '', brief: '' }; }
+      neuf: function () { return { id: uid('demo'), visible: true, title: '', who: '', lieu: '', style: 'Chanson française', audio: '', story: '', lyrics: '', brief: '' }; }
     },
     offers: {
       cle: 'offers',
@@ -93,7 +100,7 @@
   };
 
   var ONGLETS = [
-    { id: 'demos', l: 'Musiques' },
+    { id: 'demos', l: 'Catalogue' },
     { id: 'offers', l: 'Tarifs' },
     { id: 'testimonials', l: 'Témoignages' },
     { id: 'faq', l: 'Questions' },

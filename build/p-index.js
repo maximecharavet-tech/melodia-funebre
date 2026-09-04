@@ -7,7 +7,7 @@ module.exports = {
   desc: "Maison française de composition musicale pour cérémonies funéraires. Une œuvre originale écrite pour votre défunt, livrée en 24 heures, sans droits SACEM. Dès 149 €.",
   jsonld: [P.jsonldOrg, P.jsonldService, P.jsonldFaq],
   intro: true,
-  scripts: ['assets/js/player.js'],
+  scripts: ['assets/js/catalogue.js'],
   body: `
   <!-- ═══ COUVERTURE ═══ -->
   <section class="hero-video">
@@ -95,19 +95,17 @@ ${P.urgency()}
     </div>
   </section>
 
-  <!-- ═══ ÉCOUTE ═══ -->
+  <!-- ═══ CATALOGUE DES RÉALISATIONS ═══ -->
   <section class="section">
     <div class="wrap">
-      <div class="grid-2" style="gap:4rem;align-items:center;">
-        <div class="reveal">
-          <div class="eyebrow">Écouter</div>
-          <h2 class="h-xl">Trois vies,<br>trois <em>mélodies.</em></h2>
-          <p class="lead" style="margin-top:1.6rem;">Chacune de ces œuvres est née d'un entretien de cinq minutes avec une famille. Rien n'a été choisi dans un catalogue : tout a été écrit pour eux, à partir de trois mots et d'un souvenir.</p>
-          <div class="hero-actions" style="margin-top:2rem;">
-            <a href="demos.html" class="btn btn-outline">Toutes les démonstrations</a>
-          </div>
-        </div>
-        ${P.player()}
+      <div class="center reveal" style="margin-bottom:3.2rem;">
+        <div class="eyebrow">Nos réalisations</div>
+        <h2 class="h-xl">Des vies entières,<br>en <em>trois minutes.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:64ch;">Chacun de ces hommages est né d'un entretien de cinq minutes avec une famille. Rien n'a été pris dans un catalogue : tout a été écrit pour eux, à partir de trois mots et d'un souvenir. Écoutez, la personne est décrite à côté.</p>
+      </div>
+${P.oeuvres('apercu')}
+      <div class="center reveal" style="margin-top:2.8rem;">
+        <a href="demos.html" class="btn btn-gold">Le catalogue complet</a>
       </div>
     </div>
   </section>

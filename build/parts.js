@@ -1,6 +1,6 @@
 /* Blocs réutilisables entre pages */
 const { ICON, SITE } = require('./gen.js');
-const { OFFERS, TESTIS, FAQ, STYLES } = require('./data.js');
+const { OFFERS, TESTIS, FAQ, STYLES, TRACKS } = require('./data.js');
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -80,13 +80,57 @@ ${STYLES.map(s => `    <span class="marquee-item">${s}</span>`).join('\n')}
 </div>`;
 }
 
-function player(head) {
-  return `<div class="player reveal">
-          <div class="player-head"><span>${head || 'Hommages composés par la maison'}</span><span class="badge badge-live">3 extraits</span></div>
-          <div class="player-list"></div>
-          <div class="player-progress"><div class="player-progress-fill"></div></div>
-          <div class="player-wave"></div>
-        </div>`;
+/* ═══ Catalogue des réalisations ═══
+   Rendu ici en HTML pour deux raisons : Google lit le récit de chaque
+   personne, et le catalogue reste lisible si le JavaScript ne charge
+   pas. catalogue.js reprend ensuite ces fiches pour l'écoute, et les
+   remonte quand le propriétaire ajoute une musique depuis sa console. */
+function oeuvres(mode) {
+  const liste = mode === 'apercu' ? TRACKS.slice(0, 3) : TRACKS;
+  const barres = Array.from({ length: 20 },
+    (_, b) => `<span style="animation-delay:${(b * 0.07).toFixed(2)}s"></span>`).join('');
+
+  const fiches = liste.map((t, i) => {
+    const initiale = (t.who || t.title || '♪').trim().charAt(0).toUpperCase();
+    const lieu = t.lieu ? ` · ${esc(t.lieu)}` : '';
+    return `        <article class="oeuvre reveal" data-oeuvre="${i}" data-style="${esc(t.style)}">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>${esc(initiale)}</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="${i}" aria-label="Écouter ${esc(t.title)}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true">${barres}</div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">${esc(t.style)}${lieu}</div>
+            <h3 class="oeuvre-titre"><em>${esc(t.title)}</em></h3>
+            <div class="oeuvre-qui">Pour ${esc(t.who)}</div>
+            <p class="oeuvre-recit">${esc(t.story)}</p>
+${t.lyrics ? `            <blockquote class="oeuvre-vers">${esc(t.lyrics)}</blockquote>\n` : ''}            <div class="oeuvre-brief">
+              <span class="mono">Les mots de la famille</span>
+              <em>« ${esc(t.brief)} »</em>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>`;
+  }).join('\n');
+
+  /* Les mêmes données en JSON : catalogue.js s'en sert pour filtrer et
+     enchaîner sans avoir à relire le HTML. */
+  const donnees = liste.map(t => ({
+    id: t.id, title: t.title, who: t.who, lieu: t.lieu,
+    style: t.style, audio: t.file, story: t.story,
+    lyrics: t.lyrics, brief: t.brief
+  }));
+
+  return `      <div class="catalogue" data-catalogue="${mode === 'apercu' ? 'apercu' : 'complet'}">
+${fiches}
+      </div>
+      <script type="application/json" id="oeuvres-data">${JSON.stringify(donnees).replace(/</g, '\\u003c')}</script>`;
+}
+
+/* Barre de filtres — remplie par catalogue.js selon les styles présents */
+function filtres() {
+  return `      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical" hidden></div>`;
 }
 
 /* Bandeau urgence — le chemin le plus rentable du site */
@@ -140,4 +184,4 @@ const jsonldService = {
   }))
 };
 
-module.exports = { pricing, faq, scrollHint, testimonials, trustStrip, marquee, player, urgency, esc, jsonldOrg, jsonldFaq, jsonldService };
+module.exports = { pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, filtres, urgency, esc, jsonldOrg, jsonldFaq, jsonldService };

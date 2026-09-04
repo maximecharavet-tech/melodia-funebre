@@ -55,29 +55,19 @@
 
   function appliquerDemos(c) {
     if (!c.demos) return;
-    var actives = visibles(c.demos);
+    var actives = visibles(c.demos).filter(function (d) { return d && d.audio; });
     if (!actives.length) return;
 
-    /* Le lecteur lit cette variable au démarrage */
-    window.MELODIA_TRACKS = actives.map(function (d) {
-      return { t: d.title, s: (d.style || '') + (d.who ? ' · ' + d.who : ''), f: d.audio };
+    /* Le catalogue des réalisations : c'est lui qui affiche les fiches
+       et gère l'écoute. Une musique ajoutée depuis la console arrive
+       ici, et le catalogue se remonte autour d'elle. */
+    window.MELODIA_OEUVRES = actives.map(function (d) {
+      return {
+        id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
+        audio: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief
+      };
     });
-
-    /* Page Écouter : les fiches qui accompagnent le lecteur */
-    var liste = $('#demos-list');
-    if (liste) {
-      liste.innerHTML = actives.map(function (d) {
-        return '<div class="card card-lift reveal in" style="margin-bottom:1.2rem;">' +
-          '<h3 class="h-lg"><em>' + esc(d.title) + '</em></h3>' +
-          '<div class="mono" style="margin:.6rem 0 1rem;">' + esc(d.who) + ' · ' + esc(d.style) + '</div>' +
-          '<p>' + esc(d.story) + '</p>' +
-          (d.brief ? '<div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--line-soft);">' +
-            '<span class="mono" style="color:var(--dust);">Brief de départ</span>' +
-            '<div style="font-family:var(--ff-d);font-style:italic;font-size:1.1rem;color:var(--or-patina);margin-top:.4rem;">« ' +
-            esc(d.brief) + ' »</div></div>' : '') +
-        '</div>';
-      }).join('');
-    }
+    if (window.MelodiaCatalogue) window.MelodiaCatalogue.monter(window.MELODIA_OEUVRES);
   }
 
   function appliquerOffres(c) {

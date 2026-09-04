@@ -165,7 +165,16 @@ function intro() {
   return `<div class="intro" id="intro" aria-label="Entrée du site Melodia Funèbre">
   <div class="intro-inner">
     <div class="intro-line"></div>
-    <img src="assets/img/intro-logo.jpg" alt="Melodia Funèbre" class="intro-logo" width="440" height="440" fetchpriority="high">
+    <div class="intro-scene">
+      <span class="intro-onde" aria-hidden="true"></span>
+      <span class="intro-onde" aria-hidden="true"></span>
+      <span class="intro-onde" aria-hidden="true"></span>
+      <svg class="intro-anneau" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+        <circle class="an-trace" cx="100" cy="100" r="96"/>
+        <circle class="an-arc" cx="100" cy="100" r="86"/>
+      </svg>
+      <img src="assets/img/intro-logo.jpg" alt="Melodia Funèbre" class="intro-logo" width="440" height="440" fetchpriority="high">
+    </div>
     <div class="intro-name">Melodia Funèbre</div>
     <div class="intro-wave" aria-hidden="true">${barres}</div>
     <p class="intro-claim">Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
@@ -178,7 +187,7 @@ function intro() {
 }
 
 function page(p) {
-  /* content.js d'abord : il pose window.MELODIA_TRACKS avant le lecteur */
+  /* content.js d'abord : le catalogue se remonte ensuite autour du contenu publié */
   const scripts = ['assets/js/content.js', 'assets/js/main.js', 'assets/js/rappel.js'].concat(p.scripts || []);
   return `<!DOCTYPE html>
 <html lang="fr">
