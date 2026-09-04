@@ -2130,7 +2130,6 @@ body.a-ecoute { padding-bottom: 5rem; }
     background-repeat: no-repeat;
     background-position: right center;
     background-size: 42px 100%;
-    background-attachment: local, scroll;
   }
   .compare th:first-child, .compare td:first-child { scroll-snap-align: start; }
   .scroll-hint { margin-top: 0; margin-bottom: 0.7rem; }
