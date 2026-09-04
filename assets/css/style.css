@@ -2260,3 +2260,114 @@ body.a-ecoute { padding-bottom: 5rem; }
   .lien-bascule { justify-content: flex-start; letter-spacing: 0.09em; }
   .auth-switch-solo .lien-bascule { justify-content: center; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PORTRAIT ET RAMEAU — L'ÉCRIN D'UNE RÉALISATION
+
+   Une fiche du catalogue portait une initiale dorée. Avec un
+   portrait, elle cesse d'être un exemple et redevient quelqu'un :
+   c'est un visage qu'on regarde avant d'appuyer sur lecture.
+
+   Le rameau de laurier est posé derrière la fiche, jamais par-dessus
+   le texte. C'est la règle qui a guidé tout le réglage : un ornement
+   qui rend un récit de deuil plus difficile à lire s'est trompé de
+   métier. Il tient donc dans les marges, à faible opacité, et
+   s'efface franchement là où la colonne se resserre.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Le médaillon devient portrait ─── */
+.oeuvre-sceau-photo {
+  overflow: hidden; padding: 0;
+  background: var(--ink-3);
+  border-color: rgba(201, 168, 76, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
+.oeuvre-sceau-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; border-radius: 50%;
+  /* Les portraits viennent de sources diverses : on les ramène à une
+     même température pour que la grille ne ressemble pas à un
+     trombinoscope. */
+  filter: saturate(0.78) contrast(1.04) brightness(0.97);
+  transition: filter var(--t-mid) var(--ease), transform var(--t-mid) var(--ease);
+}
+.oeuvre:hover .oeuvre-sceau-photo img,
+.oeuvre.joue .oeuvre-sceau-photo img { filter: saturate(0.95) contrast(1.05); }
+
+/* Le halo d'écoute se pose autour du portrait sans le laver */
+.oeuvre.joue .oeuvre-sceau-photo { border-color: var(--or); }
+
+/* ─── Le rameau, en filigrane ─── */
+.oeuvre::after {
+  content: '';
+  position: absolute; right: -34px; bottom: -46px;
+  width: 176px; height: 382px;
+  background: url('../img/rameau.svg') no-repeat right bottom / contain;
+  opacity: 0.14;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity var(--t-mid) var(--ease), transform var(--t-mid) var(--ease);
+}
+/* La fiche en cours d'écoute s'éclaire — le rameau avec elle */
+.oeuvre.joue::after { opacity: 0.26; transform: translateY(-6px); }
+.oeuvre.vu:hover::after { opacity: 0.2; }
+
+/* Un second rameau en haut à gauche, retourné, ferme le cadre.
+   Bien plus discret : il ne fait que rappeler le premier. */
+/* Le rameau naît par sa base, qui est son extrémité dense ; posé par
+   le haut, seule sa pointe clairsemée dépassait et l'ornement ne se
+   voyait pas. La boîte est donc remontée hors du cadre et l'image
+   calée sur son bas : ce qui reste visible dans le coin, c'est la
+   naissance des feuilles. */
+.oeuvre-haut::before {
+  content: '';
+  position: absolute; left: -34px; top: -188px;
+  width: 128px; height: 278px;
+  background: url('../img/rameau.svg') no-repeat left bottom / contain;
+  /* Le miroir doit pivoter autour du centre : pris sur le bord
+     gauche, il emportait toute la boîte hors du cadre, où le
+     débordement caché de la fiche l'effaçait sans rien signaler. */
+  transform: scaleX(-1);
+  transform-origin: center;
+  opacity: 0.13;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Le contenu passe devant l'ornement, toujours */
+.oeuvre-haut, .oeuvre-corps, .oeuvre-jauge { position: relative; z-index: 2; }
+
+/* Sur la fiche claire de la page d'accueil, l'or doit se voir sur
+   fond ivoire : le filigrane y serait invisible, on le renforce. */
+.section-light .oeuvre::after { opacity: 0.2; }
+.section-light .oeuvre.joue::after { opacity: 0.32; }
+
+@media (max-width: 720px) {
+  /* La colonne se resserre : le récit passe à quelques pixels du bord
+     droit, là où le rameau était le plus dense. Il rétrécit, recule
+     dans le coin et s'estompe — présent, mais hors du chemin du
+     texte. */
+  .oeuvre::after {
+    width: 122px; height: 264px;
+    right: -30px; bottom: -34px;
+    opacity: 0.1;
+  }
+  .oeuvre.joue::after { opacity: 0.18; }
+  .oeuvre-haut::before { width: 92px; height: 200px; left: -26px; top: -136px; opacity: 0.09; }
+  .section-light .oeuvre::after { opacity: 0.15; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oeuvre::after, .oeuvre.joue::after { transform: none; transition: none; }
+  .oeuvre-sceau-photo img { transition: none; }
+}
+
+/* Le sceau contient les deux : le portrait et l'initiale. C'est la
+   classe qui décide lequel se montre — de sorte qu'un simple retrait
+   de classe, quand l'image ne charge pas, rende sa place au sceau
+   doré sans qu'aucun nœud ait à être reconstruit. */
+.oeuvre-sceau-photo > span { display: none; }
+.oeuvre-sceau:not(.oeuvre-sceau-photo) > img { display: none; }
+
+/* Mention des portraits : présente, lisible, jamais encombrante. */
+.catalogue-mention { margin-top: 1.6rem; opacity: 0.8; }

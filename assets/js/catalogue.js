@@ -48,11 +48,42 @@
     return m + ':' + String(r).padStart(2, '0');
   }
 
-  /* Le sceau porte l'initiale de la personne : chaque fiche se
-     distingue sans qu'aucune photo ne soit demandée à la famille. */
+  /* Le sceau porte le portrait de la personne quand il y en a un, et
+     son initiale sinon. Le repli n'est pas un pis-aller : une famille
+     n'a pas toujours de photo qu'elle accepte de voir publiée, et une
+     fiche sans visage doit rester aussi soignée que les autres. */
   function initiale(o) {
     var source = (o.who || o.title || '').trim();
     return source ? source.charAt(0).toUpperCase() : '♪';
+  }
+
+  function sceau(o) {
+    if (o.photo) {
+      /* Le portrait est décoratif : le nom est déjà écrit juste en
+         dessous, un texte de remplacement ne ferait que le répéter
+         aux lecteurs d'écran. L'initiale reste dans le nœud, cachée :
+         c'est elle qui reprend la place si l'image ne charge pas. */
+      return '<div class="oeuvre-sceau oeuvre-sceau-photo" aria-hidden="true" ' +
+        'data-initiale="' + esc(initiale(o)) + '">' +
+        '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async" ' +
+        'width="120" height="120"><span>' + esc(initiale(o)) + '</span></div>';
+    }
+    return '<div class="oeuvre-sceau" aria-hidden="true"><span>' + esc(initiale(o)) + '</span></div>';
+  }
+
+  /* Un chemin de portrait erroné — une faute de frappe dans la console,
+     un fichier pas encore déposé — ne doit jamais laisser une icône
+     d'image cassée sur une fiche de deuil. Le sceau doré reprend sa
+     place, et personne ne voit qu'il s'est passé quelque chose. */
+  function veillerPortraits(racine) {
+    var imgs = (racine || document).querySelectorAll('.oeuvre-sceau-photo img');
+    for (var i = 0; i < imgs.length; i++) {
+      (function (img) {
+        var rendre = function () { img.parentNode.classList.remove('oeuvre-sceau-photo'); };
+        if (img.complete && img.naturalWidth === 0) return rendre();
+        img.addEventListener('error', rendre, { once: true });
+      })(imgs[i]);
+    }
   }
 
   /* ─── Données ─── */
@@ -191,7 +222,7 @@
     var idDetail = 'oe-detail-' + i;
     art.innerHTML =
       '<div class="oeuvre-haut">' +
-        '<div class="oeuvre-sceau" aria-hidden="true"><span>' + esc(initiale(o)) + '</span></div>' +
+        sceau(o) +
         '<button type="button" class="oeuvre-lire" data-lire="' + i + '" ' +
           'aria-label="Écouter ' + esc(o.title) + '">' + PLAY + '</button>' +
         '<div class="oeuvre-onde" aria-hidden="true">' + onde + '</div>' +
@@ -228,6 +259,7 @@
       grille.appendChild(c);
     });
     peindre();
+    veillerPortraits(grille);
     observerDurees();
     animerEntree();
     majCompact();

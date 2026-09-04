@@ -64,7 +64,8 @@
     window.MELODIA_OEUVRES = actives.map(function (d) {
       return {
         id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
-        audio: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief
+        audio: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief,
+        photo: d.photo || ''
       };
     });
     if (window.MelodiaCatalogue) window.MelodiaCatalogue.monter(window.MELODIA_OEUVRES);

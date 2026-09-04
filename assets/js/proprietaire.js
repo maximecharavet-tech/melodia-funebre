@@ -39,7 +39,9 @@
       champs: [
         { k: 'title', l: 'Titre de l\'hommage', t: 'text', req: true, ph: 'Le Papi Pêcheur' },
         { k: 'who', l: 'La personne', t: 'text', ph: 'Maurice, 78 ans',
-          aide: 'Prénom et âge. L\'initiale devient le sceau de la fiche dans le catalogue.' },
+          aide: 'Prénom et âge. Sans portrait, l\'initiale devient le sceau de la fiche.' },
+        { k: 'photo', l: 'Portrait', t: 'text', ph: 'assets/img/portraits/maurice.jpg',
+          aide: 'Facultatif. Une image carrée déposée dans assets/img/portraits/, ou un lien complet. Laissé vide, le sceau doré à l\'initiale reprend sa place — une famille n\'a pas toujours de photo qu\'elle accepte de voir publiée.' },
         { k: 'lieu', l: 'Ville', t: 'text', ph: 'Nantes',
           aide: 'Facultatif. Affichée à côté du style : elle ancre l\'hommage dans un lieu réel.' },
         { k: 'style', l: 'Style musical', t: 'text', ph: 'Chanson française',
@@ -53,7 +55,7 @@
         { k: 'brief', l: 'Les mots de la famille', t: 'text', ph: 'patient · taquin · silencieux',
           aide: 'Les trois mots confiés au départ. Affichés en bas de la fiche : c\'est la preuve la plus parlante du service.' }
       ],
-      neuf: function () { return { id: uid('demo'), visible: true, title: '', who: '', lieu: '', style: 'Chanson française', audio: '', story: '', lyrics: '', brief: '' }; }
+      neuf: function () { return { id: uid('demo'), visible: true, title: '', who: '', lieu: '', style: 'Chanson française', audio: '', photo: '', story: '', lyrics: '', brief: '' }; }
     },
     offers: {
       cle: 'offers',

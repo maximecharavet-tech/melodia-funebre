@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "updated": "2026-09-02T20:46:07.726Z",
+  "version": 2,
+  "updated": "2026-09-04T21:23:49.142251Z",
   "contact": {
     "email": "contact@melodia-funebre.fr"
   },
@@ -9,6 +9,19 @@
     "claim": "Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles."
   },
   "demos": [
+    {
+      "id": "demo-8",
+      "visible": true,
+      "title": "Jusqu'au jour où l'on se retrouve",
+      "who": "Jason, 38 ans",
+      "lieu": "",
+      "style": "Piano classique",
+      "audio": "audio/jason.mp3",
+      "photo": "assets/img/portraits/jason.jpg",
+      "story": "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
+      "lyrics": "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
+      "brief": "lumineux · inachevé · aimé"
+    },
     {
       "id": "demo-4",
       "visible": true,
@@ -31,7 +44,8 @@
       "audio": "audio/giuseppe.mp3",
       "story": "Il avait quitté le Sud pour l'usine et gardé le Sud dans l'assiette. Il n'a jamais dit « je t'aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu'il n'a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.",
       "lyrics": "Ton prénom tient dans deux langues\nCelle du village et celle d'ici",
-      "brief": "taiseux · nourricier · fidèle"
+      "brief": "taiseux · nourricier · fidèle",
+      "photo": "assets/img/portraits/giuseppe.jpg"
     },
     {
       "id": "demo-6",
@@ -43,7 +57,8 @@
       "audio": "audio/chantal.mp3",
       "story": "Elle aimait les chansons, celles qui font partir l'âme bien avant les pieds. Elle est partie vers le Sud, et la vie y a posé Orlando sur son chemin. Sa famille a demandé que sa foi y soit, et un Ave Maria. Flûte amérindienne, harpe, violoncelles, chœur.",
       "lyrics": "Le vent connaît ton nom,\nIl le murmure aux montagnes,\nIl le confie aux étoiles.",
-      "brief": "voyageuse · douce · croyante"
+      "brief": "voyageuse · douce · croyante",
+      "photo": "assets/img/portraits/chantal.jpg"
     },
     {
       "id": "demo-7",
@@ -55,7 +70,8 @@
       "audio": "audio/odette.mp3",
       "story": "Elle cuisinait sans balance, juste à l'œil, et les fêtes attendaient ses plats plutôt que l'inverse. Elle repartait la valise trop pleine et revenait avec le soleil dans la voix. Paul, Thomas, Virginie et Nolan ont grandi à sa table. Orgue Hammond et chœur gospel.",
       "lyrics": "personne n'oublie ton rire\nIl arrivait avant toi dans la pièce",
-      "brief": "généreuse · rieuse · voyageuse"
+      "brief": "généreuse · rieuse · voyageuse",
+      "photo": "assets/img/portraits/odette.jpg"
     },
     {
       "id": "demo-1",
@@ -67,7 +83,8 @@
       "story": "Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.",
       "brief": "patient · taquin · silencieux",
       "lieu": "Nantes",
-      "lyrics": "Quatre paires de mains sur la même canne\nQuatre silences appris au bord de l'eau"
+      "lyrics": "Quatre paires de mains sur la même canne\nQuatre silences appris au bord de l'eau",
+      "photo": "assets/img/portraits/maurice.jpg"
     },
     {
       "id": "demo-2",
