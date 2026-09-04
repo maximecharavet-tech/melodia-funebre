@@ -2224,3 +2224,37 @@ body.a-ecoute { padding-bottom: 5rem; }
     text-wrap: balance;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SECONDE PASSE — CE QUE LA PREMIÈRE SONDE AVAIT MANQUÉ
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Le bas du bandeau d'ouverture reste sur fond quasi plein : la ligne
+   « Dès 149 € · Sans engagement · Révision jusqu'à satisfaction » se
+   détachait mal du filigrane du logo. */
+@media (max-width: 860px) {
+  .hero-video::after {
+    background:
+      linear-gradient(180deg, rgba(4, 4, 7, 0.92) 0%, rgba(4, 4, 7, 0.5) 30%,
+                      rgba(4, 4, 7, 0.86) 62%, var(--ink) 86%);
+  }
+}
+
+@media (max-width: 720px) {
+  /* 7,4 px. Le libellé est coupé par un <br>, ce qui l'avait rendu
+     invisible au premier relevé — corrigé des deux côtés. */
+  .calc-cell-lbl { font-size: 0.72rem; letter-spacing: 0.1em; margin-top: 0.5rem; }
+
+  /* Les deux issues de l'écran de connexion mesurent 157 et 124 px
+     pour 281 px de carte : elles ne tiennent pas côte à côte, l'écart
+     compris. Plutôt qu'un repli hasardeux, on les empile franchement —
+     deux actions distinctes, deux cibles pleines. */
+  .auth-switch {
+    flex-direction: column; align-items: stretch;
+    justify-content: flex-start; gap: 0;
+    border-top: 1px solid var(--line-soft); margin-top: 1.4rem; padding-top: 0.4rem;
+  }
+  .auth-switch-solo { border-top: 0; padding-top: 0; }
+  .lien-bascule { justify-content: flex-start; letter-spacing: 0.09em; }
+  .auth-switch-solo .lien-bascule { justify-content: center; }
+}
