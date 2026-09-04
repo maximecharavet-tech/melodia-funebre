@@ -8,7 +8,7 @@ module.exports = {
   desc: "Le catalogue des hommages composés par la maison : pour chacun, la personne, son histoire, les mots que sa famille nous avait confiés, et l'œuvre qui en est née — écoutable en ligne.",
   scripts: ['assets/js/catalogue.js'],
   body: `
-  <section style="padding:8rem 0 0;">
+  <section class="page-head">
     <div class="wrap">
       <div class="eyebrow reveal in">Nos réalisations</div>
       <h1 class="h-xl reveal in reveal-d1" style="margin-top:.8rem;">Écoutez ce que<br>nous <em>composons.</em></h1>

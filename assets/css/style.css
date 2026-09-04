@@ -1272,16 +1272,26 @@ body.intro-open { overflow: hidden; }
   .pt-time { font-size: 0.55rem; }
   .player-track { gap: 0.7rem; padding: 0.65rem 0.5rem; }
 
-  .footer-links a { padding: 0.15rem 0; display: inline-block; }
+  /* 28 px de haut : on vise mal au pouce. Android demande 48 dp. */
+  .footer-links a, .footer-links .lien-rappel {
+    display: inline-flex; align-items: center;
+    min-height: 44px; padding: 0.2rem 0;
+  }
+  .footer-links li { margin-bottom: 0; }
+  /* Le sous-titre du logo tombait à 7 px */
+  .nav-sub { font-size: 0.56rem; letter-spacing: 0.2em; }
   .prose h2 { font-size: 1.45rem; }
 }
 
 @media (max-width: 400px) {
   /* Dernier palier : le mono très espacé finit par casser les mots */
   .price-name, .stat-label, .mono, .card .mono { letter-spacing: 0.14em; }
-  .btn { font-size: 0.56rem; letter-spacing: 0.12em; padding: 0.85rem 1rem; }
+  /* 0,56 rem faisait 9 px : illisible pour l'action principale d'une page.
+     On resserre l'interlettrage plutôt que le corps. */
+  .btn { font-size: 0.68rem; letter-spacing: 0.08em; padding: 0.85rem 0.95rem; }
   .h-hero { font-size: clamp(2.3rem, 11vw, 3rem); }
   .intro-claim { font-size: 1.2rem; }
+  .intro-hint { font-size: 0.6rem; letter-spacing: 0.12em; }
 }
 
 /* Mentions et notes de bas de bloc — en classe, donc ajustables sur mobile */
@@ -1305,11 +1315,33 @@ body.intro-open { overflow: hidden; }
   .price-tag { font-size: 0.56rem; letter-spacing: 0.1em; }
   .step-time, .card .mono { font-size: 0.58rem; letter-spacing: 0.1em; }
   .footer-baseline, .footer-bottom { font-size: 0.58rem; letter-spacing: 0.08em; line-height: 1.9; }
+
+  /* Derniers textes sous le plancher de lisibilité, relevés d'un cran :
+     le bandeau de couverture, la réassurance, l'indication de défilement
+     et le seuil d'entrée. */
+  .badge { font-size: 0.64rem; }
+  .trust-item { font-size: 0.68rem; letter-spacing: 0.06em; }
+  .hero-scroll { font-size: 0.62rem; letter-spacing: 0.2em; }
+  .intro-name { font-size: 0.62rem; }
+  .intro-hint { font-size: 0.6rem; letter-spacing: 0.12em; }
+
+  /* Pastilles du carrousel : 7 px de côté, impossibles à viser. La zone
+     de touche passe à 40 px sans que la pastille change de taille —
+     la couleur est bornée à la boîte de contenu. */
+  .carousel-dot {
+    padding: 16px 10px; background-clip: content-box;
+    box-sizing: content-box;
+  }
+  /* Mentions légales : 18 px de haut, on les manquait au pouce */
+  .footer-legal a { display: inline-flex; align-items: center; min-height: 40px; }
+  .footer-legal { gap: 0.4rem 1.2rem; flex-wrap: wrap; }
   .player-head { font-size: 0.6rem; letter-spacing: 0.14em; }
   .field-label { font-size: 0.6rem; letter-spacing: 0.12em; }
   .wz-recap-head, .wz-total span { font-size: 0.6rem; letter-spacing: 0.12em; }
   .compare thead th { font-size: 0.6rem; letter-spacing: 0.08em; }
   .intro-hint { font-size: 0.56rem; letter-spacing: 0.14em; }
+  /* Le surtitre de chaque section tombait à 9 px */
+  .eyebrow { font-size: 0.66rem; letter-spacing: 0.2em; }
 }
 
 /* Cartes de choix : titre et description sur deux lignes distinctes.
@@ -1485,16 +1517,24 @@ body.intro-open { overflow: hidden; }
 .oeuvre.joue .oeuvre-lire { color: var(--ink); background: var(--or); border-color: var(--or); }
 
 /* Signature musicale — au repos, un simple trait */
+/* Au repos, un simple filet : vingt barres de deux pixels espacées
+   donnaient une rangée de tirets, qu'on lisait comme un élément cassé.
+   L'égaliseur n'apparaît que pendant la lecture. */
 .oeuvre-onde {
-  flex: 1; min-width: 0;
+  position: relative; flex: 1; min-width: 0;
   display: flex; align-items: center; gap: 2px; height: 20px; overflow: hidden;
+}
+.oeuvre-onde::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%;
+  height: 1px; background: var(--line); transition: opacity var(--t-fast);
 }
 .oeuvre-onde span {
   flex: 1; min-width: 1px; height: 2px; border-radius: 2px;
-  background: var(--or-deep);
-  transition: height var(--t-fast), background var(--t-fast);
+  background: var(--or-deep); opacity: 0;
+  transition: height var(--t-fast), background var(--t-fast), opacity var(--t-fast);
 }
-.oeuvre.joue .oeuvre-onde span { animation: oeuvreBarre 1.4s ease-in-out infinite; }
+.oeuvre.joue .oeuvre-onde::before { opacity: 0; }
+.oeuvre.joue .oeuvre-onde span { opacity: 1; animation: oeuvreBarre 1.4s ease-in-out infinite; }
 @keyframes oeuvreBarre {
   0%, 100% { height: 3px; background: var(--or-deep); }
   50% { height: 16px; background: var(--or-patina); }
@@ -1546,6 +1586,21 @@ body.intro-open { overflow: hidden; }
   font-family: var(--ff-d); font-style: italic; font-size: 1.05rem;
   color: var(--or-patina);
 }
+
+/* Bouton de dépliage — masqué tant que la fiche montre tout */
+.oeuvre-plus {
+  display: none; align-items: center; justify-content: space-between;
+  width: 100%; margin-top: 1rem; padding: 0.7rem 0;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--or-patina);
+  background: none; cursor: pointer;
+  transition: color var(--t-fast);
+}
+.oeuvre-plus svg { width: 15px; height: 15px; transition: transform var(--t-mid) var(--ease); }
+.oeuvre-plus:hover { color: var(--or); }
+.oeuvre.ouvert .oeuvre-plus svg { transform: rotate(180deg); }
+.oeuvre-detail > :first-child { margin-top: 0; }
 
 .oeuvre-jauge { height: 2px; background: var(--line-soft); }
 .oeuvre-jauge span {
@@ -1650,16 +1705,76 @@ body.a-ecoute { padding-bottom: 5rem; }
   .ecoute-jauge span { height: 3px; }
 }
 
-@media (max-width: 640px) {
-  .catalogue { gap: 1.1rem; }
-  .oeuvre-haut { padding: 1rem 1.1rem; gap: 0.7rem; }
-  .oeuvre-corps { padding: 1.15rem; }
-  .oeuvre-titre { font-size: 1.42rem; }
-  .oeuvre-sceau { width: 38px; height: 38px; }
-  .oeuvre-sceau span { font-size: 1.15rem; }
-  .oeuvre-lire { width: 38px; height: 38px; }
-  .cat-filtres { gap: 0.4rem; margin-bottom: 2rem; }
-  .cat-filtre { padding: 0.5rem 0.75rem; font-size: 0.52rem; }
+/* En-tête de page — en classe, donc ajustable sur téléphone. En style en
+   ligne, aucune media query n'aurait pu la resserrer. */
+.page-head { padding: 8rem 0 0; }
+
+/* ═══ La vitrine sur téléphone ═══
+   Sept récits complets faisaient sept écrans à faire défiler : on ne
+   voyait plus la vitrine, on la traversait. La fiche se replie sur
+   l'essentiel — qui, quel registre, combien de temps — et l'histoire se
+   déplie d'une touche, ou d'elle-même quand l'hommage se met à jouer.
+   Sans JavaScript, « compact » n'est jamais posé : tout reste affiché. */
+@media (max-width: 720px) {
+  /* Le titre repoussait la première note à un écran et demi */
+  .page-head { padding-top: 5.5rem; }
+  .page-head .lead { margin-top: 1rem; }
+
+  .catalogue { gap: 0.9rem; }
+  .catalogue.compact .oeuvre-plus { display: flex; }
+  .catalogue.compact .oeuvre:not(.ouvert) .oeuvre-detail { display: none; }
+  .catalogue.compact .oeuvre-plus { margin-top: 0.9rem; }
+  .catalogue.compact .oeuvre.ouvert .oeuvre-detail { animation: oeuvreOuvre 0.35s var(--ease-out); }
+  @keyframes oeuvreOuvre { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+  /* La fiche qui joue se distingue nettement dans une liste repliée */
+  .catalogue.compact .oeuvre.actif { background: var(--surface-2); }
+
+  .oeuvre-haut { padding: 0.9rem 1rem; gap: 0.75rem; }
+  .oeuvre-corps { padding: 1.05rem 1rem 1.1rem; }
+  .oeuvre-titre { font-size: 1.34rem; margin: 0.35rem 0 0.25rem; }
+  .oeuvre-qui { font-size: 0.88rem; margin-bottom: 0; }
+  .oeuvre-recit { font-size: 0.95rem; line-height: 1.62; }
+  .oeuvre-vers { font-size: 1.02rem; }
+
+  /* Cibles tactiles : Android demande 48 dp, on ne descend pas sous 44 px */
+  .oeuvre-sceau { width: 40px; height: 40px; }
+  .oeuvre-sceau span { font-size: 1.2rem; }
+  .oeuvre-lire { width: 44px; height: 44px; }
+  .oeuvre-lire svg { width: 16px; height: 16px; }
+  .oeuvre-plus { min-height: 44px; padding: 0.85rem 0; font-size: 0.66rem; }
+
+  /* Un mono à 7,5 px ne se lit pas au bras tendu */
+  .oeuvre-style { font-size: 0.64rem; letter-spacing: 0.14em; }
+  .oeuvre-duree { font-size: 0.72rem; }
+  .oeuvre-brief .mono { font-size: 0.62rem; letter-spacing: 0.14em; }
+  .oeuvre-brief em { font-size: 1.02rem; }
+
+  /* Le bandeau tenait sur trois lignes avant la première note */
+  .cat-barre { gap: 0.9rem; margin-bottom: 1.2rem; }
+  .cat-compte { font-size: 0.66rem; letter-spacing: 0.12em; }
+
+  /* Les registres défilent sur une seule ligne au lieu d'en occuper trois */
+  .cat-filtres {
+    flex-wrap: nowrap; justify-content: flex-start;
+    overflow-x: auto; scrollbar-width: none;
+    margin: 0 calc(var(--pad) * -1) 1.6rem;
+    padding: 0 var(--pad) 0.3rem;
+    scroll-snap-type: x proximity;
+  }
+  .cat-filtres::-webkit-scrollbar { display: none; }
+  .cat-filtre {
+    flex: none; scroll-snap-align: start;
+    min-height: 42px; padding: 0.6rem 0.95rem;
+    font-size: 0.66rem; letter-spacing: 0.1em;
+  }
+  .cat-filtre span { font-size: 1em; margin-left: 0.5rem; }
+}
+
+@media (max-width: 400px) {
+  .oeuvre-titre { font-size: 1.24rem; }
+  .oeuvre-haut { gap: 0.6rem; padding: 0.85rem 0.9rem; }
+  .oeuvre-corps { padding: 1rem 0.9rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
