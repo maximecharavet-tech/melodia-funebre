@@ -326,7 +326,7 @@ ul { list-style: none; }
 }
 .card-lift:hover { transform: translateY(-5px); border-color: var(--line-strong); box-shadow: var(--sh-lift); }
 .card-gold { border-color: var(--line-strong); background: linear-gradient(160deg, rgba(201, 168, 76, 0.06), var(--ink-2) 70%); }
-.card h3 { font-family: var(--ff-d); font-weight: 400; color: var(--paper); }
+.card h3 { font-family: var(--ff-d); font-weight: 400; color: var(--paper); margin-bottom: 0.45rem; }
 .card p { color: var(--ash); font-size: var(--fs-sm); }
 .section-light .card {
   background: #fff; border-color: var(--ivory-line);
@@ -2153,3 +2153,74 @@ body.a-ecoute { padding-bottom: 5rem; }
 .section-light .note-inline { color: var(--ivory-dim); }
 .section-light .note-inline a { color: var(--or-deep); }
 @media (max-width: 720px) { .note-inline { font-size: 0.86rem; } }
+
+/* ═══════════════════════════════════════════════════════════════
+   RELECTURE À L'ŒIL — CE QU'UN RELEVÉ AUTOMATIQUE NE VOIT PAS
+
+   Les tailles étaient bonnes et les cibles atteignables, mais les
+   captures à 360 px ont montré ce qu'aucune mesure ne signale :
+   des blocs qui se marchent dessus, des libellés coupés en deux,
+   un médaillon devenu rectangle.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Bas du bandeau d'ouverture ───
+   « Découvrir » est posé en absolu à 2 rem du bas. Sur un téléphone,
+   le bandeau est plus haut que l'écran : l'indication retombait sur
+   la ligne « Dès 149 € · Sans engagement · Révision jusqu'à
+   satisfaction », qui est un argument, pas un ornement. Sur écran
+   tactile, personne n'a besoin qu'on lui dise que la page défile. */
+@media (max-width: 860px) {
+  .hero-scroll { display: none; }
+
+  /* Le voile de la barre de navigation ne tient que si le flou du
+     fond est rendu. Android le coupe en économie d'énergie, et le
+     texte de la page transparaissait alors sous le logo. */
+  .nav { background: rgba(4, 4, 7, 0.95); }
+}
+
+@media (max-width: 720px) {
+
+  /* ─── Barre d'action permanente ───
+     « Être rappelé » se coupait en deux lignes quand « Commander »
+     tenait sur une : deux boutons côte à côte, de hauteurs de texte
+     différentes. On resserre l'interlettrage de cette barre — et
+     d'elle seule — plutôt que de raccourcir le libellé. */
+  .sticky-cta .btn {
+    font-size: 0.78rem; letter-spacing: 0.03em;
+    padding: 0.85rem 0.5rem; gap: 0.45rem;
+  }
+  .sticky-cta .btn svg { width: 15px; height: 15px; }
+
+  /* ─── Simulateur de marge ───
+     Libellé à gauche, valeur à droite : sur 360 px, les deux se
+     cassaient sur trois lignes chacun et se faisaient face en
+     escalier. Empilés, ils se lisent d'un trait. */
+  .calc-head {
+    flex-direction: column; align-items: flex-start;
+    gap: 0.15rem; margin-bottom: 0.9rem;
+  }
+  .calc-val { font-size: 1.5rem; line-height: 1.15; }
+  .calc-row { margin-bottom: 1.4rem; }
+
+  /* ─── Écran de connexion ───
+     Le logo est un fichier carré à fond noir : posé tel quel sur la
+     page, il se lisait comme un rectangle collé. Il redevient le
+     médaillon des autres pages. */
+  .auth-logo {
+    width: 104px; height: 104px; object-fit: cover;
+    border-radius: 50%; border: 1px solid rgba(201, 168, 76, 0.35);
+  }
+  /* Les deux issues dépassaient de deux pixels et se rangeaient l'une
+     sous l'autre. Deux pixels d'interlettrage les remettent en ligne. */
+  .auth-switch { gap: 0.6rem; }
+  .lien-bascule { letter-spacing: 0.06em; }
+
+  /* ─── Coupures de fin de ligne ───
+     Une mention centrée qui laisse « CGI » seul sur sa deuxième ligne
+     a l'air d'un accident. Le navigateur répartit les lignes quand on
+     le lui demande ; là où il ne sait pas le faire, rien ne change. */
+  .price-note, .note-inline, .auth-note, .scroll-hint,
+  .center .lead, .price-desc, .stat-label {
+    text-wrap: balance;
+  }
+}
