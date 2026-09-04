@@ -28,6 +28,13 @@
   var PREC = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zM19 6v12l-9-6z"/></svg>';
   var SUIV = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6l9 6-9 6z"/></svg>';
   var CROIX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  var CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+
+  /* Sur téléphone, sept récits complets font sept écrans à faire défiler :
+     on ne voit plus la vitrine, on la traverse. La fiche se replie donc sur
+     l'essentiel — qui, quel registre, combien de temps — et l'histoire se
+     déplie à la demande, ou d'elle-même quand l'hommage se met à jouer. */
+  var ETROIT = window.matchMedia('(max-width: 720px)');
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -181,6 +188,7 @@
     var onde = '';
     for (var b = 0; b < BARRES; b++) onde += '<span style="animation-delay:' + (b * 0.07).toFixed(2) + 's"></span>';
 
+    var idDetail = 'oe-detail-' + i;
     art.innerHTML =
       '<div class="oeuvre-haut">' +
         '<div class="oeuvre-sceau" aria-hidden="true"><span>' + esc(initiale(o)) + '</span></div>' +
@@ -193,16 +201,21 @@
         '<div class="oeuvre-style">' + esc(o.style || 'Composition originale') + lieu + '</div>' +
         '<h3 class="oeuvre-titre"><em>' + esc(o.title || 'Sans titre') + '</em></h3>' +
         (o.who ? '<div class="oeuvre-qui">Pour ' + esc(o.who) + '</div>' : '') +
-        (o.story ? '<p class="oeuvre-recit">' + esc(o.story) + '</p>' : '') +
-        (o.lyrics ? '<blockquote class="oeuvre-vers">' + esc(o.lyrics) + '</blockquote>' : '') +
-        (o.brief ? '<div class="oeuvre-brief">' +
-            '<span class="mono">Les mots de la famille</span>' +
-            '<em>« ' + esc(o.brief) + ' »</em>' +
-          '</div>' : '') +
+        '<button type="button" class="oeuvre-plus" data-plus aria-expanded="false" ' +
+          'aria-controls="' + idDetail + '"><span data-plus-libelle>Son histoire</span>' + CHEVRON + '</button>' +
+        '<div class="oeuvre-detail" id="' + idDetail + '">' +
+          (o.story ? '<p class="oeuvre-recit">' + esc(o.story) + '</p>' : '') +
+          (o.lyrics ? '<blockquote class="oeuvre-vers">' + esc(o.lyrics) + '</blockquote>' : '') +
+          (o.brief ? '<div class="oeuvre-brief">' +
+              '<span class="mono">Les mots de la famille</span>' +
+              '<em>« ' + esc(o.brief) + ' »</em>' +
+            '</div>' : '') +
+        '</div>' +
       '</div>' +
       '<div class="oeuvre-jauge" aria-hidden="true"><span></span></div>';
 
     art.querySelector('[data-lire]').addEventListener('click', function () { basculer(i); });
+    art.querySelector('[data-plus]').addEventListener('click', function () { deplier(i); });
     return art;
   }
 
@@ -217,6 +230,7 @@
     peindre();
     observerDurees();
     animerEntree();
+    majCompact();
   }
 
   /* Les fiches montent en cascade à l'approche de l'écran. Le décalage
@@ -240,6 +254,29 @@
     }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
     visibles.forEach(function (i) { if (cartes[i]) oeilEntree.observe(cartes[i]); });
   }
+
+  /* Déplie ou replie le récit d'une fiche. Ouvrir n'a de sens que
+     replié : sur grand écran tout est déjà là. */
+  function deplier(i, force) {
+    var c = cartes[i];
+    if (!c) return;
+    var ouvert = force === undefined ? !c.classList.contains('ouvert') : force;
+    c.classList.toggle('ouvert', ouvert);
+    var b = c.querySelector('[data-plus]');
+    if (b) {
+      b.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+      var l = b.querySelector('[data-plus-libelle]');
+      if (l) l.textContent = ouvert ? 'Masquer' : 'Son histoire';
+    }
+  }
+
+  /* La grille se replie sous 720 px, et se rouvre au-delà */
+  function majCompact() {
+    grille.classList.toggle('compact', ETROIT.matches);
+    if (!ETROIT.matches) cartes.forEach(function (c, i) { if (c) deplier(i, false); });
+  }
+  if (ETROIT.addEventListener) ETROIT.addEventListener('change', majCompact);
+  else if (ETROIT.addListener) ETROIT.addListener(majCompact);
 
   /* Peint l'état de lecture sur les fiches et la barre */
   function peindre() {
@@ -325,6 +362,11 @@
     }
     cur = i;
     audio.src = OEUVRES[i].audio;
+    /* On écoute une personne : son histoire s'ouvre avec sa chanson */
+    if (ETROIT.matches) {
+      visibles.forEach(function (j) { if (j !== i) deplier(j, false); });
+      deplier(i, true);
+    }
     barre.hidden = false;
     document.body.classList.add('a-ecoute');
     audio.play().catch(bloque);

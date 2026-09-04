@@ -104,10 +104,13 @@ function oeuvres() {
             <div class="oeuvre-style">${esc(t.style)}${lieu}</div>
             <h3 class="oeuvre-titre"><em>${esc(t.title)}</em></h3>
             <div class="oeuvre-qui">Pour ${esc(t.who)}</div>
-            <p class="oeuvre-recit">${esc(t.story)}</p>
-${t.lyrics ? `            <blockquote class="oeuvre-vers">${esc(t.lyrics)}</blockquote>\n` : ''}            <div class="oeuvre-brief">
-              <span class="mono">Les mots de la famille</span>
-              <em>« ${esc(t.brief)} »</em>
+            <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-${i}"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="oeuvre-detail" id="oe-detail-${i}">
+              <p class="oeuvre-recit">${esc(t.story)}</p>
+${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</blockquote>\n` : ''}              <div class="oeuvre-brief">
+                <span class="mono">Les mots de la famille</span>
+                <em>« ${esc(t.brief)} »</em>
+              </div>
             </div>
           </div>
           <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
