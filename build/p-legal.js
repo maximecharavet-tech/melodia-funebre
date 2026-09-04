@@ -72,11 +72,11 @@ const cgv = legal(
 <p>Les présentes conditions régissent la vente de compositions musicales personnalisées destinées aux cérémonies funéraires, réalisées par Melodia Funèbre à la demande d'un client particulier ou d'une agence de pompes funèbres partenaire.</p>
 
 <h2>Article 2 — Offres et tarifs</h2>
-<table>
+<table class="tab-fiches">
   <tr><th>Offre</th><th>Prix TTC</th><th>Révisions incluses</th></tr>
-  <tr><td>Essentiel</td><td>149 €</td><td>Aucune (option 49 €)</td></tr>
-  <tr><td>Prestige</td><td>299 €</td><td>Une révision</td></tr>
-  <tr><td>Mémorial</td><td>499 €</td><td>Illimitées</td></tr>
+  <tr><td data-l="Offre">Essentiel</td><td data-l="Prix TTC">149 €</td><td data-l="Révisions incluses">Aucune (option 49 €)</td></tr>
+  <tr><td data-l="Offre">Prestige</td><td data-l="Prix TTC">299 €</td><td data-l="Révisions incluses">Une révision</td></tr>
+  <tr><td data-l="Offre">Mémorial</td><td data-l="Prix TTC">499 €</td><td data-l="Révisions incluses">Illimitées</td></tr>
 </table>
 <p>TVA non applicable, article 293 B du Code général des impôts. L'option « priorité 6 heures » est facturée 49 € et incluse dans l'offre Mémorial. Les tarifs en vigueur sont ceux affichés sur le site au moment de la commande.</p>
 
@@ -130,12 +130,12 @@ const confid = legal(
 <p>Melodia Funèbre, représentée par Maxime Charavet — <a href="mailto:${MAIL}">${MAIL}</a>, <button type="button" class="lien-rappel" data-rappel>Être rappelé</button>, ${F('[adresse du siège]')}.</p>
 
 <h2>Données collectées</h2>
-<table>
+<table class="tab-fiches">
   <tr><th>Catégorie</th><th>Données</th><th>Finalité</th></tr>
-  <tr><td>Identification</td><td>Nom, email, téléphone</td><td>Traiter la commande, mener l'entretien, livrer l'œuvre</td></tr>
-  <tr><td>Éléments biographiques</td><td>Prénom du défunt, traits de caractère, métier, habitudes, anecdotes</td><td>Composer l'hommage — usage exclusif</td></tr>
-  <tr><td>Commande</td><td>Offre, montant, statut, référence</td><td>Suivi, facturation, obligations comptables</td></tr>
-  <tr><td>Compte partenaire</td><td>Agence, ville, coordonnées professionnelles</td><td>Gestion du partenariat et des marges</td></tr>
+  <tr><td data-l="Catégorie">Identification</td><td data-l="Données">Nom, email, téléphone</td><td data-l="Finalité">Traiter la commande, mener l'entretien, livrer l'œuvre</td></tr>
+  <tr><td data-l="Catégorie">Éléments biographiques</td><td data-l="Données">Prénom du défunt, traits de caractère, métier, habitudes, anecdotes</td><td data-l="Finalité">Composer l'hommage — usage exclusif</td></tr>
+  <tr><td data-l="Catégorie">Commande</td><td data-l="Données">Offre, montant, statut, référence</td><td data-l="Finalité">Suivi, facturation, obligations comptables</td></tr>
+  <tr><td data-l="Catégorie">Compte partenaire</td><td data-l="Données">Agence, ville, coordonnées professionnelles</td><td data-l="Finalité">Gestion du partenariat et des marges</td></tr>
 </table>
 
 <h2>Base légale</h2>

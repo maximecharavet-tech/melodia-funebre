@@ -421,3 +421,51 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--dust); display: block; margin-bottom: 0.25rem;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PLANCHER TYPOGRAPHIQUE ET TACTILE — CONSOLE SUR TÉLÉPHONE
+
+   La console est un outil de bureau, mais un collaborateur la
+   consulte entre deux rendez-vous, dans sa voiture, sur son
+   téléphone : il doit pouvoir lire la fiche d'une agence, relancer
+   et noter un appel. Même règle que sur le site public — rien sous
+   12 px, rien à viser sous 44 px.
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+
+  /* Étiquettes et surtitres */
+  .side-label, .side-urole, .dash-eyebrow, .panel-sub,
+  .kpi-label, .kpi-foot, .o-meta, .tl-lab, .status-live {
+    font-size: 0.73rem; letter-spacing: 0.1em;
+  }
+  .side-brand .s { font-size: 0.66rem; letter-spacing: 0.16em; }
+  .side-badge { font-size: 0.72rem; }
+  .pill { font-size: 0.72rem; letter-spacing: 0.08em; padding: 0.4rem 0.75rem; }
+  .report { font-size: 0.73rem; letter-spacing: 0.06em; min-height: 44px; }
+  .o-contact { font-size: 0.9rem; }
+  .panel-note, .cible-pourquoi { font-size: 0.95rem; }
+
+  /* Tableaux : l'entête en mono capitale devenait un liseré gris */
+  .tbl th { font-size: 0.72rem; letter-spacing: 0.09em; padding: 0.7rem 0.5rem; }
+  .tbl td { padding: 0.7rem 0.5rem; }
+
+  /* Un tableau de console a plus de colonnes qu'un téléphone n'a de
+     largeur — jusqu'à sept pour le journal des commandes. Il défile
+     sur lui-même plutôt que de pousser la page : passé en bloc, le
+     tableau garde sa mise en page interne et gagne son propre
+     ascenseur horizontal. */
+  .tbl {
+    display: block; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  .tbl td, .tbl th { white-space: nowrap; }
+  /* Les cellules d'un texte long gardent le droit de revenir à la ligne */
+  .tbl td.libre, .tbl .o-brief { white-space: normal; }
+
+  /* Les liens de contact d'une fiche sont l'action la plus fréquente
+     depuis un téléphone : appeler, écrire. Ils méritent une cible. */
+  .o-contact a {
+    display: inline-flex; align-items: center; min-height: 44px;
+    padding-right: 0.4rem;
+  }
+}

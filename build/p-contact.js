@@ -69,7 +69,7 @@ ${P.urgency()}
           <div class="field-err"></div>
         </div>
         <button class="btn btn-gold btn-block" type="button" id="ct-send">Envoyer le message</button>
-        <p style="font-size:.78rem;color:var(--ivory-dim);margin-top:1rem;line-height:1.6;text-align:center;">Ce bouton ouvre votre logiciel de messagerie avec le message pré-rempli. Vous pouvez aussi écrire directement à <a href="mailto:${MAIL}" style="color:var(--or-deep);text-decoration:underline;">${MAIL}</a>.</p>
+        <p class="note-inline">Ce bouton ouvre votre logiciel de messagerie avec le message pré-rempli. Vous pouvez aussi écrire directement à <a href="mailto:${MAIL}">${MAIL}</a>.</p>
       </div>
     </div>
   </section>

@@ -116,6 +116,7 @@ ${P.urgency()}
         <h2 class="h-xl">Ce que les autres<br>solutions <em>ne font pas.</em></h2>
         <p class="lead" style="margin-top:1.4rem;">Trois façons d'apporter de la musique à une cérémonie. Voici honnêtement ce que chacune permet.</p>
       </div>
+${P.scrollHint()}
       <div class="compare-wrap reveal">
         <table class="compare">
           <thead>
@@ -137,7 +138,6 @@ ${P.urgency()}
           </tbody>
         </table>
       </div>
-${P.scrollHint()}
       <p class="center reveal note" style="margin-top:1.6rem;">Budgets constatés en France métropolitaine, à titre indicatif</p>
     </div>
   </section>

@@ -43,6 +43,7 @@ ${P.pricing('order')}
         <div class="eyebrow">Le détail</div>
         <h2 class="h-xl">Ce que comprend<br>chaque <em>offre.</em></h2>
       </div>
+${P.scrollHint()}
       <div class="compare-wrap reveal">
         <table class="compare">
           <thead><tr><th scope="col">&nbsp;</th><th scope="col">Essentiel<br>149 €</th><th scope="col" class="col-hl">Prestige<br>299 €</th><th scope="col">Mémorial<br>499 €</th></tr></thead>
@@ -61,7 +62,6 @@ ${P.pricing('order')}
           </tbody>
         </table>
       </div>
-${P.scrollHint()}
     </div>
   </section>
 
