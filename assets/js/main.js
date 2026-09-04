@@ -25,6 +25,8 @@
       sortiIntro = true;
       intro.classList.add('leaving');
       document.body.classList.remove('intro-open');
+      var v = $('.intro-video', intro);
+      if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {} }
       setTimeout(function () { if (intro.parentNode) intro.parentNode.removeChild(intro); }, 1400);
     };
 
@@ -37,8 +39,40 @@
     window.addEventListener('wheel', franchir, { passive: true, once: true });
     window.addEventListener('touchmove', franchir, { passive: true, once: true });
 
+    /* ─── L'animation du logo ───
+       Trois mégaoctets ne doivent jamais retarder l'affichage du seuil :
+       le médaillon dessiné en CSS est là tout de suite, et le film vient
+       se poser dessus s'il arrive à temps. On ne le charge pas du tout
+       en mouvement réduit, en économie de données, ni sur un réseau lent
+       — trois mégaoctets sur un forfait comptés pour cinq secondes
+       d'écran, ce serait indélicat. */
+    var attente = REDUCED ? 3500 : 5200;
+    var film = $('.intro-video', intro);
+    var reseau = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    var econome = reseau && (reseau.saveData || /^([23]g|slow-2g)$/.test(reseau.effectiveType || ''));
+
+    if (film && !REDUCED && !econome) {
+      film.src = film.getAttribute('data-src');
+      film.load();
+      film.addEventListener('canplay', function () {
+        if (sortiIntro) return;
+        intro.classList.add('film-pret');
+        var essai = film.play();
+        if (essai && essai.catch) essai.catch(function () { intro.classList.remove('film-pret'); });
+      }, { once: true });
+      /* Le film dure dix secondes : on laisse le temps d'en voir
+         l'essentiel, sans jamais retenir qui veut entrer. */
+      film.addEventListener('playing', function () {
+        if (sortiIntro) return;
+        clearTimeout(minuterie);
+        minuterie = setTimeout(franchir, 7600);
+      }, { once: true });
+      /* Un fichier qui n'arrive pas ne doit rien changer au déroulé */
+      film.addEventListener('error', function () { intro.classList.remove('film-pret'); });
+    }
+
     /* Sans animation, on ne fait pas patienter devant un écran fixe. */
-    setTimeout(franchir, REDUCED ? 3500 : 5200);
+    var minuterie = setTimeout(franchir, attente);
     /* Pas de mise au point automatique sur « Entrer » : elle dessine un liseré
        de focus inutile, alors que la touche Entrée, Espace ou Échap franchit
        déjà le seuil, et que le bouton reste atteignable à la tabulation. */

@@ -170,6 +170,7 @@ function intro() {
   return `<div class="intro" id="intro" aria-label="Entrée du site Melodia Funèbre">
   <div class="intro-inner">
     <div class="intro-line"></div>
+    <div class="intro-visuel">
     <div class="intro-scene">
       <span class="intro-onde" aria-hidden="true"></span>
       <span class="intro-onde" aria-hidden="true"></span>
@@ -179,6 +180,16 @@ function intro() {
         <circle class="an-arc" cx="100" cy="100" r="86"/>
       </svg>
       <img src="assets/img/intro-logo.jpg" alt="Melodia Funèbre" class="intro-logo" width="440" height="440" fetchpriority="high">
+    </div>
+    <!-- L'animation du logo. Elle se superpose au médaillon dessiné en CSS
+         quand elle est prête : le seuil s'affiche à l'instant, la vidéo
+         arrive ensuite. Sur connexion lente, en économie de données ou en
+         mouvement réduit, elle ne se charge jamais. -->
+    <div class="intro-film" aria-hidden="true">
+      <video class="intro-video" muted playsinline preload="none"
+             poster="assets/img/intro-anime.jpg" width="1040" height="880"
+             data-src="assets/img/intro-anime.mp4"></video>
+    </div>
     </div>
     <div class="intro-name">Melodia Funèbre</div>
     <div class="intro-wave" aria-hidden="true">${barres}</div>
