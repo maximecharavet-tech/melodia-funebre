@@ -24,6 +24,11 @@
 
   var V = window.MELODIA_VENTE || {};
   var MODELES = V.MODELES || {};
+  var MODELES_CULTE = V.MODELES_CULTE || {};
+  /* Un diocèse ne reçoit pas les mêmes messages qu'une agence funéraire :
+     la fiche porte sa famille, et la console propose en conséquence. */
+  function modelesDe(p) { return (p && p.type === 'culte') ? MODELES_CULTE : MODELES; }
+  function tousModeles() { return Object.assign({}, MODELES, MODELES_CULTE); }
   var EST_MAITRE = U.role === 'master';
   var ST = window.MELODIA_PROSPECT_STATUTS;
   var $ = function (id) { return document.getElementById(id); };
@@ -121,7 +126,8 @@
     prospects: ['Portefeuille', 'Mes <em>prospects</em>', vProspects, brancherProspects],
     modeles: ['Ressources', 'Modèles de <em>courriel</em>', vModeles, brancherModeles],
     playbook: ['Ressources', 'Script et <em>objections</em>', vPlaybook, brancherPlaybook],
-    plan: ['Ressources', 'Plan de <em>prospection</em>', vPlan, function () {}]
+    plan: ['Ressources', 'Plan de <em>prospection</em>', vPlan, function () {}],
+    traditions: ['Ressources', 'Les <em>traditions</em>', vTraditions, brancherTraditions]
   };
 
   function go(v) {
@@ -290,6 +296,12 @@
     return '<div class="panel">' +
         '<div class="panel-title">L\'annuaire des <em>entreprises</em></div>' +
         '<div class="panel-sub" style="margin-bottom:1.4rem;">Base SIRENE de l\'INSEE, code NAF 96.03Z — services funéraires. Données ouvertes, sans clé.</div>' +
+        '<div class="field"><label class="field-label">Qui cherchez-vous ?</label>' +
+          '<select class="field-select" id="rc-type">' +
+            '<option value="funeraire">Pompes funèbres et crématoriums</option>' +
+            '<option value="culte">Paroisses, diocèses, mosquées, synagogues, temples</option>' +
+          '</select>' +
+          '<div class="field-hint">Deux codes d\'activité différents dans la base SIRENE. Les lieux de culte se démarchent autrement : lisez d\'abord la fiche des traditions.</div></div>' +
         '<div class="field-row">' +
           '<div class="field"><label class="field-label">Département</label>' +
             '<select class="field-select" id="rc-dep"><option value="">Choisir…</option>' +
@@ -320,13 +332,15 @@
     var lancer = async function (page) {
       var dep = $('rc-dep').value;
       var q = $('rc-q').value.trim();
+      var type = $('rc-type') ? $('rc-type').value : 'funeraire';
       if (!dep && !q) {
         if (window.melodiaToast) window.melodiaToast('Choisissez un département ou saisissez un nom.');
         return;
       }
       $('rc-res').innerHTML = '<div class="panel"><p style="color:var(--ash);">Recherche en cours…</p></div>';
       try {
-        var url = '/api/prospects?' + (dep ? 'departement=' + encodeURIComponent(dep) : '') +
+        var url = '/api/prospects?type=' + encodeURIComponent(type) +
+          (dep ? '&departement=' + encodeURIComponent(dep) : '') +
           (q ? '&q=' + encodeURIComponent(q) : '') + '&page=' + (page || 1);
         var r = await fetch(url);
         var d = await r.json();
@@ -382,7 +396,7 @@
       b.addEventListener('click', async function () {
         var e = d.resultats.filter(function (x) { return x.siret === b.dataset.ajout; })[0];
         if (!e) return;
-        await ajouter(e);
+        await ajouter(e, d.type);
         b.outerHTML = '<span class="pill" style="color:var(--green);border-color:rgba(74,222,128,.35);">Ajoutée</span>';
       });
     });
@@ -390,7 +404,7 @@
     if (tout) tout.addEventListener('click', async function () {
       tout.disabled = true;
       for (var i = 0; i < d.resultats.length; i++) {
-        if (!connus[d.resultats[i].siret]) await ajouter(d.resultats[i]);
+        if (!connus[d.resultats[i].siret]) await ajouter(d.resultats[i], d.type);
       }
       await charger();
       if (window.melodiaToast) window.melodiaToast(d.resultats.length + ' agences ajoutées à votre portefeuille.');
@@ -403,8 +417,9 @@
 
   /* Une fiche neuve arrive avec une action prévue : sans date, elle
      dormirait au fond du portefeuille. */
-  async function ajouter(e) {
+  async function ajouter(e, type) {
     var p = Object.assign({}, e, {
+      type: type || 'funeraire',
       statut: 'nouveau',
       relance_le: aujourdhui(),
       journal: [{ le: new Date().toISOString(), quoi: 'Fiche créée', detail: 'Depuis l\'annuaire', par: U.name || U.email }]
@@ -547,6 +562,7 @@
       '<div class="o-head">' +
         '<div style="min-width:0;">' +
           '<div class="o-name">' + esc(p.nom) +
+            (p.type === 'culte' ? ' <span class="pill pill-culte">Lieu de culte</span>' : '') +
             (p.oppose ? ' <span class="pill" style="color:var(--red);border-color:rgba(248,113,113,.4);">Opposition</span>' : '') + '</div>' +
           '<div class="o-meta">' + esc([p.adresse, p.cp, p.ville].filter(Boolean).join(' · ')) +
           (p.dirigeant ? ' · ' + esc(p.dirigeant) : '') +
@@ -620,10 +636,14 @@
           '<div style="border-top:1px solid var(--line-soft);padding-top:1rem;">' +
             '<div class="field-label" style="margin-bottom:.6rem;">Écrire à cette agence</div>' +
             '<div style="display:flex;gap:.5rem;flex-wrap:wrap;">' +
-              Object.keys(MODELES).map(function (m) {
-                return '<button class="btn btn-' + (m === 'contact' ? 'gold' : 'outline') + ' btn-sm" data-mail="' + m + '" data-siret="' + esc(p.siret) + '">' +
-                  esc(MODELES[m].nom) + '</button>';
-              }).join('') +
+              (function () {
+                var jeu = modelesDe(p);
+                var premier = Object.keys(jeu)[0];
+                return Object.keys(jeu).map(function (m) {
+                  return '<button class="btn btn-' + (m === premier ? 'gold' : 'outline') + ' btn-sm" data-mail="' + m + '" data-siret="' + esc(p.siret) + '">' +
+                    esc(jeu[m].nom) + '</button>';
+                }).join('');
+              })() +
             '</div>' +
           '</div>') +
 
@@ -759,7 +779,7 @@
      ═══════════════════════════════════════════════════════════ */
   function composer(siret, cle) {
     var p = trouver(siret);
-    var m = MODELES[cle];
+    var m = tousModeles()[cle];
     if (!p || !m) return;
 
     if (p.oppose) {
@@ -1051,6 +1071,66 @@
         '</div>' +
       '</div>';
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     Vue : les traditions religieuses
+     Se tromper de rite au téléphone ferme une porte pour de bon.
+     ═══════════════════════════════════════════════════════════ */
+  function vTraditions() {
+    return '<div class="panel" style="margin-bottom:1.4rem;">' +
+        '<div class="panel-title">Avant de <em>décrocher</em></div>' +
+        '<div class="panel-sub">Six traditions, six façons de faire</div>' +
+        '<p class="panel-note">Une communauté religieuse ne cherche pas une marge : elle garde un rite, et parfois finance des œuvres. ' +
+          'Le premier message doit prouver qu\'on connaît sa tradition — sinon il ne sera pas lu deux fois. ' +
+          'Et là où la musique n\'a pas sa place, le dire franchement est ce qui fait revenir les gens.</p>' +
+        '<p class="panel-note" style="color:var(--or-patina);">La page publique <a href="rites.html" target="_blank" rel="noopener" style="color:var(--or);">L\'hommage selon le rite</a> dit tout cela publiquement. Envoyez-la : elle fait la moitié du travail.</p>' +
+      '</div>' +
+
+      (V.TRADITIONS || []).map(function (t) {
+        return '<div class="panel trad">' +
+          '<div class="trad-tete">' +
+            '<span class="trad-nom">' + esc(t.nom) + '</span>' +
+            '<span class="pill">' + esc(t.tenue) + '</span>' +
+          '</div>' +
+          '<div class="trad-bloc"><span class="trad-label">Ce que vous pouvez dire</span>' +
+            '<p>' + esc(t.dire) + '</p></div>' +
+          '<div class="trad-bloc trad-eviter"><span class="trad-label">À ne surtout pas dire</span>' +
+            '<p>' + esc(t.eviter) + '</p></div>' +
+          '<div class="trad-cible"><span class="mono">Qui démarcher</span> ' + esc(t.cible) + '</div>' +
+        '</div>';
+      }).join('') +
+
+      '<div class="panel" style="margin-top:1.4rem;">' +
+        '<div class="panel-title">Leurs <em>objections</em></div>' +
+        '<div class="panel-sub">Cinq réponses propres aux communautés</div>' +
+        '<p class="panel-note">Elles ne ressemblent pas à celles des agences : ici on ne parle pas de marge, on parle de rite et d\'œuvres.</p>' +
+        (V.OBJECTIONS_CULTE || []).map(function (o, i) {
+          return '<div class="obj">' +
+            '<button class="obj-q" data-obj="c' + i + '" aria-expanded="false">' +
+              '<span>« ' + esc(o.objection) + ' »</span>' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' +
+            '</button>' +
+            '<div class="obj-r" hidden>' +
+              '<p class="obj-cache"><b>Ce que ça cache —</b> ' + esc(o.cache) + '</p>' +
+              '<p class="obj-rep">' + esc(o.reponse) + '</p>' +
+              '<p class="obj-relance"><b>Puis vous rendez la main :</b><br>« ' + esc(o.relance) + ' »</p>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+
+      '<div class="panel" style="margin-top:1.4rem;">' +
+        '<div class="panel-title">Le <em>reversement</em></div>' +
+        '<div class="panel-sub">À manier avec précaution</div>' +
+        '<p class="panel-note">Une association cultuelle relevant de la loi de 1905 a un objet limité à l\'exercice du culte. ' +
+          'Selon le statut de votre interlocuteur, la part qui lui revient prend la forme d\'un don, d\'une convention de ' +
+          'partenariat, ou passe par une association d\'entraide adossée à la sienne. ' +
+          '<b style="color:var(--paper);">Ne promettez jamais une forme juridique au téléphone</b> : dites que nous en parlons ' +
+          'avec leur trésorier, et faites remonter la fiche au fondateur.</p>' +
+      '</div>';
+  }
+
+  function brancherTraditions() { brancherPlaybook(); }
 
   /* Départements, pour la saisie assistée */
   var DEPS = [['01','Ain'],['02','Aisne'],['03','Allier'],['04','Alpes-de-Haute-Provence'],['05','Hautes-Alpes'],['06','Alpes-Maritimes'],['07','Ardèche'],['08','Ardennes'],['09','Ariège'],['10','Aube'],['11','Aude'],['12','Aveyron'],['13','Bouches-du-Rhône'],['14','Calvados'],['15','Cantal'],['16','Charente'],['17','Charente-Maritime'],['18','Cher'],['19','Corrèze'],['2A','Corse-du-Sud'],['2B','Haute-Corse'],['21','Côte-d\'Or'],['22','Côtes-d\'Armor'],['23','Creuse'],['24','Dordogne'],['25','Doubs'],['26','Drôme'],['27','Eure'],['28','Eure-et-Loir'],['29','Finistère'],['30','Gard'],['31','Haute-Garonne'],['32','Gers'],['33','Gironde'],['34','Hérault'],['35','Ille-et-Vilaine'],['36','Indre'],['37','Indre-et-Loire'],['38','Isère'],['39','Jura'],['40','Landes'],['41','Loir-et-Cher'],['42','Loire'],['43','Haute-Loire'],['44','Loire-Atlantique'],['45','Loiret'],['46','Lot'],['47','Lot-et-Garonne'],['48','Lozère'],['49','Maine-et-Loire'],['50','Manche'],['51','Marne'],['52','Haute-Marne'],['53','Mayenne'],['54','Meurthe-et-Moselle'],['55','Meuse'],['56','Morbihan'],['57','Moselle'],['58','Nièvre'],['59','Nord'],['60','Oise'],['61','Orne'],['62','Pas-de-Calais'],['63','Puy-de-Dôme'],['64','Pyrénées-Atlantiques'],['65','Hautes-Pyrénées'],['66','Pyrénées-Orientales'],['67','Bas-Rhin'],['68','Haut-Rhin'],['69','Rhône'],['70','Haute-Saône'],['71','Saône-et-Loire'],['72','Sarthe'],['73','Savoie'],['74','Haute-Savoie'],['75','Paris'],['76','Seine-Maritime'],['77','Seine-et-Marne'],['78','Yvelines'],['79','Deux-Sèvres'],['80','Somme'],['81','Tarn'],['82','Tarn-et-Garonne'],['83','Var'],['84','Vaucluse'],['85','Vendée'],['86','Vienne'],['87','Haute-Vienne'],['88','Vosges'],['89','Yonne'],['90','Territoire de Belfort'],['91','Essonne'],['92','Hauts-de-Seine'],['93','Seine-Saint-Denis'],['94','Val-de-Marne'],['95','Val-d\'Oise'],['971','Guadeloupe'],['972','Martinique'],['973','Guyane'],['974','La Réunion'],['976','Mayotte']];
