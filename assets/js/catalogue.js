@@ -57,6 +57,18 @@
     return source ? source.charAt(0).toUpperCase() : '♪';
   }
 
+  /* Les trois mots confiés par la famille sont donnés un par un au
+     téléphone. On les rend un par un : la ligne continue « douce ·
+     obstinée · matinale » se lisait comme une étiquette de produit. */
+  function jetons(brief) {
+    var mots = String(brief).split('·').map(function (m) { return m.trim(); })
+      .filter(Boolean);
+    if (!mots.length) return '';
+    return mots.map(function (m) {
+      return '<span class="oeuvre-mot">' + esc(m) + '</span>';
+    }).join('');
+  }
+
   function sceau(o) {
     if (o.photo) {
       /* Le portrait est décoratif : le nom est déjà écrit juste en
@@ -172,24 +184,43 @@
   }
 
   /* ─── Animation du spectre ─── */
-  var pas = 0, raf = null;
+  var pas = 0, raf = null, lueur = 0;
+
+  /* La fiche qui joue s'éclaire de la musique elle-même : on tire du
+     spectre une amplitude d'ensemble, lissée pour que la lumière
+     respire au lieu de clignoter, et on la passe en variable CSS.
+     C'est le même analyseur qui dessine déjà les barres — la lueur ne
+     coûte donc qu'une moyenne par image. */
+  function eclairer(v) {
+    /* Montée franche, descente lente : une lumière retombe doucement */
+    lueur += (v - lueur) * (v > lueur ? 0.28 : 0.06);
+    var carte = cartes[cur];
+    if (carte) carte.style.setProperty('--lueur', lueur.toFixed(3));
+    if (barre) barre.style.setProperty('--lueur', lueur.toFixed(3));
+  }
+
   function dessiner() {
     if (bBarres.length) {
       if (analyseur && joue) {
         analyseur.getByteFrequencyData(spectre);
+        var somme = 0;
         for (var i = 0; i < bBarres.length; i++) {
           /* Les basses saturent : on compresse pour garder un dessin lisible */
           var v = spectre[Math.floor(i * spectre.length / bBarres.length)] / 255;
+          somme += v;
           bBarres[i].style.height = (2 + Math.pow(v, 0.72) * 20) + 'px';
         }
+        eclairer(Math.min(1, Math.pow(somme / bBarres.length, 0.62) * 1.35));
       } else if (joue && !REDUIT) {
         pas++;
         for (var j = 0; j < bBarres.length; j++) {
           bBarres[j].style.height =
             (2 + Math.abs(Math.sin((pas + j * 2) * 0.09) * Math.cos((pas + j) * 0.04)) * 18) + 'px';
         }
+        eclairer(0.45 + Math.sin(pas * 0.045) * 0.3);
       } else {
         for (var k = 0; k < bBarres.length; k++) bBarres[k].style.height = '2px';
+        if (lueur > 0.001) eclairer(0);
       }
     }
     raf = requestAnimationFrame(dessiner);
@@ -227,7 +258,7 @@
           (o.lyrics ? '<blockquote class="oeuvre-vers">' + esc(o.lyrics) + '</blockquote>' : '') +
           (o.brief ? '<div class="oeuvre-brief">' +
               '<span class="mono">Les mots de la famille</span>' +
-              '<em>« ' + esc(o.brief) + ' »</em>' +
+              '<em>' + jetons(o.brief) + '</em>' +
             '</div>' : '') +
         '</div>' +
       '</div>' +

@@ -112,7 +112,8 @@ ${t.mention ? `            <div class="oeuvre-mention">${esc(t.mention)}</div>\n
               <p class="oeuvre-recit">${esc(t.story)}</p>
 ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</blockquote>\n` : ''}              <div class="oeuvre-brief">
                 <span class="mono">Les mots de la famille</span>
-                <em>« ${esc(t.brief)} »</em>
+                <em>${String(t.brief).split('·').map(m => m.trim()).filter(Boolean)
+                       .map(m => `<span class="oeuvre-mot">${esc(m)}</span>`).join('')}</em>
               </div>
             </div>
           </div>
