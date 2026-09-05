@@ -14,6 +14,6 @@
    deuil, ainsi que le prénom et l'histoire du défunt — seraient
    lisibles par n'importe qui. */
 window.MELODIA_CONFIG = {
-  SUPABASE_URL: '',      // ex : 'https://xxxx.supabase.co'
-  SUPABASE_ANON_KEY: ''  // Settings → API → anon public
+  SUPABASE_URL: 'https://awvgmkoozerfggdvvubi.supabase.co',
+  SUPABASE_ANON_KEY: ''  // Settings → API → « anon public » — PAS « service_role »
 };

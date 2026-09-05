@@ -63,6 +63,48 @@ fermer les portes, pas les ouvrir.
 Pour un collaborateur commercial, la même ligne avec
 `'commercial'` au lieu de `'master'`.
 
+## 4 bis. Contrôler que la sécurité est bien en place
+
+Avant de mettre les clés dans le site, passez cette requête dans le
+**SQL Editor**. Elle vérifie que le verrou est posé sur les quatre
+tables et compte les règles :
+
+```sql
+select c.relname                                   as table,
+       case when c.relrowsecurity then 'OUI' else '*** NON ***' end as rls_actif,
+       (select count(*) from pg_policies p
+         where p.schemaname = 'public' and p.tablename = c.relname) as regles
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in ('roles','orders','collaborateurs','prospects')
+order by c.relname;
+```
+
+Le résultat attendu :
+
+| table | rls_actif | regles |
+|---|---|---|
+| collaborateurs | OUI | 2 |
+| orders | OUI | 4 |
+| prospects | OUI | 4 |
+| roles | OUI | 1 |
+
+**Si une seule ligne affiche `*** NON ***`, ne renseignez pas les clés
+dans le site.** Relancez d'abord le script : une table sans RLS est
+lisible par quiconque possède la clé publique, c'est-à-dire par tout
+le monde.
+
+Et pour le stockage :
+
+```sql
+select policyname from pg_policies
+where schemaname = 'storage' and tablename = 'objects';
+```
+
+Quatre règles doivent apparaître (écoute, dépôt, remplacement,
+retrait).
+
 ## 5. Vérifier
 
 - Connectez-vous sur `/compte` avec le compte créé.
