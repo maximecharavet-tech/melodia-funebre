@@ -64,28 +64,18 @@
     return mots.map(function (m) { return '<span class="oeuvre-mot">' + esc(m) + '</span>'; }).join('');
   }
 
-  /* ─── Le guilloché ───
-     Une rosette d'épitrochoïde, comme la gravure de fond d'un
-     certificat. Tracée une fois : trois courbes décalées suffisent à
-     donner la moire, et le tracé coûte moins qu'une image de fond. */
-  function rosette(R, r, d, tours) {
-    var p = '', n = 1200, x, y, t;
-    for (var i = 0; i <= n; i++) {
-      t = i / n * Math.PI * 2 * tours;
-      x = (R - r) * Math.cos(t) + d * Math.cos((R - r) / r * t);
-      y = (R - r) * Math.sin(t) - d * Math.sin((R - r) / r * t);
-      p += (i ? 'L' : 'M') + x.toFixed(2) + ' ' + y.toFixed(2);
-    }
-    return p;
-  }
-  function guilloche() {
+  /* ─── La gravure ───
+     Chaque hommage porte la sienne, tirée du prénom de la personne :
+     celle d'Odette n'est pas celle d'Antone, et elle ne change pas
+     d'une visite à l'autre. Le tracé vient du module d'ornements —
+     inutile d'avoir deux fois la même courbe dans le site. */
+  var ORN = window.MelodiaOrnements || null;
+
+  function guilloche(cle) {
     var g = document.createElement('div');
     g.className = 'guilloche';
     g.setAttribute('aria-hidden', 'true');
-    g.innerHTML = '<svg viewBox="-105 -105 210 210">' +
-      '<path d="' + rosette(100, 27, 62, 27) + '" opacity=".9"/>' +
-      '<path d="' + rosette(88, 19, 44, 19) + '" opacity=".55"/>' +
-      '<path d="' + rosette(70, 11, 26, 11) + '" opacity=".35"/></svg>';
+    g.innerHTML = ORN ? ORN.rosette(cle || 'melodia', { traits: 3, pas: 380 }) : '';
     return g;
   }
 
@@ -155,7 +145,8 @@
       '<div class="pup-brief" data-brief hidden><span>Les mots de la famille</span><em></em></div>' +
     '</div>';
   scene.appendChild(platine);
-  platine.querySelector('[data-cadre]').appendChild(guilloche());
+  var cadreDisque = platine.querySelector('[data-cadre]');
+  cadreDisque.appendChild(guilloche('melodia'));
 
   var elDisque   = platine.querySelector('[data-disque]'),
       elEtiq     = platine.querySelector('[data-etiquette]'),
@@ -218,6 +209,11 @@
     var o = OEUVRES[i];
     if (!o) return;
     cur = i;
+
+    /* La gravure du lecteur devient celle de la personne écoutée. */
+    var ancienne = cadreDisque.querySelector('.guilloche');
+    if (ancienne) ancienne.remove();
+    cadreDisque.insertBefore(guilloche(o.who || o.title || o.id), cadreDisque.firstChild);
 
     var e = platine.querySelector('[data-etiquette]');
     e.innerHTML = '<b data-ini>' + esc(initiale(o)) + '</b>' +
@@ -574,6 +570,7 @@
       b.setAttribute('aria-label', 'Écouter ' + esc(o.title || 'cet hommage'));
       b.innerHTML =
         '<span class="jet">' +
+          (ORN ? ORN.sceau(o.who || o.title || o.id, { traits: 2 }) : '') +
           (o.photo ? '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async">' : '') +
           '<span class="jet-ini">' + esc(initiale(o)) + '</span>' +
           '<svg class="jet-arc" viewBox="0 0 68 68" style="--tour:' + TOUR.toFixed(2) + '">' +

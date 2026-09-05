@@ -241,10 +241,26 @@
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
     reveals.forEach(function (el) { io.observe(el); });
 
-    /* Décalage automatique dans les grilles : effet de cascade sans classe à écrire */
-    $$('.grid-2, .grid-3, .grid-4, .steps').forEach(function (grid) {
-      $$('.reveal', grid).forEach(function (el, i) {
-        if (!/reveal-d\d/.test(el.className)) el.style.transitionDelay = Math.min(i * 0.08, 0.4) + 's';
+    /* ─── La cascade ───
+       Un bloc de six cartes qui apparaissent toutes ensemble ne se lit
+       pas : l'œil ne sait pas par où commencer. Décalées, elles se
+       lisent dans l'ordre où elles sont écrites.
+
+       Le décalage se calcule par RANGÉE et non par rang absolu : sur
+       une grille de trois colonnes, les cartes 1, 2 et 3 sont côte à
+       côte et doivent monter presque ensemble ; c'est la rangée
+       suivante qui attend. Un décalage par rang faisait attendre la
+       troisième carte trois fois plus que la première, pour rien. */
+    $$('.grid-2, .grid-3, .grid-4, .steps, .cards, [data-cascade]').forEach(function (grille) {
+      var enfants = $$('.reveal', grille);
+      if (enfants.length < 2) return;
+      var hautPrec = null, rang = -1, dansRang = 0;
+      enfants.forEach(function (el) {
+        if (/reveal-d\d/.test(el.className)) return;
+        var haut = Math.round(el.offsetTop);
+        if (hautPrec === null || Math.abs(haut - hautPrec) > 12) { rang++; dansRang = 0; hautPrec = haut; }
+        else dansRang++;
+        el.style.transitionDelay = Math.min(rang * 0.11 + dansRang * 0.06, 0.55) + 's';
       });
     });
   } else {

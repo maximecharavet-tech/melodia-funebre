@@ -11,8 +11,18 @@ module.exports = {
   body: `
   <!-- ═══ COUVERTURE ═══ -->
   <section class="hero-video">
-    <video muted loop playsinline preload="none" poster="assets/img/logo-melodia.jpg"
-           data-src="assets/img/logo-melodia-anime.mp4" aria-hidden="true"></video>
+    <!-- L'animation de fond montrait l'ANCIEN logo, en filigrane derrière
+         le nouvel emblème : deux dessins de la maison superposés. Elle
+         est retirée. L'emblème tient désormais ce rôle, avec le bon
+         dessin — et la page s'allège de 5,2 Mo au passage.
+         assets/img/logo-melodia-anime.mp4 reste au dépôt : si une
+         animation du nouveau logo arrive, elle prendra cette place. -->
+    <!-- L'emblème en scène : l'anneau se trace, la gravure tourne, une
+         lumière balaie la médaille. Le logo n'est pas redessiné, il est
+         mis en scène — c'est une image matricielle, on ne peut pas
+         l'animer trait par trait. -->
+    <div class="hero-embleme" data-orn-embleme data-orn-priorite
+         data-orn-alt="Melodia Funèbre" aria-hidden="true"></div>
     <div class="hero-caption">
       <div class="badge reveal in" style="margin-bottom:1.6rem;">Composition originale · Livrée en 24 heures</div>
       <h1 class="h-hero reveal in reveal-d1">Chaque vie mérite<br><em>une chanson.</em></h1>
@@ -75,6 +85,8 @@ ${P.oeuvres()}
 
 ${P.urgency()}
 
+  
+  <div class="orn-portee-hote" data-orn-portee="actes"></div>
   <!-- ═══ TROIS ACTES ═══ -->
   <section class="section section-light">
     <div class="wrap">
@@ -158,6 +170,8 @@ ${P.pricing('link')}
     </div>
   </section>
 
+  
+  <div class="orn-portee-hote" data-orn-portee="temoignages"></div>
   <!-- ═══ TÉMOIGNAGES ═══ -->
   <section class="section section-top">
     <div class="wrap">
@@ -171,7 +185,8 @@ ${P.testimonials()}
 
   <!-- ═══ CITATION ═══ -->
   <div class="wrap"><hr class="rule-gold"></div>
-  <section class="quote-band">
+  <section class="quote-band a-rosace">
+    <div class="orn-rosace-hote" data-orn-rosace="citation" data-orn-traits="3"></div>
     <div class="wrap reveal">
       <p>« La musique commence là où s'arrête<br>le pouvoir des mots. »</p>
       <cite>Richard Wagner</cite>
@@ -221,6 +236,8 @@ ${P.faq(null, true)}
     </div>
   </section>
 
+  
+  <div class="orn-portee-hote" data-orn-portee="final"></div>
   <!-- ═══ APPEL FINAL ═══ -->
   <section class="section section-top" style="padding-bottom:6rem;">
     <div class="wrap center reveal">

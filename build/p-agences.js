@@ -16,7 +16,8 @@ module.exports = {
   desc: "Pompes funèbres : proposez à vos familles un hommage musical composé sur mesure. 60 % de marge, aucun investissement, première composition offerte. Simulez vos revenus en ligne.",
   jsonld: [P.jsonldFil('Espace agences', '/agences')],
   body: `
-  <section class="section" style="padding-top:9rem;padding-bottom:0;">
+  <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
+    <div class="orn-rosace-hote" data-orn-rosace="agences" data-orn-traits="3"></div>
     <div class="wrap">
       <div class="eyebrow reveal in">Espace professionnels</div>
       <h1 class="h-hero reveal in reveal-d1">Votre agence,<br><em>différenciée.</em></h1>

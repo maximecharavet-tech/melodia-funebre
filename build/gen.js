@@ -263,7 +263,7 @@ function intro() {
 
 function page(p) {
   /* content.js d'abord : le catalogue se remonte ensuite autour du contenu publié */
-  const scripts = ['assets/js/content.js', 'assets/js/main.js', 'assets/js/rappel.js', 'assets/js/courrier.js'].concat(p.scripts || []);
+  const scripts = ['assets/js/content.js', 'assets/js/main.js', 'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'].concat(p.scripts || []);
   return empreinterImages(`<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -274,6 +274,7 @@ ${p.intro ? intro() + '\n' : ''}${nav(/hero-video/.test(p.body || ''))}
 <main id="main">
 ${p.body}
 </main>
+<div class="orn-portee-hote orn-portee-pied" data-orn-portee="${(p.file || 'page').replace(/\.html$/, '')}"></div>
 ${footer()}
 ${p.sticky === false ? '' : stickyCta() + '\n'}${scripts.map(s => `<script src="${versionne(s)}"></script>`).join('\n')}
 ${p.inline || ''}

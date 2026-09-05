@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=637297ed">
+<link rel="stylesheet" href="assets/css/style.css?v=5920e451">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -124,8 +124,18 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
 
   <!-- ═══ COUVERTURE ═══ -->
   <section class="hero-video">
-    <video muted loop playsinline preload="none" poster="assets/img/logo-melodia.jpg?v=c9f03ed0"
-           data-src="assets/img/logo-melodia-anime.mp4?v=14671ff7" aria-hidden="true"></video>
+    <!-- L'animation de fond montrait l'ANCIEN logo, en filigrane derrière
+         le nouvel emblème : deux dessins de la maison superposés. Elle
+         est retirée. L'emblème tient désormais ce rôle, avec le bon
+         dessin — et la page s'allège de 5,2 Mo au passage.
+         assets/img/logo-melodia-anime.mp4?v=14671ff7 reste au dépôt : si une
+         animation du nouveau logo arrive, elle prendra cette place. -->
+    <!-- L'emblème en scène : l'anneau se trace, la gravure tourne, une
+         lumière balaie la médaille. Le logo n'est pas redessiné, il est
+         mis en scène — c'est une image matricielle, on ne peut pas
+         l'animer trait par trait. -->
+    <div class="hero-embleme" data-orn-embleme data-orn-priorite
+         data-orn-alt="Melodia Funèbre" aria-hidden="true"></div>
     <div class="hero-caption">
       <div class="badge reveal in" style="margin-bottom:1.6rem;">Composition originale · Livrée en 24 heures</div>
       <h1 class="h-hero reveal in reveal-d1">Chaque vie mérite<br><em>une chanson.</em></h1>
@@ -538,6 +548,8 @@ J'ai encore un pas de danse à vous apprendre</blockquote>
     </div>
   </section>
 
+  
+  <div class="orn-portee-hote" data-orn-portee="actes"></div>
   <!-- ═══ TROIS ACTES ═══ -->
   <section class="section section-light">
     <div class="wrap">
@@ -677,6 +689,8 @@ J'ai encore un pas de danse à vous apprendre</blockquote>
     </div>
   </section>
 
+  
+  <div class="orn-portee-hote" data-orn-portee="temoignages"></div>
   <!-- ═══ TÉMOIGNAGES ═══ -->
   <section class="section section-top">
     <div class="wrap">
@@ -726,7 +740,8 @@ J'ai encore un pas de danse à vous apprendre</blockquote>
 
   <!-- ═══ CITATION ═══ -->
   <div class="wrap"><hr class="rule-gold"></div>
-  <section class="quote-band">
+  <section class="quote-band a-rosace">
+    <div class="orn-rosace-hote" data-orn-rosace="citation" data-orn-traits="3"></div>
     <div class="wrap reveal">
       <p>« La musique commence là où s'arrête<br>le pouvoir des mots. »</p>
       <cite>Richard Wagner</cite>
@@ -841,6 +856,8 @@ J'ai encore un pas de danse à vous apprendre</blockquote>
     </div>
   </section>
 
+  
+  <div class="orn-portee-hote" data-orn-portee="final"></div>
   <!-- ═══ APPEL FINAL ═══ -->
   <section class="section section-top" style="padding-bottom:6rem;">
     <div class="wrap center reveal">
@@ -853,6 +870,7 @@ J'ai encore un pas de danse à vous apprendre</blockquote>
     </div>
   </section>
 </main>
+<div class="orn-portee-hote orn-portee-pied" data-orn-portee="index"></div>
 <footer class="footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -904,10 +922,11 @@ J'ai encore un pas de danse à vous apprendre</blockquote>
   <a href="/offres" class="btn btn-gold">Commander</a>
 </div>
 <script src="assets/js/content.js?v=ec7f70d9"></script>
-<script src="assets/js/main.js?v=efc900f7"></script>
+<script src="assets/js/main.js?v=5ed21030"></script>
 <script src="assets/js/rappel.js?v=1840ff2c"></script>
 <script src="assets/js/courrier.js?v=f9ff5aca"></script>
-<script src="assets/js/catalogue.js?v=e504556f"></script>
+<script src="assets/js/ornements.js?v=b123bb2c"></script>
+<script src="assets/js/catalogue.js?v=9a0c8550"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->

@@ -873,7 +873,13 @@ ul { list-style: none; }
 /* ═══════════════════════════════════════════════════════════════
    RÉVÉLATION AU DÉFILEMENT
    ═══════════════════════════════════════════════════════════════ */
-.reveal { opacity: 0; transform: translateY(26px); transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out); }
+/* La montée porte aussi un très léger rapprochement : le bloc arrive
+   vers le lecteur au lieu de simplement glisser. Deux centièmes
+   d'échelle suffisent — au-delà, cela se voit et cela fatigue. */
+.reveal {
+  opacity: 0; transform: translateY(26px) scale(.985);
+  transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out);
+}
 .reveal.in { opacity: 1; transform: none; }
 .reveal-d1 { transition-delay: 0.1s; }
 .reveal-d2 { transition-delay: 0.2s; }
@@ -2678,7 +2684,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   -webkit-mask: radial-gradient(circle, #000 26%, rgba(0,0,0,.35) 46%, transparent 66%);
           mask: radial-gradient(circle, #000 26%, rgba(0,0,0,.35) 46%, transparent 66%);
 }
-.guilloche svg { width: 100%; height: 100%; animation: rosace 120s linear infinite; }
+.guilloche svg { width: 100%; height: 100%; }
 .guilloche path { fill: none; stroke: var(--or); stroke-width: .28; vector-effect: non-scaling-stroke; }
 @keyframes rosace { to { transform: rotate(-360deg); } }
 
@@ -2911,13 +2917,25 @@ body.a-ecoute { padding-bottom: 5rem; }
     0 6px 16px -8px rgba(0, 0, 0, .9);
   transition: box-shadow .55s, transform .55s cubic-bezier(.22, 1, .36, 1);
 }
-/* Le guilloché du lecteur, en écho : de fines nervures concentriques */
-.jet::before {
-  content: ''; position: absolute; inset: 6px; border-radius: 50%; pointer-events: none;
-  background: repeating-radial-gradient(circle at 50% 50%,
-    rgba(201, 168, 76, .085) 0 .5px, transparent .5px 3px);
-  opacity: .55; transition: opacity .55s;
+/* Chaque jeton porte SA gravure, tirée du prénom : celle d'Odette n'est
+   pas celle d'Antone. Les cercles concentriques d'avant étaient les
+   mêmes pour les douze — un motif, pas une identité. */
+.jet .orn-sceau {
+  position: absolute; inset: 4px; border-radius: 50%; overflow: hidden;
+  pointer-events: none; z-index: 1; opacity: .34; transition: opacity .55s;
+  /* La gravure se tient en couronne : au centre, l'initiale doit rester
+     lisible. À pleine surface, la moire la noyait. C'est ainsi qu'est
+     frappée une vraie médaille — le champ reste net, le pourtour est
+     travaillé. */
+  -webkit-mask: radial-gradient(circle, transparent 30%, #000 48%, #000 100%);
+          mask: radial-gradient(circle, transparent 30%, #000 48%, #000 100%);
 }
+.jet .orn-sceau .orn-svg path {
+  stroke: var(--or); stroke-width: .4; stroke-dasharray: none; stroke-dashoffset: 0;
+  transition: none;
+}
+.pastille[aria-current="true"] .jet .orn-sceau { opacity: .62; }
+.pastille[aria-current="true"].joue .jet .orn-sceau { animation: rosaceJeton 44s linear infinite; }
 .jet-ini {
   position: relative; z-index: 2; line-height: 1;
   font-family: var(--ff-d); font-weight: 300; font-size: 1.42rem;
@@ -2988,8 +3006,6 @@ body.a-ecoute { padding-bottom: 5rem; }
     inset 0 0 18px rgba(201, 168, 76, calc(.06 + var(--lueur, 0) * .16)),
     0 0 calc(14px + var(--lueur, 0) * 26px) -6px rgba(201, 168, 76, calc(.35 + var(--lueur, 0) * .45));
 }
-.pastille[aria-current="true"] .jet::before { opacity: .9; }
-.pastille[aria-current="true"].joue .jet::before { animation: rosaceJeton 44s linear infinite; }
 @keyframes rosaceJeton { to { transform: rotate(360deg); } }
 .pastille[aria-current="true"] .jet-ini { opacity: 1; }
 .pastille[aria-current="true"] .jet img { opacity: .95; }
@@ -3018,7 +3034,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 
 @media (prefers-reduced-motion: reduce) {
   .jet-vu i { animation: none !important; }
-  .pastille[aria-current="true"].joue .jet::before { animation: none !important; }
+  .pastille[aria-current="true"].joue .jet .orn-sceau { animation: none !important; }
 }
 
 /* Sans JavaScript, la grille d'origine reste : c'est elle qui porte les
@@ -3029,3 +3045,204 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (prefers-reduced-motion: reduce) {
   .guilloche svg, .disque { animation: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LES ORNEMENTS DE LA MAISON
+
+   Le site n'avait pas de vocabulaire graphique : du texte, un filet
+   d'or, des icônes. Deux à trois images par page, et c'étaient les
+   logos. Voici celui du logo — l'anneau, la portée, la gravure de
+   fond — décliné dans les pages.
+
+   Tout est tracé en SVG dans le navigateur. Une rosette pèse deux
+   kilo-octets de chemin au lieu de trois cents kilo-octets de PNG,
+   reste nette à toutes les tailles, et se colore avec la charte.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── La rosette gravée ───
+   Elle se trace à l'approche de l'écran, trait après trait, comme une
+   plume qui écrit. Posée en filigrane derrière un bloc, jamais devant. */
+.orn-rosace {
+  position: absolute; pointer-events: none; z-index: 0;
+  left: 50%; top: 50%; width: 34rem; height: 34rem;
+  transform: translate(-50%, -50%);
+  /* Une gravure de fond doit rester en dessous du propos. À pleine
+     force elle traversait le titre et le paragraphe : c'est le défaut
+     que montrait la page « processus ». */
+  opacity: .4;
+  -webkit-mask: radial-gradient(circle, #000 18%, rgba(0,0,0,.32) 44%, transparent 66%);
+          mask: radial-gradient(circle, #000 18%, rgba(0,0,0,.32) 44%, transparent 66%);
+}
+/* Sur l'ouverture d'une page, elle se range dans l'angle plutôt que de
+   se poser derrière le texte. */
+.section > .orn-rosace-hote > .orn-rosace {
+  left: auto; right: -12rem; top: -10rem; transform: none;
+  width: 40rem; height: 40rem; opacity: .3;
+}
+@media (max-width: 860px) {
+  .section > .orn-rosace-hote > .orn-rosace {
+    right: -16rem; top: -14rem; width: 34rem; height: 34rem; opacity: .22;
+  }
+}
+.orn-svg { width: 100%; height: 100%; overflow: visible; }
+.orn-svg path {
+  fill: none; stroke: var(--or); stroke-width: .3; vector-effect: non-scaling-stroke;
+  stroke-dasharray: 2400; stroke-dashoffset: 2400;
+  transition: stroke-dashoffset 3.4s cubic-bezier(.22, 1, .36, 1);
+}
+.orn-rosace.orn-vu .orn-svg path { stroke-dashoffset: 0; }
+.orn-rosace.orn-vu .orn-svg path:nth-child(2) { transition-delay: .35s; }
+.orn-rosace.orn-vu .orn-svg path:nth-child(3) { transition-delay: .7s; }
+/* Pas de rotation ici : un tour en 150 s ne se perçoit pas, et
+   redessiner des milliers de points à chaque image se paie sur un
+   téléphone. La gravure vit par son tracé, pas par son mouvement. */
+@keyframes ornTourne { to { transform: rotate(360deg); } }
+
+/* La section qui porte une rosette doit la contenir */
+.a-rosace { position: relative; overflow: hidden; }
+.a-rosace > *:not(.orn-rosace-hote) { position: relative; z-index: 1; }
+.orn-rosace-hote { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.section-light .orn-svg path { stroke: var(--or-deep); }
+.orn-rosace.orn-faible { opacity: .5; }
+.quote-band .orn-rosace { opacity: .6; }
+
+/* ─── La portée ───
+   Cinq lignes qui ondulent, comme celles du logo. Un filet droit ne dit
+   rien ; une portée dit qu'ici, on écrit de la musique. */
+.orn-portee-hote {
+  position: relative; height: 80px; margin: 0; overflow: hidden; pointer-events: none;
+}
+.orn-portee { width: 100%; height: 100%; display: block; }
+.orn-portee path {
+  fill: none; stroke: var(--or-patina); stroke-width: 1; opacity: .34;
+  stroke-dasharray: 1400; stroke-dashoffset: 1400;
+  transition: stroke-dashoffset 2.6s cubic-bezier(.33, 1, .5, 1);
+  transition-delay: calc(var(--rang) * .13s);
+}
+.orn-portee-hote.orn-vu path { stroke-dashoffset: 0; }
+.section-light .orn-portee path { stroke: var(--or-deep); opacity: .5; }
+
+/* ─── L'emblème ───
+   Le logo est une image matricielle : on ne peut pas l'animer trait par
+   trait. On l'anime donc par ce qui l'entoure — un anneau qui se trace,
+   une lumière qui balaie la médaille, un halo qui respire. Le dessin
+   officiel n'est pas redessiné, il est mis en scène. */
+.embleme {
+  position: relative; width: min(30rem, 78vw); aspect-ratio: 1; margin: 0 auto;
+  display: grid; place-items: center; isolation: isolate;
+}
+.emb-logo {
+  position: relative; z-index: 2; width: 72%; height: 72%;
+  object-fit: cover; border-radius: 50%; border: 1px solid var(--line-strong);
+  opacity: 0; transform: scale(1.1);
+  transition: opacity 1.5s var(--ease-out), transform 1.9s var(--ease-out);
+}
+.embleme.orn-vu .emb-logo { opacity: 1; transform: none; }
+
+/* Le halo : la médaille éclaire ce qui l'entoure */
+.emb-halo {
+  position: absolute; inset: -6%; z-index: 0; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(201,168,76,.2) 0%, rgba(201,168,76,.06) 42%, transparent 68%);
+  opacity: 0; transition: opacity 2s ease;
+}
+.embleme.orn-vu .emb-halo { opacity: 1; animation: embRespire 7s ease-in-out infinite 2s; }
+@keyframes embRespire { 0%, 100% { transform: scale(1); opacity: .85; } 50% { transform: scale(1.06); opacity: 1; } }
+
+/* L'anneau qui se trace autour de la médaille */
+.emb-anneau { position: absolute; inset: 0; z-index: 3; transform: rotate(-90deg); pointer-events: none; }
+.emb-anneau circle { fill: none; stroke-width: .7; vector-effect: non-scaling-stroke; }
+.emb-trace { stroke: rgba(201,168,76,.16); }
+.emb-arc {
+  stroke: var(--or); stroke-linecap: round;
+  stroke-dasharray: 603; stroke-dashoffset: 603;
+  filter: drop-shadow(0 0 6px rgba(227,201,119,.55));
+  transition: stroke-dashoffset 2.8s cubic-bezier(.22, 1, .36, 1) .3s;
+}
+.embleme.orn-vu .emb-arc { stroke-dashoffset: 60; }
+
+/* La gravure de fond, en écho au guilloché du lecteur */
+.emb-rosace {
+  position: absolute; inset: -12%; z-index: 1; pointer-events: none; opacity: 0;
+  transition: opacity 2.4s ease .6s;
+  -webkit-mask: radial-gradient(circle, transparent 34%, #000 44%, transparent 72%);
+          mask: radial-gradient(circle, transparent 34%, #000 44%, transparent 72%);
+}
+.embleme.orn-vu .emb-rosace { opacity: .5; }
+
+
+/* La lumière qui balaie la médaille, comme sur une feuille d'or */
+.emb-lueur {
+  position: absolute; z-index: 4; width: 72%; height: 72%; border-radius: 50%;
+  pointer-events: none; overflow: hidden; opacity: 0;
+  transition: opacity 1s ease 1.4s;
+}
+.embleme.orn-vu .emb-lueur { opacity: 1; }
+.emb-lueur::before {
+  content: ''; position: absolute; top: -60%; left: -120%; width: 60%; height: 220%;
+  background: linear-gradient(100deg, transparent, rgba(255,248,226,.16) 44%, rgba(255,248,226,.3) 50%, transparent 62%);
+  transform: rotate(14deg);
+  animation: embBalaie 6.5s cubic-bezier(.5, 0, .5, 1) infinite 2.4s;
+}
+@keyframes embBalaie { 0% { left: -120%; } 45%, 100% { left: 190%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .orn-svg path, .orn-portee path, .emb-arc { stroke-dashoffset: 0 !important; transition: none !important; }
+  .orn-rosace .orn-svg, .emb-rosace .orn-svg, .emb-halo, .emb-lueur::before { animation: none !important; }
+  .emb-logo { opacity: 1 !important; transform: none !important; }
+}
+
+/* ─── L'emblème en couverture ───
+   Sur grand écran il occupe la moitié droite, face au texte. Sous
+   860 px il passe derrière lui, atténué : une médaille de trente rem
+   au-dessus du titre repousserait l'appel à l'action hors de l'écran,
+   et c'est lui qui compte. */
+.hero-embleme {
+  position: absolute; z-index: 2; pointer-events: none;
+  right: 4%; top: 50%; transform: translateY(-50%);
+  width: min(34rem, 40vw);
+}
+.hero-embleme .embleme { width: 100%; }
+@media (max-width: 1080px) { .hero-embleme { right: -4%; width: min(30rem, 46vw); opacity: .55; } }
+@media (max-width: 860px) {
+  /* Remontée derrière le titre et non derrière le paragraphe : la
+     médaille doit poser une atmosphère, pas gêner la lecture. */
+  .hero-embleme {
+    right: 50%; transform: translate(50%, -50%);
+    top: 30%; width: min(26rem, 88vw); opacity: .17;
+  }
+  .hero-embleme .emb-lueur { display: none; }
+  .hero-embleme .emb-halo { opacity: .4; }
+}
+
+/* La portée qui ferme chaque page : plus discrète que celles qui
+   séparent deux sections, elle marque la fin du propos. */
+.orn-portee-pied { height: 62px; opacity: .6; }
+
+
+/* ─── Le sceau ───
+   La gravure à la taille d'une médaille, posée DANS son hôte. Elle se
+   trace comme les grandes rosettes, mais plus vite : à soixante pixels,
+   trois secondes de tracé passeraient pour un défaut d'affichage. */
+.a-sceau { position: relative; }
+.orn-sceau { display: block; }
+.orn-sceau .orn-svg path {
+  stroke-width: .55; stroke-dasharray: 900; stroke-dashoffset: 900;
+  transition: stroke-dashoffset 1.5s cubic-bezier(.22, 1, .36, 1);
+}
+.orn-sceau.orn-vu .orn-svg path { stroke-dashoffset: 0; }
+.orn-sceau.orn-vu .orn-svg path:nth-child(2) { transition-delay: .2s; }
+
+
+/* ─── Les étapes du processus ───
+   La pastille numérotée était un rond avec un chiffre. Elle porte
+   maintenant la gravure de son étape — sept médailles, sept dessins. */
+.step-dot { position: relative; overflow: hidden; }
+.step-dot .orn-sceau {
+  position: absolute; inset: 2px; border-radius: 50%; overflow: hidden;
+  pointer-events: none; z-index: 0; opacity: .5;
+  -webkit-mask: radial-gradient(circle, transparent 32%, #000 50%, #000 100%);
+          mask: radial-gradient(circle, transparent 32%, #000 50%, #000 100%);
+}
+.step-dot .orn-sceau .orn-svg path { stroke: var(--or); stroke-width: .5; }
+.section-light .step-dot .orn-sceau .orn-svg path { stroke: var(--or-deep); }
+.section-light .step-dot .orn-sceau { opacity: .6; }
