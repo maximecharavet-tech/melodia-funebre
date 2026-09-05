@@ -86,8 +86,15 @@
 
     async login(identifiant, password) {
       var id = (identifiant || '').trim();
-      // 1) Compte maître
-      if (id.toLowerCase() === MASTER_ID && password === MASTER_PW) {
+      /* 1) Raccourci de démonstration.
+         L'identifiant et le mot de passe sont écrits en clair dans ce
+         fichier, donc lisibles par quiconque affiche le source de la
+         page — et ils sont identiques l'un à l'autre. C'était sans
+         conséquence tant que tout vivait dans le navigateur du poste.
+         Dès qu'une vraie base existe, ce raccourci n'a plus lieu
+         d'être : en mode production, seul un compte Supabase ouvre la
+         console, avec un mot de passe que personne ne peut lire. */
+      if (!HAS_SB && id.toLowerCase() === MASTER_ID && password === MASTER_PW) {
         LS.set('melodia_master', { at: Date.now() });
         return { id: 'master', name: 'Maxime Charavet', email: MASTER_MAIL, role: 'master' };
       }

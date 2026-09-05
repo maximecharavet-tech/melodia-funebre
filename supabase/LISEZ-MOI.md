@@ -1,4 +1,25 @@
-# Activer Supabase
+# Supabase — état : ACTIF
+
+Le projet `awvgmkoozerfggdvvubi` (région eu-west-1, Irlande) est en
+service depuis le 5 septembre 2026. Tables, règles de sécurité,
+dossier de stockage et rôle du fondateur sont posés et vérifiés. Le
+site est branché dessus.
+
+**Ce qu'il reste à faire, une seule fois :** créer votre compte dans
+Supabase → Authentication → Users, avec l'adresse
+`contact@melodia-funebre.fr`. Le rôle `master` lui est déjà attribué,
+il s'appliquera dès la première connexion.
+
+Le raccourci `mastermax07` ne fonctionne plus en production — il était
+écrit en clair dans un fichier public, et son mot de passe était
+identique à son identifiant. Il ne subsiste qu'en mode démo.
+
+Ce qui suit décrit comment tout cela a été monté, et sert de référence
+si le projet devait être recréé.
+
+---
+
+## Activer Supabase
 
 Sans Supabase, le site fonctionne : comptes, commandes et prospection
 vivent dans le navigateur de chaque poste. C'est suffisant pour

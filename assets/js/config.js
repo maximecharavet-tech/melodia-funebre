@@ -15,5 +15,10 @@
    lisibles par n'importe qui. */
 window.MELODIA_CONFIG = {
   SUPABASE_URL: 'https://awvgmkoozerfggdvvubi.supabase.co',
-  SUPABASE_ANON_KEY: ''  // Settings → API → « anon public » — PAS « service_role »
+  /* Clé « anon public ». Elle est publique par construction : le code
+     l'envoie en en-tête depuis le navigateur, elle est donc lisible
+     dans le source de la page. C'est prévu ainsi — la protection des
+     données tient au Row Level Security, posé le 5 septembre 2026 et
+     vérifié : quatre tables verrouillées, onze règles. */
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dmdta29vemVyZmdnZHZ2dWJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NjA1MTUsImV4cCI6MjEwNDEzNjUxNX0.FfvtgMMC7KqbANL7Zz4Ecwd9br5o7_ToDPCIZoB23sw'
 };
