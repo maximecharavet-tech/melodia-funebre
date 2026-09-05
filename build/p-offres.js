@@ -16,7 +16,8 @@ module.exports = {
   jsonld: [P.jsonldService, P.jsonldFil('Offres et tarifs', '/offres')],
   scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/order.js'],
   body: `
-  <section class="section" style="padding-top:9rem;padding-bottom:0;">
+  <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
+    <div class="orn-rosace-hote" data-orn-rosace="offres" data-orn-traits="3"></div>
     <div class="wrap">
       <div class="eyebrow reveal in">Offres et tarifs</div>
       <h1 class="h-hero reveal in reveal-d1">Trois façons<br>de dire <em>adieu.</em></h1>

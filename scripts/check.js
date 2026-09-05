@@ -7,7 +7,7 @@ const files = [
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
   'assets/css/style.css', 'assets/css/dashboard.css',
   'assets/js/main.js', 'assets/js/catalogue.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
-  'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
+  'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'assets/js/ornements.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
   'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js',
   'assets/js/auth.js', 'assets/js/config.js',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-complet.jpg', 'assets/img/logo-melodia-anime.mp4',

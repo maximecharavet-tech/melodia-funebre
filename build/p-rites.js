@@ -134,7 +134,8 @@ module.exports = {
   </section>
 
   <!-- ═══ LE PRINCIPE ═══ -->
-  <section class="section-sm" style="padding-top:2.6rem;">
+  <section class="section-sm a-rosace" style="padding-top:2.6rem;">
+    <div class="orn-rosace-hote" data-orn-rosace="rites" data-orn-traits="3"></div>
     <div class="wrap">
       <div class="grid-3">
         <div class="card reveal">

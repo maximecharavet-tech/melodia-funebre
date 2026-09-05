@@ -8,7 +8,8 @@ module.exports = {
   desc: "Comment nous composons un hommage musical : entretien de 5 minutes, écriture des paroles, composition, relecture humaine, livraison en 24 heures. Ce que nous vous demandons, et ce que nous garantissons.",
   jsonld: [P.jsonldProcessus, P.jsonldFil('Le processus', '/processus')],
   body: `
-  <section class="section" style="padding-top:9rem;padding-bottom:0;">
+  <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
+    <div class="orn-rosace-hote" data-orn-rosace="processus" data-orn-traits="3"></div>
     <div class="wrap">
       <div class="eyebrow reveal in">Le processus</div>
       <h1 class="h-hero reveal in reveal-d1">De cinq questions<br>à une <em>œuvre.</em></h1>
