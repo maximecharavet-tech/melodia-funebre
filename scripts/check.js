@@ -14,7 +14,7 @@ const files = [
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
-  'audio/maurice.mp3', 'audio/monique.mp3', 'audio/sergio.mp3',
+  'audio/maurice.mp3', 'audio/monique.mp3', 'audio/sergio.mp3', 'audio/dorian.mp3',
   'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
   'vercel.json', 'robots.txt', 'sitemap.xml'
 ];

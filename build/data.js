@@ -60,7 +60,7 @@ const FAQ = [
     a: "Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain." }
 ];
 
-const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer'];
+const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais'];
 
 /* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
@@ -91,6 +91,11 @@ const TRACKS = [
     story: "Né un matin de brume à Bréhat, entre l'écume et les mâts. Son père sentait le sel, sa mère le goémon. À douze ans il montait sur son premier dundee, direction l'Islande. Il a épousé Marie aux cheveux couleur de lin ; ils ont eu quatre enfants, deux filles et deux garçons, et la maison sentait le cidre et le pain noir. Quand la maladie l'a cloué dans son lit, il a demandé qu'on ouvre la fenêtre pour voir la mer une dernière fois. Harpe celtique, bombarde, biniou kozh et violon ; le chant passe du breton au français.",
     lyrics: "Oh Yann, enfant de la côte de Goëlo\nTu as aimé la mer plus qu'on n'aime les rois\nEt tu t'en es allé comme s'en vont les bateaux\nVers l'île d'Ys, vers le pays d'après",
     brief: "marin · courageux · fidèle" },
+  { id: "demo-12", title: "Enfant de la mer", who: "Dorian, tambouyé de Fort-de-France", lieu: "Martinique",
+    style: "Bélé antillais", file: "audio/dorian.mp3",
+    story: "Né un matin de 1948 à Fort-de-France, entre la mer et les cannes. Son père ramenait les poissons volants, sa mère les histoires d'avant. À dix ans il tenait déjà le tambou et faisait lever tout le quartier. Il connaissait les poissons, les étoiles et les rivières. Il a épousé Yolande ; ils ont eu quatre enfants, deux garçons et deux filles, et la maison n'a jamais manqué de rires ni de musique. Le soir, devant la case, il racontait les légendes aux petits. Quand la maladie est venue, il a demandé qu'on joue du bélé : il a dansé une dernière fois, et il a souri. Tambou bélé, ti-bwa, chacha et guitare ; les couplets en français, un passage en créole.",
+    lyrics: "Oh Dorian, enfant de la mer\nTu avais le rythme dans le corps\nEt tu t'en es allé comme se lève le soleil\nIbo pa mouri janmen — les esprits ne meurent jamais",
+    brief: "rythmé · conteur · joyeux" },
   { id: "demo-11", title: "Eshet Chayil, femme de valeur", who: "Ruth, 85 ans", lieu: "Paris et Israël",
     style: "Klezmer", mention: "Composé pour une vivante",
     file: "audio/ruth.mp3",
