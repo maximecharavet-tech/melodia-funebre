@@ -5,10 +5,15 @@ service depuis le 5 septembre 2026. Tables, règles de sécurité,
 dossier de stockage et rôle du fondateur sont posés et vérifiés. Le
 site est branché dessus.
 
-**Ce qu'il reste à faire, une seule fois :** créer votre compte dans
-Supabase → Authentication → Users, avec l'adresse
-`contact@melodia-funebre.fr`. Le rôle `master` lui est déjà attribué,
-il s'appliquera dès la première connexion.
+Le compte du fondateur (`contact@melodia-funebre.fr`) existe, son
+adresse est confirmée et le rôle `master` lui est attribué. Il n'y a
+plus rien à créer.
+
+**Changez son mot de passe dès votre première connexion.** Le mot de
+passe initial a transité par une conversation : Supabase →
+Authentication → Users → la ligne du compte → **Reset password**, ou
+depuis le site par « Mot de passe oublié ». Un mot de passe qui a été
+écrit ailleurs qu'entre vos mains n'est plus un secret.
 
 Le raccourci `mastermax07` ne fonctionne plus en production — il était
 écrit en clair dans un fichier public, et son mot de passe était
