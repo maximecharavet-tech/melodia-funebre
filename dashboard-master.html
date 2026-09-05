@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="assets/css/dashboard.css">
+<link rel="stylesheet" href="assets/css/style.css?v=798a789d">
+<link rel="stylesheet" href="assets/css/dashboard.css?v=4243bdaa">
 </head>
 <body>
 <div class="dash">
@@ -57,15 +57,22 @@
   </main>
 </div>
 
-<script src="assets/js/config.js"></script>
-<script src="assets/js/auth.js"></script>
-<script src="assets/js/main.js"></script>
-<script src="assets/js/livraison.js"></script>
-<script src="assets/js/atelier-music.js"></script>
-<script src="assets/js/proprietaire.js"></script>
+<script src="assets/js/config.js?v=13072ce7"></script>
+<script src="assets/js/auth.js?v=6ff8a2e5"></script>
+<script src="assets/js/main.js?v=efc900f7"></script>
+<script src="assets/js/livraison.js?v=8816d59c"></script>
+<script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
+<script src="assets/js/proprietaire.js?v=b1d5175b"></script>
 <script>
 var U = window.MelodiaAuth.guard();
-if (U && U.role !== 'master') location.href = 'dashboard-partenaire.html';
+/* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
+   pas : deux pages qui se renvoient mutuellement font boucler le
+   navigateur dès qu'elles ne s'accordent pas — ce qui arrive dès que
+   l'une tourne sur une version de auth.js gardée en cache et l'autre
+   non. orienter() relit le rôle dans la base, qui seule fait autorité,
+   et ne s'autorise qu'un seul saut par chargement. U est posé tout de
+   suite pour que la page démarre, puis rafraîchi si l'on reste. */
+window.MelodiaAuth.orienter('master').then(function (u) { if (u) U = u; });
 
 function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
 function eur(n){return (n||0).toLocaleString('fr-FR')+' €';}
