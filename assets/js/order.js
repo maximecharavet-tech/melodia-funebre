@@ -242,6 +242,18 @@
         })
       }).catch(function () {});
 
+      /* Prévenir la famille : sans cet accusé, elle vient de payer et
+         n'a plus rien — ni référence, ni délai, ni interlocuteur.
+         L'envoi n'est pas attendu : la confirmation à l'écran ne doit
+         pas dépendre d'un service de messagerie. */
+      if (window.MelodiaCourrier) {
+        window.MelodiaCourrier.confirmation({
+          email: state.email, nom: state.name, defunt: state.defunt,
+          ref: order.ref, offre: state.offer + ' · ' + euro(priceOf()),
+          urgence: !!state.urgence
+        });
+      }
+
       try { localStorage.removeItem(DRAFT); } catch (e) {}
       var ref = $('#confirm-ref');
       if (ref) ref.textContent = order.ref;

@@ -59,6 +59,7 @@
 
 <script src="assets/js/config.js?v=13072ce7"></script>
 <script src="assets/js/auth.js?v=6ff8a2e5"></script>
+<script src="assets/js/courrier.js?v=f9ff5aca"></script>
 <script src="assets/js/main.js?v=efc900f7"></script>
 <script src="assets/js/livraison.js?v=8816d59c"></script>
 <script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
@@ -153,10 +154,35 @@ function orderCard(o) {
 }
 
 async function advance(ref, status) {
+  var o = ORDERS.filter(function (x) { return x.ref === ref; })[0];
   await window.MelodiaDB.setStatus(ref, status);
+
+  /* Le statut changeait dans la base et la famille n'en savait rien :
+     elle voyait l'avancement seulement si elle pensait à se connecter.
+     Chaque passage d'étape lui écrit maintenant — la livraison surtout,
+     qui porte le lien d'écoute et l'invitation à demander une révision. */
+  var envoi = Promise.resolve({ ok: false, code: 'NO_ORDER' });
+  if (o && o.user_email && window.MelodiaCourrier) {
+    envoi = window.MelodiaCourrier.etape(status, {
+      email: o.user_email, nom: o.user_name, defunt: o.defunt,
+      ref: o.ref, offre: o.offer, urgence: !!o.urgence,
+      lien: /^https:\/\//i.test(o.audio_url || '') ? o.audio_url : ''
+    });
+  }
+
   ORDERS = await window.MelodiaDB.all();
-  window.melodiaToast('Statut mis à jour — le client le voit immédiatement.');
   go('commandes');
+
+  var r = await envoi;
+  if (r.ok) {
+    window.melodiaToast('Statut mis à jour — ' + (o.user_email) + ' vient d\'être prévenu par courriel.');
+  } else if (status === 'livree') {
+    /* Une livraison muette est un incident : la famille attend un
+       courriel, pas une connexion au tableau de bord. */
+    window.melodiaToast('Statut mis à jour, mais le courriel de livraison n\'est PAS parti (' + r.code + '). Prévenez la famille à la main.');
+  } else {
+    window.melodiaToast('Statut mis à jour — le client le voit immédiatement.');
+  }
 }
 
 function loadBrief(ref) {
