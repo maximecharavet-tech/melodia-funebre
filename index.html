@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=90423168">
+<link rel="stylesheet" href="assets/css/style.css?v=4f474049">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -60,16 +60,25 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
     <!-- L'animation du logo. Elle se superpose au médaillon dessiné en CSS
          quand elle est prête : le seuil s'affiche à l'instant, la vidéo
          arrive ensuite. Sur connexion lente, en économie de données ou en
-         mouvement réduit, elle ne se charge jamais. -->
+         mouvement réduit, elle ne se charge jamais.
+         Pas d'image d'attente : elle serait forcément une seconde du film,
+         donc un faux départ. Le médaillon dessiné dessous tient ce rôle,
+         et il est déjà là. -->
     <div class="intro-film" aria-hidden="true">
       <video class="intro-video" muted playsinline preload="none"
-             poster="assets/img/intro-anime.jpg" width="1040" height="880"
-             data-src="assets/img/intro-anime.mp4"></video>
+             width="1040" height="880"
+             data-src="assets/img/intro-melodia.mp4?v=488159e4"></video>
     </div>
     </div>
+    <button type="button" class="intro-son" hidden
+            aria-label="Activer le son de l'animation">
+      <svg class="son-muet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+      <svg class="son-actif" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+      <span class="intro-son-mot">Son</span>
+    </button>
     <div class="intro-name">Melodia Funèbre</div>
     <div class="intro-wave" aria-hidden="true"><span style="animation-delay:0s"></span><span style="animation-delay:0.18s"></span><span style="animation-delay:0.36s"></span><span style="animation-delay:0.12s"></span><span style="animation-delay:0.5s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.44s"></span><span style="animation-delay:0.08s"></span><span style="animation-delay:0.32s"></span></div>
-    <p class="intro-claim">Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
+    <p class="intro-claim">Premier site dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
     <div class="intro-actions">
       <button class="btn btn-gold btn-lg" id="intro-enter" type="button">Entrer</button>
       <span class="intro-hint">Ou touchez l'écran pour continuer</span>
@@ -867,7 +876,7 @@ J'ai encore un pas de danse à vous apprendre</blockquote>
   <a href="/offres" class="btn btn-gold">Commander</a>
 </div>
 <script src="assets/js/content.js?v=ec7f70d9"></script>
-<script src="assets/js/main.js?v=ad3379e8"></script>
+<script src="assets/js/main.js?v=339d53f4"></script>
 <script src="assets/js/rappel.js?v=4d2deef5"></script>
 <script src="assets/js/catalogue.js?v=2e73d007"></script>
 

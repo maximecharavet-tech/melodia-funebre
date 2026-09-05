@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=90423168">
+<link rel="stylesheet" href="assets/css/style.css?v=4f474049">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -213,10 +213,12 @@
   </div>
 </footer>
 <script src="assets/js/content.js?v=ec7f70d9"></script>
-<script src="assets/js/main.js?v=ad3379e8"></script>
+<script src="assets/js/main.js?v=339d53f4"></script>
 <script src="assets/js/rappel.js?v=4d2deef5"></script>
 <script src="assets/js/config.js?v=13072ce7"></script>
 <script src="assets/js/auth.js?v=224a3f35"></script>
+<script src="assets/js/accueil-connexion.js?v=ebad0e50"></script>
+<script>window.MELODIA_ACCUEIL_FILM = "assets/img/connexion.mp4?v=44886729";</script>
 <script>
 var TITLES = { login: 'Accès à votre <em>tableau de bord</em>', signup: 'Créer un <em>compte partenaire</em>', forgot: 'Réinitialiser le <em>mot de passe</em>' };
 function showView(v) {
@@ -229,11 +231,21 @@ function msg(t, ok) {
   m.className = 'form-msg' + (t ? (ok ? ' ok' : ' err') : '');
   m.textContent = t || '';
 }
+/* Le nom d'abord, l'identifiant ensuite : « Bienvenue Maxime » vaut
+   mieux que « Bienvenue contact@melodia-funebre.fr ». */
+function prenomDe(u) {
+  if (!u) return '';
+  var n = (u.name || u.nom || '').trim();
+  if (n) return n;
+  return (u.email || '').split('@')[0];
+}
 async function doLogin(e) {
   e.preventDefault();
   try {
-    await window.MelodiaAuth.login(document.getElementById('li-id').value, document.getElementById('li-pw').value);
-    location.href = window.MelodiaAuth.home();
+    var u = await window.MelodiaAuth.login(document.getElementById('li-id').value, document.getElementById('li-pw').value);
+    var vers = window.MelodiaAuth.home();
+    if (window.MelodiaAccueil) return window.MelodiaAccueil.saluer(prenomDe(u), vers);
+    location.href = vers;
   } catch (err) { msg(err.message); }
   return false;
 }
@@ -248,7 +260,10 @@ async function doSignup(e) {
       ville: document.getElementById('su-ville').value.trim(),
       tel: document.getElementById('su-tel').value.trim()
     });
-    location.href = window.MelodiaAuth.home();
+    var neuf = window.MelodiaAuth.current();
+    var ou = window.MelodiaAuth.home();
+    if (window.MelodiaAccueil && neuf) return window.MelodiaAccueil.saluer(prenomDe(neuf), ou);
+    location.href = ou;
   } catch (err) { msg(err.message); }
   return false;
 }

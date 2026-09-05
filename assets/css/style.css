@@ -2436,3 +2436,126 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (max-width: 720px) {
   .oeuvre-mention { font-size: 0.72rem; letter-spacing: 0.08em; padding: 0.34rem 0.7rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LE SON DU SEUIL
+
+   Le film d'ouverture porte une musique, et elle fait partie de
+   l'œuvre. Mais aucun navigateur ne laisse un son démarrer sans
+   geste préalable — et c'est heureux : sur un site funéraire, on est
+   parfois au bureau, parfois au chevet de quelqu'un. Le bouton est
+   donc toujours là, discret mais trouvable du premier regard, et il
+   dit l'état réel plutôt que l'action à faire.
+   ═══════════════════════════════════════════════════════════════ */
+.intro-son {
+  position: absolute; top: 1.6rem; right: 1.6rem; z-index: 6;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.55rem 0.95rem;
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  border-radius: 100px; cursor: pointer;
+  background: rgba(4, 4, 7, 0.55);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: var(--dust);
+  font-family: var(--ff-m); font-size: 0.62rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  opacity: 0; animation: introFondu 0.8s ease 1.4s forwards;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.intro-son:hover { color: var(--or); border-color: var(--or-patina); }
+.intro-son svg { width: 16px; height: 16px; flex: none; }
+.intro-son .son-actif { display: none; }
+.intro-son.actif { color: var(--or); border-color: rgba(201, 168, 76, 0.5); }
+.intro-son.actif .son-actif { display: block; }
+.intro-son.actif .son-muet { display: none; }
+
+@media (max-width: 640px) {
+  .intro-son {
+    top: 1rem; right: 1rem; padding: 0.5rem 0.8rem;
+    font-size: 0.72rem; letter-spacing: 0.08em;
+  }
+  .intro-son .intro-son-mot { display: none; }
+  .intro-son { padding: 0.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-son { animation: none; opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   L'ACCUEIL APRÈS CONNEXION
+
+   Entre le mot de passe et le tableau de bord, un moment : le film,
+   muet, et le nom de la personne qui vient d'entrer. La console
+   s'ouvre plusieurs fois par jour — le film ne retient donc rien :
+   un clic, une touche, le bouton « Passer », et l'on est chez soi.
+   ═══════════════════════════════════════════════════════════════ */
+.accueil {
+  position: fixed; inset: 0; z-index: 400;
+  display: grid; place-items: center;
+  background: var(--ink);
+  opacity: 0; transition: opacity 0.5s var(--ease);
+  cursor: pointer; overflow: hidden;
+}
+.accueil.vu { opacity: 1; }
+.accueil.sort { opacity: 0; transition: opacity 0.4s var(--ease); }
+
+.accueil-film {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%; min-height: 100%;
+  width: auto; height: auto;
+  object-fit: cover;
+  /* Le film est un fond, pas un sujet : le nom doit rester lisible
+     par-dessus, quelle que soit l'image. */
+  opacity: 0.5;
+}
+.accueil::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgba(4, 4, 7, 0.25) 0%, rgba(4, 4, 7, 0.78) 68%, var(--ink) 100%);
+}
+
+.accueil-mots {
+  position: relative; z-index: 2; text-align: center;
+  padding: 0 var(--pad);
+  animation: accueilMonte 1s var(--ease-out) 0.25s both;
+}
+.accueil-sur {
+  display: block;
+  font-family: var(--ff-m); font-size: 0.68rem;
+  letter-spacing: 0.34em; text-transform: uppercase;
+  color: var(--or-patina);
+}
+.accueil-nom {
+  display: block; margin: 0.9rem 0 0.7rem;
+  font-family: var(--ff-d); font-weight: 300; font-style: italic;
+  font-size: clamp(2.4rem, 7vw, 4.6rem); line-height: 1.05;
+  background: var(--or-grad); -webkit-background-clip: text;
+  background-clip: text; -webkit-text-fill-color: transparent; color: var(--or);
+}
+.accueil-suite {
+  display: block;
+  font-family: var(--ff-m); font-size: 0.66rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust);
+}
+@keyframes accueilMonte {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.accueil-passer {
+  position: absolute; z-index: 3; bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  min-height: 44px; padding: 0.6rem 1.4rem;
+  border: 1px solid var(--line-strong); border-radius: 100px;
+  background: rgba(4, 4, 7, 0.5); cursor: pointer;
+  color: var(--ash); font-family: var(--ff-m); font-size: 0.66rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.accueil-passer:hover { color: var(--or); border-color: var(--or-patina); }
+
+@media (max-width: 640px) {
+  .accueil-sur { font-size: 0.72rem; letter-spacing: 0.24em; }
+  .accueil-suite { font-size: 0.72rem; letter-spacing: 0.1em; }
+  .accueil-passer { font-size: 0.72rem; letter-spacing: 0.1em; bottom: 1.6rem; }
+}

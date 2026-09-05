@@ -1,12 +1,12 @@
 {
-  "version": 5,
-  "updated": "2026-09-05T01:38:10.889611Z",
+  "version": 6,
+  "updated": "2026-09-05T11:06:08.785698Z",
   "contact": {
     "email": "contact@melodia-funebre.fr"
   },
   "intro": {
     "enabled": true,
-    "claim": "Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles."
+    "claim": "Premier site dédié à la<br><em>musique personnalisée</em> pour funérailles."
   },
   "demos": [
     {
