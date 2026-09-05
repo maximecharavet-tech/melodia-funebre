@@ -2036,7 +2036,14 @@ body.a-ecoute { padding-bottom: 5rem; }
    ═══════════════════════════════════════════════════════════════ */
 .page-auth { padding-top: 9rem; min-height: 100vh; }
 .auth-wrap { max-width: 520px; }
-.auth-logo { height: 110px; margin: 0 auto 1.8rem; }
+/* Le logo est un fichier carré à fond noir. Posé tel quel, il se lit
+   comme un rectangle collé sur la page : c'est le médaillon rond des
+   autres pages qu'il faut ici aussi, à toutes les largeurs. */
+.auth-logo {
+  width: 118px; height: 118px; object-fit: cover;
+  border-radius: 50%; border: 1px solid var(--line-strong);
+  margin: 0 auto 1.8rem;
+}
 .auth-intro { color: var(--ash); font-size: 0.9rem; margin-bottom: 1.6rem; }
 .auth-switch {
   display: flex; justify-content: space-between; align-items: center;
@@ -2350,13 +2357,8 @@ body.a-ecoute { padding-bottom: 5rem; }
   .calc-row { margin-bottom: 1.4rem; }
 
   /* ─── Écran de connexion ───
-     Le logo est un fichier carré à fond noir : posé tel quel sur la
-     page, il se lisait comme un rectangle collé. Il redevient le
-     médaillon des autres pages. */
-  .auth-logo {
-    width: 104px; height: 104px; object-fit: cover;
-    border-radius: 50%; border: 1px solid rgba(201, 168, 76, 0.35);
-  }
+     Le médaillon se resserre un peu sous téléphone. */
+  .auth-logo { width: 104px; height: 104px; }
   /* Les deux issues dépassaient de deux pixels et se rangeaient l'une
      sous l'autre. Deux pixels d'interlettrage les remettent en ligne. */
   .auth-switch { gap: 0.6rem; }

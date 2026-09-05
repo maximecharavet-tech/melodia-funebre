@@ -12,13 +12,13 @@
   "theme_color": "#040407",
   "categories": ["music", "lifestyle"],
   "icons": [
-    { "src": "/assets/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/assets/img/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/assets/img/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/assets/img/icons/icon-192.png?v=7fe48436", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/img/icons/icon-512.png?v=9d6bc0d7", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/img/icons/maskable-512.png?v=6fadfcf1", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Commander un hommage", "url": "/offres", "icons": [{ "src": "/assets/img/icons/icon-96.png", "sizes": "96x96" }] },
-    { "name": "Écouter les démonstrations", "url": "/demos", "icons": [{ "src": "/assets/img/icons/icon-96.png", "sizes": "96x96" }] },
-    { "name": "Espace agences", "url": "/agences", "icons": [{ "src": "/assets/img/icons/icon-96.png", "sizes": "96x96" }] }
+    { "name": "Commander un hommage", "url": "/offres", "icons": [{ "src": "/assets/img/icons/icon-96.png?v=870222fe", "sizes": "96x96" }] },
+    { "name": "Écouter les démonstrations", "url": "/demos", "icons": [{ "src": "/assets/img/icons/icon-96.png?v=870222fe", "sizes": "96x96" }] },
+    { "name": "Espace agences", "url": "/agences", "icons": [{ "src": "/assets/img/icons/icon-96.png?v=870222fe", "sizes": "96x96" }] }
   ]
 }

@@ -27,6 +27,19 @@ function versionne(chemin) {
   return e ? chemin + '?v=' + e : chemin;
 }
 
+/* Les images sont servies avec « max-age=31536000, immutable » : sans
+   empreinte dans leur adresse, un visiteur déjà venu garderait l'ancien
+   logo pendant un an. On marque donc toute adresse d'image de la page,
+   qu'elle soit relative ou absolue — c'est le même piège que celui qui
+   avait retenu la configuration Supabase, appliqué aux images. */
+const RE_IMG = new RegExp(
+  '(https://melodia-funebre\\.fr/)?(assets/img/(?:[a-z0-9-]+/)?[a-z0-9._-]+' +
+  '\\.(?:jpe?g|png|webp|svg|avif|mp4|webm))(\\?v=[a-f0-9]+)?', 'gi');
+
+function empreinterImages(html) {
+  return html.replace(RE_IMG, (_, origine, chemin) => (origine || '') + versionne(chemin));
+}
+
 const OUT = process.argv[2] || '.';
 
 const SITE = 'https://melodia-funebre.fr';
@@ -251,7 +264,7 @@ function intro() {
 function page(p) {
   /* content.js d'abord : le catalogue se remonte ensuite autour du contenu publié */
   const scripts = ['assets/js/content.js', 'assets/js/main.js', 'assets/js/rappel.js', 'assets/js/courrier.js'].concat(p.scripts || []);
-  return `<!DOCTYPE html>
+  return empreinterImages(`<!DOCTYPE html>
 <html lang="fr">
 <head>
 ${head(p)}
@@ -269,7 +282,7 @@ ${p.inline || ''}
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
-</html>`;
+</html>`);
 }
 
-module.exports = { page, ICON, SITE, MAIL, head, nav, footer, versionne };
+module.exports = { page, ICON, SITE, MAIL, head, nav, footer, versionne, empreinterImages };

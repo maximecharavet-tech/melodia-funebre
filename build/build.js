@@ -84,17 +84,30 @@ console.log('  ' + String(total).padStart(28) + ' octets au total');
 
    On réécrit donc leurs adresses d'actifs à la construction, comme
    pour le reste du site. */
-const { versionne } = require('./gen.js');
+const { versionne, empreinterImages } = require('./gen.js');
 const CONSOLES = ['dashboard-master.html', 'dashboard-partenaire.html', 'dashboard-commercial.html'];
 let marquees = 0;
 for (const f of CONSOLES) {
   const chemin = path.join(RACINE, f);
   if (!fs.existsSync(chemin)) continue;
   const avant = fs.readFileSync(chemin, 'utf8');
-  const apres = avant.replace(
+  const apres = empreinterImages(avant.replace(
     /(src|href)="(assets\/(?:js|css)\/[a-z0-9.-]+\.(?:js|css))(\?v=[a-f0-9]+)?"/g,
-    (_, attr, actif) => attr + '="' + versionne(actif) + '"');
+    (_, attr, actif) => attr + '="' + versionne(actif) + '"'));
   if (apres !== avant) { fs.writeFileSync(chemin, apres); marquees++; }
+}
+
+/* Le manifeste désigne les icônes de l'application installée. Elles sont
+   servies « immutable » comme le reste des images : sans empreinte, un
+   téléphone qui a ajouté le site à son écran d'accueil garderait
+   l'ancienne icône. Le manifeste, lui, n'est pas mis en cache. */
+const MANIF = path.join(RACINE, 'site.webmanifest');
+if (fs.existsSync(MANIF)) {
+  const avant = fs.readFileSync(MANIF, 'utf8');
+  const apres = avant.replace(
+    /\/(assets\/img\/(?:[a-z0-9-]+\/)?[a-z0-9._-]+\.(?:jpe?g|png|webp|svg))(\?v=[a-f0-9]+)?/gi,
+    (_, chemin) => '/' + versionne(chemin));
+  if (apres !== avant) { fs.writeFileSync(MANIF, apres); console.log('  manifeste             icônes marquées'); }
 }
 console.log('  consoles marquées      ' + marquees + ' / ' + CONSOLES.length);
 

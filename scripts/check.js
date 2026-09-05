@@ -10,7 +10,7 @@ const files = [
   'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
   'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js',
   'assets/js/auth.js', 'assets/js/config.js',
-  'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-anime.mp4',
+  'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-complet.jpg', 'assets/img/logo-melodia-anime.mp4',
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
@@ -40,7 +40,8 @@ for (const p of pages) {
 try {
   const man = JSON.parse(fs.readFileSync('site.webmanifest', 'utf8'));
   for (const ic of man.icons || []) {
-    const f = ic.src.replace(/^\//, '');
+    /* Les icônes portent une empreinte (?v=…) depuis la construction */
+    const f = ic.src.replace(/^\//, '').replace(/\?.*$/, '');
     if (!fs.existsSync(f)) { console.error('  ICÔNE MANQUANTE', ic.src); ok = false; }
   }
 } catch (e) { console.error('  site.webmanifest illisible :', e.message); ok = false; }
