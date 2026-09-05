@@ -1,18 +1,19 @@
 /* ═══════════════════════════════════════════════════════════════
-   MELODIA — Catalogue des réalisations
+   MELODIA — Le catalogue autour d'une platine
 
-   Chaque hommage composé devient une fiche : la personne, son
-   histoire, les mots que la famille nous avait confiés, et l'œuvre
-   qui en est née — écoutable sur place.
+   La grille de douze fiches faisait 3 246 px sur un téléphone : trois
+   écrans et demi qu'on traversait au lieu de les regarder. Une seule
+   œuvre est désormais en scène, et les douze restent à portée de pouce
+   dans la frise du bas.
 
-   Le catalogue est rendu côté serveur (référencement, et il reste
-   lisible sans JavaScript), puis repris ici pour l'écoute. Il se
-   remonte tout seul quand le propriétaire ajoute une musique depuis
-   sa console : content.js le rappelle avec la nouvelle liste.
+   Le catalogue est rendu côté serveur — référencement, et il reste
+   lisible sans JavaScript. Ce fichier le remplace par la platine dès
+   qu'il s'exécute, et se remonte tout seul quand le propriétaire
+   ajoute une musique depuis sa console : content.js le rappelle avec
+   la nouvelle liste.
 
-   Un seul élément audio pour tout le catalogue — deux hommages ne
-   peuvent jamais se superposer, et la barre d'écoute suit la lecture
-   pendant qu'on fait défiler les fiches.
+   Un seul élément audio, un seul analyseur, une seule platine. Deux
+   hommages ne peuvent jamais se superposer.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -21,69 +22,64 @@
   if (!grille) return;
 
   var REDUIT = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var BARRES = 20;
 
-  var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-  var PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-  var PREC = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zM19 6v12l-9-6z"/></svg>';
-  var SUIV = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6l9 6-9 6z"/></svg>';
+  var PLAY  = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  var PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg>';
+  var PREC  = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zM19 6v12l-9-6z"/></svg>';
+  var SUIV  = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6l9 6-9 6z"/></svg>';
   var CROIX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-  var CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
-
-  /* Sur téléphone, sept récits complets font sept écrans à faire défiler :
-     on ne voit plus la vitrine, on la traverse. La fiche se replie donc sur
-     l'essentiel — qui, quel registre, combien de temps — et l'histoire se
-     déplie à la demande, ou d'elle-même quand l'hommage se met à jouer. */
-  var ETROIT = window.matchMedia('(max-width: 720px)');
 
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
-
   function fmt(s) {
     if (!isFinite(s) || s < 0) return '—:—';
     var m = Math.floor(s / 60), r = Math.floor(s % 60);
     return m + ':' + String(r).padStart(2, '0');
   }
 
-  /* Le sceau porte le portrait de la personne quand il y en a un, et
-     son initiale sinon. Le repli n'est pas un pis-aller : une famille
-     n'a pas toujours de photo qu'elle accepte de voir publiée, et une
-     fiche sans visage doit rester aussi soignée que les autres. */
+  /* L'initiale tient lieu de portrait. Le repli n'est pas un pis-aller :
+     une famille n'a pas toujours de photo qu'elle accepte de voir
+     publiée, et une fiche sans visage doit rester aussi soignée. */
   function initiale(o) {
-    var source = (o.who || o.title || '').trim();
-    return source ? source.charAt(0).toUpperCase() : '♪';
+    var s = (o.who || o.title || '').trim();
+    return s ? s.charAt(0).toUpperCase() : '♪';
   }
 
-  /* Les trois mots confiés par la famille sont donnés un par un au
-     téléphone. On les rend un par un : la ligne continue « douce ·
-     obstinée · matinale » se lisait comme une étiquette de produit. */
+  /* Les trois mots confiés par la famille sont donnés un par un. La
+     ligne continue « douce · obstinée · matinale » se lisait comme une
+     étiquette de produit. */
   function jetons(brief) {
-    var mots = String(brief).split('·').map(function (m) { return m.trim(); })
-      .filter(Boolean);
-    if (!mots.length) return '';
-    return mots.map(function (m) {
-      return '<span class="oeuvre-mot">' + esc(m) + '</span>';
-    }).join('');
+    var mots = String(brief || '').split('·').map(function (m) { return m.trim(); }).filter(Boolean);
+    return mots.map(function (m) { return '<span class="oeuvre-mot">' + esc(m) + '</span>'; }).join('');
   }
 
-  function sceau(o) {
-    if (o.photo) {
-      /* Le portrait est décoratif : le nom est déjà écrit juste en
-         dessous, un texte de remplacement ne ferait que le répéter
-         aux lecteurs d'écran. L'initiale reste dans le nœud, cachée :
-         c'est elle qui reprend la place si l'image ne charge pas. */
-      return '<div class="oeuvre-sceau oeuvre-sceau-photo" aria-hidden="true" ' +
-        '>' +
-        '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async" ' +
-        'width="120" height="120"><span>' + esc(initiale(o)) + '</span></div>';
+  /* ─── Le guilloché ───
+     Une rosette d'épitrochoïde, comme la gravure de fond d'un
+     certificat. Tracée une fois : trois courbes décalées suffisent à
+     donner la moire, et le tracé coûte moins qu'une image de fond. */
+  function rosette(R, r, d, tours) {
+    var p = '', n = 1200, x, y, t;
+    for (var i = 0; i <= n; i++) {
+      t = i / n * Math.PI * 2 * tours;
+      x = (R - r) * Math.cos(t) + d * Math.cos((R - r) / r * t);
+      y = (R - r) * Math.sin(t) - d * Math.sin((R - r) / r * t);
+      p += (i ? 'L' : 'M') + x.toFixed(2) + ' ' + y.toFixed(2);
     }
-    return '<div class="oeuvre-sceau" aria-hidden="true"><span>' + esc(initiale(o)) + '</span></div>';
+    return p;
   }
-
-
+  function guilloche() {
+    var g = document.createElement('div');
+    g.className = 'guilloche';
+    g.setAttribute('aria-hidden', 'true');
+    g.innerHTML = '<svg viewBox="-105 -105 210 210">' +
+      '<path d="' + rosette(100, 27, 62, 27) + '" opacity=".9"/>' +
+      '<path d="' + rosette(88, 19, 44, 19) + '" opacity=".55"/>' +
+      '<path d="' + rosette(70, 11, 26, 11) + '" opacity=".35"/></svg>';
+    return g;
+  }
 
   /* ─── Données ─── */
   function lireDonnees() {
@@ -93,46 +89,327 @@
     try { return JSON.parse(bloc.textContent) || []; } catch (e) { return []; }
   }
 
-  var OEUVRES = [];
-  var visibles = [];        /* indices retenus par le filtre courant */
-  var cartes = [];          /* une entrée par œuvre, ou null si filtrée */
-  var cur = -1, joue = false;
-  var durees = {};
+  var OEUVRES = [], visibles = [], cur = -1, joue = false;
+  var pastilles = [];
 
   var audio = new Audio();
   audio.preload = 'none';
 
-  /* ─── Spectre réel ─── */
-  var ctx = null, analyseur = null, spectre = null;
+  var ctxAudio = null, analyseur = null, spectre = null;
   function graphe() {
-    if (ctx || REDUIT) return;
+    if (ctxAudio || REDUIT) return;
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     try {
-      ctx = new AC();
-      var src = ctx.createMediaElementSource(audio);
-      analyseur = ctx.createAnalyser();
-      analyseur.fftSize = 128;
+      ctxAudio = new AC();
+      analyseur = ctxAudio.createAnalyser();
+      analyseur.fftSize = 256;
       analyseur.smoothingTimeConstant = 0.8;
-      /* Le son doit continuer d'atteindre les enceintes une fois routé */
-      src.connect(analyseur);
-      analyseur.connect(ctx.destination);
       spectre = new Uint8Array(analyseur.frequencyBinCount);
-    } catch (e) { ctx = null; analyseur = null; }
+      /* Le son doit continuer d'atteindre les enceintes une fois routé */
+      ctxAudio.createMediaElementSource(audio).connect(analyseur);
+      analyseur.connect(ctxAudio.destination);
+    } catch (e) { ctxAudio = null; analyseur = null; }
   }
 
-  /* ─── Barre d'écoute, créée à la demande ─── */
-  var barre = null, bTitre, bQui, bLire, bTemps, bJauge, bRemplit, bOnde, bBarres = [];
+  /* ═══════════════════════════════════════════════════════════════
+     LA PLATINE — construite une fois, jamais recopiée
+     ═══════════════════════════════════════════════════════════════ */
+  var scene = document.createElement('div');
+  scene.className = 'scene-platine';
 
+  var platine = document.createElement('div');
+  platine.className = 'platine';
+  platine.innerHTML =
+    '<div class="disque-cadre" data-cadre>' +
+      '<div class="disque" data-disque></div>' +
+      '<div class="disque-bord"></div>' +
+      '<div class="etiquette" data-etiquette><b data-ini>♪</b></div>' +
+      '<div class="bras" aria-hidden="true"><svg viewBox="0 0 100 100">' +
+        '<path class="tige" d="M88 12 L46 74"/><path class="tige" d="M46 74 l-5 7"/>' +
+        '<circle class="pivot" cx="88" cy="12" r="6"/></svg></div>' +
+    '</div>' +
+    '<div class="pupitre">' +
+      '<div class="pup-style" data-style></div>' +
+      '<div class="pup-mention" data-mention hidden></div>' +
+      '<h3 class="pup-titre" data-titre></h3>' +
+      '<div class="pup-qui" data-qui></div>' +
+      '<div class="pup-onde"><canvas data-onde></canvas></div>' +
+      '<div class="pup-bas">' +
+        '<button class="jeton" type="button" data-jeton aria-label="Écouter">' + PLAY + '</button>' +
+        '<span class="pup-t" data-tc>0:00</span>' +
+        '<div class="molette" data-molette role="slider" tabindex="0" aria-label="Position dans l\'hommage"' +
+          ' aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i><u></u></div>' +
+        '<span class="pup-t fin" data-td>—:—</span>' +
+      '</div>' +
+      '<p class="pup-recit" data-recit></p>' +
+      '<blockquote class="pup-vers" data-vers></blockquote>' +
+      '<div class="pup-brief" data-brief hidden><span>Les mots de la famille</span><em></em></div>' +
+    '</div>';
+  scene.appendChild(platine);
+  platine.querySelector('[data-cadre]').appendChild(guilloche());
+
+  var elDisque   = platine.querySelector('[data-disque]'),
+      elEtiq     = platine.querySelector('[data-etiquette]'),
+      elCanvas   = platine.querySelector('[data-onde]'),
+      pinceau    = elCanvas.getContext('2d'),
+      elMolette  = platine.querySelector('[data-molette]'),
+      elRempli   = elMolette.querySelector('i'),
+      elPoignee  = elMolette.querySelector('u'),
+      elJeton    = platine.querySelector('[data-jeton]');
+
+  /* ─── La frise ─── */
+  var frise = document.createElement('div');
+  frise.className = 'frise';
+  frise.innerHTML = '<div class="frise-titre"><span class="mono" data-frise-titre></span></div>' +
+                    '<div class="frise-piste" role="tablist" aria-label="Choisir un hommage"></div>';
+  var fPiste = frise.querySelector('.frise-piste');
+  var fTitre = frise.querySelector('[data-frise-titre]');
+
+  /* ═══ Peinture d'une œuvre dans la platine ═══ */
+  function poser(i) {
+    var o = OEUVRES[i];
+    if (!o) return;
+    cur = i;
+
+    var e = platine.querySelector('[data-etiquette]');
+    e.innerHTML = '<b data-ini>' + esc(initiale(o)) + '</b>' +
+      (o.photo ? '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async">' : '');
+
+    platine.querySelector('[data-style]').textContent =
+      (o.style || 'Composition originale') + (o.lieu ? '  ·  ' + o.lieu : '');
+
+    var m = platine.querySelector('[data-mention]');
+    m.textContent = o.mention || '';
+    m.hidden = !o.mention;
+
+    platine.querySelector('[data-titre]').textContent = o.title || 'Sans titre';
+    platine.querySelector('[data-qui]').textContent = o.who ? 'Pour ' + o.who : '';
+
+    var r = platine.querySelector('[data-recit]');
+    r.textContent = o.story || '';
+    r.hidden = !o.story;
+
+    var v = platine.querySelector('[data-vers]');
+    v.textContent = o.lyrics || '';
+    v.hidden = !o.lyrics;
+
+    var b = platine.querySelector('[data-brief]');
+    b.hidden = !o.brief;
+    if (o.brief) b.querySelector('em').innerHTML = jetons(o.brief);
+
+    platine.querySelector('[data-tc]').textContent = '0:00';
+    platine.querySelector('[data-td]').textContent = '—:—';
+    elRempli.style.width = '0';
+    elPoignee.style.left = '0';
+    elJeton.setAttribute('aria-label', 'Écouter ' + (o.title || 'cet hommage'));
+
+    marquerFrise();
+  }
+
+  /* ═══ Commandes ═══ */
+  function choisir(i, lancer) {
+    if (!OEUVRES[i]) return;
+    var change = i !== cur;
+    if (change) poser(i);
+    if (!lancer) return;
+    graphe();
+    if (ctxAudio && ctxAudio.state === 'suspended') ctxAudio.resume();
+    if (change || audio.src.indexOf(OEUVRES[i].audio) === -1) {
+      audio.src = OEUVRES[i].audio;
+      audio.currentTime = 0;
+    }
+    audio.play().catch(bloque);
+  }
+  function basculer() {
+    if (cur < 0) { if (visibles.length) choisir(visibles[0], true); return; }
+    if (joue) audio.pause(); else choisir(cur, true);
+  }
+  /* Enchaîne dans l'ordre affiché, pas dans l'ordre des données :
+     après un filtre, « suivant » doit rester ce qu'on voit. */
+  function sauter(sens) {
+    if (!visibles.length) return;
+    var p = visibles.indexOf(cur);
+    choisir(visibles[(p + sens + visibles.length) % visibles.length], true);
+  }
+  function arreter() {
+    audio.pause();
+    audio.removeAttribute('src');
+    joue = false;
+    elRempli.style.width = '0';
+    elPoignee.style.left = '0';
+    platine.querySelector('[data-tc]').textContent = '0:00';
+    if (barre) barre.hidden = true;
+    document.body.classList.remove('a-ecoute');
+    peindre();
+  }
+  function bloque() {
+    joue = false; peindre();
+    if (window.melodiaToast) window.melodiaToast('Touchez à nouveau pour lancer la lecture.');
+  }
+
+  elJeton.addEventListener('click', basculer);
+
+  audio.addEventListener('play',  function () { joue = true; document.body.classList.add('a-ecoute'); peindre(); });
+  audio.addEventListener('pause', function () { joue = false; peindre(); });
+  audio.addEventListener('loadedmetadata', function () {
+    platine.querySelector('[data-td]').textContent = '−' + fmt(audio.duration);
+  });
+  audio.addEventListener('timeupdate', function () {
+    if (!audio.duration || !isFinite(audio.duration)) return;
+    var p = audio.currentTime / audio.duration;
+    elRempli.style.width = (p * 100) + '%';
+    elPoignee.style.left = (p * 100) + '%';
+    elMolette.setAttribute('aria-valuenow', String(Math.round(p * 100)));
+    platine.querySelector('[data-tc]').textContent = fmt(audio.currentTime);
+    platine.querySelector('[data-td]').textContent = '−' + fmt(audio.duration - audio.currentTime);
+    if (bRemplit) bRemplit.style.width = (p * 100) + '%';
+    if (bTemps) bTemps.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+  });
+  audio.addEventListener('ended', function () {
+    var p = visibles.indexOf(cur);
+    if (p >= 0 && p < visibles.length - 1) sauter(1); else arreter();
+  });
+  audio.addEventListener('error', function () {
+    if (!audio.getAttribute('src')) return;   /* arreter() vide la source */
+    if (window.melodiaToast) window.melodiaToast('Cet hommage n\'a pas pu être chargé.');
+    joue = false; peindre();
+  });
+
+  /* La molette se saisit et se glisse, comme sur un vrai appareil */
+  (function () {
+    var pris = false;
+    function place(e) {
+      var r = elMolette.getBoundingClientRect();
+      var x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      if (audio.duration && isFinite(audio.duration)) audio.currentTime = x * audio.duration;
+      elRempli.style.width = (x * 100) + '%';
+      elPoignee.style.left = (x * 100) + '%';
+    }
+    elMolette.addEventListener('pointerdown', function (e) {
+      pris = true; elMolette.setPointerCapture(e.pointerId); place(e); e.preventDefault();
+    });
+    elMolette.addEventListener('pointermove', function (e) { if (pris) place(e); });
+    elMolette.addEventListener('pointerup', function () { pris = false; });
+    elMolette.addEventListener('keydown', function (e) {
+      if (!audio.duration) return;
+      if (e.key === 'ArrowRight') { audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); e.preventDefault(); }
+      if (e.key === 'ArrowLeft')  { audio.currentTime = Math.max(0, audio.currentTime - 5); e.preventDefault(); }
+      if (e.key === ' ' || e.key === 'Enter') { basculer(); e.preventDefault(); }
+    });
+  })();
+
+  /* ═══ Le spectre, dessiné au canvas ═══
+     Un tracé miroir : la moitié haute dessinée, la basse repliée à
+     l'opacité d'un reflet. Vingt <div> ne donnent pas cette courbe. */
+  var largC = 0, hautC = 0;
+  function taillerCanvas() {
+    var r = elCanvas.getBoundingClientRect();
+    if (!r.width) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    elCanvas.width = Math.round(r.width * dpr);
+    elCanvas.height = Math.round(r.height * dpr);
+    pinceau.setTransform(dpr, 0, 0, dpr, 0, 0);
+    largC = r.width; hautC = r.height;
+  }
+  window.addEventListener('resize', taillerCanvas);
+
+  function arrondi(c, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath(); c.fill();
+  }
+
+  function dessinerOnde(enLecture) {
+    if (!largC) return;
+    var c = pinceau, L = largC, H = hautC, sol = H * 0.68;
+    c.clearRect(0, 0, L, H);
+
+    var N = 56, pas = L / N, larg = Math.max(1.5, pas * 0.34);
+    var g = c.createLinearGradient(0, sol - H * 0.55, 0, sol);
+    g.addColorStop(0, 'rgba(246,236,201,.95)');
+    g.addColorStop(0.45, 'rgba(227,201,119,.85)');
+    g.addColorStop(1, 'rgba(151,128,60,.55)');
+
+    for (var i = 0; i < N; i++) {
+      var v;
+      if (enLecture && spectre) {
+        /* Les bacs utiles d'un morceau tiennent dans le premier tiers de
+           l'analyse : on s'y tient, et l'on relève les aigus qui
+           décroissent naturellement, sans quoi la moitié droite du tracé
+           reste plate sur toute musique réelle. */
+        var k = Math.min(spectre.length - 1,
+                Math.floor(Math.pow(i / N, 1.22) * (spectre.length * 0.38)));
+        v = Math.min(1, Math.pow(spectre[k] / 255, 0.68) * (0.72 + (i / N) * 1.05));
+      } else if (enLecture) {
+        v = 0.18 + Math.abs(Math.sin(Date.now() / 340 + i * 0.38)) * 0.4 * (0.4 + lueur);
+      } else {
+        v = 0.035 + Math.abs(Math.sin(i * 0.7)) * 0.028;   /* repos : une ligne à peine ondulée */
+      }
+      var h = Math.max(1.5, v * sol * 0.92);
+      var x = i * pas + (pas - larg) / 2;
+      c.fillStyle = g;
+      c.globalAlpha = 0.92; arrondi(c, x, sol - h, larg, h, larg / 2);
+      c.globalAlpha = 0.17; arrondi(c, x, sol + 1, larg, h * 0.42, larg / 2);
+    }
+    c.globalAlpha = 1;
+    c.fillStyle = 'rgba(201,168,76,.14)';
+    c.fillRect(0, sol, L, 0.5);
+  }
+
+  /* ═══ La boucle : lumière, inertie du disque, spectre ═══ */
+  var lueur = 0, angle = 0, vitesse = 0, raf = null;
+  function boucle() {
+    var enLecture = joue && !audio.paused;
+    var v = 0;
+    if (analyseur && enLecture) {
+      analyseur.getByteFrequencyData(spectre);
+      var s = 0;
+      for (var i = 0; i < spectre.length; i++) s += spectre[i] / 255;
+      v = Math.min(1, Math.pow(s / spectre.length, 0.6) * 1.55);
+    } else if (enLecture) {
+      v = 0.42 + Math.sin(Date.now() / 430) * 0.2;   /* sans analyseur : une respiration */
+    }
+    /* Montée franche, descente lente : une lumière retombe doucement */
+    lueur += (v - lueur) * (v > lueur ? 0.3 : 0.06);
+    platine.style.setProperty('--lueur', lueur.toFixed(3));
+    if (barre) barre.style.setProperty('--lueur', lueur.toFixed(3));
+
+    /* Le disque a une masse : sa vitesse monte et retombe. Il ne
+       s'arrête pas net comme une animation qu'on coupe. */
+    var cible = enLecture ? (REDUIT ? 0 : 0.42) : 0;
+    vitesse += (cible - vitesse) * (enLecture ? 0.022 : 0.014);
+    if (vitesse > 0.0015) {
+      angle = (angle + vitesse) % 360;
+      elDisque.style.transform = 'rotate(' + angle.toFixed(2) + 'deg)';
+    }
+
+    dessinerOnde(enLecture);
+    /* On ne tourne que tant qu'il reste quelque chose à animer */
+    if (enLecture || lueur > 0.002 || vitesse > 0.0015) raf = requestAnimationFrame(boucle);
+    else { raf = null; dessinerOnde(false); }
+  }
+  function reveiller() { if (!raf) raf = requestAnimationFrame(boucle); }
+  audio.addEventListener('play', reveiller);
+
+  /* ═══ La barre d'écoute — seulement quand la platine quitte l'écran ═══
+     Elle ne double pas la platine : elle prend le relais quand on a
+     fait défiler la page plus bas. */
+  var barre = null, bTitre, bQui, bLire, bTemps, bJauge, bRemplit;
   function creerBarre() {
     if (barre) return barre;
     barre = document.createElement('div');
     barre.className = 'ecoute';
+    barre.hidden = true;
     barre.setAttribute('role', 'region');
     barre.setAttribute('aria-label', 'Lecture en cours');
     barre.innerHTML =
       '<div class="ecoute-inner">' +
-        '<div class="ecoute-onde" aria-hidden="true"></div>' +
         '<button type="button" class="ecoute-nav" data-prec aria-label="Hommage précédent">' + PREC + '</button>' +
         '<button type="button" class="ecoute-lire" data-lire aria-label="Mettre en pause">' + PAUSE + '</button>' +
         '<button type="button" class="ecoute-nav" data-suiv aria-label="Hommage suivant">' + SUIV + '</button>' +
@@ -143,22 +420,14 @@
         '<button type="button" class="ecoute-fermer" data-fermer aria-label="Arrêter l\'écoute">' + CROIX + '</button>' +
       '</div>';
     document.body.appendChild(barre);
-
     bTitre = barre.querySelector('[data-titre]');
     bQui = barre.querySelector('[data-qui]');
     bLire = barre.querySelector('[data-lire]');
     bTemps = barre.querySelector('[data-temps]');
     bJauge = barre.querySelector('[data-jauge]');
     bRemplit = bJauge.querySelector('span');
-    bOnde = barre.querySelector('.ecoute-onde');
 
-    for (var i = 0; i < BARRES * 2; i++) {
-      var s = document.createElement('span');
-      bOnde.appendChild(s);
-      bBarres.push(s);
-    }
-
-    barre.querySelector('[data-lire]').addEventListener('click', function () { basculer(cur); });
+    barre.querySelector('[data-lire]').addEventListener('click', basculer);
     barre.querySelector('[data-prec]').addEventListener('click', function () { sauter(-1); });
     barre.querySelector('[data-suiv]').addEventListener('click', function () { sauter(1); });
     barre.querySelector('[data-fermer]').addEventListener('click', arreter);
@@ -169,347 +438,116 @@
       audio.currentTime = Math.min(Math.max((x - r.left) / r.width, 0), 1) * audio.duration;
     };
     var glisse = false;
-    bJauge.addEventListener('pointerdown', function (e) {
-      glisse = true; bJauge.setPointerCapture(e.pointerId); viser(e.clientX);
-    });
+    bJauge.addEventListener('pointerdown', function (e) { glisse = true; bJauge.setPointerCapture(e.pointerId); viser(e.clientX); });
     bJauge.addEventListener('pointermove', function (e) { if (glisse) viser(e.clientX); });
     bJauge.addEventListener('pointerup', function () { glisse = false; });
     bJauge.addEventListener('keydown', function (e) {
       if (!audio.duration) return;
       if (e.key === 'ArrowRight') { audio.currentTime = Math.min(audio.currentTime + 5, audio.duration); e.preventDefault(); }
       if (e.key === 'ArrowLeft') { audio.currentTime = Math.max(audio.currentTime - 5, 0); e.preventDefault(); }
-      if (e.key === ' ' || e.key === 'Enter') { basculer(cur); e.preventDefault(); }
     });
     return barre;
   }
 
-  /* ─── Animation du spectre ─── */
-  var pas = 0, raf = null, lueur = 0;
-
-  /* La fiche qui joue s'éclaire de la musique elle-même : on tire du
-     spectre une amplitude d'ensemble, lissée pour que la lumière
-     respire au lieu de clignoter, et on la passe en variable CSS.
-     C'est le même analyseur qui dessine déjà les barres — la lueur ne
-     coûte donc qu'une moyenne par image. */
-  function eclairer(v) {
-    /* Montée franche, descente lente : une lumière retombe doucement */
-    lueur += (v - lueur) * (v > lueur ? 0.28 : 0.06);
-    var carte = cartes[cur];
-    if (carte) carte.style.setProperty('--lueur', lueur.toFixed(3));
-    if (barre) barre.style.setProperty('--lueur', lueur.toFixed(3));
+  var platineVue = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (e) {
+      platineVue = e[0].isIntersecting;
+      majBarre();
+    }, { threshold: 0.15 }).observe(scene);
+  }
+  function majBarre() {
+    if (!joue) { if (barre) barre.hidden = true; return; }
+    creerBarre();
+    barre.hidden = platineVue;
   }
 
-  function dessiner() {
-    if (bBarres.length) {
-      if (analyseur && joue) {
-        analyseur.getByteFrequencyData(spectre);
-        var somme = 0;
-        for (var i = 0; i < bBarres.length; i++) {
-          /* Les basses saturent : on compresse pour garder un dessin lisible */
-          var v = spectre[Math.floor(i * spectre.length / bBarres.length)] / 255;
-          somme += v;
-          bBarres[i].style.height = (2 + Math.pow(v, 0.72) * 20) + 'px';
-        }
-        eclairer(Math.min(1, Math.pow(somme / bBarres.length, 0.62) * 1.35));
-      } else if (joue && !REDUIT) {
-        pas++;
-        for (var j = 0; j < bBarres.length; j++) {
-          bBarres[j].style.height =
-            (2 + Math.abs(Math.sin((pas + j * 2) * 0.09) * Math.cos((pas + j) * 0.04)) * 18) + 'px';
-        }
-        eclairer(0.45 + Math.sin(pas * 0.045) * 0.3);
-      } else {
-        for (var k = 0; k < bBarres.length; k++) bBarres[k].style.height = '2px';
-        if (lueur > 0.001) eclairer(0);
-      }
-    }
-    raf = requestAnimationFrame(dessiner);
-  }
-
-  /* ─── Rendu des fiches ─── */
-  function fiche(o, i) {
-    var art = document.createElement('article');
-    art.className = 'oeuvre';
-    art.setAttribute('data-oeuvre', String(i));
-    if (o.style) art.setAttribute('data-style', o.style);
-
-    var lieu = o.lieu ? ' · ' + esc(o.lieu) : '';
-    var onde = '';
-    for (var b = 0; b < BARRES; b++) onde += '<span style="animation-delay:' + (b * 0.07).toFixed(2) + 's"></span>';
-
-    var idDetail = 'oe-detail-' + i;
-    art.innerHTML =
-      '<div class="oeuvre-haut">' +
-        sceau(o) +
-        '<button type="button" class="oeuvre-lire" data-lire="' + i + '" ' +
-          'aria-label="Écouter ' + esc(o.title) + '">' + PLAY + '</button>' +
-        '<div class="oeuvre-onde" aria-hidden="true">' + onde + '</div>' +
-        '<span class="oeuvre-duree" data-duree>—:—</span>' +
-      '</div>' +
-      '<div class="oeuvre-corps">' +
-        '<div class="oeuvre-style">' + esc(o.style || 'Composition originale') + lieu + '</div>' +
-        (o.mention ? '<div class="oeuvre-mention">' + esc(o.mention) + '</div>' : '') +
-        '<h3 class="oeuvre-titre"><em>' + esc(o.title || 'Sans titre') + '</em></h3>' +
-        (o.who ? '<div class="oeuvre-qui">Pour ' + esc(o.who) + '</div>' : '') +
-        '<button type="button" class="oeuvre-plus" data-plus aria-expanded="false" ' +
-          'aria-controls="' + idDetail + '"><span data-plus-libelle>Son histoire</span>' + CHEVRON + '</button>' +
-        '<div class="oeuvre-detail" id="' + idDetail + '">' +
-          (o.story ? '<p class="oeuvre-recit">' + esc(o.story) + '</p>' : '') +
-          (o.lyrics ? '<blockquote class="oeuvre-vers">' + esc(o.lyrics) + '</blockquote>' : '') +
-          (o.brief ? '<div class="oeuvre-brief">' +
-              '<span class="mono">Les mots de la famille</span>' +
-              '<em>' + jetons(o.brief) + '</em>' +
-            '</div>' : '') +
-        '</div>' +
-      '</div>' +
-      '<div class="oeuvre-jauge" aria-hidden="true"><span></span></div>';
-
-    art.querySelector('[data-lire]').addEventListener('click', function () { basculer(i); });
-    art.querySelector('[data-plus]').addEventListener('click', function () { deplier(i); });
-    return art;
-  }
-
-  function rendre() {
-    grille.innerHTML = '';
-    cartes = OEUVRES.map(function () { return null; });
-    visibles.forEach(function (i) {
-      var c = fiche(OEUVRES[i], i);
-      cartes[i] = c;
-      grille.appendChild(c);
-    });
-    peindre();
-    observerDurees();
-    animerEntree();
-    majCompact();
-  }
-
-  /* Les fiches montent en cascade à l'approche de l'écran. Le décalage
-     est calculé sur celles qui entrent ensemble : la vague suit donc la
-     largeur réelle de la grille, sans rien savoir du nombre de colonnes. */
-  var oeilEntree = null;
-  function animerEntree() {
-    if (REDUIT || !('IntersectionObserver' in window)) {
-      cartes.forEach(function (c) { if (c) c.classList.add('vu'); });
-      return;
-    }
-    if (oeilEntree) oeilEntree.disconnect();
-    oeilEntree = new IntersectionObserver(function (entrees) {
-      var rang = 0;
-      entrees.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        e.target.style.transitionDelay = (rang++ * 0.08).toFixed(2) + 's';
-        e.target.classList.add('vu');
-        oeilEntree.unobserve(e.target);
-      });
-    }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
-    visibles.forEach(function (i) { if (cartes[i]) oeilEntree.observe(cartes[i]); });
-  }
-
-  /* Déplie ou replie le récit d'une fiche. Ouvrir n'a de sens que
-     replié : sur grand écran tout est déjà là. */
-  function deplier(i, force) {
-    var c = cartes[i];
-    if (!c) return;
-    var ouvert = force === undefined ? !c.classList.contains('ouvert') : force;
-    c.classList.toggle('ouvert', ouvert);
-    var b = c.querySelector('[data-plus]');
-    if (b) {
-      b.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
-      var l = b.querySelector('[data-plus-libelle]');
-      if (l) l.textContent = ouvert ? 'Masquer' : 'Son histoire';
-    }
-  }
-
-  /* La grille se replie sous 720 px, et se rouvre au-delà */
-  function majCompact() {
-    grille.classList.toggle('compact', ETROIT.matches);
-    if (!ETROIT.matches) cartes.forEach(function (c, i) { if (c) deplier(i, false); });
-  }
-  if (ETROIT.addEventListener) ETROIT.addEventListener('change', majCompact);
-  else if (ETROIT.addListener) ETROIT.addListener(majCompact);
-
-  /* Peint l'état de lecture sur les fiches et la barre */
+  /* ═══ Peinture de l'état ═══ */
   function peindre() {
-    cartes.forEach(function (c, i) {
-      if (!c) return;
-      var actif = i === cur;
-      c.classList.toggle('actif', actif);
-      c.classList.toggle('joue', actif && joue);
-      var bouton = c.querySelector('[data-lire]');
-      if (bouton) {
-        bouton.innerHTML = actif && joue ? PAUSE : PLAY;
-        bouton.setAttribute('aria-label',
-          (actif && joue ? 'Mettre en pause ' : 'Écouter ') + (OEUVRES[i].title || 'cet hommage'));
-      }
-      var d = c.querySelector('[data-duree]');
-      if (d) d.textContent = fmt(durees[i]);
-    });
-
-    if (!barre) { majBoutonTout(); return; }
+    platine.classList.toggle('joue', joue);
+    elJeton.innerHTML = joue ? PAUSE : PLAY;
     var o = OEUVRES[cur];
-    if (o) {
+    elJeton.setAttribute('aria-label',
+      (joue ? 'Mettre en pause ' : 'Écouter ') + ((o && o.title) || 'cet hommage'));
+    if (barre && o) {
       bTitre.textContent = o.title || 'Hommage';
       bQui.textContent = [o.who, o.style].filter(Boolean).join(' · ');
+      bLire.innerHTML = joue ? PAUSE : PLAY;
+      bLire.setAttribute('aria-label', joue ? 'Mettre en pause' : 'Reprendre la lecture');
+      barre.classList.toggle('joue', joue);
     }
+    majBarre();
     majBoutonTout();
-    bLire.innerHTML = joue ? PAUSE : PLAY;
-    bLire.setAttribute('aria-label', joue ? 'Mettre en pause' : 'Reprendre la lecture');
-    barre.classList.toggle('joue', joue);
+    marquerFrise();
   }
 
-  /* ─── Durées : lues quand la fiche approche de l'écran ─── */
-  var vu = {};
-  function sonder(i) {
-    if (vu[i] || !OEUVRES[i] || !OEUVRES[i].audio) return;
-    vu[i] = true;
-    var p = new Audio();
-    p.preload = 'metadata';
-    p.addEventListener('loadedmetadata', function () {
-      if (isFinite(p.duration)) {
-        durees[i] = p.duration;
-        var c = cartes[i];
-        var d = c && c.querySelector('[data-duree]');
-        if (d) d.textContent = fmt(p.duration);
-      }
-    });
-    p.addEventListener('error', function () {
-      var c = cartes[i];
-      var d = c && c.querySelector('[data-duree]');
-      if (d) d.textContent = '—:—';
-    });
-    p.src = OEUVRES[i].audio;
+  function marquerFrise() {
+    for (var i = 0; i < pastilles.length; i++) {
+      if (!pastilles[i]) continue;
+      pastilles[i].setAttribute('aria-current', Number(pastilles[i].dataset.i) === cur ? 'true' : 'false');
+    }
   }
 
-  var oeil = null;
-  function observerDurees() {
-    /* Un catalogue de cinquante hommages ne doit pas déclencher
-       cinquante requêtes au chargement : on ne lit la durée que des
-       fiches qui approchent de l'écran. */
-    if (!('IntersectionObserver' in window)) { visibles.forEach(sonder); return; }
-    if (oeil) oeil.disconnect();
-    oeil = new IntersectionObserver(function (entrees) {
-      entrees.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        sonder(Number(e.target.getAttribute('data-oeuvre')));
-        oeil.unobserve(e.target);
+  /* ═══ Rendu ═══ */
+  function rendre() {
+    fPiste.innerHTML = '';
+    pastilles = [];
+    visibles.forEach(function (i) {
+      var o = OEUVRES[i];
+      var b = document.createElement('button');
+      b.className = 'pastille';
+      b.type = 'button';
+      b.dataset.i = String(i);
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-current', 'false');
+      b.setAttribute('aria-label', 'Écouter ' + esc(o.title || 'cet hommage'));
+      b.innerHTML = '<span class="jet"><span>' + esc(initiale(o)) + '</span>' +
+        (o.photo ? '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async">' : '') +
+        '</span><span class="past-nom">' + esc(String(o.who || o.title || '').split(',')[0]) + '</span>';
+      b.addEventListener('click', function () {
+        /* Toucher un visage, c'est vouloir l'entendre */
+        choisir(i, true);
+        scene.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
-    }, { rootMargin: '300px' });
-    visibles.forEach(function (i) { if (cartes[i]) oeil.observe(cartes[i]); });
-  }
-
-  /* ─── Commandes ─── */
-  function basculer(i) {
-    if (i < 0 || !OEUVRES[i]) return;
-    graphe();
-    if (ctx && ctx.state === 'suspended') ctx.resume();
-    creerBarre();
-    if (!raf) raf = requestAnimationFrame(dessiner);
-
-    if (cur === i) {
-      if (joue) audio.pause();
-      else audio.play().catch(bloque);
-      return;
-    }
-    cur = i;
-    audio.src = OEUVRES[i].audio;
-    /* On écoute une personne : son histoire s'ouvre avec sa chanson */
-    if (ETROIT.matches) {
-      visibles.forEach(function (j) { if (j !== i) deplier(j, false); });
-      deplier(i, true);
-    }
-    barre.hidden = false;
-    document.body.classList.add('a-ecoute');
-    audio.play().catch(bloque);
-    peindre();
-  }
-
-  /* Enchaîne dans l'ordre affiché, pas dans l'ordre des données :
-     après un filtre, « suivant » doit rester ce qu'on voit. */
-  function sauter(sens) {
-    if (!visibles.length) return;
-    var p = visibles.indexOf(cur);
-    var n = visibles[(p + sens + visibles.length) % visibles.length];
-    basculer(n);
-  }
-
-  function arreter() {
-    audio.pause();
-    audio.removeAttribute('src');
-    cur = -1; joue = false;
-    if (barre) barre.hidden = true;
-    document.body.classList.remove('a-ecoute');
-    if (bRemplit) bRemplit.style.width = '0';
-    cartes.forEach(function (c) {
-      if (!c) return;
-      var g = c.querySelector('.oeuvre-jauge span');
-      if (g) g.style.width = '0';
+      fPiste.appendChild(b);
+      pastilles.push(b);
     });
-    peindre();
+    fTitre.textContent = visibles.length + (visibles.length > 1 ? ' hommages composés' : ' hommage composé');
+
+    /* Si l'œuvre en scène vient d'être filtrée, on passe à la première
+       qui reste plutôt que de laisser une platine orpheline. */
+    if (visibles.indexOf(cur) === -1) {
+      if (joue) arreter();
+      if (visibles.length) poser(visibles[0]);
+    }
+    marquerFrise();
+    taillerCanvas();
+    dessinerOnde(joue);
   }
 
-  function bloque() {
-    joue = false;
-    peindre();
-    if (window.melodiaToast) window.melodiaToast('Touchez à nouveau pour lancer la lecture.');
-  }
-
-  audio.addEventListener('play', function () { joue = true; peindre(); });
-  audio.addEventListener('pause', function () { joue = false; peindre(); });
-  audio.addEventListener('loadedmetadata', function () {
-    if (cur >= 0 && isFinite(audio.duration)) durees[cur] = audio.duration;
-    peindre();
-  });
-  audio.addEventListener('timeupdate', function () {
-    if (!audio.duration) return;
-    var p = audio.currentTime / audio.duration;
-    if (bRemplit) bRemplit.style.width = (p * 100) + '%';
-    if (bJauge) bJauge.setAttribute('aria-valuenow', String(Math.round(p * 100)));
-    if (bTemps) bTemps.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
-    var c = cartes[cur];
-    var g = c && c.querySelector('.oeuvre-jauge span');
-    if (g) g.style.width = (p * 100) + '%';
-  });
-  audio.addEventListener('ended', function () {
-    var p = visibles.indexOf(cur);
-    if (p >= 0 && p < visibles.length - 1) basculer(visibles[p + 1]);
-    else arreter();
-  });
-  audio.addEventListener('error', function () {
-    if (!audio.getAttribute('src')) return;   /* arreter() vide la source */
-    if (window.melodiaToast) window.melodiaToast('Cet hommage n\'a pas pu être chargé.');
-    joue = false; peindre();
-  });
-
-  /* ─── Filtres par style ─── */
+  /* ═══ Filtres par style ═══ */
   var hoteFiltres = document.querySelector('[data-catalogue-filtres]');
   var filtreActif = '';
 
   function rendreFiltres() {
     if (!hoteFiltres) return;
     var styles = [];
-    OEUVRES.forEach(function (o) {
-      if (o.style && styles.indexOf(o.style) === -1) styles.push(o.style);
-    });
+    OEUVRES.forEach(function (o) { if (o.style && styles.indexOf(o.style) === -1) styles.push(o.style); });
     /* Un seul style dans le catalogue : le filtre n'apprend rien */
     if (styles.length < 2) { hoteFiltres.innerHTML = ''; hoteFiltres.hidden = true; return; }
     hoteFiltres.hidden = false;
-
-    var compte = function (s) {
-      return OEUVRES.filter(function (o) { return !s || o.style === s; }).length;
-    };
+    var compte = function (s) { return OEUVRES.filter(function (o) { return !s || o.style === s; }).length; };
     hoteFiltres.innerHTML =
       '<button type="button" class="cat-filtre" data-filtre="">Tout <span>' + OEUVRES.length + '</span></button>' +
       styles.map(function (s) {
         return '<button type="button" class="cat-filtre" data-filtre="' + esc(s) + '">' +
           esc(s) + ' <span>' + compte(s) + '</span></button>';
       }).join('');
-
     Array.prototype.forEach.call(hoteFiltres.querySelectorAll('[data-filtre]'), function (b) {
       b.addEventListener('click', function () { filtrer(b.getAttribute('data-filtre')); });
     });
     marquerFiltre();
   }
-
   function marquerFiltre() {
     if (!hoteFiltres) return;
     Array.prototype.forEach.call(hoteFiltres.querySelectorAll('[data-filtre]'), function (b) {
@@ -518,14 +556,12 @@
       b.setAttribute('aria-pressed', actif ? 'true' : 'false');
     });
   }
-
   function filtrer(style) {
     filtreActif = style || '';
     calculerVisibles();
     rendre();
     marquerFiltre();
   }
-
   function calculerVisibles() {
     visibles = [];
     OEUVRES.forEach(function (o, i) {
@@ -534,13 +570,13 @@
     });
   }
 
-  /* ─── « Tout écouter » : la vitrine en une touche ─── */
+  /* ═══ « Tout écouter » ═══ */
   var boutonTout = document.querySelector('[data-tout-ecouter]');
   if (boutonTout) {
     boutonTout.addEventListener('click', function () {
       if (joue) { arreter(); return; }
-      if (cur >= 0) { basculer(cur); return; }
-      if (visibles.length) basculer(visibles[0]);
+      if (cur >= 0) { choisir(cur, true); return; }
+      if (visibles.length) choisir(visibles[0], true);
     });
   }
   function majBoutonTout() {
@@ -550,7 +586,7 @@
     if (t) t.textContent = joue ? 'Arrêter l\'écoute' : 'Tout écouter';
   }
 
-  /* ─── Compteurs affichés ailleurs sur la page ─── */
+  /* ═══ Compteurs affichés ailleurs sur la page ═══ */
   function majCompteurs() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-catalogue-total]'), function (e) {
       e.textContent = String(OEUVRES.length);
@@ -560,28 +596,33 @@
     });
   }
 
-  /* ─── Montage, rejouable ─── */
+  /* ═══ Montage, rejouable ═══ */
   function monter(liste) {
     if (liste) window.MELODIA_OEUVRES = liste;
-    OEUVRES = (lireDonnees() || []).filter(function (o) {
-      return o && o.audio && o.visible !== false;
-    });
-    /* Si l'écoute en cours disparaît du nouveau contenu, on l'arrête */
-    if (cur >= OEUVRES.length) arreter();
-    durees = {}; vu = {};
+    OEUVRES = (lireDonnees() || []).filter(function (o) { return o && o.audio && o.visible !== false; });
     if (filtreActif && !OEUVRES.some(function (o) { return o.style === filtreActif; })) filtreActif = '';
     calculerVisibles();
+
+    /* La grille rendue par le serveur cède la place. Elle a servi : les
+       moteurs et les navigateurs sans JavaScript l'ont déjà lue, et les
+       douze œuvres restent décrites une à une dans le JSON-LD de la page. */
+    grille.innerHTML = '';
+    grille.classList.add('platine-active');
+    grille.appendChild(scene);
+    grille.appendChild(frise);
+    grille.classList.toggle('est-vide', !visibles.length);
+
+    if (visibles.length && cur < 0) poser(visibles[0]);
     rendre();
     rendreFiltres();
     majCompteurs();
-    grille.classList.toggle('est-vide', !visibles.length);
-    majBoutonTout();
+    peindre();
   }
 
   window.addEventListener('pagehide', function () {
     if (raf) cancelAnimationFrame(raf);
     audio.pause();
-    if (ctx && ctx.state !== 'closed') ctx.close();
+    if (ctxAudio && ctxAudio.state !== 'closed') ctxAudio.close();
   });
 
   window.MelodiaCatalogue = { monter: monter, arreter: arreter };

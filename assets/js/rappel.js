@@ -164,7 +164,17 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(demande)
       });
-      if (r.ok) { confirmer(demande, false); return; }
+      if (r.ok) {
+        /* La maison est prévenue ; il reste à répondre au demandeur,
+           qui sinon ne sait pas si son message est parti. */
+        if (window.MelodiaCourrier && demande.email) {
+          window.MelodiaCourrier.rappel({
+            email: demande.email, nom: demande.nom,
+            moment: demande.moment, urgence: demande.urgent
+          });
+        }
+        confirmer(demande, false); return;
+      }
       var d = null; try { d = await r.json(); } catch (e) {}
       /* Notification non configurée : la messagerie du visiteur prend le relais */
       if (d && d.code === 'NOT_CONFIGURED') { replimessagerie(demande); return; }

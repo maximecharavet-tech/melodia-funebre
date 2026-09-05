@@ -7,13 +7,14 @@ const files = [
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
   'assets/css/style.css', 'assets/css/dashboard.css',
   'assets/js/main.js', 'assets/js/catalogue.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
-  'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
+  'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
+  'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js',
   'assets/js/auth.js', 'assets/js/config.js',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-anime.mp4',
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
-  'audio/maurice.mp3', 'audio/monique.mp3', 'audio/sergio.mp3',
+  'audio/maurice.mp3', 'audio/monique.mp3', 'audio/sergio.mp3', 'audio/dorian.mp3',
   'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
   'vercel.json', 'robots.txt', 'sitemap.xml'
 ];

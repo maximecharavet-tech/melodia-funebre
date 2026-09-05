@@ -8,11 +8,12 @@
 // Variables d'environnement (Vercel → Settings → Environment Variables) :
 //   RESEND_API_KEY    clé Resend (resend.com) — offre gratuite suffisante
 //   LEAD_TO           destinataire, ex. contact@melodia-funebre.fr
-//   LEAD_FROM         expéditeur vérifié chez Resend
-//                     ex. Melodia <notifications@melodia-funebre.fr>
+//   COURRIER_FROM     expéditeur transactionnel vérifié chez Resend
+//                     ex. Melodia <bonjour@envoi.melodia-funebre.fr>
+//                     à défaut, LEAD_FROM est utilisé
 // ═══════════════════════════════════════════════════════════════
 
-const TIMEOUT_MS = 15000;
+import { envoyer, expediteurCourrier, boiteMaison } from './_courrier.js';
 
 const TITRES = {
   rappel: 'Demande de rappel',
@@ -39,14 +40,13 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST uniquement' });
 
-  const cle = process.env.RESEND_API_KEY;
-  const dest = process.env.LEAD_TO;
-  const exp = process.env.LEAD_FROM;
-  if (!cle || !dest || !exp) {
+  const dest = boiteMaison();
+  const exp = expediteurCourrier();
+  if (!process.env.RESEND_API_KEY || !dest.length || !exp) {
     return res.status(503).json({
       error: 'La notification par courriel n\'est pas configurée.',
       code: 'NOT_CONFIGURED',
-      hint: 'Renseignez RESEND_API_KEY, LEAD_TO et LEAD_FROM dans Vercel, puis redéployez.'
+      hint: 'Renseignez RESEND_API_KEY, LEAD_TO et COURRIER_FROM dans Vercel, puis redéployez.'
     });
   }
 
@@ -89,41 +89,15 @@ export default async function handler(req, res) {
       '</div>' +
     '</div>';
 
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  const r = await envoyer({
+    from: exp,
+    to: dest,
+    subject: sujet,
+    html: corps,
+    // La famille peut être jointe d'un simple « Répondre »
+    reply_to: email || undefined
+  });
 
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cle}` },
-      body: JSON.stringify({
-        from: exp,
-        to: dest.split(',').map(s => s.trim()).filter(Boolean),
-        subject: sujet,
-        html: corps,
-        // La famille peut être jointe d'un simple « Répondre »
-        reply_to: email || undefined
-      }),
-      signal: ctrl.signal
-    });
-
-    const texte = await r.text();
-    let data; try { data = JSON.parse(texte); } catch (e) { data = { raw: texte }; }
-
-    if (!r.ok) {
-      return res.status(r.status).json({
-        error: data.message || data.error || `Le service d'envoi a répondu ${r.status}.`,
-        code: r.status === 401 || r.status === 403 ? 'BAD_KEY' : 'PROVIDER_ERROR'
-      });
-    }
-    return res.status(200).json({ ok: true, id: data.id || null });
-  } catch (err) {
-    const coupe = err.name === 'AbortError';
-    return res.status(coupe ? 504 : 500).json({
-      error: coupe ? 'Le service d\'envoi n\'a pas répondu.' : 'Envoi impossible : ' + err.message,
-      code: coupe ? 'TIMEOUT' : 'FETCH_FAILED'
-    });
-  } finally {
-    clearTimeout(timer);
-  }
+  if (!r.ok) return res.status(r.status).json({ error: r.error, code: r.code, motif: r.motif });
+  return res.status(200).json({ ok: true, id: r.id });
 }
