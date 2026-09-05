@@ -7,298 +7,395 @@
 <title>Trois façons de présenter le catalogue — Melodia Funèbre</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#040407; --surface:#0b0b11; --surface-2:#101018; --surface-3:#16161f;
-  --line:rgba(201,168,76,.12); --line-soft:rgba(255,255,255,.06); --line-strong:rgba(201,168,76,.3);
-  --or-deep:#6b5828; --or-patina:#97803c; --or:#c9a84c; --or-bright:#e3c977;
+  --ink:#040407; --ink-2:#07070c; --surface:#0b0b11; --surface-2:#101018; --surface-3:#16161f;
+  --line:rgba(201,168,76,.12); --line-soft:rgba(255,255,255,.055); --line-strong:rgba(201,168,76,.32);
+  --or-deep:#6b5828; --or-patina:#97803c; --or:#c9a84c; --or-bright:#e3c977; --or-blanc:#f6ecc9;
   --silver:#d8d8dc; --silver-dim:#9a9aa2; --paper:#f2efe8; --bone:#c4bba6; --ash:#8e8878; --dust:#5d5a51;
   --ff-d:'Cormorant Garamond',Georgia,serif; --ff-b:'Jost',system-ui,sans-serif; --ff-m:'JetBrains Mono',ui-monospace,monospace;
+  --feuille:linear-gradient(102deg,#8a6f30 0%,#c9a84c 22%,#f6ecc9 38%,#e3c977 48%,#97803c 66%,#e3c977 82%,#a98c3c 100%);
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--ink);color:var(--silver);font-family:var(--ff-b);font-weight:300;line-height:1.7;
-  -webkit-font-smoothing:antialiased}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--silver);font-family:var(--ff-b);font-weight:300;line-height:1.72;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-/* ─── Grain : une seule texture, posée une fois, réutilisée partout ─── */
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9;opacity:.4;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E")}
+/* ─── Deux voiles fixes : le grain de l'encre, puis la vignette ───
+   Ils passent AVANT le contenu en z-index négatif pour la vignette et
+   au-dessus pour le grain : l'un teinte le fond, l'autre le papier. */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 120% 80% at 50% 0%,rgba(201,168,76,.055),transparent 62%),
+             radial-gradient(ellipse 140% 100% at 50% 100%,rgba(0,0,0,.7),transparent 55%)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.45;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E")}
 
-.hab{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.2rem)}
-.mono{font-family:var(--ff-m);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--or-patina)}
+.hab{max-width:1240px;margin:0 auto;padding:0 clamp(1.1rem,4vw,2.4rem);position:relative;z-index:1}
+
+/* ─── Or en feuille : un dégradé qui balaie, jamais un aplat ─── */
+.feuille{background:var(--feuille);background-size:280% 100%;-webkit-background-clip:text;background-clip:text;
+  color:transparent;animation:balaye 9s ease-in-out infinite}
+@keyframes balaye{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+.eyebrow{font-family:var(--ff-m);font-weight:300;font-size:.6rem;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--or-patina)}
+.filet{height:1px;background:linear-gradient(90deg,transparent,var(--or-deep) 18%,var(--or) 50%,var(--or-deep) 82%,transparent);
+  opacity:.5}
 
 /* ─── Chapeau ─── */
-.chapeau{padding:clamp(2.4rem,7vw,4.6rem) 0 1.6rem;border-bottom:1px solid var(--line-soft)}
-.chapeau h1{font-family:var(--ff-d);font-weight:300;font-size:clamp(2rem,5.4vw,3.4rem);line-height:1.1;
-  margin:.7rem 0 .9rem;color:var(--paper);text-wrap:balance}
-.chapeau h1 em{font-style:italic;color:var(--or)}
-.chapeau p{max-width:60ch;color:var(--ash);font-size:.98rem;margin:0}
-.chiffre{color:var(--or-bright);font-family:var(--ff-m);font-size:.95rem}
+.chapeau{padding:clamp(2.6rem,8vw,5.4rem) 0 clamp(1.6rem,4vw,2.4rem);text-align:center;position:relative}
+.chapeau h1{font-family:var(--ff-d);font-weight:300;font-size:clamp(2.2rem,6.4vw,4.4rem);line-height:1.06;
+  margin:1.1rem 0 1rem;color:var(--paper);text-wrap:balance;letter-spacing:-.01em}
+.chapeau h1 em{font-style:italic}
+.chapeau p{max-width:54ch;margin:0 auto;color:var(--ash);font-size:clamp(.9rem,2.4vw,1rem)}
+.chiffre{font-family:var(--ff-m);color:var(--or-bright);font-size:.92em;font-variant-numeric:tabular-nums}
+.orne{display:flex;align-items:center;justify-content:center;gap:.9rem;margin:1.6rem auto 0;max-width:22rem}
+.orne .filet{flex:1}
+.orne svg{width:16px;height:16px;color:var(--or);opacity:.75}
 
 /* ─── Onglets ─── */
-.onglets{position:sticky;top:0;z-index:8;background:rgba(4,4,7,.9);backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);margin-bottom:clamp(1.6rem,4vw,2.8rem)}
-.onglets-in{display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none}
+.onglets{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,rgba(4,4,7,.96),rgba(4,4,7,.84));
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line);
+  margin-bottom:clamp(2rem,5vw,3.4rem)}
+.onglets-in{display:flex;justify-content:center;gap:clamp(.2rem,2vw,2.4rem);overflow-x:auto;scrollbar-width:none}
 .onglets-in::-webkit-scrollbar{display:none}
-.ong{flex:0 0 auto;appearance:none;background:none;border:0;border-bottom:2px solid transparent;
-  color:var(--silver-dim);font-family:var(--ff-b);font-size:.85rem;font-weight:300;letter-spacing:.04em;
-  padding:1.05rem 1.05rem;cursor:pointer;transition:color .3s,border-color .3s;white-space:nowrap}
-.ong b{display:block;font-family:var(--ff-d);font-size:1.12rem;font-weight:400;font-style:italic;letter-spacing:0}
+.ong{position:relative;flex:0 0 auto;appearance:none;background:none;border:0;cursor:pointer;
+  padding:1.15rem clamp(.75rem,3vw,1.3rem) 1.05rem;color:var(--silver-dim);transition:color .45s}
+.ong .n{display:block;font-family:var(--ff-m);font-size:.56rem;letter-spacing:.34em;opacity:.6;margin-bottom:.28rem}
+.ong .t{display:block;font-family:var(--ff-d);font-style:italic;font-weight:400;font-size:clamp(1.05rem,3.4vw,1.35rem);
+  letter-spacing:.01em;white-space:nowrap}
+.ong::after{content:'';position:absolute;left:50%;right:50%;bottom:-1px;height:1px;background:var(--feuille);
+  transition:left .5s cubic-bezier(.22,1,.36,1),right .5s cubic-bezier(.22,1,.36,1)}
 .ong:hover{color:var(--bone)}
-.ong[aria-selected="true"]{color:var(--paper);border-bottom-color:var(--or)}
-.ong[aria-selected="true"] b{color:var(--or)}
+.ong[aria-selected="true"]{color:var(--paper)}
+.ong[aria-selected="true"]::after{left:.9rem;right:.9rem}
+.ong[aria-selected="true"] .t{color:var(--or-bright)}
 
-.volet{display:none;padding-bottom:clamp(3rem,8vw,5rem)}
-.accroche{max-width:56ch;margin:0 0 1.2rem;color:var(--ash);font-size:.9rem;line-height:1.6}
-.accroche b{display:block;color:var(--paper);font-family:var(--ff-d);font-style:italic;font-weight:400;
-  font-size:clamp(1.15rem,3.4vw,1.5rem);line-height:1.25;margin-bottom:.25rem}
-.apres{max-width:62ch;margin-top:clamp(1.8rem,5vw,2.6rem);padding-top:1.4rem;border-top:1px solid var(--line-soft)}
-.apres p{color:var(--ash);font-size:.9rem;margin:.9rem 0 0}
-.apres .reserve{color:var(--dust)}
+.volet{display:none;padding-bottom:clamp(3rem,9vw,6rem);animation:entre .8s cubic-bezier(.22,1,.36,1) both}
 .volet.actif{display:block}
-.mesure{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;padding:.4rem .8rem;
-  border:1px solid var(--line);border-radius:2px;background:rgba(201,168,76,.04)}
-.mesure span{font-family:var(--ff-m);font-size:.7rem;letter-spacing:.1em;color:var(--bone)}
-.mesure b{color:var(--or-bright);font-weight:500}
+@keyframes entre{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.accroche{max-width:52ch;margin:0 auto clamp(1.6rem,4vw,2.4rem);text-align:center;color:var(--ash);
+  font-size:.88rem;line-height:1.65}
+.accroche b{display:block;color:var(--paper);font-family:var(--ff-d);font-style:italic;font-weight:400;
+  font-size:clamp(1.25rem,3.8vw,1.75rem);line-height:1.24;margin-bottom:.4rem;letter-spacing:.005em}
+.apres{max-width:60ch;margin:clamp(2.2rem,6vw,3.4rem) auto 0;padding-top:1.6rem;position:relative}
+.apres::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+.apres p{color:var(--ash);font-size:.88rem;margin:1rem 0 0}
+.apres .reserve{color:var(--dust);font-size:.82rem}
+.mesure{display:inline-flex;align-items:baseline;gap:.6rem;padding:.5rem .95rem;border:1px solid var(--line);
+  background:rgba(201,168,76,.035)}
+.mesure i{font-style:normal;font-family:var(--ff-m);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dust)}
+.mesure b{font-family:var(--ff-m);font-weight:400;font-size:.82rem;color:var(--or-bright);font-variant-numeric:tabular-nums}
 
 /* ═══════════════════════════════════════════════════════════════
-   Ce que les trois partagent : le sceau, l'onde, la lumière
+   LA PLATINE — l'objet partagé par les trois mises en scène.
+   Un seul exemplaire dans la page : il est déplacé d'un cadre à
+   l'autre. Deux platines voudraient deux canvas, deux boucles et
+   deux analyseurs pour un seul son.
    ═══════════════════════════════════════════════════════════════ */
-.sceau{position:relative;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
-  background:radial-gradient(circle at 32% 28%,#1b1b26,#08080d 72%);
-  border:1px solid rgba(201,168,76,.28);overflow:hidden}
-.sceau span{font-family:var(--ff-d);font-weight:300;color:var(--or);line-height:1;
-  text-shadow:0 0 calc(14px * var(--lueur,0)) rgba(227,201,119,.8)}
-.sceau::before{content:'';position:absolute;inset:-1px;border-radius:50%;
-  background:conic-gradient(from 0deg,transparent 0deg,rgba(227,201,119,.75) 40deg,transparent 110deg,
-    transparent 250deg,rgba(201,168,76,.45) 300deg,transparent 350deg);
-  -webkit-mask:radial-gradient(circle,transparent 61%,#000 63%);mask:radial-gradient(circle,transparent 61%,#000 63%);
-  opacity:calc(.25 + var(--lueur,0)*.75);transition:opacity .4s}
-.joue .sceau::before{animation:tourne 18s linear infinite}
-@keyframes tourne{to{transform:rotate(360deg)}}
+.platine{--lueur:0;position:relative;display:grid;gap:clamp(1.2rem,3.5vw,2.2rem);
+  grid-template-columns:auto 1fr;align-items:center}
+@media (max-width:760px){.platine{grid-template-columns:1fr;justify-items:center;text-align:center}}
 
-.onde{display:flex;align-items:flex-end;gap:2px;height:22px;flex:1;min-width:0;overflow:hidden}
-.onde i{flex:1;min-width:1px;max-width:3px;height:2px;background:linear-gradient(180deg,var(--or-bright),var(--or-deep));
-  border-radius:1px;transition:height .09s linear;opacity:.75}
+/* Le guilloché : une rosette d'épitrochoïde tracée à l'ouverture,
+   comme la gravure de fond d'un certificat. Elle tourne très lentement
+   en sens inverse du disque. */
+.guilloche{position:absolute;left:50%;top:50%;width:205%;height:205%;
+  transform:translate(-50%,-50%);pointer-events:none;z-index:-1;
+  opacity:calc(.14 + var(--lueur)*.2);transition:opacity .5s;
+  -webkit-mask:radial-gradient(circle,#000 26%,rgba(0,0,0,.35) 46%,transparent 66%);
+          mask:radial-gradient(circle,#000 26%,rgba(0,0,0,.35) 46%,transparent 66%)}
+.guilloche svg{width:100%;height:100%;animation:rosace 120s linear infinite}
+.guilloche path{fill:none;stroke:var(--or);stroke-width:.28;vector-effect:non-scaling-stroke}
+@keyframes rosace{to{transform:rotate(-360deg)}}
 
-.lire{appearance:none;border:1px solid rgba(201,168,76,.35);background:rgba(201,168,76,.06);
-  border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:0 0 auto;color:var(--or);
-  transition:background .3s,border-color .3s,transform .3s}
-.lire:hover{background:rgba(201,168,76,.16);border-color:var(--or);transform:scale(1.06)}
-.lire svg{width:42%;height:42%;margin-left:6%}
-.joue .lire svg{margin-left:0}
-.jauge{height:1px;background:var(--line-soft);position:relative;overflow:hidden}
-.jauge i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--or-deep),var(--or-bright));
-  box-shadow:0 0 10px rgba(201,168,76,.55)}
+/* ─── Le disque ─── */
+.disque-cadre{position:relative;z-index:1;flex:0 0 auto;isolation:isolate;
+  width:clamp(148px,38vw,208px);aspect-ratio:1}
+.disque{position:absolute;inset:0;border-radius:50%;
+  background:
+    repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.032) 0 1px,rgba(0,0,0,0) 1px 3.5px),
+    repeating-radial-gradient(circle at 50% 50%,rgba(0,0,0,.5) 0 2px,rgba(0,0,0,0) 2px 7px),
+    radial-gradient(circle at 33% 28%,#22222e 0%,#0d0d15 46%,#050509 78%);
+  box-shadow:inset 0 0 46px rgba(0,0,0,.95),inset 0 2px 3px rgba(255,255,255,.06),
+             0 34px 64px -26px rgba(0,0,0,.95),
+             0 0 calc(28px + var(--lueur)*54px) -14px rgba(201,168,76,calc(.16 + var(--lueur)*.4));
+  transition:box-shadow .4s}
+/* Le reflet : un balayage conique qui tourne avec le disque */
+.disque::after{content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(255,255,255,.075) 22deg,transparent 60deg,
+    transparent 180deg,rgba(201,168,76,.075) 202deg,transparent 240deg)}
+.disque-bord{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(201,168,76,.22);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),inset 0 0 0 7px rgba(255,255,255,.018)}
+/* L'étiquette centrale, en or gravé */
+.etiquette{position:absolute;left:50%;top:50%;width:39%;aspect-ratio:1;transform:translate(-50%,-50%);
+  border-radius:50%;display:grid;place-items:center;z-index:2;
+  background:radial-gradient(circle at 36% 30%,#1c1a12,#0a0a0e 74%);
+  border:1px solid rgba(201,168,76,.4);
+  box-shadow:0 0 0 3px rgba(4,4,7,.9),0 4px 14px rgba(0,0,0,.7),
+             inset 0 0 calc(8px + var(--lueur)*22px) rgba(201,168,76,calc(.14 + var(--lueur)*.34))}
+.etiquette b{font-family:var(--ff-d);font-weight:300;font-size:clamp(1.5rem,4.6vw,2.1rem);line-height:1;
+  background:var(--feuille);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 calc(var(--lueur)*11px) rgba(227,201,119,.75))}
+.etiquette::after{content:'';position:absolute;left:50%;top:50%;width:9%;aspect-ratio:1;transform:translate(-50%,-50%);
+  border-radius:50%;background:#000;box-shadow:inset 0 1px 2px rgba(255,255,255,.14)}
+/* Le bras : un simple arc qui se pose quand la lecture commence */
+.bras{position:absolute;right:-2%;top:6%;width:54%;height:54%;z-index:3;pointer-events:none;
+  transform-origin:88% 12%;transform:rotate(-26deg);transition:transform 1.1s cubic-bezier(.34,1.3,.5,1);
+  opacity:.85}
+.platine.joue .bras{transform:rotate(6deg)}
+.bras svg{width:100%;height:100%;overflow:visible}
+.bras .tige{stroke:rgba(201,168,76,.55);stroke-width:1.4;fill:none;stroke-linecap:round}
+.bras .pivot{fill:#14141c;stroke:rgba(201,168,76,.5);stroke-width:1}
+
+/* ─── Le pupitre : titre, spectre, molette ─── */
+.pupitre{position:relative;z-index:2;min-width:0;width:100%;max-width:34rem}
+.pup-style{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--or-patina);margin-bottom:.55rem}
+.pup-titre{font-family:var(--ff-d);font-weight:300;font-style:italic;font-size:clamp(1.65rem,5.2vw,2.5rem);
+  line-height:1.1;color:var(--paper);margin:0 0 .35rem;text-wrap:balance;letter-spacing:-.005em}
+.pup-qui{font-size:.84rem;color:var(--ash);margin-bottom:1.15rem}
+.pup-onde{position:relative;width:100%;height:72px;margin-bottom:.55rem}
+.pup-onde canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.pup-bas{display:flex;align-items:center;gap:1rem}
+@media (max-width:760px){.pup-bas{justify-content:center}}
+.pup-t{font-family:var(--ff-m);font-weight:300;font-size:.7rem;color:var(--dust);font-variant-numeric:tabular-nums;
+  letter-spacing:.04em;flex:0 0 auto}
+.pup-t.fin{color:var(--or-patina)}
+.molette{position:relative;flex:1;height:26px;cursor:pointer;touch-action:none;min-width:80px}
+.molette::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-.5px;
+  background:var(--line-soft)}
+.molette i{position:absolute;left:0;top:50%;height:1px;margin-top:-.5px;width:0;
+  background:linear-gradient(90deg,var(--or-deep),var(--or-bright));box-shadow:0 0 9px rgba(201,168,76,.6)}
+.molette u{position:absolute;top:50%;left:0;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;
+  transform:rotate(45deg);background:var(--or-bright);box-shadow:0 0 12px rgba(227,201,119,.85);
+  opacity:0;transition:opacity .4s}
+.platine.joue .molette u,.molette:hover u{opacity:1}
+
+/* Le bouton : un jeton d'or, pas un rond bleu */
+.jeton{position:relative;appearance:none;border:0;padding:0;cursor:pointer;flex:0 0 auto;
+  width:58px;height:58px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 34% 28%,#1d1a12,#0a0a0e 76%);
+  box-shadow:0 0 0 1px rgba(201,168,76,.4),0 8px 22px -8px rgba(0,0,0,.9),
+             inset 0 1px 1px rgba(255,255,255,.08);
+  color:var(--or-bright);transition:box-shadow .45s,transform .45s}
+.jeton::before{content:'';position:absolute;inset:-5px;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(201,168,76,.18);
+  transform:scale(.9);opacity:0;transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .6s}
+.jeton:hover{transform:scale(1.05);box-shadow:0 0 0 1px var(--or),0 10px 26px -8px rgba(0,0,0,.9),
+             inset 0 1px 1px rgba(255,255,255,.1),0 0 26px -6px rgba(201,168,76,.45)}
+.jeton:hover::before{transform:scale(1);opacity:1}
+.jeton svg{width:19px;height:19px;margin-left:2px;filter:drop-shadow(0 0 6px rgba(227,201,119,.5))}
+.platine.joue .jeton svg{margin-left:0}
+.platine.joue .jeton{box-shadow:0 0 0 1px var(--or),0 10px 26px -8px rgba(0,0,0,.9),
+  inset 0 1px 1px rgba(255,255,255,.1),0 0 calc(16px + var(--lueur)*34px) -6px rgba(201,168,76,calc(.3 + var(--lueur)*.5))}
+
+/* Le récit sous la platine, en colonne éditoriale avec lettrine */
+.pup-recit{margin:1.5rem 0 0;font-size:.86rem;line-height:1.78;color:var(--bone);text-align:left;
+  max-width:56ch}
+.pup-recit::first-letter{float:left;font-family:var(--ff-d);font-weight:300;font-size:3.1rem;line-height:.82;
+  padding:.12rem .5rem 0 0;color:var(--or);text-shadow:0 0 18px rgba(201,168,76,.3)}
+.pup-vers{font-family:var(--ff-d);font-style:italic;font-weight:300;font-size:clamp(1.05rem,2.9vw,1.3rem);
+  line-height:1.5;color:var(--or-bright);white-space:pre-line;margin:1.3rem 0 0;padding:0 0 0 1.1rem;
+  border-left:1px solid var(--line-strong);text-align:left;max-width:48ch}
+@media (max-width:760px){.pup-recit,.pup-vers{margin-left:auto;margin-right:auto}}
 
 /* ═══════════════════════════════════════════════════════════════
-   1 — LE SILLON  ·  bande horizontale, la fiche jouée s'ouvre
+   1 — LA PLATINE  ·  le lecteur en majesté, la collection en frise
    ═══════════════════════════════════════════════════════════════ */
-.sillon{position:relative;margin:0 calc(-1 * clamp(1rem,4vw,2.2rem))}
-.sillon::before,.sillon::after{content:'';position:absolute;top:0;bottom:0;width:clamp(1rem,4vw,3.4rem);z-index:3;pointer-events:none}
-.sillon::before{left:0;background:linear-gradient(90deg,var(--ink),transparent)}
-.sillon::after{right:0;background:linear-gradient(270deg,var(--ink),transparent)}
-.sillon-piste{display:flex;gap:.85rem;overflow-x:auto;scroll-snap-type:x mandatory;
-  padding:1.4rem clamp(1rem,4vw,2.2rem) 1.8rem;scrollbar-width:none;perspective:1400px}
-.sillon-piste::-webkit-scrollbar{display:none}
-
-.lame{--lueur:0;--proche:0;
-  flex:0 0 auto;width:14.5rem;scroll-snap-align:center;position:relative;
-  border:1px solid var(--line-soft);border-radius:3px;overflow:hidden;cursor:pointer;
-  background:linear-gradient(178deg,var(--surface-2),var(--surface) 46%,#07070c);
-  transform:rotateY(calc(var(--decal,0) * -7deg)) scale(calc(.9 + var(--proche) * .1));
-  opacity:calc(.5 + var(--proche) * .5);
-  transition:transform .55s cubic-bezier(.22,1,.36,1),opacity .55s,width .55s cubic-bezier(.22,1,.36,1),
-    border-color .5s,box-shadow .5s}
-.lame::before{content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(120% 78% at 18% -8%,rgba(201,168,76,calc(.05 + var(--lueur)*.16)) 0%,transparent 60%);
-  transition:background .25s}
-.lame.actif{width:19.5rem;border-color:var(--line-strong);
-  box-shadow:0 24px 60px -22px rgba(0,0,0,.85),0 0 44px -16px rgba(201,168,76,calc(.18 + var(--lueur)*.3))}
-.lame-haut{display:flex;align-items:center;gap:.7rem;padding:1.1rem 1.1rem .9rem}
-.lame .sceau{width:44px;height:44px}
-.lame .sceau span{font-size:1.25rem}
-.lame .lire{width:34px;height:34px}
-.lame-corps{padding:0 1.1rem 1.2rem}
-.lame-style{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--or-patina);margin-bottom:.5rem}
-.lame-titre{font-family:var(--ff-d);font-style:italic;font-weight:300;font-size:1.3rem;line-height:1.18;
-  color:var(--paper);margin:0 0 .3rem;text-wrap:balance}
-.lame-qui{font-size:.78rem;color:var(--ash);line-height:1.5}
-.lame-plus{max-height:0;opacity:0;overflow:hidden;
-  transition:max-height .6s cubic-bezier(.22,1,.36,1),opacity .4s}
-.lame.actif .lame-plus{max-height:22rem;opacity:1}
-.lame-recit{font-size:.8rem;color:var(--bone);line-height:1.66;margin:.9rem 0 0;
-  border-top:1px solid var(--line-soft);padding-top:.9rem}
-.lame-vers{font-family:var(--ff-d);font-style:italic;font-size:.95rem;color:var(--or-bright);
-  margin:.8rem 0 0;padding-left:.8rem;border-left:1px solid var(--line-strong);white-space:pre-line;line-height:1.55}
-.lame .onde{padding:0 1.1rem;margin-bottom:.9rem;height:18px}
-.lame .jauge{margin:0 1.1rem}
+.scene{position:relative;padding:clamp(3.4rem,10vw,5rem) 0 clamp(1.4rem,4vw,2.4rem);overflow:hidden}
+.scene-hote{position:relative;z-index:1;min-height:230px;display:flex;justify-content:center}
+.frise{position:relative;margin-top:clamp(1.8rem,5vw,2.8rem);padding-top:1.6rem}
+.frise::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line-strong) 30%,var(--line-strong) 70%,transparent)}
+.frise-titre{text-align:center;margin-bottom:1.2rem}
+.frise-piste{display:flex;gap:clamp(.7rem,2.4vw,1.15rem);overflow-x:auto;scroll-snap-type:x proximity;
+  padding:.4rem clamp(1.1rem,4vw,2.4rem) 1.2rem;margin:0 calc(-1 * clamp(1.1rem,4vw,2.4rem));
+  scrollbar-width:none}
+.frise-piste::-webkit-scrollbar{display:none}
+.pastille{flex:0 0 auto;scroll-snap-align:center;appearance:none;background:none;border:0;padding:.3rem;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.5rem;width:5.4rem;
+  opacity:.44;transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.pastille:hover{opacity:.8}
+.pastille[aria-current="true"]{opacity:1;transform:translateY(-3px)}
+.jet{position:relative;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 34% 28%,#1a1a24,#08080d 74%);
+  border:1px solid rgba(201,168,76,.22);transition:border-color .5s,box-shadow .5s}
+.jet span{font-family:var(--ff-d);font-weight:300;font-size:1.28rem;color:var(--or-patina);line-height:1;
+  transition:color .5s}
+.pastille[aria-current="true"] .jet{border-color:var(--or);
+  box-shadow:0 0 22px -4px rgba(201,168,76,.55),inset 0 0 14px rgba(201,168,76,.12)}
+.pastille[aria-current="true"] .jet span{background:var(--feuille);background-size:250% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.past-nom{font-size:.62rem;line-height:1.3;color:var(--dust);text-align:center;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pastille[aria-current="true"] .past-nom{color:var(--bone)}
 
 /* ═══════════════════════════════════════════════════════════════
-   2 — LE CERCLE  ·  arc de sceaux, une seule histoire à la fois
+   2 — LE CERCLE  ·  arc de médaillons, la platine dessous
    ═══════════════════════════════════════════════════════════════ */
-.cercle{position:relative;padding:1rem 0 0}
-.arc{position:relative;height:190px;margin-bottom:.4rem;touch-action:pan-y;cursor:grab;overflow:hidden}
+.arc{position:relative;height:172px;touch-action:pan-y;cursor:grab;overflow:hidden;
+  margin-bottom:clamp(.6rem,2vw,1.4rem)}
 .arc:active{cursor:grabbing}
-.arc-piece{--d:0;--lueur:0;
-  position:absolute;left:50%;top:26px;width:104px;height:104px;margin-left:-52px;
-  transition:transform .7s cubic-bezier(.22,1,.36,1),opacity .7s,filter .7s;
-  transform:translateX(calc(var(--d) * 84px)) translateY(calc(var(--d) * var(--d) * 13px))
-            scale(calc(1 - min(abs(var(--d)),3) * .215));
-  opacity:calc(1 - min(abs(var(--d)),3) * .3);
-  filter:blur(calc(min(abs(var(--d)),3) * .9px)) saturate(calc(1 - min(abs(var(--d)),3) * .25));
+.arc::after{content:'';position:absolute;left:50%;bottom:18px;width:min(420px,92vw);height:46px;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(201,168,76,.18),transparent 68%)}
+.med{--d:0;position:absolute;left:50%;top:24px;width:96px;height:96px;margin-left:-48px;cursor:pointer;
+  transition:transform .75s cubic-bezier(.22,1,.36,1),opacity .75s,filter .75s;
+  transform:translateX(calc(var(--d) * 82px)) translateY(calc(var(--d) * var(--d) * 12px))
+            rotate(calc(var(--d) * 5deg)) scale(calc(1 - min(abs(var(--d)),3) * .2));
+  opacity:calc(1 - min(abs(var(--d)),3) * .29);
+  filter:blur(calc(min(abs(var(--d)),3) * 1.1px)) saturate(calc(1 - min(abs(var(--d)),3) * .3))
+         brightness(calc(1 - min(abs(var(--d)),3) * .12));
   z-index:calc(10 - min(abs(var(--d)),9))}
-.arc-piece[data-loin="1"]{opacity:0;pointer-events:none}
-.arc-piece .sceau{width:104px;height:104px;border-width:1px}
-.arc-piece .sceau span{font-size:2.5rem}
-.arc-piece.centre .sceau{border-color:var(--or);
-  box-shadow:0 0 calc(30px + var(--lueur)*46px) -6px rgba(201,168,76,calc(.3 + var(--lueur)*.42)),
-             inset 0 0 24px rgba(201,168,76,.12)}
-.arc-piece:not(.centre){cursor:pointer}
-/* Le socle : une ellipse de lumière sur laquelle l'arc semble posé */
-.arc::after{content:'';position:absolute;left:50%;bottom:14px;width:340px;height:44px;margin-left:-170px;
-  background:radial-gradient(ellipse at center,rgba(201,168,76,.16),transparent 70%);pointer-events:none}
-
-.cercle-texte{text-align:center;max-width:44ch;margin:0 auto;padding:0 .5rem;min-height:15.5rem}
-.cercle-style{font-family:var(--ff-m);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--or-patina)}
-.cercle-titre{font-family:var(--ff-d);font-style:italic;font-weight:300;font-size:clamp(1.7rem,5vw,2.5rem);
-  line-height:1.12;color:var(--paper);margin:.5rem 0 .35rem;text-wrap:balance}
-.cercle-qui{font-size:.86rem;color:var(--ash);margin-bottom:1rem}
-.cercle-vers{font-family:var(--ff-d);font-style:italic;font-size:clamp(1rem,3vw,1.2rem);color:var(--or-bright);
-  white-space:pre-line;line-height:1.5;margin:0 0 1.1rem}
-.cercle-bloc{animation:monte .6s cubic-bezier(.22,1,.36,1) both}
-@keyframes monte{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.cercle-cmd{display:flex;align-items:center;gap:1rem;max-width:26rem;margin:0 auto}
-.cercle .lire{width:58px;height:58px}
-.cercle .jauge{flex:1}
-.cercle-recit{font-size:.84rem;color:var(--bone);line-height:1.7;margin:1.2rem auto 0;max-width:52ch;
-  border-top:1px solid var(--line-soft);padding-top:1rem;text-align:left}
-.fleches{display:flex;justify-content:center;gap:.5rem;margin-top:1.4rem}
-.fleche{appearance:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
-  background:none;color:var(--bone);cursor:pointer;display:grid;place-items:center;transition:.3s}
-.fleche:hover{border-color:var(--or);color:var(--or)}
-.fleche svg{width:18px;height:18px}
+.med[data-loin="1"]{opacity:0;pointer-events:none}
+.med-rond{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 34% 28%,#1d1d28,#08080d 74%);
+  border:1px solid rgba(201,168,76,.24);
+  box-shadow:inset 0 0 22px rgba(0,0,0,.8),0 14px 30px -14px rgba(0,0,0,.9)}
+.med-rond span{font-family:var(--ff-d);font-weight:300;font-size:2.35rem;color:var(--or-patina);line-height:1}
+/* Anneau gravé sur le médaillon central */
+.med.centre .med-rond{border-color:var(--or);
+  box-shadow:inset 0 0 26px rgba(201,168,76,.14),0 0 34px -6px rgba(201,168,76,.5),
+             0 16px 34px -14px rgba(0,0,0,.9)}
+.med.centre .med-rond span{background:var(--feuille);background-size:250% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.med.centre::before{content:'';position:absolute;inset:-9px;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(227,201,119,.7) 44deg,transparent 108deg,
+    transparent 252deg,rgba(201,168,76,.44) 302deg,transparent 348deg);
+  -webkit-mask:radial-gradient(circle,transparent 64%,#000 66%);mask:radial-gradient(circle,transparent 64%,#000 66%);
+  animation:tourne 22s linear infinite}
+@keyframes tourne{to{transform:rotate(360deg)}}
+.cercle-hote{position:relative;min-height:250px;display:flex;justify-content:center}
+.fleches{display:flex;justify-content:center;align-items:center;gap:1.1rem;margin-top:1.8rem}
+.fleche{appearance:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+  background:none;color:var(--dust);cursor:pointer;display:grid;place-items:center;transition:.45s}
+.fleche:hover{border-color:var(--or);color:var(--or-bright);box-shadow:0 0 18px -6px rgba(201,168,76,.6)}
+.fleche svg{width:16px;height:16px}
+.rang{font-family:var(--ff-m);font-size:.66rem;letter-spacing:.2em;color:var(--dust);
+  font-variant-numeric:tabular-nums}
+.rang b{color:var(--or-bright);font-weight:400}
 
 /* ═══════════════════════════════════════════════════════════════
-   3 — LA TABLE  ·  douze lignes, une seule s'ouvre
+   3 — LA TABLE  ·  douze lignes gravées, une seule s'ouvre
    ═══════════════════════════════════════════════════════════════ */
-.table{border-top:1px solid var(--line-soft)}
-.ligne{--lueur:0;position:relative;border-bottom:1px solid var(--line-soft);transition:background .5s}
-.ligne::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
-  background:linear-gradient(180deg,var(--or-bright),var(--or-deep));
-  transform:scaleY(0);transform-origin:top;transition:transform .5s cubic-bezier(.22,1,.36,1)}
-.ligne.ouvert::before{transform:scaleY(1)}
-.ligne.ouvert{background:linear-gradient(90deg,rgba(201,168,76,calc(.045 + var(--lueur)*.05)),transparent 62%)}
-.ligne-tete{display:flex;align-items:center;gap:.9rem;width:100%;appearance:none;background:none;border:0;
-  padding:.95rem clamp(.4rem,2vw,1rem);cursor:pointer;text-align:left;color:inherit;font-family:inherit}
+.table{max-width:56rem;margin:0 auto;border-top:1px solid var(--line-soft)}
+.ligne{position:relative;border-bottom:1px solid var(--line-soft);transition:background .6s}
+.ligne::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--feuille);
+  background-size:100% 260%;transform:scaleY(0);transform-origin:top;
+  transition:transform .65s cubic-bezier(.22,1,.36,1)}
+.ligne.ouvert::before{transform:scaleY(1);animation:balayeV 5s ease-in-out infinite}
+@keyframes balayeV{0%,100%{background-position:50% 0%}50%{background-position:50% 100%}}
+.ligne.ouvert{background:linear-gradient(96deg,rgba(201,168,76,.05),rgba(201,168,76,.012) 46%,transparent 74%)}
+.ligne-tete{display:flex;align-items:center;gap:clamp(.7rem,2.5vw,1.1rem);width:100%;appearance:none;
+  background:none;border:0;padding:1.05rem clamp(.5rem,2.4vw,1.2rem);cursor:pointer;text-align:left;
+  color:inherit;font-family:inherit}
+.ligne-num{font-family:var(--ff-m);font-size:.6rem;color:var(--dust);letter-spacing:.16em;
+  font-variant-numeric:tabular-nums;flex:0 0 auto;width:1.6rem;transition:color .5s}
+.ligne.ouvert .ligne-num{color:var(--or)}
+.ligne-mid{display:block;flex:1;min-width:0}
+.ligne-titre{display:block;font-family:var(--ff-d);font-style:italic;font-weight:400;font-size:clamp(1.08rem,3.2vw,1.32rem);
+  color:var(--paper);line-height:1.24;transition:color .45s;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ligne-tete:hover .ligne-titre{color:var(--or-bright)}
-.ligne .sceau{width:38px;height:38px}
-.ligne .sceau span{font-size:1.05rem}
-.ligne-mid{flex:1;min-width:0}
-.ligne-titre{font-family:var(--ff-d);font-style:italic;font-weight:400;font-size:1.12rem;color:var(--paper);
-  line-height:1.25;transition:color .3s;
+.ligne-sous{display:block;font-size:.7rem;color:var(--ash);margin-top:.12rem;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ligne-sous{font-size:.72rem;color:var(--ash);margin-top:.1rem;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ligne-droite{display:flex;align-items:center;gap:.75rem;flex:0 0 auto}
-.ligne-style{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--or-patina);border:1px solid var(--line);border-radius:2px;padding:.2rem .5rem}
-.ligne-chev{width:15px;height:15px;color:var(--dust);transition:transform .5s cubic-bezier(.22,1,.36,1),color .3s}
+.ligne-style{font-family:var(--ff-m);font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--or-patina);border:1px solid var(--line);padding:.24rem .6rem;flex:0 0 auto;
+  transition:border-color .5s,color .5s}
+.ligne.ouvert .ligne-style{border-color:var(--line-strong);color:var(--or-bright)}
+.ligne-chev{width:14px;height:14px;color:var(--dust);flex:0 0 auto;
+  transition:transform .6s cubic-bezier(.22,1,.36,1),color .45s}
 .ligne.ouvert .ligne-chev{transform:rotate(180deg);color:var(--or)}
-.ligne-corps{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s cubic-bezier(.22,1,.36,1)}
+.ligne-corps{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.22,1,.36,1)}
 .ligne.ouvert .ligne-corps{grid-template-rows:1fr}
 .ligne-corps>div{overflow:hidden}
-.ligne-in{padding:0 clamp(.4rem,2vw,1rem) 1.3rem 3.5rem}
-.ligne-cmd{display:flex;align-items:center;gap:.85rem;margin-bottom:1rem}
-.table .lire{width:44px;height:44px}
-.table .jauge{flex:1}
-.ligne-recit{font-size:.84rem;color:var(--bone);line-height:1.7;margin:0}
-.ligne-vers{font-family:var(--ff-d);font-style:italic;font-size:1rem;color:var(--or-bright);white-space:pre-line;
-  line-height:1.5;margin:.9rem 0 0;padding-left:.9rem;border-left:1px solid var(--line-strong)}
-.duree{font-family:var(--ff-m);font-size:.66rem;color:var(--dust);letter-spacing:.06em}
+.ligne-hote{padding:1.5rem clamp(.5rem,2.4vw,1.2rem) 1.9rem clamp(.5rem,2.4vw,1.2rem);
+  display:flex;justify-content:center}
+@media (max-width:520px){.ligne-style{display:none}}
 
-@media (max-width:520px){
-  .ligne-style{display:none}
-  .ligne-in{padding-left:1rem}
-  .arc-piece{width:88px;height:88px;margin-left:-44px}
-  .arc-piece .sceau{width:88px;height:88px}
-  .arc-piece .sceau span{font-size:2.1rem}
-  .arc-piece{transform:translateX(calc(var(--d) * 68px)) translateY(calc(var(--d) * var(--d) * 11px))
-             scale(calc(1 - min(abs(var(--d)),3) * .23))}
-  .arc{height:168px}
-}
+.pied{border-top:1px solid var(--line-soft);padding:2.2rem 0 3.4rem;color:var(--dust);font-size:.76rem;
+  text-align:center}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
     transition-duration:.01ms!important}
 }
-.pied{border-top:1px solid var(--line-soft);padding:2rem 0 3rem;color:var(--dust);font-size:.78rem}
 </style>
 </head>
 <body>
 
-<header class="chapeau">
-  <div class="hab">
-    <div class="mono">Melodia Funèbre · page d'essai</div>
-    <h1>Trois façons de présenter <em>le catalogue</em></h1>
-    <p>Le catalogue empilé fait <span class="chiffre">3&nbsp;246&nbsp;px</span> sur ton S25 — trois écrans et demi.
-      Voici trois façons de le tenir en un seul. Les musiques sont réelles : écoute, fais glisser, choisis.</p>
-  </div>
-</header>
+<header class="chapeau"><div class="hab">
+  <div class="eyebrow">Melodia Funèbre · page d'essai</div>
+  <h1>Trois façons de présenter <em class="feuille">le catalogue</em></h1>
+  <p>Le catalogue empilé fait <span class="chiffre">3&nbsp;246&nbsp;px</span> sur ton S25 — trois écrans et demi.
+    Voici trois mises en scène d'un même lecteur. Les douze musiques sont réelles.</p>
+  <div class="orne"><div class="filet"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></svg>
+    <div class="filet"></div></div>
+</div></header>
 
-<nav class="onglets" aria-label="Les trois propositions">
-  <div class="hab"><div class="onglets-in" role="tablist">
-    <button class="ong" role="tab" aria-selected="true"  data-volet="sillon">1 — <b>Le Sillon</b></button>
-    <button class="ong" role="tab" aria-selected="false" data-volet="cercle">2 — <b>Le Cercle</b></button>
-    <button class="ong" role="tab" aria-selected="false" data-volet="table">3 — <b>La Table</b></button>
-  </div></div>
-</nav>
+<nav class="onglets" aria-label="Les trois propositions"><div class="hab">
+  <div class="onglets-in" role="tablist">
+    <button class="ong" role="tab" aria-selected="true"  data-volet="platine"><span class="n">I</span><span class="t">La Platine</span></button>
+    <button class="ong" role="tab" aria-selected="false" data-volet="cercle"><span class="n">II</span><span class="t">Le Cercle</span></button>
+    <button class="ong" role="tab" aria-selected="false" data-volet="table"><span class="n">III</span><span class="t">La Table</span></button>
+  </div>
+</div></nav>
 
 <main class="hab">
 
-  <section class="volet actif" id="v-sillon">
-    <p class="accroche"><b>Une bande qui défile ; la fiche qu'on lance s'ouvre en place.</b>
-      Fais glisser du pouce, puis touche une lecture.</p>
-    <div class="sillon"><div class="sillon-piste" id="piste-sillon"></div></div>
+  <section class="volet actif" id="v-platine">
+    <p class="accroche"><b>Le lecteur en majesté, la collection en frise.</b>
+      Le disque tourne pendant la lecture et ralentit quand on l'arrête. Touche un médaillon pour changer d'œuvre.</p>
+    <div class="scene"><div class="scene-hote" id="hote-platine"></div></div>
+    <div class="frise">
+      <div class="frise-titre"><span class="eyebrow">Les douze œuvres</span></div>
+      <div class="frise-piste" id="frise" role="tablist" aria-label="Choisir une œuvre"></div>
+    </div>
     <div class="apres">
-      <div class="mesure"><span>Hauteur sur S25 : <b data-h="sillon">—</b></span></div>
-      <p>Trois œuvres visibles à la fois. Chaque lame s'incline selon sa distance au centre ; celle qui joue
-        s'élargit, déplie son récit, et sa lumière dorée respire au rythme de la musique.</p>
-      <p class="reserve">C'est un présentoir de disques : on parcourt, on s'arrête, on écoute, on repart.
-        Réserve — sur un écran étroit, deux lames sur trois sont coupées, et il faut faire glisser douze fois
-        pour tout voir.</p>
+      <div class="mesure"><i>Hauteur sur S25</i><b data-h="platine">—</b></div>
+      <p>Une seule œuvre à l'écran, mais elle occupe toute la scène : disque gravé, spectre dessiné en direct,
+        guilloché qui s'éclaire au volume. La frise du bas garde les douze à portée de pouce.</p>
+      <p class="reserve">Réserve — le récit d'une seule œuvre est visible à la fois ; les onze autres ne sont
+        présentes que par leur initiale.</p>
     </div>
   </section>
 
   <section class="volet" id="v-cercle">
-    <p class="accroche"><b>Un arc de médaillons, une seule histoire à la fois.</b>
-      Fais tourner l'arc au doigt, ou touche un médaillon.</p>
-    <div class="cercle">
+    <p class="accroche"><b>Un arc de médaillons, la platine dessous.</b>
+      Fais tourner l'arc au doigt : le médaillon du centre porte l'œuvre qui joue.</p>
+    <div class="scene">
       <div class="arc" id="arc" role="listbox" aria-label="Les œuvres" tabindex="0"></div>
-      <div class="cercle-texte" id="cercle-texte"></div>
+      <div class="cercle-hote" id="hote-cercle"></div>
       <div class="fleches">
-        <button class="fleche" data-pas="-1" aria-label="Œuvre précédente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <button class="fleche" data-pas="1" aria-label="Œuvre suivante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg></button>
+        <button class="fleche" data-pas="-1" aria-label="Œuvre précédente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="rang"><b id="rang-n">1</b> / <span id="rang-t">12</span></span>
+        <button class="fleche" data-pas="1" aria-label="Œuvre suivante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
     </div>
     <div class="apres">
-      <div class="mesure"><span>Hauteur sur S25 : <b data-h="cercle">—</b></span></div>
-      <p>Le sceau du centre est net et éclairé ; les autres reculent, se voilent, perdent leur couleur. Le texte
-        de l'œuvre choisie monte sous l'arc à chaque changement.</p>
-      <p class="reserve">Le plus spectaculaire des trois. Réserve — on ne lit qu'une œuvre à la fois, les onze
-        autres sont muettes pour Google, et retrouver un style précis demande de faire tourner.</p>
+      <div class="mesure"><i>Hauteur sur S25</i><b data-h="cercle">—</b></div>
+      <p>Le médaillon central porte un anneau gravé qui tourne ; les autres reculent, s'inclinent, se voilent
+        et perdent leur couleur. La platine apparaît dessous et change avec l'arc.</p>
+      <p class="reserve">Réserve — le plus spectaculaire, mais on ne lit qu'une œuvre à la fois et les onze
+        autres sont muettes pour Google.</p>
     </div>
   </section>
 
   <section class="volet" id="v-table">
-    <p class="accroche"><b>Douze lignes d'un coup d'œil, une seule s'ouvre.</b>
-      Touche une ligne : elle se déplie et la lecture démarre.</p>
+    <p class="accroche"><b>Douze lignes gravées, une seule s'ouvre.</b>
+      Touche une ligne : la platine s'y installe et la lecture commence.</p>
     <div class="table" id="table"></div>
     <div class="apres">
-      <div class="mesure"><span>Hauteur sur S25 : <b data-h="table">—</b></span></div>
-      <p>Ce n'est pas un carrousel, c'est un sommaire. Un filet doré descend le long de la ligne ouverte, la
-        précédente se referme, et le fond s'éclaire au rythme de la musique.</p>
+      <div class="mesure"><i>Hauteur sur S25</i><b data-h="table">—</b></div>
+      <p>Un filet d'or descend le long de la ligne ouverte et ondule pendant la lecture. La platine se déplace
+        d'une ligne à l'autre — c'est le même objet, jamais une copie.</p>
       <p class="reserve">Le moins spectaculaire — et celui que je recommanderais : les douze titres restent
         lisibles par Google, rien n'est caché derrière un geste, et une famille qui cherche « quelque chose de
         corse » le trouve sans faire défiler douze fois.</p>
@@ -309,7 +406,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9;opac
 
 <footer class="pied"><div class="hab">
   Page d'essai — non référencée, destinée à être supprimée une fois le choix fait.
-  Les douze musiques sont celles du site.
 </div></footer>
 
 <script>
@@ -317,351 +413,506 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9;opac
   'use strict';
   var REDUIT = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
-  function init(s){return (String(s||'♪').trim().charAt(0)||'♪').toUpperCase();}
-  function mmss(t){if(!isFinite(t))return'—:—';var m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+(s<10?'0':'')+s;}
-  var LIRE='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-  var PAUSE='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+  function ini(s){return (String(s||'♪').trim().charAt(0)||'♪').toUpperCase();}
+  function mmss(t){if(!isFinite(t)||t<0)return'—:—';var m=Math.floor(t/60),s=Math.floor(t%60);return m+':'+(s<10?'0':'')+s;}
+  var LIRE  = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  var PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg>';
 
-  /* ═══ Le moteur audio, partagé par les trois propositions ═══
-     Un seul élément <audio> et un seul analyseur : trois lecteurs
-     indépendants se marcheraient dessus, et trois AudioContext
-     épuiseraient la carte son du téléphone. */
-  var audio = new Audio();
-  audio.preload = 'none';
-  var ctx = null, analyseur = null, spectre = null, source = null;
-  var courant = null;          /* { volet, index, onIn, onOut } */
-  var abonnes = [];            /* les vues qui veulent l'amplitude */
+  /* ════════════════════════════════════════════════════════════
+     Le guilloché — une rosette d'épitrochoïde, comme la gravure de
+     fond d'un certificat. Tracée une fois à l'ouverture : trois
+     courbes décalées suffisent à donner la moire, et le tracé coûte
+     moins qu'une image de fond.
+     ════════════════════════════════════════════════════════════ */
+  function rosette(R, r, d, tours) {
+    var p = '', n = 1400, x, y, t;
+    for (var i = 0; i <= n; i++) {
+      t = i / n * Math.PI * 2 * tours;
+      x = (R - r) * Math.cos(t) + d * Math.cos((R - r) / r * t);
+      y = (R - r) * Math.sin(t) - d * Math.sin((R - r) / r * t);
+      p += (i ? 'L' : 'M') + x.toFixed(2) + ' ' + y.toFixed(2);
+    }
+    return p;
+  }
+  function guilloche() {
+    var g = document.createElement('div');
+    g.className = 'guilloche';
+    g.setAttribute('aria-hidden', 'true');
+    g.innerHTML = '<svg viewBox="-105 -105 210 210">' +
+      '<path d="' + rosette(100, 27, 62, 27) + '" opacity=".9"/>' +
+      '<path d="' + rosette(88, 19, 44, 19) + '" opacity=".55"/>' +
+      '<path d="' + rosette(70, 11, 26, 11) + '" opacity=".35"/>' +
+      '</svg>';
+    return g;
+  }
 
-  function brancher() {
-    if (ctx || REDUIT) return;
+  /* ════════════════════════════════════════════════════════════
+     LA PLATINE — un seul exemplaire dans la page.
+     Elle se déplace d'un cadre à l'autre plutôt que d'être recopiée :
+     deux platines voudraient deux canvas, deux boucles d'animation et
+     deux analyseurs pour un seul son.
+     ════════════════════════════════════════════════════════════ */
+  var P = {
+    piste: null, sur: null, lueur: 0,
+    angle: 0, vitesse: 0,          /* le disque a de l'inertie */
+    ctx: null, analyseur: null, spectre: null,
+    ecoute: []                     /* les vues prévenues d'un changement */
+  };
+
+  P.audio = new Audio();
+  P.audio.preload = 'none';
+
+  P.el = document.createElement('div');
+  P.el.className = 'platine';
+  P.el.innerHTML =
+    '<div class="disque-cadre" data-cadre>' +
+      '<div class="disque"></div>' +
+      '<div class="disque-bord"></div>' +
+      '<div class="etiquette"><b data-ini>♪</b></div>' +
+      '<div class="bras" aria-hidden="true"><svg viewBox="0 0 100 100">' +
+        '<path class="tige" d="M88 12 L46 74"/><path class="tige" d="M46 74 l-5 7"/>' +
+        '<circle class="pivot" cx="88" cy="12" r="6"/></svg></div>' +
+    '</div>' +
+    '<div class="pupitre">' +
+      '<div class="pup-style" data-style></div>' +
+      '<h3 class="pup-titre" data-titre></h3>' +
+      '<div class="pup-qui" data-qui></div>' +
+      '<div class="pup-onde"><canvas data-onde></canvas></div>' +
+      '<div class="pup-bas">' +
+        '<button class="jeton" type="button" data-jeton aria-label="Écouter">' + LIRE + '</button>' +
+        '<span class="pup-t" data-tc>0:00</span>' +
+        '<div class="molette" data-molette role="slider" tabindex="0" aria-label="Position dans le morceau"' +
+          ' aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i><u></u></div>' +
+        '<span class="pup-t fin" data-td>—:—</span>' +
+      '</div>' +
+      '<p class="pup-recit" data-recit></p>' +
+      '<blockquote class="pup-vers" data-vers></blockquote>' +
+    '</div>';
+
+  P.disque  = P.el.querySelector('.disque');
+  P.canvas  = P.el.querySelector('[data-onde]');
+  P.pinceau = P.canvas.getContext('2d');
+  P.molette = P.el.querySelector('[data-molette]');
+  P.jeton   = P.el.querySelector('[data-jeton]');
+
+  /** Installe la platine dans un cadre. Le nœud est déplacé, pas cloné. */
+  P.el.querySelector('[data-cadre]').appendChild(guilloche());
+
+  /** Installe la platine dans un cadre. Le nœud est déplacé, pas cloné. */
+  P.poser = function (hote) {
+    if (!hote || hote === P.sur) return;
+    hote.appendChild(P.el);
+    P.sur = hote;
+    P.taillerCanvas();
+  };
+
+  P.charger = function (t, jouer) {
+    P.piste = t;
+    P.el.querySelector('[data-ini]').textContent = ini(t.who || t.title);
+    P.el.querySelector('[data-style]').textContent = t.style + (t.lieu ? '  ·  ' + t.lieu : '');
+    P.el.querySelector('[data-titre]').textContent = t.title;
+    P.el.querySelector('[data-qui]').textContent = 'Pour ' + t.who;
+    P.el.querySelector('[data-recit]').textContent = t.story || '';
+    var v = P.el.querySelector('[data-vers]');
+    v.textContent = t.lyrics || '';
+    v.style.display = t.lyrics ? '' : 'none';
+    P.el.querySelector('[data-td]').textContent = '—:—';
+    P.el.querySelector('[data-tc]').textContent = '0:00';
+    P.molette.querySelector('i').style.width = '0';
+    P.molette.querySelector('u').style.left = '0';
+    if (jouer) P.jouer(t); else P.stop();
+  };
+
+  P.brancher = function () {
+    if (P.ctx) return;
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
-      ctx = new AC();
-      source = ctx.createMediaElementSource(audio);
-      analyseur = ctx.createAnalyser();
-      analyseur.fftSize = 128; analyseur.smoothingTimeConstant = .78;
-      spectre = new Uint8Array(analyseur.frequencyBinCount);
-      source.connect(analyseur); analyseur.connect(ctx.destination);
-    } catch (e) { ctx = null; analyseur = null; }
-  }
+      P.ctx = new AC();
+      P.analyseur = P.ctx.createAnalyser();
+      P.analyseur.fftSize = 256;
+      P.analyseur.smoothingTimeConstant = .8;
+      P.spectre = new Uint8Array(P.analyseur.frequencyBinCount);
+      P.ctx.createMediaElementSource(P.audio).connect(P.analyseur);
+      P.analyseur.connect(P.ctx.destination);
+    } catch (e) { P.ctx = null; P.analyseur = null; }
+  };
 
-  function jouer(piste, vue) {
-    /* Relancer la même piste = mettre en pause */
-    if (courant && courant.vue === vue && courant.piste === piste && !audio.paused) { audio.pause(); return; }
-    if (courant && (courant.vue !== vue || courant.piste !== piste)) courant.vue.arret(courant.piste);
-    courant = { piste: piste, vue: vue };
-    brancher();
-    if (ctx && ctx.state === 'suspended') ctx.resume();
-    if (audio.src.indexOf(piste.audio) === -1) { audio.src = piste.audio; audio.currentTime = 0; }
-    audio.play().catch(function () { vue.arret(piste); });
-  }
+  P.jouer = function (t) {
+    if (t && t !== P.piste) { P.charger(t, true); return; }
+    P.brancher();
+    if (P.ctx && P.ctx.state === 'suspended') P.ctx.resume();
+    if (!P.piste) return;
+    if (P.audio.src.indexOf(P.piste.audio) === -1) { P.audio.src = P.piste.audio; P.audio.currentTime = 0; }
+    P.audio.play().catch(function () { P.stop(); });
+  };
+  P.stop = function () { if (!P.audio.paused) P.audio.pause(); };
+  P.bascule = function () { if (P.audio.paused) P.jouer(); else P.stop(); };
 
-  audio.addEventListener('play',  function () { if (courant) courant.vue.marche(courant.piste); });
-  audio.addEventListener('pause', function () { if (courant) courant.vue.arret(courant.piste); });
-  audio.addEventListener('ended', function () { if (courant) { courant.vue.arret(courant.piste); courant.vue.suivant && courant.vue.suivant(); } });
-  audio.addEventListener('timeupdate', function () {
-    if (!courant || !audio.duration) return;
-    courant.vue.avance(courant.piste, audio.currentTime / audio.duration, audio.currentTime, audio.duration);
+  P.jeton.addEventListener('click', P.bascule);
+  P.audio.addEventListener('play',  function () { P.el.classList.add('joue'); P.jeton.innerHTML = PAUSE; prevenir(); });
+  P.audio.addEventListener('pause', function () { P.el.classList.remove('joue'); P.jeton.innerHTML = LIRE; prevenir(); });
+  P.audio.addEventListener('ended', function () { P.el.classList.remove('joue'); P.jeton.innerHTML = LIRE; prevenir('fin'); });
+  P.audio.addEventListener('timeupdate', function () {
+    var d = P.audio.duration;
+    if (!d || !isFinite(d)) return;
+    var r = P.audio.currentTime / d;
+    P.molette.querySelector('i').style.width = (r * 100) + '%';
+    P.molette.querySelector('u').style.left = (r * 100) + '%';
+    P.molette.setAttribute('aria-valuenow', Math.round(r * 100));
+    P.el.querySelector('[data-tc]').textContent = mmss(P.audio.currentTime);
+    P.el.querySelector('[data-td]').textContent = '−' + mmss(d - P.audio.currentTime);
+  });
+  P.audio.addEventListener('loadedmetadata', function () {
+    P.el.querySelector('[data-td]').textContent = '−' + mmss(P.audio.duration);
   });
 
-  /* Une seule boucle d'animation pour tout le monde */
-  var lueur = 0;
-  (function boucle() {
-    var v = 0;
-    if (analyseur && !audio.paused) {
-      analyseur.getByteFrequencyData(spectre);
-      var somme = 0;
-      for (var i = 0; i < spectre.length; i++) somme += spectre[i] / 255;
-      v = Math.min(1, Math.pow(somme / spectre.length, .62) * 1.5);
-    } else if (!audio.paused) {
-      /* Sans analyseur (Safari strict, mouvement réduit) : une respiration */
-      v = .4 + Math.sin(Date.now() / 420) * .22;
+  function prevenir(quoi) { for (var i = 0; i < P.ecoute.length; i++) P.ecoute[i](P.piste, !P.audio.paused, quoi); }
+
+  /* La molette : on saisit et on glisse, comme sur un vrai appareil */
+  (function () {
+    var pris = false;
+    function place(e) {
+      var r = P.molette.getBoundingClientRect();
+      var x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      if (P.audio.duration) P.audio.currentTime = x * P.audio.duration;
+      P.molette.querySelector('i').style.width = (x * 100) + '%';
+      P.molette.querySelector('u').style.left = (x * 100) + '%';
     }
-    lueur += (v - lueur) * (v > lueur ? .3 : .07);
-    for (var k = 0; k < abonnes.length; k++) abonnes[k](lueur, spectre, !audio.paused);
+    P.molette.addEventListener('pointerdown', function (e) {
+      pris = true; P.molette.setPointerCapture(e.pointerId); place(e); e.preventDefault();
+    });
+    P.molette.addEventListener('pointermove', function (e) { if (pris) place(e); });
+    P.molette.addEventListener('pointerup',   function () { pris = false; });
+    P.molette.addEventListener('keydown', function (e) {
+      if (!P.audio.duration) return;
+      if (e.key === 'ArrowRight') { P.audio.currentTime = Math.min(P.audio.duration, P.audio.currentTime + 5); e.preventDefault(); }
+      if (e.key === 'ArrowLeft')  { P.audio.currentTime = Math.max(0, P.audio.currentTime - 5); e.preventDefault(); }
+      if (e.key === ' ' || e.key === 'Enter') { P.bascule(); e.preventDefault(); }
+    });
+  })();
+
+  /* ─── Le canvas du spectre ───
+     Un tracé miroir : la moitié haute dessinée, la basse repliée à
+     l'opacité d'un reflet. Vingt <div> ne donnent pas cette courbe. */
+  P.taillerCanvas = function () {
+    var r = P.canvas.getBoundingClientRect();
+    if (!r.width) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    P.canvas.width = Math.round(r.width * dpr);
+    P.canvas.height = Math.round(r.height * dpr);
+    P.pinceau.setTransform(dpr, 0, 0, dpr, 0, 0);
+    P.larg = r.width; P.haut = r.height;
+  };
+  addEventListener('resize', function () { P.taillerCanvas(); });
+
+  P.dessiner = function (joue) {
+    if (!P.larg) return;
+    var c = P.pinceau, L = P.larg, H = P.haut, base = H * .68;
+    c.clearRect(0, 0, L, H);
+
+    var N = 56, pas = L / N, larg = Math.max(1.5, pas * .34);
+    var g = c.createLinearGradient(0, base - H * .55, 0, base);
+    g.addColorStop(0, 'rgba(246,236,201,.95)');
+    g.addColorStop(.45, 'rgba(227,201,119,.85)');
+    g.addColorStop(1, 'rgba(151,128,60,.55)');
+
+    for (var i = 0; i < N; i++) {
+      var v;
+      if (joue && P.spectre) {
+        /* Les bacs utiles d'un morceau tiennent dans le premier tiers de
+           l'analyse : on s'y tient, et l'on relève les aigus qui décroissent
+           naturellement, sans quoi la moitié droite du tracé reste plate. */
+        var k = Math.min(P.spectre.length - 1,
+                Math.floor(Math.pow(i / N, 1.22) * (P.spectre.length * .38)));
+        v = Math.pow(P.spectre[k] / 255, .68) * (.72 + (i / N) * 1.05);
+        v = Math.min(1, v);
+      } else if (joue) {
+        v = .18 + Math.abs(Math.sin(Date.now() / 340 + i * .38)) * .4 * (.4 + P.lueur);
+      } else {
+        v = .035 + Math.abs(Math.sin(i * .7)) * .028;   /* repos : une ligne à peine ondulée */
+      }
+      var h = Math.max(1.5, v * base * .92);
+      var x = i * pas + (pas - larg) / 2;
+
+      c.fillStyle = g;
+      c.globalAlpha = .92;
+      arrondi(c, x, base - h, larg, h, larg / 2);
+
+      /* Le reflet sous la ligne de sol */
+      c.globalAlpha = .17;
+      arrondi(c, x, base + 1, larg, h * .42, larg / 2);
+    }
+    c.globalAlpha = 1;
+
+    /* La ligne de sol, en or très pâle */
+    c.fillStyle = 'rgba(201,168,76,.14)';
+    c.fillRect(0, base, L, .5);
+  };
+  function arrondi(c, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath(); c.fill();
+  }
+
+  /* ─── La boucle : lumière, inertie du disque, spectre ─── */
+  (function boucle() {
+    var joue = !P.audio.paused && !P.audio.ended;
+    var v = 0;
+    if (P.analyseur && joue) {
+      P.analyseur.getByteFrequencyData(P.spectre);
+      var s = 0;
+      for (var i = 0; i < P.spectre.length; i++) s += P.spectre[i] / 255;
+      v = Math.min(1, Math.pow(s / P.spectre.length, .6) * 1.55);
+    } else if (joue) {
+      v = .42 + Math.sin(Date.now() / 430) * .2;   /* sans analyseur : une respiration */
+    }
+    /* Montée franche, descente lente : une lumière retombe doucement */
+    P.lueur += (v - P.lueur) * (v > P.lueur ? .3 : .06);
+    P.el.style.setProperty('--lueur', P.lueur.toFixed(3));
+
+    /* Le disque a une masse : il monte en vitesse et ralentit,
+       il ne s'arrête pas net comme une animation qu'on coupe. */
+    var cible = joue ? (REDUIT ? 0 : .42) : 0;
+    P.vitesse += (cible - P.vitesse) * (joue ? .022 : .014);
+    if (P.vitesse > .0015) { P.angle = (P.angle + P.vitesse) % 360;
+      P.disque.style.transform = 'rotate(' + P.angle.toFixed(2) + 'deg)'; }
+
+    P.dessiner(joue);
     requestAnimationFrame(boucle);
   })();
 
-  /* ═══ Les données : les vraies fiches du site ═══ */
-  var SECOURS = [];
+  /* ════════════════════════════════════════════════════════════
+     Les données : les vraies fiches du site
+     ════════════════════════════════════════════════════════════ */
   fetch('assets/data/content.json').then(function (r) { return r.json(); })
     .then(function (d) { batir((d.demos || []).filter(function (t) { return t.visible !== false; })); })
-    .catch(function () { batir(SECOURS); });
+    .catch(function () {
+      document.querySelector('main').innerHTML =
+        '<p style="padding:4rem 0;text-align:center;color:var(--ash)">Le catalogue n\'a pas pu être chargé.</p>';
+    });
 
+  var VUES = {};
   function batir(T) {
-    if (!T.length) { document.querySelector('main').innerHTML =
-      '<p style="padding:3rem 0;color:var(--ash)">Le contenu n\'a pas pu être chargé. Ouvrez cette page depuis le site, pas depuis le fichier.</p>'; return; }
-    sillon(T); cercle(T); table(T); mesurer();
+    if (!T.length) return;
+    VUES.platine = vuePlatine(T);
+    VUES.cercle  = vueCercle(T);
+    VUES.table   = vueTable(T);
+    VUES.platine.entrer();
+    mesurer();
   }
 
   /* ────────────────────────────────────────────────────────────
-     1 — LE SILLON
+     I — LA PLATINE
      ──────────────────────────────────────────────────────────── */
-  function sillon(T) {
-    var piste = document.getElementById('piste-sillon');
-    var lames = T.map(function (t, i) {
-      var el = document.createElement('article');
-      el.className = 'lame';
-      el.innerHTML =
-        '<div class="lame-haut">' +
-          '<div class="sceau"><span>' + esc(init(t.who || t.title)) + '</span></div>' +
-          '<button class="lire" type="button" aria-label="Écouter ' + esc(t.title) + '">' + LIRE + '</button>' +
-          '<span class="duree" data-duree>—:—</span>' +
-        '</div>' +
-        '<div class="onde" aria-hidden="true">' + Array(19).join('<i></i>') + '<i></i></div>' +
-        '<div class="jauge"><i></i></div>' +
-        '<div class="lame-corps">' +
-          '<div class="lame-style">' + esc(t.style) + (t.lieu ? ' · ' + esc(t.lieu) : '') + '</div>' +
-          '<h3 class="lame-titre">' + esc(t.title) + '</h3>' +
-          '<div class="lame-qui">Pour ' + esc(t.who) + '</div>' +
-          '<div class="lame-plus">' +
-            '<p class="lame-recit">' + esc(t.story) + '</p>' +
-            (t.lyrics ? '<blockquote class="lame-vers">' + esc(t.lyrics) + '</blockquote>' : '') +
-          '</div>' +
-        '</div>';
-      piste.appendChild(el);
-      el.querySelector('.lire').addEventListener('click', function (e) { e.stopPropagation(); jouer(t, vue); });
-      el.addEventListener('click', function () { el.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' }); });
-      return el;
-    });
-
-    var vue = {
-      marche: function (t) { var el = lames[T.indexOf(t)]; el.classList.add('joue','actif'); el.querySelector('.lire').innerHTML = PAUSE; el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); },
-      arret:  function (t) { var el = lames[T.indexOf(t)]; el.classList.remove('joue'); el.querySelector('.lire').innerHTML = LIRE; },
-      avance: function (t, r, c, d) { var el = lames[T.indexOf(t)];
-        el.querySelector('.jauge i').style.width = (r * 100) + '%';
-        el.querySelector('[data-duree]').textContent = mmss(d - c); },
-      suivant: function () { var i = T.indexOf(courant.piste); if (i + 1 < T.length) jouer(T[i + 1], vue); }
-    };
-
-    /* La proximité au centre pilote l'échelle et l'inclinaison. On la
-       recalcule au défilement, pas à chaque image : c'est un scroll,
-       pas une animation continue. */
-    var attente = null;
-    function proximite() {
-      var c = piste.scrollLeft + piste.clientWidth / 2;
-      for (var i = 0; i < lames.length; i++) {
-        var el = lames[i];
-        var m = el.offsetLeft + el.offsetWidth / 2;
-        var d = (m - c) / (el.offsetWidth + 14);
-        el.style.setProperty('--decal', Math.max(-2.4, Math.min(2.4, d)).toFixed(3));
-        el.style.setProperty('--proche', Math.max(0, 1 - Math.abs(d) * .62).toFixed(3));
-      }
-    }
-    piste.addEventListener('scroll', function () {
-      if (attente) return;
-      attente = requestAnimationFrame(function () { attente = null; proximite(); });
-    }, { passive: true });
-    proximite();
-
-    abonnes.push(function (l, sp, joue) {
-      if (!courant || courant.vue !== vue) return;
-      var el = lames[T.indexOf(courant.piste)];
-      el.style.setProperty('--lueur', l.toFixed(3));
-      barres(el, sp, joue, l);
-    });
-  }
-
-  /* Le dessin du spectre, identique dans les trois vues */
-  function barres(el, sp, joue, l) {
-    var b = el.querySelectorAll('.onde i');
-    if (!b.length) return;
-    for (var i = 0; i < b.length; i++) {
-      var h = 2;
-      if (joue && sp) h = 2 + Math.pow(sp[Math.floor(i * sp.length / b.length)] / 255, .72) * 18;
-      else if (joue) h = 2 + Math.abs(Math.sin(Date.now() / 300 + i * .5)) * 14 * l;
-      b[i].style.height = h.toFixed(1) + 'px';
-    }
-  }
-
-  /* ────────────────────────────────────────────────────────────
-     2 — LE CERCLE
-     ──────────────────────────────────────────────────────────── */
-  function cercle(T) {
-    var arc = document.getElementById('arc');
-    var zone = document.getElementById('cercle-texte');
+  function vuePlatine(T) {
+    var hote = document.getElementById('hote-platine');
+    var frise = document.getElementById('frise');
     var pos = 0;
 
-    var pieces = T.map(function (t, i) {
+    var pastilles = T.map(function (t, i) {
+      var b = document.createElement('button');
+      b.className = 'pastille';
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-current', i === 0 ? 'true' : 'false');
+      b.innerHTML = '<span class="jet"><span>' + esc(ini(t.who || t.title)) + '</span></span>' +
+                    '<span class="past-nom">' + esc((t.who || '').split(',')[0]) + '</span>';
+      b.addEventListener('click', function () { aller(i, true); });
+      frise.appendChild(b);
+      return b;
+    });
+
+    function marquer() {
+      for (var i = 0; i < pastilles.length; i++)
+        pastilles[i].setAttribute('aria-current', i === pos ? 'true' : 'false');
+      pastilles[pos].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    function aller(i, jouer) {
+      pos = Math.max(0, Math.min(T.length - 1, i));
+      marquer();
+      P.poser(hote);
+      P.charger(T[pos], jouer);
+    }
+
+    P.ecoute.push(function (t, joue, quoi) {
+      if (courante !== 'platine') return;
+      if (quoi === 'fin' && pos + 1 < T.length) aller(pos + 1, true);
+    });
+
+    return {
+      entrer: function () { P.poser(hote); P.charger(T[pos], false); marquer(); },
+      quitter: function () {}
+    };
+  }
+
+  /* ────────────────────────────────────────────────────────────
+     II — LE CERCLE
+     ──────────────────────────────────────────────────────────── */
+  function vueCercle(T) {
+    var arc = document.getElementById('arc');
+    var hote = document.getElementById('hote-cercle');
+    var pos = 0;
+    document.getElementById('rang-t').textContent = T.length;
+
+    var meds = T.map(function (t, i) {
       var el = document.createElement('div');
-      el.className = 'arc-piece';
+      el.className = 'med';
       el.setAttribute('role', 'option');
-      el.innerHTML = '<div class="sceau"><span>' + esc(init(t.who || t.title)) + '</span></div>';
-      el.addEventListener('click', function () { aller(i); });
+      el.innerHTML = '<div class="med-rond"><span>' + esc(ini(t.who || t.title)) + '</span></div>';
+      el.addEventListener('click', function () { if (i !== pos) aller(i, true); });
       arc.appendChild(el);
       return el;
     });
 
     function placer() {
-      for (var i = 0; i < pieces.length; i++) {
+      for (var i = 0; i < meds.length; i++) {
         var d = i - pos;
-        pieces[i].style.setProperty('--d', d);
-        pieces[i].classList.toggle('centre', i === pos);
-        pieces[i].setAttribute('data-loin', Math.abs(d) > 3.4 ? '1' : '0');
-        pieces[i].setAttribute('aria-selected', i === pos ? 'true' : 'false');
+        meds[i].style.setProperty('--d', d);
+        meds[i].classList.toggle('centre', i === pos);
+        meds[i].setAttribute('data-loin', Math.abs(d) > 3.4 ? '1' : '0');
+        meds[i].setAttribute('aria-selected', i === pos ? 'true' : 'false');
       }
+      document.getElementById('rang-n').textContent = pos + 1;
     }
-
-    function peindre() {
-      var t = T[pos];
-      zone.innerHTML =
-        '<div class="cercle-bloc">' +
-          '<div class="cercle-style">' + esc(t.style) + (t.lieu ? ' · ' + esc(t.lieu) : '') + '</div>' +
-          '<h3 class="cercle-titre">' + esc(t.title) + '</h3>' +
-          '<div class="cercle-qui">Pour ' + esc(t.who) + '</div>' +
-          (t.lyrics ? '<blockquote class="cercle-vers">' + esc(t.lyrics) + '</blockquote>' : '') +
-          '<div class="cercle-cmd">' +
-            '<button class="lire" type="button" aria-label="Écouter ' + esc(t.title) + '">' + LIRE + '</button>' +
-            '<div class="onde" aria-hidden="true">' + Array(23).join('<i></i>') + '<i></i></div>' +
-            '<span class="duree" data-duree>—:—</span>' +
-          '</div>' +
-          '<div class="jauge" style="max-width:26rem;margin:.7rem auto 0"><i></i></div>' +
-          '<p class="cercle-recit">' + esc(t.story) + '</p>' +
-        '</div>';
-      zone.querySelector('.lire').addEventListener('click', function () { jouer(t, vue); });
-      if (courant && courant.piste === t && !audio.paused) vue.marche(t);
-    }
-
-    function aller(i) {
+    function aller(i, jouer) {
       pos = Math.max(0, Math.min(T.length - 1, i));
-      placer(); peindre();
+      placer();
+      P.poser(hote);
+      P.charger(T[pos], jouer);
     }
 
-    var vue = {
-      marche: function (t) { var i = T.indexOf(t); if (i !== pos) aller(i);
-        pieces[i].classList.add('joue');
-        var b = zone.querySelector('.lire'); if (b) b.innerHTML = PAUSE; },
-      arret:  function (t) { var i = T.indexOf(t); pieces[i].classList.remove('joue');
-        var b = zone.querySelector('.lire'); if (b && i === pos) b.innerHTML = LIRE; },
-      avance: function (t, r, c, d) {
-        if (T.indexOf(t) !== pos) return;
-        var j = zone.querySelector('.jauge i'); if (j) j.style.width = (r * 100) + '%';
-        var u = zone.querySelector('[data-duree]'); if (u) u.textContent = mmss(d - c);
-      },
-      suivant: function () { if (pos + 1 < T.length) { aller(pos + 1); jouer(T[pos], vue); } }
-    };
-
-    /* Glisser du doigt fait tourner l'arc */
-    var x0 = null, p0 = 0;
-    arc.addEventListener('pointerdown', function (e) { x0 = e.clientX; p0 = pos; arc.setPointerCapture(e.pointerId); });
+    /* Glisser fait tourner l'arc ; on ne repeint la platine qu'au relâché,
+       sinon on rechargerait douze morceaux en traversant l'arc. */
+    var x0 = null, p0 = 0, bouge = false;
+    arc.addEventListener('pointerdown', function (e) {
+      x0 = e.clientX; p0 = pos; bouge = false; arc.setPointerCapture(e.pointerId);
+    });
     arc.addEventListener('pointermove', function (e) {
       if (x0 === null) return;
-      var n = Math.round(p0 - (e.clientX - x0) / 72);
-      if (n !== pos && n >= 0 && n < T.length) { pos = n; placer(); }
+      var n = Math.round(p0 - (e.clientX - x0) / 70);
+      n = Math.max(0, Math.min(T.length - 1, n));
+      if (n !== pos) { pos = n; bouge = true; placer(); }
     });
-    arc.addEventListener('pointerup', function () { if (x0 !== null) { x0 = null; peindre(); } });
+    arc.addEventListener('pointerup', function () {
+      if (x0 === null) return;
+      x0 = null;
+      if (bouge) { P.poser(hote); P.charger(T[pos], !P.audio.paused); }
+    });
     arc.addEventListener('pointercancel', function () { x0 = null; });
     arc.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { aller(pos + 1); e.preventDefault(); }
-      if (e.key === 'ArrowLeft')  { aller(pos - 1); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { aller(pos + 1, !P.audio.paused); e.preventDefault(); }
+      if (e.key === 'ArrowLeft')  { aller(pos - 1, !P.audio.paused); e.preventDefault(); }
     });
     document.querySelectorAll('.fleche').forEach(function (b) {
-      b.addEventListener('click', function () { aller(pos + Number(b.dataset.pas)); });
+      b.addEventListener('click', function () { aller(pos + Number(b.dataset.pas), !P.audio.paused); });
     });
 
-    abonnes.push(function (l, sp, joue) {
-      if (!courant || courant.vue !== vue) return;
-      var i = T.indexOf(courant.piste);
-      pieces[i].style.setProperty('--lueur', l.toFixed(3));
-      if (i === pos) barres(zone, sp, joue, l);
+    P.ecoute.push(function (t, joue, quoi) {
+      if (courante !== 'cercle') return;
+      if (quoi === 'fin' && pos + 1 < T.length) aller(pos + 1, true);
     });
 
-    placer(); peindre();
+    return {
+      entrer: function () { placer(); P.poser(hote); P.charger(T[pos], false); },
+      quitter: function () {}
+    };
   }
 
   /* ────────────────────────────────────────────────────────────
-     3 — LA TABLE
+     III — LA TABLE
      ──────────────────────────────────────────────────────────── */
-  function table(T) {
+  function vueTable(T) {
     var hote = document.getElementById('table');
-    var ouverte = null;
+    var ouverte = null, pos = 0;
 
     var lignes = T.map(function (t, i) {
       var el = document.createElement('div');
       el.className = 'ligne';
       el.innerHTML =
         '<button class="ligne-tete" type="button" aria-expanded="false">' +
-          '<div class="sceau"><span>' + esc(init(t.who || t.title)) + '</span></div>' +
-          '<div class="ligne-mid">' +
-            '<div class="ligne-titre">' + esc(t.title) + '</div>' +
-            '<div class="ligne-sous">Pour ' + esc(t.who) + '</div>' +
-          '</div>' +
-          '<div class="ligne-droite">' +
-            '<span class="ligne-style">' + esc(t.style) + '</span>' +
-            '<svg class="ligne-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6"/></svg>' +
-          '</div>' +
+          '<span class="ligne-num">' + (i + 1 < 10 ? '0' : '') + (i + 1) + '</span>' +
+          '<span class="ligne-mid">' +
+            '<span class="ligne-titre">' + esc(t.title) + '</span>' +
+            '<span class="ligne-sous">Pour ' + esc(t.who) + '</span>' +
+          '</span>' +
+          '<span class="ligne-style">' + esc(t.style) + '</span>' +
+          '<svg class="ligne-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>' +
         '</button>' +
-        '<div class="ligne-corps"><div><div class="ligne-in">' +
-          '<div class="ligne-cmd">' +
-            '<button class="lire" type="button" aria-label="Écouter ' + esc(t.title) + '">' + LIRE + '</button>' +
-            '<div class="onde" aria-hidden="true">' + Array(27).join('<i></i>') + '<i></i></div>' +
-            '<span class="duree" data-duree>—:—</span>' +
-          '</div>' +
-          '<div class="jauge"><i></i></div>' +
-          '<p class="ligne-recit" style="margin-top:1rem">' + esc(t.story) + '</p>' +
-          (t.lyrics ? '<blockquote class="ligne-vers">' + esc(t.lyrics) + '</blockquote>' : '') +
-        '</div></div></div>';
+        '<div class="ligne-corps"><div><div class="ligne-hote"></div></div></div>';
       hote.appendChild(el);
-
-      var tete = el.querySelector('.ligne-tete');
-      tete.addEventListener('click', function () {
-        var deja = el.classList.contains('ouvert');
-        if (ouverte && ouverte !== el) {
-          ouverte.classList.remove('ouvert');
-          ouverte.querySelector('.ligne-tete').setAttribute('aria-expanded', 'false');
-        }
-        el.classList.toggle('ouvert', !deja);
-        tete.setAttribute('aria-expanded', String(!deja));
-        ouverte = deja ? null : el;
-        /* Ouvrir, c'est écouter : personne ne déplie une fiche pour la regarder */
-        if (!deja) jouer(t, vue); else if (courant && courant.piste === t) audio.pause();
-      });
-      el.querySelector('.lire').addEventListener('click', function (e) { e.stopPropagation(); jouer(t, vue); });
+      el.querySelector('.ligne-tete').addEventListener('click', function () { ouvrir(i); });
       return el;
     });
 
-    var vue = {
-      marche: function (t) { var el = lignes[T.indexOf(t)]; el.classList.add('joue'); el.querySelector('.lire').innerHTML = PAUSE; },
-      arret:  function (t) { var el = lignes[T.indexOf(t)]; el.classList.remove('joue'); el.querySelector('.lire').innerHTML = LIRE; },
-      avance: function (t, r, c, d) { var el = lignes[T.indexOf(t)];
-        el.querySelector('.jauge i').style.width = (r * 100) + '%';
-        el.querySelector('[data-duree]').textContent = mmss(d - c); },
-      suivant: function () { var i = T.indexOf(courant.piste); if (i + 1 < T.length) lignes[i + 1].querySelector('.ligne-tete').click(); }
-    };
+    function ouvrir(i) {
+      var el = lignes[i], deja = el.classList.contains('ouvert');
+      if (deja) { fermer(); P.stop(); return; }
+      if (ouverte) fermer();
+      pos = i;
+      el.classList.add('ouvert');
+      el.querySelector('.ligne-tete').setAttribute('aria-expanded', 'true');
+      ouverte = el;
+      /* Ouvrir, c'est écouter : personne ne déplie une fiche pour la regarder */
+      P.poser(el.querySelector('.ligne-hote'));
+      P.charger(T[i], true);
+    }
+    function fermer() {
+      if (!ouverte) return;
+      ouverte.classList.remove('ouvert');
+      ouverte.querySelector('.ligne-tete').setAttribute('aria-expanded', 'false');
+      ouverte = null;
+    }
 
-    abonnes.push(function (l, sp, joue) {
-      if (!courant || courant.vue !== vue) return;
-      var el = lignes[T.indexOf(courant.piste)];
-      el.style.setProperty('--lueur', l.toFixed(3));
-      barres(el, sp, joue, l);
+    P.ecoute.push(function (t, joue, quoi) {
+      if (courante !== 'table') return;
+      if (quoi === 'fin' && pos + 1 < T.length) ouvrir(pos + 1);
     });
+
+    return {
+      entrer: function () { /* rien n'est ouvert : la table se lit d'abord */ },
+      quitter: function () { fermer(); }
+    };
   }
 
-  /* ═══ Onglets ═══ */
+  /* ════════════════════════════════════════════════════════════
+     Onglets — la platine suit, elle ne se duplique pas
+     ════════════════════════════════════════════════════════════ */
+  var courante = 'platine';
   document.querySelectorAll('.ong').forEach(function (b) {
     b.addEventListener('click', function () {
+      var v = b.dataset.volet;
+      if (v === courante) return;
+      P.stop();
+      if (VUES[courante]) VUES[courante].quitter();
       document.querySelectorAll('.ong').forEach(function (o) { o.setAttribute('aria-selected', String(o === b)); });
-      document.querySelectorAll('.volet').forEach(function (v) { v.classList.toggle('actif', v.id === 'v' + '-' + b.dataset.volet); });
+      document.querySelectorAll('.volet').forEach(function (s) { s.classList.toggle('actif', s.id === 'v-' + v); });
+      courante = v;
+      if (VUES[v]) VUES[v].entrer();
+      P.taillerCanvas();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      mesurer();
+      setTimeout(mesurer, 60);
     });
   });
 
-  /* ═══ La mesure annoncée est mesurée, pas affirmée ═══
-     Chaque volet indique sa hauteur réelle ramenée à la largeur d'un
-     S25 : c'est le seul chiffre qui compte pour choisir. */
+  /* ═══ La hauteur annoncée est mesurée, pas affirmée ═══ */
   function mesurer() {
-    var cible = { sillon: '.sillon', cercle: '.cercle', table: '#table' };
+    var cible = { platine: '#v-platine .scene, #v-platine .frise', cercle: '#v-cercle .scene', table: '#table' };
     Object.keys(cible).forEach(function (k) {
-      var el = document.querySelector(cible[k]);
       var out = document.querySelector('[data-h="' + k + '"]');
-      if (!el || !out) return;
-      var h = Math.round(el.getBoundingClientRect().height);
-      out.textContent = h ? h + ' px  ·  ' + (h / 915).toFixed(1) + ' écran' + (h > 1373 ? 's' : '') : '—';
+      if (!out) return;
+      var h = 0;
+      document.querySelectorAll(cible[k]).forEach(function (e) { h += e.getBoundingClientRect().height; });
+      h = Math.round(h);
+      out.textContent = h ? h + ' px · ' + (h / 915).toFixed(1) + ' écran' + (h > 1373 ? 's' : '') : '—';
     });
   }
-  addEventListener('resize', mesurer);
+  addEventListener('resize', function () { setTimeout(mesurer, 120); });
 })();
 </script>
 </body>
