@@ -879,9 +879,8 @@ ul { list-style: none; }
 .reveal {
   opacity: 0; transform: translateY(26px) scale(.985);
   transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out);
-  will-change: opacity, transform;
 }
-.reveal.in { opacity: 1; transform: none; will-change: auto; }
+.reveal.in { opacity: 1; transform: none; }
 .reveal-d1 { transition-delay: 0.1s; }
 .reveal-d2 { transition-delay: 0.2s; }
 .reveal-d3 { transition-delay: 0.3s; }
@@ -2685,7 +2684,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   -webkit-mask: radial-gradient(circle, #000 26%, rgba(0,0,0,.35) 46%, transparent 66%);
           mask: radial-gradient(circle, #000 26%, rgba(0,0,0,.35) 46%, transparent 66%);
 }
-.guilloche svg { width: 100%; height: 100%; animation: rosace 120s linear infinite; }
+.guilloche svg { width: 100%; height: 100%; }
 .guilloche path { fill: none; stroke: var(--or); stroke-width: .28; vector-effect: non-scaling-stroke; }
 @keyframes rosace { to { transform: rotate(-360deg); } }
 
@@ -3094,7 +3093,9 @@ body.a-ecoute { padding-bottom: 5rem; }
 .orn-rosace.orn-vu .orn-svg path { stroke-dashoffset: 0; }
 .orn-rosace.orn-vu .orn-svg path:nth-child(2) { transition-delay: .35s; }
 .orn-rosace.orn-vu .orn-svg path:nth-child(3) { transition-delay: .7s; }
-.orn-rosace .orn-svg { animation: ornTourne 150s linear infinite; }
+/* Pas de rotation ici : un tour en 150 s ne se perçoit pas, et
+   redessiner des milliers de points à chaque image se paie sur un
+   téléphone. La gravure vit par son tracé, pas par son mouvement. */
 @keyframes ornTourne { to { transform: rotate(360deg); } }
 
 /* La section qui porte une rosette doit la contenir */
@@ -3167,7 +3168,7 @@ body.a-ecoute { padding-bottom: 5rem; }
           mask: radial-gradient(circle, transparent 34%, #000 44%, transparent 72%);
 }
 .embleme.orn-vu .emb-rosace { opacity: .5; }
-.emb-rosace .orn-svg { animation: ornTourne 110s linear infinite reverse; }
+
 
 /* La lumière qui balaie la médaille, comme sur une feuille d'or */
 .emb-lueur {

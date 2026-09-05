@@ -75,7 +75,7 @@
     var g = document.createElement('div');
     g.className = 'guilloche';
     g.setAttribute('aria-hidden', 'true');
-    g.innerHTML = ORN ? ORN.rosette(cle || 'melodia', { traits: 3, pas: 900 }) : '';
+    g.innerHTML = ORN ? ORN.rosette(cle || 'melodia', { traits: 3, pas: 380 }) : '';
     return g;
   }
 

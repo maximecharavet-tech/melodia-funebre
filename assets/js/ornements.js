@@ -64,7 +64,7 @@
     o = o || {};
     var d = des(graine(cle));
     var n = o.traits || 3;
-    var pas = o.pas || 700;
+    var pas = o.pas || 420;
     var svg = '<svg class="orn-svg" viewBox="-105 -105 210 210" aria-hidden="true" focusable="false">';
     for (var i = 0; i < n; i++) {
       /* Chaque passe est plus petite et plus dense que la précédente :
@@ -86,7 +86,7 @@
   function sceau(cle, o) {
     o = o || {};
     return '<span class="orn-sceau" aria-hidden="true">' +
-      rosette(cle, { traits: o.traits || 2, pas: o.pas || 240 }) + '</span>';
+      rosette(cle, { traits: o.traits || 2, pas: o.pas || 200 }) + '</span>';
   }
 
   /* ─── La portée ───
