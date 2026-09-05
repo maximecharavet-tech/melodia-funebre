@@ -60,12 +60,17 @@ const FAQ = [
     a: "Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain." }
 ];
 
-const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae'];
+const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae', 'Rock'];
 
 /* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
    propriétaire ajoute ses musiques depuis sa console, pas ici. */
 const TRACKS = [
+  { id: "demo-15", title: "Le rocker au cœur d'or", who: "Gilbert, rocker de Lyon", lieu: "Lyon",
+    style: "Rock", file: "audio/gilbert.mp3",
+    story: "Né un soir de 1956 dans un quartier populaire de Lyon. À quinze ans il entend à la radio une voix qui hurlait comme un loup — c'était Johnny, et il a couru acheter son premier 45 tours. À dix-huit ans, une vieille Triumph retapée de ses mains, et toutes les routes de France pour suivre la tournée : Paris, Marseille, Toulouse. Il a épousé Martine, qui supportait les vinyles et les week-ends sur la route. À soixante-dix ans il est allé au dernier concert, au Stade de France ; il a levé les bras comme à vingt ans et dit à son fils : « un jour, tu iras pour moi ». Il est rentré, a mis son vinyle préféré, et s'est endormi le sourire aux lèvres. Aujourd'hui les motos sont alignées devant son garage et ses petits-enfants ont découvert Johnny ce soir-là. Guitares électriques, orgue Hammond, et une foule qui chante.",
+    lyrics: "Oh Gilbert, le rocker au cœur d'or\nTu as vécu ta vie comme un concert\nEt tu t'en es allé comme une guitare électrique\nVers la scène d'en haut, là où les rockers ne s'éteignent jamais",
+    brief: "fidèle · bruyant · tendre" },
   { id: "demo-13", title: "Ta lumière reste", who: "Anthony, routard de la vie", lieu: "Paris et le monde",
     style: "Reggae", file: "audio/anthony.mp3",
     story: "Né en 1976 dans une banlieue grise, loin des tropiques, avec le one-drop dans le cœur. À dix-huit ans, son premier sac : Kingston, Addis-Abeba, les étoiles du Sahara. Il parlait cinq langues, mais le patwa était son cœur, et il revenait à Noël avec des masques d'Afrique et des pierres d'Inde. L'année de ses cinquante ans il est reparti pour l'Éthiopie — « cette fois, je reste un peu plus longtemps » — et n'est jamais revenu. Ses amis ont ramené son sac à dos, mis Exodus à fond dans le jardin de son vieux squat parisien, et dansé jusqu'au lever du soleil. Melodica, basse lourde, batterie one-drop et échos dub.",

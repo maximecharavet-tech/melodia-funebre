@@ -10,6 +10,18 @@
   },
   "demos": [
     {
+      "id": "demo-15",
+      "visible": true,
+      "title": "Le rocker au cœur d'or",
+      "who": "Gilbert, rocker de Lyon",
+      "lieu": "Lyon",
+      "style": "Rock",
+      "audio": "audio/gilbert.mp3",
+      "story": "Né un soir de 1956 dans un quartier populaire de Lyon. À quinze ans il entend à la radio une voix qui hurlait comme un loup — c'était Johnny, et il a couru acheter son premier 45 tours. À dix-huit ans, une vieille Triumph retapée de ses mains, et toutes les routes de France pour suivre la tournée : Paris, Marseille, Toulouse. Il a épousé Martine, qui supportait les vinyles et les week-ends sur la route. À soixante-dix ans il est allé au dernier concert, au Stade de France ; il a levé les bras comme à vingt ans et dit à son fils : « un jour, tu iras pour moi ». Il est rentré, a mis son vinyle préféré, et s'est endormi le sourire aux lèvres. Aujourd'hui les motos sont alignées devant son garage et ses petits-enfants ont découvert Johnny ce soir-là. Guitares électriques, orgue Hammond, et une foule qui chante.",
+      "lyrics": "Oh Gilbert, le rocker au cœur d'or\nTu as vécu ta vie comme un concert\nEt tu t'en es allé comme une guitare électrique\nVers la scène d'en haut, là où les rockers ne s'éteignent jamais",
+      "brief": "fidèle · bruyant · tendre"
+    },
+    {
       "id": "demo-13",
       "visible": true,
       "title": "Ta lumière reste",
