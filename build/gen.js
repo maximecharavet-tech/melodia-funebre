@@ -1,6 +1,32 @@
 /* Générateur des pages statiques Melodia — sorties committées telles quelles */
 const fs = require('fs');
 const path = require('path');
+
+/* ─── Empreinte des fichiers servis ───
+   Les feuilles et les scripts sont mis en cache un jour, avec une
+   semaine de tolérance en plus : une correction n'atteignait donc pas
+   un visiteur déjà venu avant le lendemain. On l'a payé une fois — la
+   clé Supabase ajoutée à config.js ne parvenait pas au navigateur, et
+   le site restait en mode démo en affichant « mot de passe incorrect »
+   sur un mot de passe juste.
+
+   Chaque adresse porte désormais une empreinte de son contenu : le
+   cache reste long, et le moindre octet changé donne une adresse
+   neuve, donc un téléchargement immédiat. */
+const crypto = require('crypto');
+const RACINE_ACTIFS = require('path').join(__dirname, '..');
+const empreintes = {};
+function versionne(chemin) {
+  if (!(chemin in empreintes)) {
+    try {
+      const octets = require('fs').readFileSync(require('path').join(RACINE_ACTIFS, chemin));
+      empreintes[chemin] = crypto.createHash('sha1').update(octets).digest('hex').slice(0, 8);
+    } catch (e) { empreintes[chemin] = ''; }
+  }
+  const e = empreintes[chemin];
+  return e ? chemin + '?v=' + e : chemin;
+}
+
 const OUT = process.argv[2] || '.';
 
 const SITE = 'https://melodia-funebre.fr';
@@ -71,7 +97,7 @@ ${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta prop
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="${versionne('assets/css/style.css')}">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -227,7 +253,7 @@ ${p.intro ? intro() + '\n' : ''}${nav(/hero-video/.test(p.body || ''))}
 ${p.body}
 </main>
 ${footer()}
-${p.sticky === false ? '' : stickyCta() + '\n'}${scripts.map(s => `<script src="${s}"></script>`).join('\n')}
+${p.sticky === false ? '' : stickyCta() + '\n'}${scripts.map(s => `<script src="${versionne(s)}"></script>`).join('\n')}
 ${p.inline || ''}
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->
