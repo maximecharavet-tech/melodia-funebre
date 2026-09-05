@@ -873,8 +873,15 @@ ul { list-style: none; }
 /* ═══════════════════════════════════════════════════════════════
    RÉVÉLATION AU DÉFILEMENT
    ═══════════════════════════════════════════════════════════════ */
-.reveal { opacity: 0; transform: translateY(26px); transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out); }
-.reveal.in { opacity: 1; transform: none; }
+/* La montée porte aussi un très léger rapprochement : le bloc arrive
+   vers le lecteur au lieu de simplement glisser. Deux centièmes
+   d'échelle suffisent — au-delà, cela se voit et cela fatigue. */
+.reveal {
+  opacity: 0; transform: translateY(26px) scale(.985);
+  transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out);
+  will-change: opacity, transform;
+}
+.reveal.in { opacity: 1; transform: none; will-change: auto; }
 .reveal-d1 { transition-delay: 0.1s; }
 .reveal-d2 { transition-delay: 0.2s; }
 .reveal-d3 { transition-delay: 0.3s; }
@@ -2911,13 +2918,25 @@ body.a-ecoute { padding-bottom: 5rem; }
     0 6px 16px -8px rgba(0, 0, 0, .9);
   transition: box-shadow .55s, transform .55s cubic-bezier(.22, 1, .36, 1);
 }
-/* Le guilloché du lecteur, en écho : de fines nervures concentriques */
-.jet::before {
-  content: ''; position: absolute; inset: 6px; border-radius: 50%; pointer-events: none;
-  background: repeating-radial-gradient(circle at 50% 50%,
-    rgba(201, 168, 76, .085) 0 .5px, transparent .5px 3px);
-  opacity: .55; transition: opacity .55s;
+/* Chaque jeton porte SA gravure, tirée du prénom : celle d'Odette n'est
+   pas celle d'Antone. Les cercles concentriques d'avant étaient les
+   mêmes pour les douze — un motif, pas une identité. */
+.jet .orn-sceau {
+  position: absolute; inset: 4px; border-radius: 50%; overflow: hidden;
+  pointer-events: none; z-index: 1; opacity: .34; transition: opacity .55s;
+  /* La gravure se tient en couronne : au centre, l'initiale doit rester
+     lisible. À pleine surface, la moire la noyait. C'est ainsi qu'est
+     frappée une vraie médaille — le champ reste net, le pourtour est
+     travaillé. */
+  -webkit-mask: radial-gradient(circle, transparent 30%, #000 48%, #000 100%);
+          mask: radial-gradient(circle, transparent 30%, #000 48%, #000 100%);
 }
+.jet .orn-sceau .orn-svg path {
+  stroke: var(--or); stroke-width: .4; stroke-dasharray: none; stroke-dashoffset: 0;
+  transition: none;
+}
+.pastille[aria-current="true"] .jet .orn-sceau { opacity: .62; }
+.pastille[aria-current="true"].joue .jet .orn-sceau { animation: rosaceJeton 44s linear infinite; }
 .jet-ini {
   position: relative; z-index: 2; line-height: 1;
   font-family: var(--ff-d); font-weight: 300; font-size: 1.42rem;
@@ -2988,8 +3007,6 @@ body.a-ecoute { padding-bottom: 5rem; }
     inset 0 0 18px rgba(201, 168, 76, calc(.06 + var(--lueur, 0) * .16)),
     0 0 calc(14px + var(--lueur, 0) * 26px) -6px rgba(201, 168, 76, calc(.35 + var(--lueur, 0) * .45));
 }
-.pastille[aria-current="true"] .jet::before { opacity: .9; }
-.pastille[aria-current="true"].joue .jet::before { animation: rosaceJeton 44s linear infinite; }
 @keyframes rosaceJeton { to { transform: rotate(360deg); } }
 .pastille[aria-current="true"] .jet-ini { opacity: 1; }
 .pastille[aria-current="true"] .jet img { opacity: .95; }
@@ -3018,7 +3035,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 
 @media (prefers-reduced-motion: reduce) {
   .jet-vu i { animation: none !important; }
-  .pastille[aria-current="true"].joue .jet::before { animation: none !important; }
+  .pastille[aria-current="true"].joue .jet .orn-sceau { animation: none !important; }
 }
 
 /* Sans JavaScript, la grille d'origine reste : c'est elle qui porte les
@@ -3199,3 +3216,32 @@ body.a-ecoute { padding-bottom: 5rem; }
 /* La portée qui ferme chaque page : plus discrète que celles qui
    séparent deux sections, elle marque la fin du propos. */
 .orn-portee-pied { height: 62px; opacity: .6; }
+
+
+/* ─── Le sceau ───
+   La gravure à la taille d'une médaille, posée DANS son hôte. Elle se
+   trace comme les grandes rosettes, mais plus vite : à soixante pixels,
+   trois secondes de tracé passeraient pour un défaut d'affichage. */
+.a-sceau { position: relative; }
+.orn-sceau { display: block; }
+.orn-sceau .orn-svg path {
+  stroke-width: .55; stroke-dasharray: 900; stroke-dashoffset: 900;
+  transition: stroke-dashoffset 1.5s cubic-bezier(.22, 1, .36, 1);
+}
+.orn-sceau.orn-vu .orn-svg path { stroke-dashoffset: 0; }
+.orn-sceau.orn-vu .orn-svg path:nth-child(2) { transition-delay: .2s; }
+
+
+/* ─── Les étapes du processus ───
+   La pastille numérotée était un rond avec un chiffre. Elle porte
+   maintenant la gravure de son étape — sept médailles, sept dessins. */
+.step-dot { position: relative; overflow: hidden; }
+.step-dot .orn-sceau {
+  position: absolute; inset: 2px; border-radius: 50%; overflow: hidden;
+  pointer-events: none; z-index: 0; opacity: .5;
+  -webkit-mask: radial-gradient(circle, transparent 32%, #000 50%, #000 100%);
+          mask: radial-gradient(circle, transparent 32%, #000 50%, #000 100%);
+}
+.step-dot .orn-sceau .orn-svg path { stroke: var(--or); stroke-width: .5; }
+.section-light .step-dot .orn-sceau .orn-svg path { stroke: var(--or-deep); }
+.section-light .step-dot .orn-sceau { opacity: .6; }

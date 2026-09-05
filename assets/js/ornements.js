@@ -64,6 +64,7 @@
     o = o || {};
     var d = des(graine(cle));
     var n = o.traits || 3;
+    var pas = o.pas || 700;
     var svg = '<svg class="orn-svg" viewBox="-105 -105 210 210" aria-hidden="true" focusable="false">';
     for (var i = 0; i < n; i++) {
       /* Chaque passe est plus petite et plus dense que la précédente :
@@ -72,10 +73,20 @@
       var r = 9 + Math.floor(d() * 22);
       var dd = R * (0.45 + d() * 0.3);
       var t = r;                       /* la courbe se referme après r tours */
-      svg += '<path d="' + courbe(R, r, dd, t, 700) + '" opacity="' +
+      svg += '<path d="' + courbe(R, r, dd, t, pas) + '" opacity="' +
              (0.85 - i * 0.22).toFixed(2) + '"/>';
     }
     return svg + '</svg>';
+  }
+
+  /* ─── Le sceau ───
+     La même gravure, mais à la taille d'une médaille : posée DANS un
+     jeton, un médaillon, une pastille numérotée. Elle épouse son hôte
+     au lieu de s'étendre derrière lui. */
+  function sceau(cle, o) {
+    o = o || {};
+    return '<span class="orn-sceau" aria-hidden="true">' +
+      rosette(cle, { traits: o.traits || 2, pas: o.pas || 240 }) + '</span>';
   }
 
   /* ─── La portée ───
@@ -135,6 +146,14 @@
       e.insertBefore(h, e.firstChild);
     });
 
+    Array.prototype.forEach.call(document.querySelectorAll('[data-orn-sceau]'), function (e) {
+      if (e.dataset.ornPose) return;
+      e.dataset.ornPose = '1';
+      e.classList.add('a-sceau');
+      e.insertAdjacentHTML('afterbegin', sceau(e.dataset.ornSceau || e.textContent || 'melodia',
+                                               { traits: Number(e.dataset.ornTraits) || 2 }));
+    });
+
     Array.prototype.forEach.call(document.querySelectorAll('[data-orn-portee]'), function (e) {
       if (e.dataset.ornPose) return;
       e.dataset.ornPose = '1';
@@ -163,16 +182,16 @@
         });
       }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
       Array.prototype.forEach.call(
-        document.querySelectorAll('.orn-rosace, .orn-portee-hote, .embleme'),
+        document.querySelectorAll('.orn-rosace, .orn-portee-hote, .embleme, .orn-sceau'),
         function (e) { oeil.observe(e); });
     } else {
       Array.prototype.forEach.call(
-        document.querySelectorAll('.orn-rosace, .orn-portee-hote, .embleme'),
+        document.querySelectorAll('.orn-rosace, .orn-portee-hote, .embleme, .orn-sceau'),
         function (e) { e.classList.add('orn-vu'); });
     }
   }
 
-  window.MelodiaOrnements = { rosette: rosette, portee: portee, embleme: embleme, poser: poser, graine: graine };
+  window.MelodiaOrnements = { rosette: rosette, sceau: sceau, portee: portee, embleme: embleme, poser: poser, graine: graine };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', poser);
   else poser();
 })();

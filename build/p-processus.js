@@ -28,7 +28,7 @@ module.exports = {
       </div>
       <div class="steps">
         <div class="step reveal">
-          <div class="step-dot">1</div>
+          <div class="step-dot" data-orn-sceau="Vous nous appelez, ou vous commandez en ligne">1</div>
           <div class="step-body">
             <h3>Vous nous appelez, ou vous commandez en ligne</h3>
             <p>Trois minutes suffisent pour lancer la commande : l'offre, le prénom du défunt, vos coordonnées. Si la cérémonie est imminente, dites-le : nous basculons immédiatement en priorité.</p>
@@ -36,7 +36,7 @@ module.exports = {
           </div>
         </div>
         <div class="step reveal">
-          <div class="step-dot">2</div>
+          <div class="step-dot" data-orn-sceau="L'entretien : cinq questions, cinq minutes">2</div>
           <div class="step-body">
             <h3>L'entretien : cinq questions, cinq minutes</h3>
             <p>Nous vous rappelons. Qui était-il ? Trois traits de caractère. Son métier ou sa passion. Une habitude que tout le monde lui connaissait. Une anecdote qui le résume. C'est tout — et c'est déjà beaucoup pour écrire une chanson juste.</p>
@@ -44,7 +44,7 @@ module.exports = {
           </div>
         </div>
         <div class="step reveal">
-          <div class="step-dot">3</div>
+          <div class="step-dot" data-orn-sceau="L'écriture des paroles">3</div>
           <div class="step-body">
             <h3>L'écriture des paroles</h3>
             <p>Vos mots deviennent des couplets. On ne cherche pas le poème : on cherche <em>lui</em>. Les détails concrets — la canne à pêche, le jasmin, la 4L bleue — valent mieux que dix métaphores. Les paroles vous sont soumises si vous le souhaitez.</p>
@@ -52,7 +52,7 @@ module.exports = {
           </div>
         </div>
         <div class="step reveal">
-          <div class="step-dot">4</div>
+          <div class="step-dot" data-orn-sceau="La composition et le mixage">4</div>
           <div class="step-body">
             <h3>La composition et le mixage</h3>
             <p>La mélodie s'écrit dans le style choisi : chanson française, folk, piano, jazz, bossa nova, gospel. Tempo, instrumentation, tonalité — tout est réglé pour qu'on le reconnaisse dès les premières mesures.</p>
@@ -60,7 +60,7 @@ module.exports = {
           </div>
         </div>
         <div class="step reveal">
-          <div class="step-dot">5</div>
+          <div class="step-dot" data-orn-sceau="La relecture humaine">5</div>
           <div class="step-body">
             <h3>La relecture humaine</h3>
             <p>Aucun hommage ne part sans avoir été écouté en entier par la maison. On vérifie le texte, la prononciation des prénoms, les niveaux, les silences. C'est l'étape qu'on ne saute jamais, même en urgence.</p>
@@ -68,7 +68,7 @@ module.exports = {
           </div>
         </div>
         <div class="step reveal">
-          <div class="step-dot">6</div>
+          <div class="step-dot" data-orn-sceau="La livraison">6</div>
           <div class="step-body">
             <h3>La livraison</h3>
             <p>Vous recevez le fichier par email et dans votre espace personnel : MP3 haute qualité, prêt à diffuser sur n'importe quelle enceinte. Téléchargeable autant de fois que vous voulez, par toute la famille.</p>
@@ -76,7 +76,7 @@ module.exports = {
           </div>
         </div>
         <div class="step reveal">
-          <div class="step-dot">7</div>
+          <div class="step-dot" data-orn-sceau="La reprise, si nécessaire">7</div>
           <div class="step-body">
             <h3>La reprise, si nécessaire</h3>
             <p>Si l'œuvre ne vous touche pas, nous la reprenons. Une révision est incluse dans l'offre Prestige, illimitée dans l'offre Mémorial. Nous préférons recommencer plutôt que livrer un hommage qui sonne faux.</p>
