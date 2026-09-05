@@ -5,7 +5,7 @@ module.exports = {
   file: 'index.html',
   title: 'Melodia Funèbre — La chanson qu\'il méritait, composée en 24 h',
   desc: "Maison française de composition musicale pour cérémonies funéraires. Une œuvre originale écrite pour votre défunt, livrée en 24 heures, sans droits SACEM. Dès 149 €.",
-  jsonld: [P.jsonldOrg, P.jsonldService, P.jsonldFaq],
+  jsonld: [P.jsonldSite, P.jsonldOrg, P.jsonldService, P.jsonldFaq, P.jsonldCatalogue],
   intro: true,
   scripts: ['assets/js/catalogue.js'],
   body: `
@@ -18,8 +18,8 @@ module.exports = {
       <h1 class="h-hero reveal in reveal-d1">Chaque vie mérite<br><em>une chanson.</em></h1>
       <p class="lead reveal in reveal-d2">Pour chaque personne qui s'en va, notre maison compose une œuvre originale — sa vie, ses gestes, sa mémoire — remise à la famille sous vingt-quatre heures. Sans droits à régler, à vous pour toujours.</p>
       <div class="hero-actions reveal in reveal-d3">
-        <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
-        <a href="demos.html" class="btn btn-outline btn-lg">${ICON.note} Écouter trois hommages</a>
+        <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
+        <a href="/demos" class="btn btn-outline btn-lg">${ICON.note} Écouter trois hommages</a>
       </div>
       <p class="reveal in reveal-d4 note" style="margin-top:1.8rem;">
         Dès 149 € · Sans engagement · Révision jusqu'à satisfaction
@@ -59,7 +59,7 @@ ${P.oeuvres()}
           <h2 class="h-xl">Née d'un adieu<br>qui sonnait <em>faux.</em></h2>
           <p class="lead" style="margin-top:1.8rem;">Aux obsèques, la musique n'a presque jamais connu le défunt. Un Ave Maria pour une grand-mère qui ne chantait qu'en cuisine. Une valse pour un homme qui sifflait dans ses champs. L'hommage le plus intime d'une vie, réduit à une citation empruntée.</p>
           <p class="lead" style="margin-top:1.2rem;">Melodia Funèbre existe pour corriger cela : composer, pour chaque personne qui s'en va, la chanson qu'elle méritait.</p>
-          <a href="processus.html" class="btn btn-outline" style="margin-top:2rem;">Comment nous procédons</a>
+          <a href="/processus" class="btn btn-outline" style="margin-top:2rem;">Comment nous procédons</a>
         </div>
         <div class="reveal reveal-d1">
           <div class="grid-2" style="gap:0;">
@@ -103,7 +103,7 @@ ${P.urgency()}
         </div>
       </div>
       <div class="center reveal" style="margin-top:3rem;">
-        <a href="processus.html" class="btn btn-outline">Le processus en détail</a>
+        <a href="/processus" class="btn btn-outline">Le processus en détail</a>
       </div>
     </div>
   </section>
@@ -188,8 +188,8 @@ ${P.testimonials()}
           <h2 class="h-xl">Un service que vos confrères<br>ne proposent <em>pas encore.</em></h2>
           <p class="lead" style="margin-top:1.6rem;">Soixante pour cent de marge sur chaque hommage, aucun investissement, aucune charge technique. Vous présentez, la famille décide, nous composons. Votre espace partenaire suit chaque commande en temps réel.</p>
           <div class="hero-actions" style="margin-top:2rem;">
-            <a href="agences.html" class="btn btn-gold">Espace agences</a>
-            <a href="agences.html#calculateur" class="btn btn-outline">${ICON.euro} Simuler mes revenus</a>
+            <a href="/agences" class="btn btn-gold">Espace agences</a>
+            <a href="/agences#calculateur" class="btn btn-outline">${ICON.euro} Simuler mes revenus</a>
           </div>
         </div>
         <div class="reveal reveal-d1">
@@ -216,7 +216,7 @@ ${P.faq(null, true)}
       </div>
       <div class="center reveal" style="margin-top:2.5rem;">
         <p class="lead" style="margin-bottom:1.4rem;">Une question qui n'est pas ici ?</p>
-        <div class="hero-actions"><button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button><a href="contact.html" class="btn btn-ghost">Nous écrire</a></div>
+        <div class="hero-actions"><button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button><a href="/contact" class="btn btn-ghost">Nous écrire</a></div>
       </div>
     </div>
   </section>
@@ -227,7 +227,7 @@ ${P.faq(null, true)}
       <h2 class="h-xl">Offrez-leur la chanson<br>qu'ils <em>méritaient.</em></h2>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape. Et si l'œuvre ne vous touche pas, nous la reprenons.</p>
       <div class="hero-actions">
-        <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
+        <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
         <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>

@@ -13,7 +13,7 @@ module.exports = {
   file: 'offres.html',
   title: 'Offres et tarifs — Un hommage musical dès 149 € | Melodia Funèbre',
   desc: "Trois offres de composition musicale funéraire : Essentiel 149 €, Prestige 299 €, Mémorial 499 €. Livraison en 24 h, aucun droit SACEM, révision incluse. Commande en ligne sécurisée.",
-  jsonld: [P.jsonldService],
+  jsonld: [P.jsonldService, P.jsonldFil('Offres et tarifs', '/offres')],
   scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/order.js'],
   body: `
   <section class="section" style="padding-top:9rem;padding-bottom:0;">
@@ -168,7 +168,7 @@ ${offerChoices}
                 <option>Autre tradition</option>
                 <option>Je ne sais pas encore</option>
               </select>
-              <div class="field-hint">La musique doit s'accorder au rite : certaines traditions n'en admettent pas, et nous vous le dirons franchement. <a href="rites.html" style="color:var(--or-patina);">Ce que nous proposons selon le rite</a></div>
+              <div class="field-hint">La musique doit s'accorder au rite : certaines traditions n'en admettent pas, et nous vous le dirons franchement. <a href="/rites" style="color:var(--or-patina);">Ce que nous proposons selon le rite</a></div>
             </div>
             <div class="field">
               <label class="field-label" for="o-texte">Un texte, un verset ou une prière qui comptait</label>
@@ -193,7 +193,7 @@ ${offerChoices}
             </div>
             <label class="check">
               <input type="checkbox" id="o-consent">
-              <span>J'accepte que ces informations soient utilisées pour composer l'hommage, conformément à la <a href="confidentialite.html" style="color:var(--or);text-decoration:underline;">politique de confidentialité</a>. *</span>
+              <span>J'accepte que ces informations soient utilisées pour composer l'hommage, conformément à la <a href="/confidentialite" style="color:var(--or);text-decoration:underline;">politique de confidentialité</a>. *</span>
             </label>
             <div class="wz-actions"><button type="button" class="btn btn-ghost" data-wz-prev>${ICON.arrowL} Retour</button><button type="button" class="btn btn-gold" data-wz-next>Vérifier ma commande</button></div>
           </div>
@@ -239,7 +239,7 @@ ${offerChoices}
       <p style="color:var(--ash);margin-bottom:.4rem;" id="confirm-summary"></p>
       <p style="color:var(--ash);margin-bottom:2.4rem;max-width:46ch;margin-left:auto;margin-right:auto;">Nous vous appelons sous deux heures ouvrées pour l'entretien de cinq minutes. La composition démarre juste après.</p>
       <div class="hero-actions" style="justify-content:center;">
-        <a href="compte.html" class="btn btn-gold">Suivre ma commande</a>
+        <a href="/compte" class="btn btn-gold">Suivre ma commande</a>
         <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>

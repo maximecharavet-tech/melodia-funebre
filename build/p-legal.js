@@ -17,7 +17,7 @@ ${prose}
       </div>
       <div style="margin-top:3.5rem;padding-top:2rem;border-top:1px solid var(--line-soft);">
         <div class="hero-actions">
-          <a href="contact.html" class="btn btn-outline">Une question ?</a>
+          <a href="/contact" class="btn btn-outline">Une question ?</a>
           <button type="button" class="btn btn-ghost" data-rappel>${ICON.phone} Être rappelé</button>
         </div>
       </div>
@@ -49,7 +49,7 @@ Email : <a href="mailto:${MAIL}">${MAIL}</a></p>
 <h2>Propriété intellectuelle</h2>
 <p>L'ensemble des éléments du site — textes, visuels, logo, charte graphique, extraits sonores de démonstration — est protégé par le droit de la propriété intellectuelle et demeure la propriété exclusive de Melodia Funèbre, sauf mention contraire.</p>
 <p>Toute reproduction, représentation, adaptation ou exploitation, totale ou partielle, sans autorisation écrite préalable est interdite.</p>
-<p><strong>Œuvres composées pour les clients :</strong> chaque hommage musical commandé fait l'objet d'une cession des droits d'usage au client, dans les conditions précisées par les <a href="cgv.html">conditions générales de vente</a>. Le client peut diffuser l'œuvre lors de la cérémonie, la copier pour les membres de sa famille et la conserver sans limitation de durée.</p>
+<p><strong>Œuvres composées pour les clients :</strong> chaque hommage musical commandé fait l'objet d'une cession des droits d'usage au client, dans les conditions précisées par les <a href="/cgv">conditions générales de vente</a>. Le client peut diffuser l'œuvre lors de la cérémonie, la copier pour les membres de sa famille et la conserver sans limitation de durée.</p>
 
 <h2>Responsabilité</h2>
 <p>Melodia Funèbre s'efforce d'assurer l'exactitude des informations publiées sur ce site. Les tarifs, délais et caractéristiques des offres peuvent toutefois évoluer ; seules les informations communiquées lors de la confirmation de commande font foi.</p>

@@ -14,6 +14,7 @@ module.exports = {
   file: 'agences.html',
   title: 'Espace agences — 60 % de marge, zéro investissement | Melodia Funèbre',
   desc: "Pompes funèbres : proposez à vos familles un hommage musical composé sur mesure. 60 % de marge, aucun investissement, première composition offerte. Simulez vos revenus en ligne.",
+  jsonld: [P.jsonldFil('Espace agences', '/agences')],
   body: `
   <section class="section" style="padding-top:9rem;padding-bottom:0;">
     <div class="wrap">
@@ -22,7 +23,7 @@ module.exports = {
       <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Proposez à vos familles un service qu'aucune agence voisine n'offre : une œuvre musicale composée pour leur défunt, livrée en vingt-quatre heures. Vous présentez, nous composons, vous conservez 60 %.</p>
       <div class="hero-actions reveal in reveal-d3" style="margin-top:2.4rem;">
         <a href="#calculateur" class="btn btn-gold btn-lg">${ICON.euro} Simuler mes revenus</a>
-        <a href="compte.html" class="btn btn-outline btn-lg">Créer mon compte partenaire</a>
+        <a href="/compte" class="btn btn-outline btn-lg">Créer mon compte partenaire</a>
       </div>
     </div>
   </section>
@@ -71,7 +72,7 @@ module.exports = {
         </p>
       </div>
       <div class="center reveal" style="margin-top:2.5rem;">
-        <a href="compte.html" class="btn btn-gold btn-lg">Créer mon compte partenaire</a>
+        <a href="/compte" class="btn btn-gold btn-lg">Créer mon compte partenaire</a>
       </div>
     </div>
   </section>

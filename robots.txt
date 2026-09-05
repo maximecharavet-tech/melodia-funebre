@@ -1,6 +1,81 @@
+# Melodia Funèbre — https://melodia-funebre.fr
+#
+# Le service est nouveau et sa catégorie n'existe pas encore : être
+# lisible par les moteurs comme par les assistants qui répondent aux
+# questions est donc l'essentiel de sa visibilité. Les robots des
+# systèmes d'IA sont nommés et autorisés explicitement — une règle
+# générale suffirait techniquement, mais l'autorisation nommée lève
+# toute ambiguïté pour ceux qui la cherchent.
+
 User-agent: *
 Allow: /
+Disallow: /dashboard-master
+Disallow: /dashboard-partenaire
+Disallow: /compte
 Disallow: /dashboard-master.html
 Disallow: /dashboard-partenaire.html
 Disallow: /compte.html
+Disallow: /MELODIA_DASHBOARD_V2.html
+
+# ─── Robots d'indexation et de réponse des systèmes d'IA ───
+# Autorisés : c'est par eux que passe une part croissante des
+# questions « peut-on faire composer une chanson pour des obsèques ».
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
 Sitemap: https://melodia-funebre.fr/sitemap.xml
+
+# Résumé lisible du service, à l'intention des systèmes qui lisent le
+# web pour répondre à des questions : https://melodia-funebre.fr/llms.txt

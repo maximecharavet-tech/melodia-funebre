@@ -9,13 +9,18 @@ const SITE = 'https://melodia-funebre.fr';
    sont lues par les moteurs et publiées en clair. */
 const MAIL = 'contact@melodia-funebre.fr';
 
+/* Adresses sans extension : « cleanUrls » est actif sur Vercel, qui
+   redirige /offres.html vers /offres en 308. Chaque lien interne en
+   .html coûtait donc un aller-retour au visiteur comme au robot
+   d'indexation, et diluait le lien sur une redirection au lieu de le
+   porter sur la page. */
 const NAVITEMS = [
-  ['processus.html', 'Processus'],
-  ['demos.html', 'Écouter'],
-  ['rites.html', 'Rites'],
-  ['offres.html', 'Offres'],
-  ['agences.html', 'Agences'],
-  ['contact.html', 'Contact']
+  ['/processus', 'Processus'],
+  ['/demos', 'Écouter'],
+  ['/rites', 'Rites'],
+  ['/offres', 'Offres'],
+  ['/agences', 'Agences'],
+  ['/contact', 'Contact']
 ];
 
 const ICON = {
@@ -89,13 +94,13 @@ function nav(surBandeau) {
 <div class="grain" aria-hidden="true"></div>
 <nav class="nav${surBandeau ? ' at-top' : ''}">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand" aria-label="Melodia Funèbre, accueil">
+    <a href="/" class="nav-brand" aria-label="Melodia Funèbre, accueil">
       <img src="assets/img/logo-melodia.jpg" alt="" class="nav-logo" width="40" height="40">
       <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
     </a>
     <div class="nav-links">
 ${links}
-      <a href="compte.html" class="nav-cta">Mon compte</a>
+      <a href="/compte" class="nav-cta">Mon compte</a>
     </div>
     <button class="nav-burger" aria-label="Ouvrir le menu" aria-controls="menu-mobile">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -104,9 +109,9 @@ ${links}
 </nav>
 <div class="nav-mobile" id="menu-mobile">
 ${mlinks}
-  <a href="compte.html">Mon compte</a>
+  <a href="/compte">Mon compte</a>
   <div class="nav-mobile-cta">
-    <a href="offres.html" class="btn btn-gold">Commander un hommage</a>
+    <a href="/offres" class="btn btn-gold">Commander un hommage</a>
     <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
   </div>
 </div>`;
@@ -124,19 +129,19 @@ function footer() {
       <div>
         <h4>Découvrir</h4>
         <ul class="footer-links">
-          <li><a href="processus.html">Le processus</a></li>
-          <li><a href="demos.html">Écouter les hommages</a></li>
-          <li><a href="rites.html">L'hommage selon le rite</a></li>
-          <li><a href="offres.html">Offres &amp; tarifs</a></li>
-          <li><a href="index.html#faq">Questions fréquentes</a></li>
+          <li><a href="/processus">Le processus</a></li>
+          <li><a href="/demos">Écouter les hommages</a></li>
+          <li><a href="/rites">L'hommage selon le rite</a></li>
+          <li><a href="/offres">Offres &amp; tarifs</a></li>
+          <li><a href="/#faq">Questions fréquentes</a></li>
         </ul>
       </div>
       <div>
         <h4>Professionnels</h4>
         <ul class="footer-links">
-          <li><a href="agences.html">Espace agences</a></li>
-          <li><a href="agences.html#calculateur">Simuler mes revenus</a></li>
-          <li><a href="compte.html">Connexion partenaire</a></li>
+          <li><a href="/agences">Espace agences</a></li>
+          <li><a href="/agences#calculateur">Simuler mes revenus</a></li>
+          <li><a href="/compte">Connexion partenaire</a></li>
         </ul>
       </div>
       <div>
@@ -144,16 +149,16 @@ function footer() {
         <ul class="footer-links">
           <li><a href="mailto:${MAIL}">${MAIL}</a></li>
           <li><button type="button" class="lien-rappel" data-rappel>Être rappelé</button></li>
-          <li><a href="contact.html">Nous écrire</a></li>
+          <li><a href="/contact">Nous écrire</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <span>© <span data-year>2026</span> Melodia Funèbre — Tous droits réservés</span>
       <span class="footer-legal">
-        <a href="mentions-legales.html">Mentions légales</a>
-        <a href="cgv.html">CGV</a>
-        <a href="confidentialite.html">Confidentialité</a>
+        <a href="/mentions-legales">Mentions légales</a>
+        <a href="/cgv">CGV</a>
+        <a href="/confidentialite">Confidentialité</a>
       </span>
       <span class="gold">Fondateur : Maxime Charavet</span>
     </div>
@@ -164,7 +169,7 @@ function footer() {
 function stickyCta() {
   return `<div class="sticky-cta">
   <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
-  <a href="offres.html" class="btn btn-gold">Commander</a>
+  <a href="/offres" class="btn btn-gold">Commander</a>
 </div>`;
 }
 

@@ -6,6 +6,7 @@ module.exports = {
   file: 'contact.html',
   title: 'Nous contacter — rappel sous 2 h ouvrées | Melodia Funèbre',
   desc: "Demandez à être rappelé par Melodia Funèbre, ou écrivez-nous. Urgences traitées sept jours sur sept, réponse sous deux heures ouvrées.",
+  jsonld: [P.jsonldFil('Nous joindre', '/contact')],
   body: `
   <section class="section" style="padding-top:9rem;padding-bottom:0;">
     <div class="wrap">
@@ -38,7 +39,7 @@ ${P.urgency()}
           <div class="card-icon">${ICON.users}</div>
           <h3 class="h-lg">Vous êtes une agence</h3>
           <p>Pompes funèbres : découvrez les conditions du partenariat et simulez vos revenus.</p>
-          <a href="agences.html" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Espace agences</a>
+          <a href="/agences" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Espace agences</a>
           <div class="mono" style="margin-top:1rem;text-align:center;">60 % de marge · 0 € d'investissement</div>
         </div>
       </div>
@@ -92,7 +93,7 @@ ${P.faq([FAQ[0], FAQ[1], FAQ[3], FAQ[6]])}
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Un appel de trois minutes, et la composition peut démarrer aujourd'hui.</p>
       <div class="hero-actions">
         <button type="button" class="btn btn-gold btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
-        <a href="offres.html" class="btn btn-outline btn-lg">Commander en ligne</a>
+        <a href="/offres" class="btn btn-outline btn-lg">Commander en ligne</a>
       </div>
     </div>
   </section>`,

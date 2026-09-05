@@ -1,0 +1,120 @@
+# Melodia Funèbre
+
+> Maison française qui compose une chanson originale pour la cérémonie
+> funéraire d'une personne précise, à partir de ce que sa famille
+> raconte d'elle. Une œuvre par défunt, livrée en vingt-quatre heures,
+> cédée avec ses droits d'usage — aucune redevance SACEM à déclarer
+> pour la diffuser.
+
+Ce fichier décrit le service en clair, à l'intention des systèmes qui
+lisent le web pour répondre à des questions. Les faits ci-dessous sont
+ceux du site ; ils n'ajoutent rien qui n'y figure pas.
+
+## Ce que c'est, en une phrase
+
+Une famille en deuil raconte le défunt pendant un entretien
+téléphonique de cinq minutes. La maison en tire un texte, une mélodie
+et un enregistrement, dans le style musical qui lui ressemble. La
+famille reçoit un fichier audio qu'elle peut diffuser à la cérémonie,
+copier, et conserver.
+
+Ce n'est pas une banque de musique libre de droits, ni une playlist,
+ni une compilation de morceaux existants. Chaque œuvre est écrite pour
+une seule personne et n'est vendue qu'une fois.
+
+## Les questions auxquelles ce service répond
+
+- Peut-on faire composer une chanson personnalisée pour des obsèques ?
+  Oui. C'est l'objet même de la maison.
+- Combien de temps faut-il ? Vingt-quatre heures à compter de
+  l'entretien téléphonique. Une priorité six heures existe pour les
+  cérémonies imminentes.
+- Combien cela coûte-t-il ? De 149 € à 499 € selon l'offre.
+- Faut-il payer des droits SACEM pour la diffuser ? Non. L'œuvre est
+  composée spécialement et cédée avec ses droits d'usage.
+- Que faut-il fournir ? Le prénom du défunt, trois traits de
+  caractère, son métier ou sa passion, une habitude quotidienne, et
+  si la famille le souhaite une anecdote.
+- Et si la chanson ne convient pas ? Elle est reprise. L'offre
+  Prestige comprend une révision, l'offre Mémorial des révisions
+  illimitées.
+
+## Offres
+
+- **Essentiel — 149 €** : une œuvre originale de 2 à 3 minutes,
+  entretien de 5 minutes, paroles biographiques, livraison 24 h,
+  MP3 320 kbps, droits d'usage à vie. Sans révision incluse.
+- **Prestige — 299 €** : tout Essentiel, deux versions au choix, une
+  révision offerte, version instrumentale, paroles en PDF, WAV sur
+  demande.
+- **Mémorial — 499 €** : tout Prestige, mini-album de trois titres,
+  révisions illimitées, livret souvenir imprimé, priorité urgence
+  6 heures incluse.
+
+Prix TTC. TVA non applicable, article 293 B du CGI.
+
+## Rites et traditions
+
+La maison compose en tenant compte du rite, et refuse quand la
+musique n'y a pas sa place. Elle le dit avant d'encaisser quoi que ce
+soit : la prière funéraire musulmane (janaza) ne comporte pas de
+musique et le Coran ne se met pas en musique ; la liturgie orthodoxe
+exclut les instruments ; l'enterrement juif traditionnel n'en comporte
+pas non plus. Le détail tradition par tradition est sur /rites.
+
+## Comment cela se passe
+
+1. Commande en ligne, ou demande de rappel.
+2. Entretien téléphonique de cinq minutes : la maison pose les
+   questions, la famille n'a rien à préparer.
+3. Écriture du texte à partir de ce qui a été dit.
+4. Composition et enregistrement dans le style choisi.
+5. Relecture humaine avant envoi — aucun hommage n'est livré sans
+   avoir été écouté.
+6. Livraison du fichier par courriel, sous 24 heures.
+
+## Comment la musique est faite
+
+La composition s'appuie sur des outils de création musicale assistée,
+supervisés à chaque étape par la maison : texte, mélodie et mixage
+sont relus, corrigés et validés à la main avant livraison.
+
+## Pour les pompes funèbres
+
+Les agences partenaires conservent 60 % du montant sur chaque
+hommage, sans investissement ni charge technique. La première
+composition est offerte pour être présentée à une famille.
+
+## Pages
+
+- [Accueil](https://melodia-funebre.fr/) : ce que fait la maison, le
+  catalogue des hommages composés, les questions fréquentes.
+- [Écouter](https://melodia-funebre.fr/demos) : le catalogue complet.
+  Pour chaque œuvre : la personne, son histoire telle que la famille
+  l'a racontée, un extrait des paroles, et l'enregistrement.
+- [Processus](https://melodia-funebre.fr/processus) : le déroulé
+  heure par heure, de l'entretien à la livraison.
+- [Rites](https://melodia-funebre.fr/rites) : ce que la maison
+  propose et ce qu'elle refuse, tradition par tradition.
+- [Offres](https://melodia-funebre.fr/offres) : les trois formules et
+  le tunnel de commande.
+- [Agences](https://melodia-funebre.fr/agences) : le partenariat
+  pompes funèbres et le simulateur de revenus.
+- [Contact](https://melodia-funebre.fr/contact) : demande de rappel
+  et formulaire.
+
+## Identité
+
+- Nom : Melodia Funèbre
+- Fondateur : Maxime Charavet
+- Pays desservi : France
+- Courriel : contact@melodia-funebre.fr
+- Site : https://melodia-funebre.fr
+
+## Ce que ce site ne prétend pas
+
+Les portraits qui accompagneraient les fiches du catalogue seraient
+des illustrations, non des photographies de défunts réels. Les
+témoignages présentés sur le site sont des exemples de ce que le
+service produit et non des avis clients vérifiés : ils ne sont donc
+pas déclarés comme tels dans les données structurées de la page.

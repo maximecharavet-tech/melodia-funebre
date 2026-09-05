@@ -33,7 +33,31 @@ const FAQ = [
   { q: "Comment se passe le paiement ?",
     a: "Par carte bancaire ou PayPal, en paiement sécurisé au moment de la commande. Vous pouvez aussi enregistrer votre commande et régler après l'entretien téléphonique. Rétractation de 14 jours dans les conditions prévues par la loi." },
   { q: "Travaillez-vous avec les pompes funèbres ?",
-    a: "Oui, et c'est une part importante de notre activité. Les agences partenaires conservent 60 % du montant sur chaque hommage, sans investissement ni charge technique. La page Agences comporte un simulateur de revenus." }
+    a: "Oui, et c'est une part importante de notre activité. Les agences partenaires conservent 60 % du montant sur chaque hommage, sans investissement ni charge technique. La page Agences comporte un simulateur de revenus." },
+
+  /* ─── Les questions telles qu'elles se posent ───
+     Le service n'a pas de nom de catégorie établi : personne ne le
+     cherche par son nom. Ce qui se cherche, ce sont ces phrases-là,
+     tapées dans un moteur ou posées à un assistant. Y répondre en
+     clair, sur la page, est ce qui rend la maison trouvable — et ces
+     réponses alimentent aussi les données structurées FAQPage. ─── */
+
+  { q: "Peut-on vraiment faire composer une chanson pour un enterrement ?",
+    a: "Oui, et c'est notre seul métier. Une famille nous raconte le défunt pendant cinq minutes au téléphone ; nous en tirons un texte, une mélodie et un enregistrement écrits pour cette personne et pour personne d'autre. Ce n'est ni une playlist, ni un morceau de catalogue adapté : l'œuvre n'existe pas avant l'entretien et n'est vendue qu'une fois." },
+  { q: "Quelle musique choisir quand on ne veut pas d'une chanson connue ?",
+    a: "C'est précisément le point de départ de la maison. Une chanson du commerce parle de quelqu'un d'autre : elle est belle, mais elle ne dit pas le métier, l'habitude, la phrase que le défunt répétait. Une œuvre composée pour lui dit ces choses-là, et la salle l'entend." },
+  { q: "A-t-on le droit de diffuser cette chanson à l'église ou au crématorium ?",
+    a: "Oui, sans démarche. L'œuvre est composée spécialement pour vous et n'est déposée à la SACEM par personne : il n'y a donc aucune redevance à déclarer ni aucune autorisation à demander pour la diffuser, la copier pour la famille ou la conserver." },
+  { q: "La cérémonie est dans deux jours. Est-ce encore possible ?",
+    a: "Oui. Le délai normal est de vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. Pour une cérémonie imminente, notre priorité six heures permet une livraison le jour même : cochez l'urgence à la commande ou demandez à être rappelé, nous répondons sept jours sur sept." },
+  { q: "La chanson peut-elle être en breton, en corse, ou dans une autre langue ?",
+    a: "Oui, et nous l'avons déjà fait. Le catalogue comporte un hommage en polyphonie corse dont les couplets sont en corse et les refrains en français, un hommage breton passant du breton au français, et un hommage mêlant le français et l'hébreu. Dites-nous la langue et le registre de sa région : c'est souvent là que la ressemblance se joue." },
+  { q: "Peut-on intégrer un psaume, une sourate ou un texte sacré ?",
+    a: "Selon le rite, et pas toujours. Nous composons volontiers autour d'un verset ou d'une prière que la famille nous donne, mais nous refusons de mettre en musique le Coran, et nous ne proposons rien pour la prière funéraire musulmane ni pour la liturgie orthodoxe, où la musique instrumentale n'a pas sa place. La page Rites détaille ce que nous proposons et ce que nous refusons, tradition par tradition." },
+  { q: "Peut-on faire composer un hommage pour une personne encore vivante ?",
+    a: "Oui. Le catalogue en comporte un, composé pour une femme de quatre-vingt-cinq ans dont les enfants voulaient lui dire de son vivant ce qu'on dit trop souvent après. La démarche est la même : un entretien, un texte, une œuvre. Elle vaut aussi pour un anniversaire, des noces d'or ou un départ." },
+  { q: "Qui écoute la chanson avant qu'elle nous soit envoyée ?",
+    a: "Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain." }
 ];
 
 const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer'];
