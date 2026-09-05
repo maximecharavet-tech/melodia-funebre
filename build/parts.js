@@ -9,7 +9,7 @@ function pricing(mode) {
   return OFFERS.map((o, i) => {
     const action = mode === 'order'
       ? `<button class="btn ${o.featured ? 'btn-gold' : 'btn-outline'} btn-block" onclick="openOrder('${o.name}')">Choisir ${o.name}</button>`
-      : `<a href="offres.html" class="btn ${o.featured ? 'btn-gold' : 'btn-outline'} btn-block">Choisir ${o.name}</a>`;
+      : `<a href="/offres" class="btn ${o.featured ? 'btn-gold' : 'btn-outline'} btn-block">Choisir ${o.name}</a>`;
     const oid = o.name.toLowerCase().normalize('NFD').replace(/[^a-z]/g, '');
     return `        <div class="card price card-lift${o.featured ? ' featured' : ''} reveal" data-offer-id="${oid}">
           <span class="price-tag"${o.tag ? '' : ' style="display:none"'}>${o.tag || ''}</span>
@@ -215,4 +215,96 @@ const jsonldService = {
   }))
 };
 
-module.exports = { pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, urgency, esc, jsonldOrg, jsonldFaq, jsonldService };
+/* ═══════════════════════════════════════════════════════════════
+   DONNÉES STRUCTURÉES
+
+   Le service est nouveau : sa catégorie n'a pas de nom établi, et
+   personne ne la cherche encore par son nom. Ce qui se cherche, ce
+   sont les questions — « peut-on faire composer une chanson pour des
+   obsèques », « a-t-on le droit de la diffuser ». Les réponses
+   doivent donc être lisibles par une machine autant que par un
+   lecteur, et rattachées à des entités nommées : une maison, un
+   service, des œuvres, une marche à suivre.
+
+   Ce qui n'y figure PAS, délibérément : aucun « aggregateRating »,
+   aucun « review ». Les témoignages du site illustrent ce que le
+   service produit ; les déclarer comme des avis clients vérifiés
+   serait un faux signal — sanctionné par Google, et une allégation
+   trompeuse au sens de l'article L121-2 du code de la consommation.
+   Le jour où de vrais avis existeront, ils auront leur place ici.
+   ═══════════════════════════════════════════════════════════════ */
+
+const jsonldSite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': SITE + '/#site',
+  url: SITE,
+  name: 'Melodia Funèbre',
+  inLanguage: 'fr-FR',
+  publisher: { '@id': SITE + '/#organisation' },
+  description: "Composition d'une chanson originale pour la cérémonie funéraire d'une personne précise, à partir de ce que sa famille raconte d'elle."
+};
+
+/* Le catalogue en entités nommées : c'est ce qui permet à un système
+   de répondre « oui, en voici onze exemples » plutôt que « peut-être ». */
+const jsonldCatalogue = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  '@id': SITE + '/demos#catalogue',
+  name: 'Les hommages composés par Melodia Funèbre',
+  description: "Chaque œuvre a été écrite pour une seule personne, d'après l'entretien mené avec sa famille.",
+  numberOfItems: TRACKS.length,
+  itemListElement: TRACKS.map((t, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'MusicRecording',
+      name: t.title,
+      description: t.story,
+      genre: t.style,
+      inLanguage: 'fr-FR',
+      byArtist: { '@id': SITE + '/#organisation' },
+      audio: { '@type': 'AudioObject', contentUrl: SITE + '/' + t.file, encodingFormat: 'audio/mpeg' },
+      isFamilyFriendly: true
+    }
+  }))
+};
+
+/* La marche à suivre, en sept étapes. Un « HowTo » est l'une des
+   formes qu'un assistant reprend le plus volontiers pour répondre à
+   « comment ça se passe ». */
+const ETAPES = [
+  ['Vous commandez, ou vous demandez à être rappelé', "Une commande en ligne ou un rappel. Rien à préparer.", 'Immédiat'],
+  ["L'entretien téléphonique", "Cinq questions, cinq minutes : le prénom du défunt, trois traits de caractère, son métier ou sa passion, une habitude quotidienne, une anecdote si vous le souhaitez. Nous posons les questions.", 'Sous 2 heures ouvrées'],
+  ["L'écriture des paroles", "Le texte est écrit à partir de ce qui a été dit, et de rien d'autre.", 'Quelques heures'],
+  ['La composition et le mixage', "La mélodie s'écrit dans le style choisi, puis l'œuvre est enregistrée et mixée.", 'Quelques heures'],
+  ['La relecture humaine', "Texte, mélodie et mixage sont relus et validés à la main. Aucun hommage n'est envoyé sans avoir été écouté.", 'Contrôle systématique'],
+  ['La livraison', "Le fichier vous est envoyé par courriel, diffusable en cérémonie, copiable pour la famille, à vous pour toujours.", "24 h après l'entretien"],
+  ['La reprise, si nécessaire', "Si l'œuvre ne vous touche pas, elle est reprise. Une révision est incluse en Prestige, illimitée en Mémorial.", 'Sous 12 heures']
+];
+
+const jsonldProcessus = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': SITE + '/processus#howto',
+  name: "Faire composer une chanson personnalisée pour une cérémonie funéraire",
+  description: "De l'entretien téléphonique à la livraison de l'œuvre, en vingt-quatre heures.",
+  inLanguage: 'fr-FR',
+  totalTime: 'PT24H',
+  estimatedCost: { '@type': 'MonetaryAmount', currency: 'EUR', minValue: 149, maxValue: 499 },
+  supply: { '@type': 'HowToSupply', name: "Le prénom du défunt, trois traits de caractère, son métier ou sa passion, une habitude quotidienne" },
+  step: ETAPES.map(([nom, txt, quand], i) => ({
+    '@type': 'HowToStep', position: i + 1, name: nom, text: txt + ' (' + quand + ')',
+    url: SITE + '/processus#etape-' + (i + 1)
+  }))
+};
+
+/* Fil d'Ariane : il dit à un robot où se situe la page dans le site,
+   et s'affiche tel quel dans les résultats de recherche. */
+function jsonldFil(titre, chemin) {
+  const fil = [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' }];
+  if (chemin) fil.push({ '@type': 'ListItem', position: 2, name: titre, item: SITE + chemin });
+  return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: fil };
+}
+
+module.exports = { pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldProcessus, jsonldFil };

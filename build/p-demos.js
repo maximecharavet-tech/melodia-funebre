@@ -7,6 +7,7 @@ module.exports = {
   title: 'Nos réalisations — Le catalogue des hommages composés | Melodia Funèbre',
   desc: "Le catalogue des hommages composés par la maison : pour chacun, la personne, son histoire, les mots que sa famille nous avait confiés, et l'œuvre qui en est née — écoutable en ligne.",
   scripts: ['assets/js/catalogue.js'],
+  jsonld: [P.jsonldCatalogue, P.jsonldFil('Nos réalisations', '/demos')],
   body: `
   <section class="page-head">
     <div class="wrap">
@@ -60,7 +61,7 @@ ${P.oeuvres()}
 ${STYLES.map(s => `        <div class="acte reveal" style="text-align:center;padding:1.6rem 1rem;"><h3 style="font-size:1.15rem;margin:0;">${s}</h3></div>`).join('\n')}
       </div>
       <div class="center reveal" style="margin-top:3rem;">
-        <a href="offres.html" class="btn btn-gold btn-lg">Commander dans ce style</a>
+        <a href="/offres" class="btn btn-gold btn-lg">Commander dans ce style</a>
       </div>
     </div>
   </section>
@@ -72,7 +73,7 @@ ${P.urgency()}
       <h2 class="h-xl">La sienne n'existe<br>pas <em>encore.</em></h2>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Trois mots, un souvenir, et nous nous occupons du reste.</p>
       <div class="hero-actions">
-        <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
+        <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
         <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>

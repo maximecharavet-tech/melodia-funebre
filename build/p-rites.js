@@ -123,6 +123,7 @@ module.exports = {
   title: 'L\'hommage selon le rite — Traditions religieuses et cérémonies civiles | Melodia Funèbre',
   desc: "Comment notre travail s'accorde à chaque tradition : catholique, protestante, orthodoxe, juive, musulmane, ou cérémonie civile. Ce que nous composons, et ce que nous ne composons pas.",
   scripts: [],
+  jsonld: [P.jsonldFil('Rites et traditions', '/rites')],
   body: `
   <section class="page-head">
     <div class="wrap">
@@ -229,7 +230,7 @@ ${t.non.map((x) => `              <li>${x}</li>`).join('\n')}
           <p class="lead" style="margin-top:1.6rem;">Les familles vous demandent souvent une musique qui ressemble vraiment au défunt, et vous n'avez rien à leur offrir que le répertoire. Nous composons cette pièce ; vous restez l'interlocuteur de la famille et le garant du rite.</p>
           <p class="lead" style="margin-top:1.2rem;">La part qui vous revient — 60 % du montant — peut être affectée en totalité à vos œuvres : entraide, aumônerie, entretien du lieu, action caritative. Vous nous dites où elle va, nous la versons là.</p>
           <div class="hero-actions" style="margin-top:2rem;">
-            <a href="contact.html" class="btn btn-gold">Prendre contact</a>
+            <a href="/contact" class="btn btn-gold">Prendre contact</a>
             <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
           </div>
         </div>
@@ -274,7 +275,7 @@ ${P.urgency()}
       <h2 class="h-xl">Dites-nous d'abord<br>ce que votre <em>rite permet.</em></h2>
       <p class="lead" style="margin:1.6rem auto 2.4rem;max-width:60ch;">Nous composerons ensuite — ou nous vous dirons franchement que ce n'est pas notre place.</p>
       <div class="hero-actions">
-        <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
+        <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
         <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>

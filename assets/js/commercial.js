@@ -44,7 +44,7 @@
   var filtreOwner = '';
   var envoiDirect = null;   /* null = inconnu, true/false une fois testé */
 
-  window.logout = function () { window.MelodiaAuth.logout(); location.href = 'compte.html'; };
+  window.logout = function () { window.MelodiaAuth.logout(); location.href = '/compte'; };
 
   /* ═══ Dates ═══ */
   function jour(d) { return new Date(d).toISOString().slice(0, 10); }

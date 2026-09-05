@@ -122,7 +122,7 @@
     /** Redirige vers le bon tableau de bord, ou vers compte.html si non connecté */
     guard: function () {
       var u = this.current();
-      if (!u) { location.href = 'compte.html'; return null; }
+      if (!u) { location.href = '/compte'; return null; }
       return u;
     },
     isCommercial: function () { var u = this.current(); return !!u && u.role === 'commercial'; },

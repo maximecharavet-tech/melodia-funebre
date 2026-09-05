@@ -6,7 +6,7 @@ module.exports = {
   file: 'processus.html',
   title: 'Le processus — De cinq questions à une œuvre, en 24 h | Melodia Funèbre',
   desc: "Comment nous composons un hommage musical : entretien de 5 minutes, écriture des paroles, composition, relecture humaine, livraison en 24 heures. Ce que nous vous demandons, et ce que nous garantissons.",
-  jsonld: [P.jsonldService],
+  jsonld: [P.jsonldProcessus, P.jsonldFil('Le processus', '/processus')],
   body: `
   <section class="section" style="padding-top:9rem;padding-bottom:0;">
     <div class="wrap">
@@ -143,7 +143,7 @@ ${P.faq(FAQ.slice(0, 5))}
       <h2 class="h-xl">Commençons par<br>ses <em>trois mots.</em></h2>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Trois minutes pour commander, cinq pour l'entretien. Le reste, c'est notre travail.</p>
       <div class="hero-actions">
-        <a href="offres.html" class="btn btn-gold btn-lg">Commander un hommage</a>
+        <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
         <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
       </div>
     </div>

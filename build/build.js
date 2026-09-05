@@ -73,3 +73,40 @@ for (const p of require('./p-legal.js')) {
   console.log('  ' + p.file.padEnd(22) + html.length + ' octets');
 }
 console.log('  ' + String(total).padStart(28) + ' octets au total');
+
+/* ─── Plan du site ───
+   Écrit à la génération plutôt que tenu à la main : un plan qui date
+   d'une refonte précédente envoie les robots sur des pages disparues
+   et tait celles qui viennent d'être créées. La date de dernière
+   modification vient du fichier lui-même, ce qui la rend juste sans
+   que personne ait à y penser. */
+const SITE_URL = 'https://melodia-funebre.fr';
+const PLAN = [
+  ['index.html', '1.0', 'weekly'],
+  ['offres.html', '1.0', 'monthly'],
+  ['demos.html', '0.9', 'weekly'],
+  ['processus.html', '0.9', 'monthly'],
+  ['rites.html', '0.9', 'monthly'],
+  ['agences.html', '0.9', 'monthly'],
+  ['contact.html', '0.7', 'yearly'],
+  ['cgv.html', '0.4', 'yearly'],
+  ['mentions-legales.html', '0.3', 'yearly'],
+  ['confidentialite.html', '0.3', 'yearly']
+];
+/* La page de connexion est hors du plan : elle est interdite aux
+   robots dans robots.txt, l'y lister serait se contredire. */
+const entrees = PLAN.map(([f, prio, freq]) => {
+  const chemin = path.join(RACINE, f);
+  const quand = fs.existsSync(chemin)
+    ? fs.statSync(chemin).mtime.toISOString().slice(0, 10)
+    : new Date().toISOString().slice(0, 10);
+  const url = SITE_URL + '/' + (f === 'index.html' ? '' : f.replace('.html', ''));
+  return `  <url><loc>${url}</loc><lastmod>${quand}</lastmod>` +
+         `<changefreq>${freq}</changefreq><priority>${prio}</priority></url>`;
+}).join('\n');
+
+fs.writeFileSync(path.join(RACINE, 'sitemap.xml'),
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  entrees + '\n</urlset>\n');
+console.log('  sitemap.xml            ' + PLAN.length + ' adresses');
