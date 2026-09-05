@@ -2619,3 +2619,264 @@ body.a-ecoute { padding-bottom: 5rem; }
   .empreinte-mot em { font-size: 0.72rem; letter-spacing: 0.08em; }
   .empreinte-ou { font-size: 0.72rem; letter-spacing: 0.08em; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA PLATINE — le catalogue autour d'un lecteur
+
+   La grille de douze fiches faisait 3 246 px sur un téléphone : trois
+   écrans et demi, qu'on traversait au lieu de les regarder. Une seule
+   œuvre est désormais à l'écran, en majesté, et les douze restent à
+   portée de pouce dans la frise du bas.
+
+   Le fond de page reste rendu en HTML pour le référencement et pour
+   les navigateurs sans JavaScript ; catalogue.js le remplace par ce
+   qui suit dès qu'il s'exécute.
+   ═══════════════════════════════════════════════════════════════ */
+
+.scene-platine {
+  position: relative;
+  padding: clamp(2.6rem, 8vw, 4rem) 0 clamp(1.2rem, 3vw, 2rem);
+  overflow: hidden;
+}
+
+.platine {
+  --lueur: 0;
+  position: relative;
+  display: grid;
+  gap: clamp(1.3rem, 3.5vw, 2.6rem);
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  max-width: 62rem;
+  margin: 0 auto;
+}
+@media (max-width: 860px) {
+  .platine { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+}
+
+/* ─── Le guilloché ───
+   Une rosette d'épitrochoïde tracée à l'ouverture, comme la gravure de
+   fond d'un certificat. Trois courbes suffisent à faire la moire, et le
+   tracé coûte moins qu'une image de fond. Elle est fondue au bord : sans
+   ce masque, elle passait sous le récit et le rendait illisible. */
+.guilloche {
+  position: absolute; left: 50%; top: 50%;
+  width: 205%; height: 205%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; z-index: -1;
+  opacity: calc(.13 + var(--lueur) * .2);
+  transition: opacity .5s;
+  -webkit-mask: radial-gradient(circle, #000 26%, rgba(0,0,0,.35) 46%, transparent 66%);
+          mask: radial-gradient(circle, #000 26%, rgba(0,0,0,.35) 46%, transparent 66%);
+}
+.guilloche svg { width: 100%; height: 100%; animation: rosace 120s linear infinite; }
+.guilloche path { fill: none; stroke: var(--or); stroke-width: .28; vector-effect: non-scaling-stroke; }
+@keyframes rosace { to { transform: rotate(-360deg); } }
+
+/* ─── Le disque ─── */
+.disque-cadre {
+  position: relative; z-index: 1; isolation: isolate;
+  width: clamp(148px, 38vw, 212px); aspect-ratio: 1;
+}
+.disque {
+  position: absolute; inset: 0; border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.032) 0 1px, rgba(0,0,0,0) 1px 3.5px),
+    repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.5) 0 2px, rgba(0,0,0,0) 2px 7px),
+    radial-gradient(circle at 33% 28%, #22222e 0%, #0d0d15 46%, #050509 78%);
+  box-shadow:
+    inset 0 0 46px rgba(0,0,0,.95), inset 0 2px 3px rgba(255,255,255,.06),
+    0 34px 64px -26px rgba(0,0,0,.95),
+    0 0 calc(28px + var(--lueur) * 54px) -14px rgba(201,168,76, calc(.16 + var(--lueur) * .4));
+  transition: box-shadow .4s;
+}
+.disque::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,.075) 22deg, transparent 60deg,
+    transparent 180deg, rgba(201,168,76,.075) 202deg, transparent 240deg);
+}
+.disque-bord {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  border: 1px solid rgba(201,168,76,.22);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.6), inset 0 0 0 7px rgba(255,255,255,.018);
+}
+
+/* L'étiquette ne tourne pas avec le disque : une initiale à l'envers
+   ne se lit plus. Elle porte le portrait quand la famille en a confié un. */
+.etiquette {
+  position: absolute; left: 50%; top: 50%; width: 39%; aspect-ratio: 1;
+  transform: translate(-50%, -50%); border-radius: 50%;
+  display: grid; place-items: center; z-index: 2; overflow: hidden;
+  background: radial-gradient(circle at 36% 30%, #1c1a12, #0a0a0e 74%);
+  border: 1px solid rgba(201,168,76,.4);
+  box-shadow: 0 0 0 3px rgba(4,4,7,.9), 0 4px 14px rgba(0,0,0,.7),
+    inset 0 0 calc(8px + var(--lueur) * 22px) rgba(201,168,76, calc(.14 + var(--lueur) * .34));
+}
+.etiquette b {
+  font-family: var(--ff-d); font-weight: 300; font-size: clamp(1.5rem, 4.6vw, 2.1rem); line-height: 1;
+  background: var(--or-grad); background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 calc(var(--lueur) * 11px) rgba(227,201,119,.75));
+}
+.etiquette img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* Le bras se pose quand la lecture commence */
+.bras {
+  position: absolute; right: -2%; top: 6%; width: 54%; height: 54%; z-index: 3; pointer-events: none;
+  transform-origin: 88% 12%; transform: rotate(-26deg); opacity: .85;
+  transition: transform 1.1s cubic-bezier(.34, 1.3, .5, 1);
+}
+.platine.joue .bras { transform: rotate(6deg); }
+.bras svg { width: 100%; height: 100%; overflow: visible; }
+.bras .tige { stroke: rgba(201,168,76,.55); stroke-width: 1.4; fill: none; stroke-linecap: round; }
+.bras .pivot { fill: #14141c; stroke: rgba(201,168,76,.5); stroke-width: 1; }
+
+/* ─── Le pupitre ─── */
+.pupitre { position: relative; z-index: 2; min-width: 0; width: 100%; }
+.pup-style {
+  font-family: var(--ff-m); font-size: .58rem; letter-spacing: .34em; text-transform: uppercase;
+  color: var(--or-patina); margin-bottom: .55rem;
+}
+.pup-mention[hidden] { display: none; }   /* inline-block l'emportait sur [hidden] */
+.pup-mention {
+  display: inline-block; font-family: var(--ff-m); font-size: .55rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--or-bright); border: 1px solid var(--line-strong);
+  padding: .24rem .6rem; margin-bottom: .7rem;
+}
+.pup-titre {
+  font-family: var(--ff-d); font-weight: 300; font-style: italic;
+  font-size: clamp(1.7rem, 5.2vw, 2.7rem); line-height: 1.1; color: var(--paper);
+  margin: 0 0 .35rem; text-wrap: balance; letter-spacing: -.005em;
+}
+.pup-qui { font-size: .86rem; color: var(--ash); margin-bottom: 1.15rem; }
+.pup-onde { position: relative; width: 100%; height: 72px; margin-bottom: .5rem; }
+.pup-onde canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.pup-bas { display: flex; align-items: center; gap: 1rem; }
+@media (max-width: 860px) { .pup-bas { justify-content: center; } }
+.pup-t {
+  font-family: var(--ff-m); font-weight: 300; font-size: .7rem; color: var(--dust);
+  font-variant-numeric: tabular-nums; letter-spacing: .04em; flex: 0 0 auto;
+}
+.pup-t.fin { color: var(--or-patina); }
+
+.molette { position: relative; flex: 1; height: 26px; cursor: pointer; touch-action: none; min-width: 70px; }
+.molette::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px;
+  background: var(--line-soft);
+}
+.molette i {
+  position: absolute; left: 0; top: 50%; height: 1px; margin-top: -.5px; width: 0;
+  background: linear-gradient(90deg, var(--or-deep), var(--or-bright));
+  box-shadow: 0 0 9px rgba(201,168,76,.6);
+}
+.molette u {
+  position: absolute; top: 50%; left: 0; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px;
+  transform: rotate(45deg); background: var(--or-bright);
+  box-shadow: 0 0 12px rgba(227,201,119,.85); opacity: 0; transition: opacity .4s;
+}
+.platine.joue .molette u, .molette:hover u { opacity: 1; }
+
+/* Le bouton : un jeton d'or, pas un rond de formulaire */
+.jeton {
+  position: relative; appearance: none; border: 0; padding: 0; cursor: pointer; flex: 0 0 auto;
+  width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 34% 28%, #1d1a12, #0a0a0e 76%);
+  box-shadow: 0 0 0 1px rgba(201,168,76,.4), 0 8px 22px -8px rgba(0,0,0,.9),
+    inset 0 1px 1px rgba(255,255,255,.08);
+  color: var(--or-bright); transition: box-shadow .45s, transform .45s;
+}
+.jeton::before {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%; pointer-events: none;
+  border: 1px solid rgba(201,168,76,.18); transform: scale(.9); opacity: 0;
+  transition: transform .6s cubic-bezier(.22,1,.36,1), opacity .6s;
+}
+.jeton:hover { transform: scale(1.05); }
+.jeton:hover::before { transform: scale(1); opacity: 1; }
+.jeton svg { width: 19px; height: 19px; margin-left: 2px; filter: drop-shadow(0 0 6px rgba(227,201,119,.5)); }
+.platine.joue .jeton svg { margin-left: 0; }
+.platine.joue .jeton {
+  box-shadow: 0 0 0 1px var(--or), 0 10px 26px -8px rgba(0,0,0,.9),
+    inset 0 1px 1px rgba(255,255,255,.1),
+    0 0 calc(16px + var(--lueur) * 34px) -6px rgba(201,168,76, calc(.3 + var(--lueur) * .5));
+}
+
+/* Le récit en colonne éditoriale, avec sa lettrine */
+.pup-recit {
+  margin: 1.5rem 0 0; font-size: .88rem; line-height: 1.78; color: var(--bone);
+  text-align: left; max-width: 58ch;
+}
+.pup-recit::first-letter {
+  float: left; font-family: var(--ff-d); font-weight: 300; font-size: 3.1rem; line-height: .82;
+  padding: .12rem .5rem 0 0; color: var(--or); text-shadow: 0 0 18px rgba(201,168,76,.3);
+}
+.pup-vers {
+  font-family: var(--ff-d); font-style: italic; font-weight: 300;
+  font-size: clamp(1.05rem, 2.9vw, 1.3rem); line-height: 1.5; color: var(--or-bright);
+  white-space: pre-line; margin: 1.3rem 0 0; padding: 0 0 0 1.1rem;
+  border-left: 1px solid var(--line-strong); text-align: left; max-width: 50ch;
+}
+.pup-brief { margin-top: 1.4rem; text-align: left; }
+.pup-brief > span {
+  display: block; font-family: var(--ff-m); font-size: .55rem; letter-spacing: .28em;
+  text-transform: uppercase; color: var(--dust); margin-bottom: .5rem;
+}
+.pup-brief em { display: flex; flex-wrap: wrap; gap: .4rem; font-style: normal; }
+@media (max-width: 860px) {
+  .pup-recit, .pup-vers { margin-left: auto; margin-right: auto; }
+  .pup-brief { text-align: center; }
+  .pup-brief em { justify-content: center; }
+}
+
+/* ─── La frise : les douze à portée de pouce ─── */
+.frise { position: relative; margin-top: clamp(1.6rem, 4vw, 2.4rem); padding-top: 1.5rem; }
+.frise::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-strong) 28%, var(--line-strong) 72%, transparent);
+}
+.frise-titre { text-align: center; margin-bottom: 1.1rem; }
+.frise-piste {
+  display: flex; gap: clamp(.7rem, 2.4vw, 1.15rem); overflow-x: auto;
+  scroll-snap-type: x proximity; padding: .4rem 1rem 1.1rem;
+  margin: 0 -1rem; scrollbar-width: none;
+}
+.frise-piste::-webkit-scrollbar { display: none; }
+.pastille {
+  flex: 0 0 auto; scroll-snap-align: center; appearance: none; background: none; border: 0;
+  padding: .3rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;
+  gap: .5rem; width: 5.4rem; opacity: .44;
+  transition: opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1);
+}
+.pastille:hover { opacity: .82; }
+.pastille[aria-current="true"] { opacity: 1; transform: translateY(-3px); }
+.jet {
+  position: relative; width: 52px; height: 52px; border-radius: 50%; overflow: hidden;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 34% 28%, #1a1a24, #08080d 74%);
+  border: 1px solid rgba(201,168,76,.22); transition: border-color .5s, box-shadow .5s;
+}
+.jet > span {
+  font-family: var(--ff-d); font-weight: 300; font-size: 1.28rem; color: var(--or-patina);
+  line-height: 1; transition: color .5s;
+}
+.jet img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pastille[aria-current="true"] .jet {
+  border-color: var(--or);
+  box-shadow: 0 0 22px -4px rgba(201,168,76,.55), inset 0 0 14px rgba(201,168,76,.12);
+}
+.pastille[aria-current="true"] .jet > span {
+  background: var(--or-grad); background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.past-nom {
+  font-size: .64rem; line-height: 1.3; color: var(--dust); text-align: center;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pastille[aria-current="true"] .past-nom { color: var(--bone); }
+
+/* Sans JavaScript, la grille d'origine reste : c'est elle qui porte les
+   douze récits pour les moteurs. Elle disparaît quand la platine prend
+   sa place. */
+.catalogue.platine-active { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .guilloche svg, .disque { animation: none !important; }
+}
