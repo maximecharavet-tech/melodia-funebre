@@ -23,11 +23,72 @@ async function doLogin(e) {
   try {
     var u = await window.MelodiaAuth.login(document.getElementById('li-id').value, document.getElementById('li-pw').value);
     var vers = window.MelodiaAuth.home();
+    /* La proposition d'empreinte vient APRÈS la connexion, jamais avant :
+       il faut une session à retenir, et on ne demande rien à quelqu'un
+       qui n'est pas encore entré. */
+    await proposerEmpreinte(u);
     if (window.MelodiaAccueil) return window.MelodiaAccueil.saluer(prenomDe(u), vers);
     location.href = vers;
   } catch (err) { msg(err.message); }
   return false;
 }
+
+/* ─── Empreinte ─── */
+var E = window.MelodiaEmpreinte;
+
+async function proposerEmpreinte(u) {
+  if (!E || E.enrole()) return;
+  try {
+    if (!(await E.disponible())) return;
+    /* Une seule proposition par appareil : un refus n'est pas une
+       question à reposer à chaque connexion. */
+    if (localStorage.getItem('melodia_empreinte_refus')) return;
+    if (!confirm("Ouvrir votre tableau de bord avec votre empreinte la prochaine fois ?\n\n"
+               + "Votre session sera chiffrée sur cet appareil et ne se rouvrira qu'après "
+               + "vérification de votre empreinte ou de votre visage. Votre mot de passe "
+               + "restera toujours possible.")) {
+      try { localStorage.setItem('melodia_empreinte_refus', '1'); } catch (er) {}
+      return;
+    }
+    await E.activer(prenomDe(u));
+  } catch (err) {
+    /* Un échec ici ne doit jamais empêcher d'entrer : on vient de se
+       connecter, l'empreinte n'était qu'un confort. */
+    msg("Empreinte non activée : " + err.message);
+    await new Promise(function (r) { setTimeout(r, 2200); });
+  }
+}
+
+async function ouvrirParEmpreinte() {
+  msg('');
+  try {
+    var u = await E.ouvrir();
+    var vers = window.MelodiaAuth.home();
+    if (window.MelodiaAccueil) return window.MelodiaAccueil.saluer(prenomDe(u), vers);
+    location.href = vers;
+  } catch (err) {
+    msg(err.message || "Le déverrouillage a échoué. Entrez votre mot de passe.");
+  }
+}
+
+function oublierEmpreinte() {
+  if (!confirm("Oublier l'empreinte enregistrée sur cet appareil ?\n\n"
+             + "Vous vous connecterez de nouveau avec votre mot de passe.")) return;
+  E.oublier();
+  try { localStorage.removeItem('melodia_empreinte_refus'); } catch (e) {}
+  document.getElementById('view-empreinte').hidden = true;
+}
+
+/* Le bloc ne s'affiche que si une clé existe ET que l'appareil sait la
+   lire : un bouton qui échoue vaut moins que pas de bouton. */
+(async function montrerEmpreinte() {
+  if (!E || !E.enrole()) return;
+  if (!(await E.disponible())) return;
+  var bloc = document.getElementById('view-empreinte');
+  var qui = E.qui();
+  if (qui) document.getElementById('empreinte-qui').textContent = qui;
+  bloc.hidden = false;
+})();
 async function doSignup(e) {
   e.preventDefault();
   try {

@@ -2559,3 +2559,63 @@ body.a-ecoute { padding-bottom: 5rem; }
   .accueil-suite { font-size: 0.72rem; letter-spacing: 0.1em; }
   .accueil-passer { font-size: 0.72rem; letter-spacing: 0.1em; bottom: 1.6rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   DÉVERROUILLAGE PAR EMPREINTE
+
+   Placé au-dessus du formulaire parce que c'est la voie normale une
+   fois l'appareil connu : le mot de passe devient le recours, pas
+   l'inverse. Le bouton est large et haut — on le vise d'un pouce,
+   souvent d'une seule main.
+   ═══════════════════════════════════════════════════════════════ */
+.empreinte { margin-bottom: 1.6rem; }
+
+.empreinte-btn {
+  display: flex; align-items: center; gap: 1rem; width: 100%;
+  padding: 1.1rem 1.3rem; cursor: pointer;
+  text-align: left;
+  border: 1px solid rgba(201, 168, 76, 0.32);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, rgba(201, 168, 76, 0.09), rgba(201, 168, 76, 0.02));
+  color: var(--paper);
+  transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+}
+.empreinte-btn:hover {
+  border-color: var(--or); transform: translateY(-1px);
+  background: linear-gradient(160deg, rgba(201, 168, 76, 0.14), rgba(201, 168, 76, 0.04));
+}
+.empreinte-btn:active { transform: none; }
+.empreinte-btn svg { width: 34px; height: 34px; flex: none; color: var(--or); }
+
+.empreinte-mot { display: block; min-width: 0; }
+.empreinte-mot b {
+  display: block; font-family: var(--ff-b); font-weight: 400;
+  font-size: 0.95rem; color: var(--paper);
+}
+.empreinte-mot em {
+  display: block; margin-top: 0.15rem; font-style: normal;
+  font-family: var(--ff-m); font-size: 0.68rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--or-patina);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.empreinte .lien-bascule { display: block; margin: 0.7rem auto 0; }
+
+/* Séparateur : un filet coupé par les mots, plutôt qu'un mot posé
+   au-dessus d'un trait. */
+.empreinte-ou {
+  display: flex; align-items: center; gap: 0.9rem;
+  margin-top: 1.4rem;
+  font-family: var(--ff-m); font-size: 0.68rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--dust);
+}
+.empreinte-ou::before, .empreinte-ou::after {
+  content: ''; flex: 1; height: 1px; background: var(--line-soft);
+}
+
+@media (max-width: 720px) {
+  .empreinte-btn { padding: 1.2rem; }
+  .empreinte-mot b { font-size: 1rem; }
+  .empreinte-mot em { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .empreinte-ou { font-size: 0.72rem; letter-spacing: 0.08em; }
+}

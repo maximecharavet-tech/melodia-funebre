@@ -7,7 +7,7 @@ module.exports = {
   desc: "Connectez-vous à votre espace Melodia Funèbre pour suivre vos commandes, ou créez un compte partenaire si vous êtes une agence de pompes funèbres.",
   noindex: true,
   sticky: false,
-  scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/accueil-connexion.js'],
+  scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/empreinte.js', 'assets/js/accueil-connexion.js'],
   body: fs.readFileSync(path.join(S, 'compte-main.html'), 'utf8'),
   /* L'adresse du film porte son empreinte : remplacer la vidéo suffit
      à ce que le navigateur la retélécharge, sans purge de cache. */

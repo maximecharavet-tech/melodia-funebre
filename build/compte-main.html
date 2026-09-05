@@ -11,6 +11,26 @@
       <div class="card reveal in reveal-d1">
         <div id="msg" class="form-msg"></div>
 
+        <!-- Déverrouillage par empreinte : n'apparaît que sur un appareil
+             où la clé a été posée, et seulement s'il sait la lire. -->
+        <div id="view-empreinte" class="empreinte" hidden>
+          <button type="button" class="empreinte-btn" onclick="ouvrirParEmpreinte()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M12 2a9 9 0 00-9 9c0 1.4.2 2.7.7 4"/>
+              <path d="M12 6a5 5 0 00-5 5c0 3 .6 5.3 1.7 7.6"/>
+              <path d="M12 10a1 1 0 00-1 1c0 3.5.6 6.5 1.8 9"/>
+              <path d="M15.6 20.5A22 22 0 0116 11a4 4 0 00-4-4"/>
+              <path d="M20.3 17A24 24 0 0021 11a9 9 0 00-4.5-7.8"/>
+            </svg>
+            <span class="empreinte-mot">
+              <b>Ouvrir avec l'empreinte</b>
+              <em id="empreinte-qui"></em>
+            </span>
+          </button>
+          <button type="button" class="lien-bascule" onclick="oublierEmpreinte()">Oublier cet appareil</button>
+          <div class="empreinte-ou"><span>ou par mot de passe</span></div>
+        </div>
+
         <!-- CONNEXION -->
         <form id="view-login" onsubmit="return doLogin(event)">
           <div class="field">

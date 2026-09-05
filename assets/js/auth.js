@@ -69,6 +69,28 @@
 
     isMaster: function () { var u = this.current(); return !!u && u.role === 'master'; },
 
+    /* Rouvre une session à partir du seul jeton de rafraîchissement.
+       C'est ce que garde le déverrouillage par empreinte : un jeton
+       d'accès ne vit qu'une heure et serait périmé au retour, alors
+       que le jeton de rafraîchissement, lui, rouvre une session
+       neuve. On n'a donc jamais à conserver le mot de passe. */
+    async rouvrir(jetonDeRetour) {
+      if (!HAS_SB) throw new Error('Session indisponible hors ligne.');
+      var d = await sb('/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST', body: JSON.stringify({ refresh_token: jetonDeRetour })
+      });
+      if (!d || !d.access_token) throw new Error('Session expirée.');
+      LS.set('melodia_session', d);
+      await this.relireRole();
+      return this.current();
+    },
+
+    /* Le jeton de rafraîchissement de la session en cours, s'il existe */
+    jetonDeRetour: function () {
+      var s = LS.get('melodia_session', null);
+      return (s && s.refresh_token) || null;
+    },
+
     /* Va chercher le rôle réel dans la base. La règle RLS de la table
        « roles » laisse chacun lire sa seule ligne : la réponse est donc
        soit son rôle, soit rien. Sans rôle attribué, on reste partenaire. */

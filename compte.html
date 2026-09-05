@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=4f474049">
+<link rel="stylesheet" href="assets/css/style.css?v=798a789d">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -89,6 +89,26 @@
 
       <div class="card reveal in reveal-d1">
         <div id="msg" class="form-msg"></div>
+
+        <!-- Déverrouillage par empreinte : n'apparaît que sur un appareil
+             où la clé a été posée, et seulement s'il sait la lire. -->
+        <div id="view-empreinte" class="empreinte" hidden>
+          <button type="button" class="empreinte-btn" onclick="ouvrirParEmpreinte()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M12 2a9 9 0 00-9 9c0 1.4.2 2.7.7 4"/>
+              <path d="M12 6a5 5 0 00-5 5c0 3 .6 5.3 1.7 7.6"/>
+              <path d="M12 10a1 1 0 00-1 1c0 3.5.6 6.5 1.8 9"/>
+              <path d="M15.6 20.5A22 22 0 0116 11a4 4 0 00-4-4"/>
+              <path d="M20.3 17A24 24 0 0021 11a9 9 0 00-4.5-7.8"/>
+            </svg>
+            <span class="empreinte-mot">
+              <b>Ouvrir avec l'empreinte</b>
+              <em id="empreinte-qui"></em>
+            </span>
+          </button>
+          <button type="button" class="lien-bascule" onclick="oublierEmpreinte()">Oublier cet appareil</button>
+          <div class="empreinte-ou"><span>ou par mot de passe</span></div>
+        </div>
 
         <!-- CONNEXION -->
         <form id="view-login" onsubmit="return doLogin(event)">
@@ -216,7 +236,8 @@
 <script src="assets/js/main.js?v=339d53f4"></script>
 <script src="assets/js/rappel.js?v=4d2deef5"></script>
 <script src="assets/js/config.js?v=13072ce7"></script>
-<script src="assets/js/auth.js?v=224a3f35"></script>
+<script src="assets/js/auth.js?v=351f8c57"></script>
+<script src="assets/js/empreinte.js?v=d4610d73"></script>
 <script src="assets/js/accueil-connexion.js?v=ebad0e50"></script>
 <script>window.MELODIA_ACCUEIL_FILM = "assets/img/connexion.mp4?v=44886729";</script>
 <script>
@@ -244,11 +265,72 @@ async function doLogin(e) {
   try {
     var u = await window.MelodiaAuth.login(document.getElementById('li-id').value, document.getElementById('li-pw').value);
     var vers = window.MelodiaAuth.home();
+    /* La proposition d'empreinte vient APRÈS la connexion, jamais avant :
+       il faut une session à retenir, et on ne demande rien à quelqu'un
+       qui n'est pas encore entré. */
+    await proposerEmpreinte(u);
     if (window.MelodiaAccueil) return window.MelodiaAccueil.saluer(prenomDe(u), vers);
     location.href = vers;
   } catch (err) { msg(err.message); }
   return false;
 }
+
+/* ─── Empreinte ─── */
+var E = window.MelodiaEmpreinte;
+
+async function proposerEmpreinte(u) {
+  if (!E || E.enrole()) return;
+  try {
+    if (!(await E.disponible())) return;
+    /* Une seule proposition par appareil : un refus n'est pas une
+       question à reposer à chaque connexion. */
+    if (localStorage.getItem('melodia_empreinte_refus')) return;
+    if (!confirm("Ouvrir votre tableau de bord avec votre empreinte la prochaine fois ?\n\n"
+               + "Votre session sera chiffrée sur cet appareil et ne se rouvrira qu'après "
+               + "vérification de votre empreinte ou de votre visage. Votre mot de passe "
+               + "restera toujours possible.")) {
+      try { localStorage.setItem('melodia_empreinte_refus', '1'); } catch (er) {}
+      return;
+    }
+    await E.activer(prenomDe(u));
+  } catch (err) {
+    /* Un échec ici ne doit jamais empêcher d'entrer : on vient de se
+       connecter, l'empreinte n'était qu'un confort. */
+    msg("Empreinte non activée : " + err.message);
+    await new Promise(function (r) { setTimeout(r, 2200); });
+  }
+}
+
+async function ouvrirParEmpreinte() {
+  msg('');
+  try {
+    var u = await E.ouvrir();
+    var vers = window.MelodiaAuth.home();
+    if (window.MelodiaAccueil) return window.MelodiaAccueil.saluer(prenomDe(u), vers);
+    location.href = vers;
+  } catch (err) {
+    msg(err.message || "Le déverrouillage a échoué. Entrez votre mot de passe.");
+  }
+}
+
+function oublierEmpreinte() {
+  if (!confirm("Oublier l'empreinte enregistrée sur cet appareil ?\n\n"
+             + "Vous vous connecterez de nouveau avec votre mot de passe.")) return;
+  E.oublier();
+  try { localStorage.removeItem('melodia_empreinte_refus'); } catch (e) {}
+  document.getElementById('view-empreinte').hidden = true;
+}
+
+/* Le bloc ne s'affiche que si une clé existe ET que l'appareil sait la
+   lire : un bouton qui échoue vaut moins que pas de bouton. */
+(async function montrerEmpreinte() {
+  if (!E || !E.enrole()) return;
+  if (!(await E.disponible())) return;
+  var bloc = document.getElementById('view-empreinte');
+  var qui = E.qui();
+  if (qui) document.getElementById('empreinte-qui').textContent = qui;
+  bloc.hidden = false;
+})();
 async function doSignup(e) {
   e.preventDefault();
   try {
