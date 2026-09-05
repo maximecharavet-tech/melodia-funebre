@@ -28,6 +28,12 @@
   var PREC  = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 6h2v12H7zM19 6v12l-9-6z"/></svg>';
   var SUIV  = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6l9 6-9 6z"/></svg>';
   var CROIX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  /* Le signe posé sur le jeton : un triangle tant que rien ne joue,
+     trois barres quand la lecture est en cours. Un rond doré seul
+     n'annonce pas qu'on peut appuyer dessus. */
+  var TRIANGLE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  var VUMETRE = '<span class="jet-vu"><i></i><i></i><i></i></span>';
+  var JETON_SIGNE = TRIANGLE + VUMETRE;
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -161,10 +167,19 @@
   /* ─── La frise ─── */
   var frise = document.createElement('div');
   frise.className = 'frise';
-  frise.innerHTML = '<div class="frise-titre"><span class="mono" data-frise-titre></span></div>' +
-                    '<div class="frise-piste" role="tablist" aria-label="Choisir un hommage"></div>';
+  /* Le dégradé de l'anneau est défini une fois pour les douze jetons :
+     un dégradé SVG ne se partage pas entre documents, mais il se
+     partage très bien entre éléments d'une même page. */
+  frise.innerHTML =
+    '<svg width="0" height="0" aria-hidden="true" style="position:absolute">' +
+      '<defs><linearGradient id="degradeOr" x1="0" y1="0" x2="1" y2="1">' +
+        '<stop offset="0%" stop-color="#97803c"/><stop offset="50%" stop-color="#f0e0ae"/>' +
+        '<stop offset="100%" stop-color="#c9a84c"/></linearGradient></defs></svg>' +
+    '<div class="frise-titre"><span class="mono" data-frise-titre></span></div>' +
+    '<div class="frise-cadre"><div class="frise-piste" role="tablist" aria-label="Choisir un hommage"></div></div>';
   var fPiste = frise.querySelector('.frise-piste');
   var fTitre = frise.querySelector('[data-frise-titre]');
+  var TOUR = 2 * Math.PI * 32;      /* circonférence de l'anneau du jeton */
 
   /* ═══ Peinture d'une œuvre dans la platine ═══ */
   function poser(i) {
@@ -265,6 +280,7 @@
     platine.querySelector('[data-td]').textContent = '−' + fmt(audio.duration - audio.currentTime);
     if (bRemplit) bRemplit.style.width = (p * 100) + '%';
     if (bTemps) bTemps.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+    arcJeton(jetonCourant(), p);
   });
   audio.addEventListener('ended', function () {
     var p = visibles.indexOf(cur);
@@ -379,6 +395,8 @@
     lueur += (v - lueur) * (v > lueur ? 0.3 : 0.06);
     platine.style.setProperty('--lueur', lueur.toFixed(3));
     if (barre) barre.style.setProperty('--lueur', lueur.toFixed(3));
+    var jc = jetonCourant();
+    if (jc) jc.style.setProperty('--lueur', lueur.toFixed(3));
 
     /* Le disque a une masse : sa vitesse monte et retombe. Il ne
        s'arrête pas net comme une animation qu'on coupe. */
@@ -483,9 +501,30 @@
 
   function marquerFrise() {
     for (var i = 0; i < pastilles.length; i++) {
-      if (!pastilles[i]) continue;
-      pastilles[i].setAttribute('aria-current', Number(pastilles[i].dataset.i) === cur ? 'true' : 'false');
+      var b = pastilles[i];
+      if (!b) continue;
+      var actif = Number(b.dataset.i) === cur;
+      b.setAttribute('aria-current', actif ? 'true' : 'false');
+      b.classList.toggle('joue', actif && joue);
+      /* Le triangle disparaît dès que les barres prennent le relais */
+      var t = b.querySelector('.jet-signe svg');
+      var v = b.querySelector('.jet-vu');
+      if (t) t.style.display = (actif && joue) ? 'none' : '';
+      if (v) v.style.display = (actif && joue) ? '' : 'none';
+      if (!actif) arcJeton(b, 0);
     }
+  }
+
+  /* L'anneau du jeton actif est la jauge du morceau : on voit d'un
+     coup d'œil où l'on en est sans quitter la frise des yeux. */
+  function arcJeton(b, part) {
+    var a = b && b.querySelector('[data-arc]');
+    if (a) a.style.strokeDashoffset = (TOUR * (1 - part)).toFixed(2);
+  }
+  function jetonCourant() {
+    for (var i = 0; i < pastilles.length; i++)
+      if (Number(pastilles[i].dataset.i) === cur) return pastilles[i];
+    return null;
   }
 
   /* ═══ Rendu ═══ */
@@ -501,9 +540,18 @@
       b.setAttribute('role', 'tab');
       b.setAttribute('aria-current', 'false');
       b.setAttribute('aria-label', 'Écouter ' + esc(o.title || 'cet hommage'));
-      b.innerHTML = '<span class="jet"><span>' + esc(initiale(o)) + '</span>' +
-        (o.photo ? '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async">' : '') +
-        '</span><span class="past-nom">' + esc(String(o.who || o.title || '').split(',')[0]) + '</span>';
+      b.innerHTML =
+        '<span class="jet">' +
+          (o.photo ? '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async">' : '') +
+          '<span class="jet-ini">' + esc(initiale(o)) + '</span>' +
+          '<svg class="jet-arc" viewBox="0 0 68 68" style="--tour:' + TOUR.toFixed(2) + '">' +
+            '<circle class="arc-piste" cx="34" cy="34" r="32"/>' +
+            '<circle class="arc-jauge" cx="34" cy="34" r="32" data-arc/>' +
+          '</svg>' +
+          '<span class="jet-signe">' + JETON_SIGNE + '</span>' +
+        '</span>' +
+        '<span class="past-nom">' + esc(String(o.who || o.title || '').split(',')[0]) + '</span>' +
+        '<span class="past-style">' + esc(o.style || '') + '</span>';
       b.addEventListener('click', function () {
         /* Toucher un visage, c'est vouloir l'entendre */
         choisir(i, true);
