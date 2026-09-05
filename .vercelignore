@@ -11,3 +11,8 @@ archive/
 build/
 scripts/
 .github/
+
+# Schéma et guide de la base : ce sont des instructions pour vous,
+# pas des fichiers à servir. Le schéma nomme les tables et les règles
+# de sécurité — inutile de le donner à lire.
+supabase/
