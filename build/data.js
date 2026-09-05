@@ -60,12 +60,22 @@ const FAQ = [
     a: "Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain." }
 ];
 
-const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais'];
+const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae'];
 
 /* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
    propriétaire ajoute ses musiques depuis sa console, pas ici. */
 const TRACKS = [
+  { id: "demo-13", title: "Ta lumière reste", who: "Anthony, routard de la vie", lieu: "Paris et le monde",
+    style: "Reggae", file: "audio/anthony.mp3",
+    story: "Né en 1976 dans une banlieue grise, loin des tropiques, avec le one-drop dans le cœur. À dix-huit ans, son premier sac : Kingston, Addis-Abeba, les étoiles du Sahara. Il parlait cinq langues, mais le patwa était son cœur, et il revenait à Noël avec des masques d'Afrique et des pierres d'Inde. L'année de ses cinquante ans il est reparti pour l'Éthiopie — « cette fois, je reste un peu plus longtemps » — et n'est jamais revenu. Ses amis ont ramené son sac à dos, mis Exodus à fond dans le jardin de son vieux squat parisien, et dansé jusqu'au lever du soleil. Melodica, basse lourde, batterie one-drop et échos dub.",
+    lyrics: "Oh Anthony, le routard de la vie\nTu as aimé la liberté plus que tout\nEt tu t'en es allé comme un son de reggae\nVers les terres d'en haut, là où les voyageurs ne s'arrêtent jamais",
+    brief: "libre · voyageur · rieur" },
+  { id: "demo-14", title: "Paula, le vent te porte", who: "Paula, 54 ans", lieu: "",
+    style: "Folk acoustique", file: "audio/paula.mp3",
+    story: "Cinquante-quatre années à semer de l'amour sur les chemins du monde. Elle aimait partir sans savoir où, suivre une route, un soleil, un parfum d'ailleurs — et partout où elle allait, quelque chose la ramenait vers les siens. Elle savait écouter les silences des autres, donner sans compter, aimer sans faire de bruit. Elle cachait parfois ses larmes derrière ses sourires, et trouvait toujours une raison d'aimer encore. Flûte amérindienne, guitare en fingerpicking, voix rauque et polyphonie masculine.",
+    lyrics: "Paula, va là où le vent te porte,\nLà où les étoiles n'ont plus de fin.\nNous garderons ta lumière\nAu creux de nos mains.",
+    brief: "généreuse · voyageuse · pudique" },
   { id: "demo-7", title: "Personne n'oublie ton rire", who: "Odette, super mamie", lieu: "",
     style: "Gospel", file: "audio/odette.mp3",
     story: "Elle cuisinait sans balance, juste à l'œil, et les fêtes attendaient ses plats plutôt que l'inverse. Elle repartait la valise trop pleine et revenait avec le soleil dans la voix. Paul, Thomas, Virginie et Nolan ont grandi à sa table. Orgue Hammond et chœur gospel.",
