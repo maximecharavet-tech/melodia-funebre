@@ -221,16 +221,25 @@ function intro() {
     <!-- L'animation du logo. Elle se superpose au médaillon dessiné en CSS
          quand elle est prête : le seuil s'affiche à l'instant, la vidéo
          arrive ensuite. Sur connexion lente, en économie de données ou en
-         mouvement réduit, elle ne se charge jamais. -->
+         mouvement réduit, elle ne se charge jamais.
+         Pas d'image d'attente : elle serait forcément une seconde du film,
+         donc un faux départ. Le médaillon dessiné dessous tient ce rôle,
+         et il est déjà là. -->
     <div class="intro-film" aria-hidden="true">
       <video class="intro-video" muted playsinline preload="none"
-             poster="assets/img/intro-anime.jpg" width="1040" height="880"
-             data-src="assets/img/intro-anime.mp4"></video>
+             width="1040" height="880"
+             data-src="${versionne('assets/img/intro-melodia.mp4')}"></video>
     </div>
     </div>
+    <button type="button" class="intro-son" hidden
+            aria-label="Activer le son de l'animation">
+      <svg class="son-muet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+      <svg class="son-actif" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+      <span class="intro-son-mot">Son</span>
+    </button>
     <div class="intro-name">Melodia Funèbre</div>
     <div class="intro-wave" aria-hidden="true">${barres}</div>
-    <p class="intro-claim">Premier site mondial dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
+    <p class="intro-claim">Premier site dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
     <div class="intro-actions">
       <button class="btn btn-gold btn-lg" id="intro-enter" type="button">Entrer</button>
       <span class="intro-hint">Ou touchez l'écran pour continuer</span>
@@ -263,4 +272,4 @@ ${p.inline || ''}
 </html>`;
 }
 
-module.exports = { page, ICON, SITE, MAIL, head, nav, footer };
+module.exports = { page, ICON, SITE, MAIL, head, nav, footer, versionne };

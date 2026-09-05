@@ -48,25 +48,81 @@
        d'écran, ce serait indélicat. */
     var attente = REDUCED ? 3500 : 5200;
     var film = $('.intro-video', intro);
+    var bouton_son = $('.intro-son', intro);
     var reseau = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     var econome = reseau && (reseau.saveData || /^([23]g|slow-2g)$/.test(reseau.effectiveType || ''));
 
+    /* ─── Le son ───
+       Le film en porte, et il fait partie de l'œuvre. Mais aucun
+       navigateur ne laisse démarrer un son sans geste préalable, et
+       c'est une bonne chose : sur un site funéraire, on est parfois
+       au bureau, parfois au chevet de quelqu'un. Le son ne s'impose
+       donc jamais — on le tente, et s'il est refusé le film continue
+       en silence avec un bouton pour l'allumer. Le choix est retenu
+       le temps de la session. */
+    var SON_CLE = 'melodia_intro_son';
+    var sonVoulu = (function () {
+      try { return sessionStorage.getItem(SON_CLE) !== 'non'; } catch (e) { return true; }
+    })();
+
+    function marquerSon(actif) {
+      if (!bouton_son) return;
+      bouton_son.hidden = false;
+      bouton_son.classList.toggle('actif', actif);
+      bouton_son.setAttribute('aria-pressed', actif ? 'true' : 'false');
+      bouton_son.setAttribute('aria-label',
+        actif ? "Couper le son de l'animation" : "Activer le son de l'animation");
+    }
+
+    if (bouton_son) {
+      bouton_son.addEventListener('click', function (e) {
+        /* Sans cela, le clic franchirait le seuil au lieu d'allumer le son */
+        e.stopPropagation();
+        if (!film) return;
+        film.muted = !film.muted;
+        sonVoulu = !film.muted;
+        try { sessionStorage.setItem(SON_CLE, sonVoulu ? 'oui' : 'non'); } catch (er) {}
+        if (!film.muted) { var r = film.play(); if (r && r.catch) r.catch(function () {}); }
+        marquerSon(!film.muted);
+      });
+    }
+
     if (film && !REDUCED && !econome) {
       film.src = film.getAttribute('data-src');
+      film.muted = !sonVoulu;
       film.load();
+
       film.addEventListener('canplay', function () {
         if (sortiIntro) return;
         intro.classList.add('film-pret');
+        /* Premier essai avec le son, si le visiteur ne l'a pas refusé */
         var essai = film.play();
-        if (essai && essai.catch) essai.catch(function () { intro.classList.remove('film-pret'); });
+        if (essai && essai.catch) essai.catch(function () {
+          /* Refusé faute de geste préalable : on repasse en silence
+             plutôt que de renoncer au film. */
+          film.muted = true;
+          var second = film.play();
+          if (second && second.catch) second.catch(function () {
+            intro.classList.remove('film-pret');
+          });
+          marquerSon(false);
+        });
       }, { once: true });
-      /* Le film dure dix secondes : on laisse le temps d'en voir
-         l'essentiel, sans jamais retenir qui veut entrer. */
+
       film.addEventListener('playing', function () {
         if (sortiIntro) return;
+        marquerSon(!film.muted);
+        /* Le film dure quinze secondes et se termine sur le logo : on
+           le laisse aller jusqu'au bout plutôt que de le couper au
+           milieu d'un geste. Rien ne retient pour autant — le bouton
+           « Entrer », un clic, une touche, un défilement franchissent
+           le seuil à tout instant. La minuterie de secours ne sert
+           qu'au cas où « ended » ne viendrait jamais. */
         clearTimeout(minuterie);
-        minuterie = setTimeout(franchir, 7600);
+        minuterie = setTimeout(franchir, 16500);
       }, { once: true });
+
+      film.addEventListener('ended', function () { franchir(); });
       /* Un fichier qui n'arrive pas ne doit rien changer au déroulé */
       film.addEventListener('error', function () { intro.classList.remove('film-pret'); });
     }
