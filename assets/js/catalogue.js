@@ -32,6 +32,8 @@
      trois barres quand la lecture est en cours. Un rond doré seul
      n'annonce pas qu'on peut appuyer dessus. */
   var TRIANGLE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  var CHEV_G = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+  var CHEV_D = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
   var VUMETRE = '<span class="jet-vu"><i></i><i></i><i></i></span>';
   var JETON_SIGNE = TRIANGLE + VUMETRE;
 
@@ -176,10 +178,40 @@
         '<stop offset="0%" stop-color="#97803c"/><stop offset="50%" stop-color="#f0e0ae"/>' +
         '<stop offset="100%" stop-color="#c9a84c"/></linearGradient></defs></svg>' +
     '<div class="frise-titre"><span class="mono" data-frise-titre></span></div>' +
-    '<div class="frise-cadre"><div class="frise-piste" role="tablist" aria-label="Choisir un hommage"></div></div>';
+    '<div class="frise-cadre">' +
+      '<button type="button" class="frise-fleche prec" data-prec-frise aria-label="Hommages précédents">' + CHEV_G + '</button>' +
+      '<div class="frise-piste" role="tablist" aria-label="Choisir un hommage"></div>' +
+      '<button type="button" class="frise-fleche suiv" data-suiv-frise aria-label="Hommages suivants">' + CHEV_D + '</button>' +
+    '</div>';
   var fPiste = frise.querySelector('.frise-piste');
   var fTitre = frise.querySelector('[data-frise-titre]');
+  var fPrec = frise.querySelector('[data-prec-frise]');
+  var fSuiv = frise.querySelector('[data-suiv-frise]');
   var TOUR = 2 * Math.PI * 32;      /* circonférence de l'anneau du jeton */
+
+  /* Les flèches déplacent la frise de presque une largeur d'écran : assez
+     pour avancer franchement, pas assez pour sauter des jetons. */
+  function glisserFrise(sens) {
+    fPiste.scrollBy({ left: sens * Math.max(140, fPiste.clientWidth * 0.8), behavior: 'smooth' });
+  }
+  fPrec.addEventListener('click', function () { glisserFrise(-1); });
+  fSuiv.addEventListener('click', function () { glisserFrise(1); });
+
+  /* Une flèche qui ne mène nulle part doit le dire. */
+  function majFleches() {
+    var max = fPiste.scrollWidth - fPiste.clientWidth;
+    var x = fPiste.scrollLeft;
+    fPrec.disabled = x <= 2;
+    fSuiv.disabled = x >= max - 2;
+    var inutile = max <= 2;
+    fPrec.hidden = fSuiv.hidden = inutile;
+  }
+  var attenteFleches = null;
+  fPiste.addEventListener('scroll', function () {
+    if (attenteFleches) return;
+    attenteFleches = requestAnimationFrame(function () { attenteFleches = null; majFleches(); });
+  }, { passive: true });
+  window.addEventListener('resize', function () { setTimeout(majFleches, 120); });
 
   /* ═══ Peinture d'une œuvre dans la platine ═══ */
   function poser(i) {
@@ -555,6 +587,9 @@
       b.addEventListener('click', function () {
         /* Toucher un visage, c'est vouloir l'entendre */
         choisir(i, true);
+        /* Le jeton choisi revient au centre : la frise avance d'elle-même,
+           et le suivant devient atteignable sans aucun glissé. */
+        b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         scene.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
       fPiste.appendChild(b);
@@ -571,6 +606,7 @@
     marquerFrise();
     taillerCanvas();
     dessinerOnde(joue);
+    majFleches();
   }
 
   /* ═══ Filtres par style ═══ */
