@@ -49,12 +49,40 @@
         var s = LS.get('melodia_session', null);
         if (!s || !s.user) return null;
         var meta = s.user.user_metadata || {};
-        return { id: s.user.id, email: s.user.email, name: meta.name || s.user.email.split('@')[0], role: meta.role || 'partner', agence: meta.agence || '' };
+        /* Le rôle vient de la table « roles », relue à la connexion, et
+           non de « user_metadata » : ce dernier est choisi librement par
+           le navigateur au moment de l'inscription, si bien qu'un compte
+           créé directement contre l'API pourrait s'y déclarer « master ».
+           Les règles RLS de la base ne s'y fient pas non plus ; sans ce
+           rappel, l'écran afficherait la console du fondateur et la base
+           ne renverrait rien — un état incompréhensible pour l'usager. */
+        var role = LS.get('melodia_role', null);
+        return {
+          id: s.user.id, email: s.user.email,
+          name: meta.name || s.user.email.split('@')[0],
+          role: role || 'partner',
+          agence: meta.agence || ''
+        };
       }
       return LS.get('melodia_user', null);
     },
 
     isMaster: function () { var u = this.current(); return !!u && u.role === 'master'; },
+
+    /* Va chercher le rôle réel dans la base. La règle RLS de la table
+       « roles » laisse chacun lire sa seule ligne : la réponse est donc
+       soit son rôle, soit rien. Sans rôle attribué, on reste partenaire. */
+    async relireRole() {
+      if (!HAS_SB) return null;
+      try {
+        var s = LS.get('melodia_session', null);
+        if (!s || !s.user) return null;
+        var r = await sb('/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(s.user.email));
+        var role = (r && r[0] && r[0].role) || 'partner';
+        LS.set('melodia_role', role);
+        return role;
+      } catch (e) { LS.set('melodia_role', 'partner'); return 'partner'; }
+    },
 
     async login(identifiant, password) {
       var id = (identifiant || '').trim();
@@ -67,6 +95,7 @@
       if (HAS_SB) {
         var d = await sb('/auth/v1/token?grant_type=password', { method: 'POST', body: JSON.stringify({ email: email, password: password }) });
         LS.set('melodia_session', d);
+        await this.relireRole();
         return this.current();
       }
       var users = LS.get('melodia_users', {});
@@ -117,7 +146,9 @@
       return 'Mode démo — mot de passe provisoire : ' + temp + ' (à changer après connexion). En production, un email est envoyé.';
     },
 
-    logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); },
+    /* Le rôle en cache part avec la session : sans cela, le compte
+       suivant ouvert sur le même navigateur hériterait du précédent. */
+    logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); LS.del('melodia_role'); },
 
     /** Redirige vers le bon tableau de bord, ou vers compte.html si non connecté */
     guard: function () {
