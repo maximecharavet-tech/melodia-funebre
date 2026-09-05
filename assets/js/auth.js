@@ -185,6 +185,42 @@
       if (!u) { location.href = '/compte'; return null; }
       return u;
     },
+
+    /* ─── Orienter vers la bonne console ───
+       Chaque console renvoyait vers l'autre quand le rôle ne lui
+       convenait pas. Deux pages qui se renvoient mutuellement font
+       boucler le navigateur à l'infini dès qu'elles ne s'accordent
+       pas sur le rôle — ce qui arrive dès que l'une tourne sur une
+       version de ce fichier gardée en cache et l'autre non.
+
+       Deux verrous : le rôle est relu dans la base, qui seule fait
+       autorité, plutôt que d'être cru sur parole ; et un seul saut
+       est permis par chargement, de sorte qu'un désaccord donne au
+       pire une page inattendue, jamais un navigateur en boucle. */
+    async orienter(roleAttendu) {
+      var u = this.current();
+      if (!u) { location.href = '/compte'; return null; }
+      if (HAS_SB) {
+        try { await this.relireRole(); } catch (e) {}
+        u = this.current();
+        if (!u) { location.href = '/compte'; return null; }
+      }
+      var CLE = 'melodia_saut';
+      if (!roleAttendu || u.role === roleAttendu) {
+        try { sessionStorage.removeItem(CLE); } catch (e) {}
+        return u;
+      }
+      var dejaSaute = false;
+      try { dejaSaute = !!sessionStorage.getItem(CLE); } catch (e) {}
+      if (dejaSaute) {
+        /* On a déjà rebondi une fois : on reste, plutôt que de boucler. */
+        try { sessionStorage.removeItem(CLE); } catch (e) {}
+        return u;
+      }
+      try { sessionStorage.setItem(CLE, '1'); } catch (e) {}
+      location.href = this.home();
+      return null;
+    },
     isCommercial: function () { var u = this.current(); return !!u && u.role === 'commercial'; },
 
     home: function () {

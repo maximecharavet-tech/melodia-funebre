@@ -74,6 +74,30 @@ for (const p of require('./p-legal.js')) {
 }
 console.log('  ' + String(total).padStart(28) + ' octets au total');
 
+/* ─── Empreintes sur les consoles ───
+   Les trois tableaux de bord sont des fichiers autonomes, écrits à la
+   main, que le générateur ne produit pas. Leurs scripts n'avaient donc
+   aucune empreinte, alors que les pages générées en avaient : une
+   console pouvait tourner sur un auth.js gardé en cache pendant que la
+   page de connexion en servait un neuf. Les deux ne s'accordaient plus
+   sur le rôle, et se renvoyaient l'une à l'autre indéfiniment.
+
+   On réécrit donc leurs adresses d'actifs à la construction, comme
+   pour le reste du site. */
+const { versionne } = require('./gen.js');
+const CONSOLES = ['dashboard-master.html', 'dashboard-partenaire.html', 'dashboard-commercial.html'];
+let marquees = 0;
+for (const f of CONSOLES) {
+  const chemin = path.join(RACINE, f);
+  if (!fs.existsSync(chemin)) continue;
+  const avant = fs.readFileSync(chemin, 'utf8');
+  const apres = avant.replace(
+    /(src|href)="(assets\/(?:js|css)\/[a-z0-9.-]+\.(?:js|css))(\?v=[a-f0-9]+)?"/g,
+    (_, attr, actif) => attr + '="' + versionne(actif) + '"');
+  if (apres !== avant) { fs.writeFileSync(chemin, apres); marquees++; }
+}
+console.log('  consoles marquées      ' + marquees + ' / ' + CONSOLES.length);
+
 /* ─── Plan du site ───
    Écrit à la génération plutôt que tenu à la main : un plan qui date
    d'une refonte précédente envoie les robots sur des pages disparues
