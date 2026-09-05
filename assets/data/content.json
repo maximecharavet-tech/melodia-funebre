@@ -10,6 +10,18 @@
   },
   "demos": [
     {
+      "id": "demo-8",
+      "visible": true,
+      "title": "Jusqu'au jour où l'on se retrouve",
+      "who": "Jason, 38 ans",
+      "lieu": "",
+      "style": "Piano classique",
+      "audio": "audio/jason.mp3",
+      "story": "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
+      "lyrics": "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
+      "brief": "lumineux · inachevé · aimé"
+    },
+    {
       "id": "demo-15",
       "visible": true,
       "title": "Le rocker au cœur d'or",
@@ -131,18 +143,6 @@
       "story": "Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.",
       "lyrics": "Ruth, Eshet Chayil, femme de valeur\nQui trouvera une femme comme toi ?\nTon prix dépasse celui des perles\nTu as marché entre deux terres avec foi",
       "brief": "croyante · debout · rassembleuse"
-    },
-    {
-      "id": "demo-8",
-      "visible": true,
-      "title": "Jusqu'au jour où l'on se retrouve",
-      "who": "Jason, 38 ans",
-      "lieu": "",
-      "style": "Piano classique",
-      "audio": "audio/jason.mp3",
-      "story": "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
-      "lyrics": "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
-      "brief": "lumineux · inachevé · aimé"
     },
     {
       "id": "demo-5",

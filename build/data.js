@@ -66,6 +66,11 @@ const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jaz
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
    propriétaire ajoute ses musiques depuis sa console, pas ici. */
 const TRACKS = [
+  { id: "demo-8", title: "Jusqu'au jour où l'on se retrouve", who: "Jason, 38 ans", lieu: "",
+    style: "Piano classique", file: "audio/jason.mp3",
+    story: "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
+    lyrics: "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
+    brief: "lumineux · inachevé · aimé" },
   { id: "demo-15", title: "Le rocker au cœur d'or", who: "Gilbert, rocker de Lyon", lieu: "Lyon",
     style: "Rock", file: "audio/gilbert.mp3",
     story: "Né un soir de 1956 dans un quartier populaire de Lyon. À quinze ans il entend à la radio une voix qui hurlait comme un loup — c'était Johnny, et il a couru acheter son premier 45 tours. À dix-huit ans, une vieille Triumph retapée de ses mains, et toutes les routes de France pour suivre la tournée : Paris, Marseille, Toulouse. Il a épousé Martine, qui supportait les vinyles et les week-ends sur la route. À soixante-dix ans il est allé au dernier concert, au Stade de France ; il a levé les bras comme à vingt ans et dit à son fils : « un jour, tu iras pour moi ». Il est rentré, a mis son vinyle préféré, et s'est endormi le sourire aux lèvres. Aujourd'hui les motos sont alignées devant son garage et ses petits-enfants ont découvert Johnny ce soir-là. Guitares électriques, orgue Hammond, et une foule qui chante.",
@@ -117,11 +122,6 @@ const TRACKS = [
     story: "Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.",
     lyrics: "Ruth, Eshet Chayil, femme de valeur\nQui trouvera une femme comme toi ?\nTon prix dépasse celui des perles\nTu as marché entre deux terres avec foi",
     brief: "croyante · debout · rassembleuse" },
-  { id: "demo-8", title: "Jusqu'au jour où l'on se retrouve", who: "Jason, 38 ans", lieu: "",
-    style: "Piano classique", file: "audio/jason.mp3",
-    story: "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
-    lyrics: "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
-    brief: "lumineux · inachevé · aimé" },
   { id: "demo-5", title: "Peppe, tesoro", who: "Giuseppe, 80 ans", lieu: "",
     style: "Musique du monde", file: "audio/giuseppe.mp3",
     story: "Il avait quitté le Sud pour l'usine et gardé le Sud dans l'assiette. Il n'a jamais dit « je t'aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu'il n'a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.",
