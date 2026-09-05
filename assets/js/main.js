@@ -46,6 +46,19 @@
        en mouvement réduit, en économie de données, ni sur un réseau lent
        — trois mégaoctets sur un forfait comptés pour cinq secondes
        d'écran, ce serait indélicat. */
+    /* ─── Combien de temps le seuil peut retenir ───
+       Un plafond ABSOLU, compté depuis l'affichage du seuil et non
+       depuis le début du film. La version précédente relançait une
+       minuterie de 16,5 s au moment où la lecture démarrait : si le
+       film mettait quatre secondes à arriver sur données mobiles, le
+       visiteur restait vingt secondes devant un écran d'attente. Le
+       film dure quinze secondes ; le site vaut mieux que quinze
+       secondes d'attente. On en montre le début, et l'on entre. */
+    var PLAFOND = REDUCED ? 3500 : 7500;
+    var depart = Date.now();
+    function reste(mini) {
+      return Math.max(mini || 0, PLAFOND - (Date.now() - depart));
+    }
     var attente = REDUCED ? 3500 : 5200;
     var film = $('.intro-video', intro);
     var bouton_son = $('.intro-son', intro);
@@ -112,17 +125,30 @@
       film.addEventListener('playing', function () {
         if (sortiIntro) return;
         marquerSon(!film.muted);
-        /* Le film dure quinze secondes et se termine sur le logo : on
-           le laisse aller jusqu'au bout plutôt que de le couper au
-           milieu d'un geste. Rien ne retient pour autant — le bouton
-           « Entrer », un clic, une touche, un défilement franchissent
-           le seuil à tout instant. La minuterie de secours ne sert
-           qu'au cas où « ended » ne viendrait jamais. */
+        /* On prolonge jusqu'au plafond, jamais au-delà : un film qui
+           démarre tard ne doit pas décaler l'entrée d'autant. Le
+           minimum de 1,2 s évite qu'un démarrage à la dernière seconde
+           ne laisse qu'un battement d'image. */
         clearTimeout(minuterie);
-        minuterie = setTimeout(franchir, 16500);
+        minuterie = setTimeout(franchir, reste(1200));
       }, { once: true });
 
+      /* Le film se termine de lui-même : on n'attend pas le plafond. */
       film.addEventListener('ended', function () { franchir(); });
+
+      /* ─── Une lecture qui s'enlise ───
+         Sur données mobiles, un film peut démarrer puis s'arrêter pour
+         se remplir. Sans cela, on regardait une image figée jusqu'au
+         plafond. Une seconde et demie de patience, puis on entre. */
+      var enlise = null;
+      film.addEventListener('waiting', function () {
+        if (sortiIntro || enlise) return;
+        enlise = setTimeout(franchir, 1500);
+      });
+      film.addEventListener('playing', function () {
+        if (enlise) { clearTimeout(enlise); enlise = null; }
+      });
+
       /* Un fichier qui n'arrive pas ne doit rien changer au déroulé */
       film.addEventListener('error', function () { intro.classList.remove('film-pret'); });
     }
