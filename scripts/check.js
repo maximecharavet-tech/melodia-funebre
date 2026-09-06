@@ -14,11 +14,27 @@ const files = [
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
-  'audio/maurice.mp3', 'audio/monique.mp3', 'audio/sergio.mp3', 'audio/dorian.mp3',
-  'audio/anthony.mp3', 'audio/paula.mp3', 'audio/gilbert.mp3',
   'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
   'vercel.json', 'robots.txt', 'sitemap.xml'
 ];
+
+/* Les hommages étaient listés à la main, et la liste avait pris du
+   retard : sept fichiers y figuraient pour dix-sept réellement servis.
+   Un catalogue qui grandit à chaque commande ne se tient pas à jour à
+   la main — on relit donc ce que le contenu publié référence vraiment,
+   ce qui vérifie du même coup que rien n'y pointe dans le vide. */
+function audiosDuCatalogue() {
+  try {
+    const c = JSON.parse(fs.readFileSync('assets/data/content.json', 'utf8'));
+    return [...new Set((c.demos || []).map((d) => d.audio).filter((a) => a && !/^https?:/i.test(a)))];
+  } catch (e) {
+    console.error('  ILLISIBLE assets/data/content.json —', e.message);
+    return [];
+  }
+}
+const audios = audiosDuCatalogue();
+if (!audios.length) console.error('  ATTENTION aucun hommage trouvé dans le catalogue');
+files.push(...audios);
 
 let ok = true;
 for (const f of files) {
