@@ -261,6 +261,20 @@ function intro() {
 </div>`;
 }
 
+/* ─── Le compte des hommages ───
+   « Les trois hommages de démonstration » est resté écrit tel quel
+   pendant que le catalogue passait de trois à seize : accueil, page
+   agences et foire aux questions annonçaient toutes un chiffre faux.
+   Les gabarits écrivent {{HOMMAGES}} et le nombre est posé ici, en
+   toute fin de génération : à ce moment TRACKS a déjà reçu le contenu
+   publié, donc un hommage ajouté depuis la console corrige la phrase
+   sans que personne n'y touche. */
+function comblerHommages(html) {
+  if (html.indexOf('{{HOMMAGES}}') === -1) return html;
+  const { TRACKS, enLettres } = require('./data.js');
+  return html.split('{{HOMMAGES}}').join(enLettres(TRACKS.length));
+}
+
 function page(p) {
   /* content.js d'abord : le catalogue se remonte ensuite autour du contenu publié */
   /* config.js en premier : content.js doit savoir où lire le contenu
@@ -269,7 +283,7 @@ function page(p) {
   const base = ['assets/js/config.js', 'assets/js/content.js', 'assets/js/main.js',
                 'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'];
   const scripts = base.concat((p.scripts || []).filter((s) => base.indexOf(s) === -1));
-  return empreinterImages(`<!DOCTYPE html>
+  return comblerHommages(empreinterImages(`<!DOCTYPE html>
 <html lang="fr">
 <head>
 ${head(p)}
@@ -288,7 +302,7 @@ ${p.inline || ''}
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
-</html>`);
+</html>`));
 }
 
 module.exports = { page, ICON, SITE, MAIL, head, nav, footer, versionne, empreinterImages };

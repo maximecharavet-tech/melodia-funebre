@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "updated": "2026-09-06",
   "contact": {
     "email": "contact@melodia-funebre.fr"
@@ -326,7 +326,7 @@
       "id": "faq-6",
       "visible": true,
       "q": "Peut-on écouter avant de payer ?",
-      "a": "Vous pouvez écouter les trois hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite."
+      "a": "Vous pouvez écouter les {{HOMMAGES}} hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite."
     },
     {
       "id": "faq-7",
