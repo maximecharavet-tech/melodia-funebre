@@ -270,6 +270,22 @@ ul { list-style: none; }
   padding: 5.5rem var(--pad) 2rem; display: flex; flex-direction: column; gap: 0.3rem;
   transform: translateY(-100%); transition: transform var(--t-mid) var(--ease);
   border-bottom: 1px solid var(--line);
+  /* Le menu n'avait ni hauteur maximale ni défilement : il mesurait
+     881 px quoi qu'il arrive. Tant qu'il tenait dans l'écran, personne
+     ne l'a vu ; l'entrée « Nous rejoindre » l'a fait déborder, et
+     « Mon compte » — la dernière ligne — est passée sous le bord, donc
+     hors d'atteinte. Sur un téléphone réel, la barre d'adresse mange
+     encore quelques dizaines de pixels, ce qui l'a rendu inaccessible
+     même sur les grands écrans.
+
+     « dvh » suit la hauteur réellement visible, barre d'adresse
+     comprise ; « vh » reste en repli pour les navigateurs qui
+     l'ignorent. Et ce qui dépasse défile. */
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .nav-mobile.open { transform: translateY(0); }
 .nav-mobile a {
@@ -278,7 +294,14 @@ ul { list-style: none; }
   transition: color var(--t-fast), padding-left var(--t-fast);
 }
 .nav-mobile a:hover, .nav-mobile a:focus-visible { color: var(--or); padding-left: 0.5rem; }
-.nav-mobile-cta { margin-top: 1.4rem; display: grid; gap: 0.7rem; }
+.nav-mobile-cta {
+  margin-top: 1.4rem; display: grid; gap: 0.7rem;
+  /* Marge de sécurité en bas : sur un téléphone à encoche, le dernier
+     bouton se retrouvait sous la barre de gestes. */
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+/* Une entrée de menu ne doit pas se compresser quand la liste défile. */
+.nav-mobile a { flex: none; }
 
 /* ═══════════════════════════════════════════════════════════════
    BOUTONS
