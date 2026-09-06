@@ -57,7 +57,7 @@
   </main>
 </div>
 
-<script src="assets/js/config.js?v=13072ce7"></script>
+<script src="assets/js/config.js?v=e792fc99"></script>
 <script src="assets/js/auth.js?v=27e02f2b"></script>
 <script src="assets/js/courrier.js?v=f9ff5aca"></script>
 <script src="assets/js/main.js?v=5ed21030"></script>
@@ -154,7 +154,7 @@ function orderCard(o) {
   var next = i < FLOW.length - 1 ? FLOW[i+1] : null;
   return '<div class="o-row"><div class="o-head">' +
     '<div><div class="o-name">Hommage à ' + esc(o.defunt) + (o.urgence ? ' ⚡' : '') + '</div>' +
-    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' ' + eur(o.price) + ' · ' + (o.paid ? 'payé' : 'non payé') + ' · ' + esc(o.agence || o.user_name) + '</div></div>' +
+    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' ' + eur(o.price) + ' · ' + mentionPaiement(o) + ' · ' + esc(o.agence || o.user_name) + '</div></div>' +
     '<div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">' +
     '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span>' +
     (next ? '<button class="btn btn-gold btn-sm" onclick="advance(\'' + o.ref + '\',\'' + next + '\')">→ ' + ST[next].label + '</button>' : '') +
@@ -225,6 +225,31 @@ async function majEtatMusique() {
       ? '<span style="color:var(--green);">API ' + esc(cfg.engine || 'Mureka') + ' active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
       : '<span style="color:var(--or);">Manuelle</span> — Suno, votre abonnement';
   } catch (e) { c.textContent = 'Indéterminé'; }
+}
+
+/* ─── L'encaissement ───
+   Trois modes possibles, et la console doit dire lequel tourne
+   réellement : afficher « bac à sable » quand l'argent arrive
+   vraiment, ou l'inverse, est la pire des confusions ici. */
+function etatPaiement() {
+  var c = window.MELODIA_CONFIG || {};
+  if ((c.PAYPAL_CLIENT_ID || '').trim()) {
+    return '<span style="color:var(--green);">PayPal — encaissement automatique</span>';
+  }
+  if (c.PAYPAL_ME) {
+    return '<span style="color:var(--amber);">PayPal.me — ' + esc(c.PAYPAL_ME) + '</span>' +
+      '<div style="color:var(--dust); font-size:0.82em; margin-top:0.3rem; line-height:1.5;">' +
+      'PayPal ne nous répond pas sur ce mode : chaque règlement est à pointer à la main.</div>';
+  }
+  return '<span style="color:var(--red);">Bac à sable — rien n\'est encaissé</span>';
+}
+
+/* « Non payé » et « payé sur un lien, à vérifier » ne demandent pas la
+   même chose : relancer une famille qui a déjà réglé serait une faute. */
+function mentionPaiement(o) {
+  if (o.paid) return '<span style="color:var(--green);">payé</span>';
+  if (o.paypal_id === 'paypalme') return '<span style="color:var(--amber);">réglé sur PayPal.me — à pointer</span>';
+  return 'non payé';
 }
 
 /* ─── L'état de la chaîne d'envoi ───
@@ -521,7 +546,7 @@ function vSysteme() {
     '<tr><td style="color:var(--ash);">Base de données</td><td>' + (window.MelodiaDB.mode === 'supabase' ? '<span style="color:var(--green);">Supabase (production)</span>' : '<span style="color:var(--amber);">Locale (démonstration)</span>') + '</td></tr>' +
     '<tr><td style="color:var(--ash);">Rédaction des paroles</td><td><span style="color:var(--green);">Active</span></td></tr>' +
     '<tr><td style="color:var(--ash);">Composition musicale</td><td id="sys-music">Vérification…</td></tr>' +
-    '<tr><td style="color:var(--ash);">Paiement</td><td>PayPal — bac à sable</td></tr>' +
+    '<tr><td style="color:var(--ash);">Encaissement</td><td>' + etatPaiement() + '</td></tr>' +
     '<tr><td style="color:var(--ash);">Mode</td><td style="color:var(--or);">Débutant</td></tr>' +
     '</tbody></table></div>' +
     '<div class="panel"><div class="panel-title">Passer en <em>automatique</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Phase 2, quand le volume le justifiera</div>' +

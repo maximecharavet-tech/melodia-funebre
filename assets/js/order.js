@@ -215,7 +215,7 @@
     return lignes.join('\n\n');
   }
 
-  window.sendOrder = async function (paid, pid) {
+  window.sendOrder = async function (paid, pid, moyen) {
     if (!validate(4)) { show(4); return; }
     var btn = $('#o-submit');
     if (btn) { btn.classList.add('is-loading'); btn.disabled = true; }
@@ -226,7 +226,10 @@
         defunt: state.defunt, name: state.name, email: state.email,
         traits: state.traits, metier: state.metier, habitude: state.habitude,
         anecdote: briefComplet(), style: state.style,
-        urgence: !!state.urgence, paid: !!paid, paypal_id: pid || ''
+        urgence: !!state.urgence, paid: !!paid,
+        /* « paypalme » signale un règlement parti sur un lien : PayPal ne
+           nous en dit rien en retour, il est à pointer à la main. */
+        paypal_id: pid || (moyen === 'paypalme' ? 'paypalme' : '')
       });
       /* Prévenir la maison : sans cet appel, la commande resterait dans le
          navigateur du client et personne ne la verrait. On n'attend pas la
@@ -259,6 +262,8 @@
       if (ref) ref.textContent = order.ref;
       var sum = $('#confirm-summary');
       if (sum) sum.textContent = state.offer + ' · ' + euro(priceOf()) + (state.urgence ? ' · urgence' : '');
+      var notePaie = $('#confirm-paiement');
+      if (notePaie) notePaie.hidden = (moyen !== 'paypalme');
       wizard.closest('section').style.display = 'none';
       var conf = $('#confirm');
       if (conf) { conf.style.display = 'block'; conf.scrollIntoView({ behavior: 'smooth' }); }
@@ -271,7 +276,18 @@
   };
 
   /* Lu par le bouton PayPal pour connaître le montant à encaisser */
-  window.melodiaOrderInfo = function () { return { offer: state.offer, price: priceOf() }; };
+  window.melodiaOrderInfo = function () { return { offer: state.offer, price: priceOf(), urgence: !!state.urgence }; };
+
+  /* Le règlement par lien PayPal.me ouvre une fenêtre, et un navigateur
+     ne l'autorise que dans le geste même du clic — pas après un « await ».
+     Il faut donc pouvoir valider le formulaire de façon synchrone, avant
+     d'ouvrir quoi que ce soit : sans cela, une commande incomplète
+     enverrait la famille payer pour rien. */
+  window.melodiaOrderPret = function () {
+    if (validate(4)) return true;
+    show(4);
+    return false;
+  };
 
   loadDraft();
   paintRecap();
