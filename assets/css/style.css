@@ -859,6 +859,59 @@ ul { list-style: none; }
 .footer-legal { display: flex; gap: 1.2rem; flex-wrap: wrap; }
 .footer-legal a:hover { color: var(--or); }
 
+/* ─── Le dépôt d'un CV ───
+   Un « input type=file » brut est laid et, sur téléphone, sa cible est
+   minuscule. On le cache et on présente un bouton pleine largeur qui
+   dit ce qu'il attend et ce qu'il a reçu. */
+.depot-cv { border: 1px dashed var(--line-strong); border-radius: 6px; padding: 1.1rem; background: var(--or-soft); }
+.depot-cv-btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  width: 100%; min-height: 48px; padding: 0.8rem 1rem;
+  background: transparent; border: 1px solid var(--line-strong); border-radius: 4px;
+  color: var(--bone); font-family: var(--ff-b); font-size: 0.92rem; cursor: pointer;
+  transition: border-color var(--t-fast), color var(--t-fast);
+}
+.depot-cv-btn:hover { border-color: var(--or); color: var(--or); }
+.depot-cv-btn svg { width: 18px; height: 18px; flex: none; }
+.depot-cv-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.depot-cv-aide { font-size: 0.78rem; color: var(--dust); line-height: 1.6; margin-top: 0.7rem; }
+.depot-cv-progres { height: 3px; background: var(--line-soft); border-radius: 2px; margin-top: 0.8rem; overflow: hidden; }
+.depot-cv-barre { height: 100%; width: 0; background: var(--or-grad); transition: width 0.4s ease; }
+@media (max-width: 720px) { .depot-cv-aide { font-size: 0.86rem; } }
+
+/* ─── La signature du fondateur ───
+   « Fondateur : Maxime Charavet » se perdait dans la ligne des
+   mentions légales, au même corps mono que le numéro de TVA. Une
+   maison qui vend de l'artisanat signe son travail : le nom passe
+   dans la police de titrage, en italique, à côté d'un médaillon. Le
+   rôle reste en petites capitales, au-dessus — c'est lui l'étiquette,
+   pas le nom. */
+.signature { display: flex; align-items: center; gap: 0.7rem; }
+.signature-portrait {
+  width: 40px; height: 40px; flex: none; object-fit: cover;
+  border-radius: 50%; border: 1px solid var(--line-strong);
+  /* Le fond gris de l'original a été ramené à l'encre du pied de page
+     dans le fichier lui-même : un voile CSS aurait aussi éteint les
+     étincelles, qui sont tout l'intérêt du portrait. */
+  transition: filter var(--t-fast), border-color var(--t-fast);
+}
+.signature:hover .signature-portrait { filter: brightness(1.35); border-color: var(--or); }
+.signature-mots { display: flex; flex-direction: column; gap: 0.15rem; line-height: 1; }
+.signature-role {
+  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--dust);
+}
+.signature-nom {
+  font-family: var(--ff-d); font-style: italic; font-size: 1.15rem;
+  letter-spacing: 0.01em; text-transform: none; color: var(--or);
+  background: var(--or-grad); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@media (max-width: 720px) {
+  .signature-role { font-size: 0.62rem; letter-spacing: 0.14em; }
+  .signature-nom { font-size: 1.2rem; }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    NOTIFICATION
    ═══════════════════════════════════════════════════════════════ */

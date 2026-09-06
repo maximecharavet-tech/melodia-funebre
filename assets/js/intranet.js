@@ -1145,3 +1145,253 @@
     } catch (e) { O.panne(hote, e); }
   };
 })();
+
+/* ═══════════════════════════════════════════════════════════════
+   VUE — LES CANDIDATURES
+
+   La seule table du site où un visiteur non connecté écrit. La
+   lecture, elle, n'est ouverte qu'au fondateur : une candidature
+   porte un nom, un téléphone et un parcours.
+
+   Le CV n'est pas servi par une adresse publique. On demande au
+   stockage un lien signé, valable une heure : de quoi l'ouvrir
+   maintenant, pas de quoi le faire circuler.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var I = window.MelodiaIntranet, O = I._outils;
+  var esc = O.esc;
+
+  var ETATS = {
+    nouveau:   { l: 'Nouvelle', c: 'or' },
+    vue:       { l: 'Lue', c: 'silver-dim' },
+    entretien: { l: 'Entretien', c: 'cyan' },
+    retenu:    { l: 'Retenu', c: 'green' },
+    ecarte:    { l: 'Écarté', c: 'dust' }
+  };
+  var POSTES = {
+    commercial: 'Collaborateur commercial', composition: 'Composition et écriture',
+    administratif: 'Administratif et suivi', autre: 'Autre'
+  };
+
+  var etat = { hote: null, liste: [], filtre: 'tous', ouvert: null };
+
+  function pastille(c) {
+    var e = ETATS[c.statut] || ETATS.nouveau;
+    return '<span class="pill" style="border-color:var(--' + e.c + ');color:var(--' + e.c + ');">' +
+      esc(e.l) + '</span>';
+  }
+
+  function fiche(c) {
+    var ouvert = etat.ouvert === c.id;
+    return '<div class="own-row" data-colonne>' +
+      '<div style="display:flex;gap:1rem;align-items:flex-start;">' +
+        '<div class="own-item" style="flex:1;min-width:0;">' +
+          '<div class="own-name">' + esc(c.nom || 'Sans nom') + '</div>' +
+          '<div class="own-detail">' + esc(POSTES[c.poste] || c.poste) +
+            (c.ville ? ' · ' + esc(c.ville) : '') +
+            ' · ' + esc(O.quand(c.created_at)) +
+            (c.cv ? ' · <span style="color:var(--or);">CV joint</span>' : ' · <span style="color:var(--dust);">sans CV</span>') +
+          '</div>' +
+          '<div class="own-detail">' +
+            '<a href="mailto:' + esc(c.email) + '" style="color:var(--or);">' + esc(c.email) + '</a>' +
+            (c.tel ? ' · <a href="tel:' + esc(c.tel) + '" style="color:var(--or);">' + esc(c.tel) + '</a>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="own-acts" style="gap:.4rem;flex-wrap:wrap;">' + pastille(c) +
+          '<button class="btn btn-ghost btn-sm" data-cand="' + esc(c.id) + '">' +
+            (ouvert ? 'Replier' : 'Ouvrir') + '</button>' +
+        '</div>' +
+      '</div>' +
+      (ouvert ? detail(c) : '') +
+    '</div>';
+  }
+
+  function detail(c) {
+    var opts = Object.keys(ETATS).map(function (s) {
+      return '<option value="' + s + '"' + (c.statut === s ? ' selected' : '') + '>' + esc(ETATS[s].l) + '</option>';
+    }).join('');
+    return '<div style="margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line-soft);">' +
+      (c.statut_pro ? '<div class="own-detail">Situation : ' + esc(c.statut_pro) + '</div>' : '') +
+      (c.experience ? '<div class="own-detail">Parcours : ' + esc(c.experience) + '</div>' : '') +
+      (c.message ? '<p style="color:var(--bone);font-size:.92rem;line-height:1.8;margin:.8rem 0;white-space:pre-wrap;">' +
+        esc(c.message) + '</p>' : '') +
+      '<div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin:1rem 0;">' +
+        (c.cv
+          ? '<button class="btn btn-outline btn-sm" data-cv="' + esc(c.id) + '">Ouvrir le CV — ' + esc(c.cv_nom || 'PDF') + '</button>'
+          : '<span style="color:var(--dust);font-size:.85rem;">Aucun CV déposé.</span>') +
+        '<span id="cv-etat-' + esc(c.id) + '" style="color:var(--ash);font-size:.82rem;"></span>' +
+      '</div>' +
+      '<div class="field-row">' +
+        '<div class="field"><label class="field-label">Où en est-on</label>' +
+          '<select class="field-select" data-statut="' + esc(c.id) + '">' + opts + '</select></div>' +
+        '<div class="field"><label class="field-label">Notes internes</label>' +
+          '<input class="field-input" data-notes="' + esc(c.id) + '" value="' + esc(c.notes || '') + '" ' +
+          'placeholder="Rappeler après le 15, secteur Rhône"></div>' +
+      '</div>' +
+      '<div class="form-msg" id="cd-etat-' + esc(c.id) + '"></div>' +
+    '</div>';
+  }
+
+  function rendre() {
+    var liste = etat.filtre === 'tous' ? etat.liste
+      : etat.liste.filter(function (c) { return c.statut === etat.filtre; });
+    var compte = {};
+    Object.keys(ETATS).forEach(function (s) {
+      compte[s] = etat.liste.filter(function (c) { return c.statut === s; }).length;
+    });
+
+    var h = '<div class="panel"><div class="panel-head"><div>' +
+      '<div class="panel-title">Les <em>candidatures</em></div>' +
+      '<div class="panel-sub">' + etat.liste.length + ' reçue(s)' +
+        (compte.nouveau ? ' · <span style="color:var(--or);">' + compte.nouveau + ' non lue(s)</span>' : '') +
+      '</div></div>' +
+      '<button class="btn btn-outline btn-sm" id="cd-rafraichir">Rafraîchir</button></div>' +
+
+      '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:1.2rem 0;">' +
+        ['tous'].concat(Object.keys(ETATS)).map(function (f) {
+          var lib = f === 'tous' ? 'Toutes' : ETATS[f].l;
+          var n = f === 'tous' ? etat.liste.length : compte[f];
+          return '<button class="btn btn-' + (etat.filtre === f ? 'gold' : 'outline') +
+            ' btn-sm" data-fcand="' + f + '">' + esc(lib) + ' (' + n + ')</button>';
+        }).join('') +
+      '</div>';
+
+    h += liste.length
+      ? '<div class="own-list">' + liste.map(fiche).join('') + '</div>'
+      : '<p style="color:var(--ash);line-height:1.8;">' +
+        (etat.liste.length ? 'Aucune candidature dans cette colonne.'
+          : 'Aucune candidature pour l\'instant. La page « Nous rejoindre » est en ligne : ' +
+            'les dépôts arriveront ici, CV compris.') + '</p>';
+
+    h += '</div>';
+    etat.hote.innerHTML = h;
+    brancher();
+  }
+
+  function brancher() {
+    var hote = etat.hote;
+    hote.querySelectorAll('[data-fcand]').forEach(function (b) {
+      b.addEventListener('click', function () { etat.filtre = b.dataset.fcand; rendre(); });
+    });
+    var r = hote.querySelector('#cd-rafraichir');
+    if (r) r.addEventListener('click', function () { I.vues.candidatures(hote); });
+
+    hote.querySelectorAll('[data-cand]').forEach(function (b) {
+      b.addEventListener('click', async function () {
+        var id = b.dataset.cand;
+        var ouvre = etat.ouvert !== id;
+        etat.ouvert = ouvre ? id : null;
+        /* Ouvrir une candidature vaut lecture : le passage de
+           « nouvelle » à « lue » se fait tout seul, sinon la pastille
+           de non-lues ne descend jamais. */
+        if (ouvre) {
+          var c = etat.liste.filter(function (x) { return x.id === id; })[0];
+          if (c && c.statut === 'nouveau') {
+            try { await majer(id, { statut: 'vue' }); c.statut = 'vue'; } catch (e) {}
+          }
+        }
+        rendre();
+      });
+    });
+
+    hote.querySelectorAll('[data-statut]').forEach(function (sel) {
+      sel.addEventListener('change', async function () {
+        var id = sel.dataset.statut;
+        try {
+          await majer(id, { statut: sel.value });
+          var c = etat.liste.filter(function (x) { return x.id === id; })[0];
+          if (c) c.statut = sel.value;
+          rendre();
+        } catch (e) { dire(id, 'Refusé : ' + e.message); }
+      });
+    });
+
+    hote.querySelectorAll('[data-notes]').forEach(function (inp) {
+      var minuteur = null;
+      inp.addEventListener('input', function () {
+        clearTimeout(minuteur);
+        /* On n'écrit pas à chaque touche : la note part une seconde
+           après la dernière frappe. */
+        minuteur = setTimeout(async function () {
+          var id = inp.dataset.notes;
+          try {
+            await majer(id, { notes: inp.value });
+            var c = etat.liste.filter(function (x) { return x.id === id; })[0];
+            if (c) c.notes = inp.value;
+            dire(id, 'Note enregistrée.', true);
+          } catch (e) { dire(id, 'Note non enregistrée : ' + e.message); }
+        }, 900);
+      });
+    });
+
+    hote.querySelectorAll('[data-cv]').forEach(function (b) {
+      b.addEventListener('click', async function () {
+        var id = b.dataset.cv;
+        var c = etat.liste.filter(function (x) { return x.id === id; })[0];
+        var mot = hote.querySelector('#cv-etat-' + id);
+        b.disabled = true; mot.textContent = 'Préparation du lien…';
+        try {
+          var lien = await lienSigne(c.cv);
+          mot.textContent = 'Lien valable une heure.';
+          window.open(lien, '_blank', 'noopener');
+        } catch (e) {
+          mot.innerHTML = '<span style="color:var(--red);">Impossible d\'ouvrir le CV : ' + esc(e.message) + '</span>';
+        } finally { b.disabled = false; }
+      });
+    });
+  }
+
+  function dire(id, t, ok) {
+    var m = etat.hote.querySelector('#cd-etat-' + id);
+    if (!m) return;
+    m.className = 'form-msg' + (t ? (ok ? ' ok' : ' err') : '');
+    m.textContent = t || '';
+    m.style.display = t ? 'block' : '';
+    if (ok) setTimeout(function () { m.textContent = ''; m.style.display = ''; }, 2200);
+  }
+
+  async function majer(id, champs) {
+    await window.MelodiaRest.appel('/rest/v1/candidatures?id=eq.' + encodeURIComponent(id), {
+      method: 'PATCH', body: JSON.stringify(champs)
+    });
+  }
+
+  /* Le casier des CV est privé. On demande un lien signé plutôt que de
+     rendre le fichier public : il expire, et il ne se transmet pas. */
+  async function lienSigne(chemin) {
+    var r = await window.MelodiaRest.appel('/storage/v1/object/sign/cv/' + encodeURI(chemin), {
+      method: 'POST', body: JSON.stringify({ expiresIn: 3600 })
+    });
+    var url = r && (r.signedURL || r.signedUrl || r.url);
+    if (!url) throw new Error('le stockage n\'a pas renvoyé de lien');
+    return (window.MELODIA_CONFIG.SUPABASE_URL || '').replace(/\/+$/, '') + '/storage/v1' +
+      String(url).replace(/^\/storage\/v1/, '');
+  }
+
+  I.vues.candidatures = async function (hote) {
+    etat.hote = hote;
+    if (!O.enLigne()) return O.horsLigne(hote, 'Les candidatures');
+    O.attente(hote, 'des candidatures');
+    try {
+      etat.liste = (await window.MelodiaRest.appel(
+        '/rest/v1/candidatures?select=*&order=created_at.desc')) || [];
+      rendre();
+      majBadgeCandidatures();
+    } catch (e) { O.panne(hote, e); }
+  };
+
+  /* La pastille de la barre latérale : le nombre de candidatures que
+     personne n'a encore ouvertes. */
+  async function majBadgeCandidatures() {
+    var b = document.getElementById('badge-cand');
+    if (!b || !O.enLigne() || !O.estMaitre()) return;
+    try {
+      var r = await window.MelodiaRest.appel('/rest/v1/candidatures?select=id&statut=eq.nouveau');
+      var n = (r || []).length;
+      b.textContent = n;
+      b.style.display = n ? '' : 'none';
+    } catch (e) { /* la console démarre même si la base est muette */ }
+  }
+  I.majBadgeCandidatures = majBadgeCandidatures;
+})();

@@ -59,7 +59,8 @@ const NAVITEMS = [
   ['/rites', 'Rites'],
   ['/offres', 'Offres'],
   ['/agences', 'Agences'],
-  ['/contact', 'Contact']
+  ['/contact', 'Contact'],
+  ['/rejoindre', 'Nous rejoindre']
 ];
 
 const ICON = {
@@ -69,6 +70,7 @@ const ICON = {
   heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.8 6.6a5 5 0 00-7.1 0L12 8.3l-1.7-1.7a5 5 0 10-7.1 7.1l8.8 8.8 8.8-8.8a5 5 0 000-7.1z"/></svg>',
   phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>',
   users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.9"/><path d="M16 3.1a4 4 0 010 7.8"/></svg>',
+  upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2"/></svg>',
   pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
   gift: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8a3 3 0 10-3-3 3 3 0 003 3zM12 8a3 3 0 113-3 3 3 0 01-3 3z"/></svg>',
   euro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6a7 7 0 100 12"/><path d="M4 10h9M4 14h9"/></svg>',
@@ -180,6 +182,7 @@ function footer() {
         <ul class="footer-links">
           <li><a href="/agences">Espace agences</a></li>
           <li><a href="/agences#calculateur">Simuler mes revenus</a></li>
+          <li><a href="/rejoindre">Nous rejoindre</a></li>
           <li><a href="/compte">Connexion partenaire</a></li>
         </ul>
       </div>
@@ -199,7 +202,13 @@ function footer() {
         <a href="/cgv">CGV</a>
         <a href="/confidentialite">Confidentialité</a>
       </span>
-      <span class="gold">Fondateur : Maxime Charavet</span>
+      <span class="signature">
+        <img src="assets/img/maxime.jpg" alt="" class="signature-portrait" width="40" height="40" loading="lazy">
+        <span class="signature-mots">
+          <span class="signature-role">Fondateur</span>
+          <span class="signature-nom">Maxime Charavet</span>
+        </span>
+      </span>
     </div>
   </div>
 </footer>`;
