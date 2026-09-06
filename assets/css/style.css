@@ -898,6 +898,13 @@ ul { list-style: none; }
   .nav-links { display: none; }
   .nav-burger { display: block; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  /* Passer à une colonne ne suffit pas : un enfant de grille conserve
+     « min-width: auto », donc un tableau large ou un mot insécable
+     élargit la piste au-delà de l'écran — la colonne fait alors 499 px
+     dans un téléphone de 412, et c'est toute la page qui part de
+     travers. On autorise la piste à se rétrécir ; ce qui reste trop
+     large défile dans son propre cadre. */
+  .grid-2 > *, .grid-3 > *, .grid-4 > * { min-width: 0; }
   .choices-3 { grid-template-columns: repeat(2, 1fr); }
   .sticky-cta { display: flex; }
   body.has-sticky-cta { padding-bottom: 4.5rem; }
