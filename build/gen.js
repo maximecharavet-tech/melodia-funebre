@@ -203,11 +203,20 @@ function footer() {
         <a href="/confidentialite">Confidentialité</a>
       </span>
       <span class="signature">
-        <img src="assets/img/maxime.jpg" alt="" class="signature-portrait" width="40" height="40" loading="lazy">
+        <img src="assets/img/maxime.png" alt="" class="signature-portrait" width="40" height="40" loading="lazy">
         <span class="signature-mots">
           <span class="signature-role">Fondateur</span>
           <span class="signature-nom">Maxime Charavet</span>
         </span>
+      </span>
+    </div>
+    <!-- La maison qui fait tourner la machine. Discret : c'est une
+         signature technique, pas une publicité — d'où le corps réduit
+         et l'emblème qui ne s'allume qu'au survol. -->
+    <div class="propulse">
+      <span class="propulse-lien">
+        <img src="assets/img/hyper-engine.png" alt="" class="propulse-marque" width="26" height="24" loading="lazy">
+        <span class="propulse-mots">Propulsé par <b>Hyper A.I Engine</b></span>
       </span>
     </div>
   </div>
