@@ -1,8 +1,19 @@
 <script>
-var TITLES = { login: 'Accès à votre <em>tableau de bord</em>', signup: 'Créer un <em>compte partenaire</em>', forgot: 'Réinitialiser le <em>mot de passe</em>' };
+var TITLES = { login: 'Accès à votre <em>espace</em>', signup: 'Créer votre <em>compte</em>', forgot: 'Réinitialiser le <em>mot de passe</em>' };
+var POUR = {
+  login: 'Les familles y retrouvent leur hommage et le suivi de leur commande. Les agences funéraires y suivent les leurs.',
+  signup: 'Quelques secondes suffisent. Aucune information n\'est demandée qui ne serve au suivi de votre commande.',
+  forgot: 'Nous vous envoyons un lien de réinitialisation à l\'adresse de votre compte.'
+};
 function showView(v) {
   ['login','signup','forgot'].forEach(function (x) { document.getElementById('view-' + x).style.display = (x === v) ? 'block' : 'none'; });
   document.getElementById('auth-title').innerHTML = TITLES[v];
+  var p = document.getElementById('auth-pour');
+  if (p) p.textContent = POUR[v] || '';
+  /* Google ouvre une session : sur « mot de passe oublié », il n'a rien
+     à faire — c'est un autre geste. */
+  var g = document.getElementById('bloc-google');
+  if (g && !g.dataset.absent) g.hidden = (v === 'forgot');
   msg('');
 }
 function msg(t, ok) {
@@ -32,6 +43,50 @@ async function doLogin(e) {
   } catch (err) { msg(err.message); }
   return false;
 }
+
+/* ─── Compte Google ───
+   Le bouton n'est montré qu'après avoir vérifié auprès de la base que
+   le fournisseur est bien activé. S'il ne l'est pas, la page n'en
+   parle pas : rien de cassé, rien de promis. */
+(async function preparerGoogle() {
+  var bloc = document.getElementById('bloc-google');
+  var bouton = document.getElementById('btn-google');
+  if (!bloc || !bouton || !window.MelodiaAuth) return;
+  bouton.addEventListener('click', function () {
+    try {
+      bouton.disabled = true;
+      bouton.querySelector('span').textContent = 'Ouverture de Google…';
+      window.MelodiaAuth.google();
+    } catch (e) {
+      bouton.disabled = false;
+      bouton.querySelector('span').textContent = 'Continuer avec Google';
+      msg(e.message);
+    }
+  });
+  try {
+    if (await window.MelodiaAuth.googleDisponible()) bloc.hidden = false;
+    else bloc.dataset.absent = '1';
+  } catch (e) { bloc.dataset.absent = '1'; }
+})();
+
+/* Au retour de Google, la session arrive dans le fragment de l'adresse.
+   On la reprend avant tout le reste : inutile de montrer un formulaire
+   de connexion à quelqu'un qui vient de se connecter. */
+(async function retourGoogle() {
+  if (!window.MelodiaAuth || !location.hash || location.hash.indexOf('access_token') === -1) {
+    if (location.hash.indexOf('error') === -1) return;
+  }
+  try {
+    var u = await window.MelodiaAuth.reprendreRetourOAuth();
+    if (!u) return;
+    var vers = window.MelodiaAuth.home();
+    await proposerEmpreinte(u);
+    if (window.MelodiaAccueil) return window.MelodiaAccueil.saluer(prenomDe(u), vers);
+    location.href = vers;
+  } catch (e) {
+    msg('Connexion Google interrompue : ' + e.message);
+  }
+})();
 
 /* ─── Empreinte ─── */
 var E = window.MelodiaEmpreinte;

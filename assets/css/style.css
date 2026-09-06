@@ -2076,6 +2076,49 @@ body.a-ecoute { padding-bottom: 5rem; }
   text-transform: uppercase; color: var(--dust); margin-top: 2rem; line-height: 1.9;
 }
 
+/* Sous-titre : à qui cette page s'adresse. Deux publics très
+   différents arrivent ici, et l'un des deux repartait faute de le
+   savoir. Le texte change avec la vue (connexion / inscription). */
+.auth-pour {
+  color: var(--bone); font-size: 0.94rem; line-height: 1.75;
+  max-width: 38ch; margin: 0.9rem auto 0;
+}
+
+/* Compte Google. Le bouton reste sur fond clair : c'est la seule
+   forme que Google autorise et, surtout, la seule que l'œil
+   reconnaît sans lire. Il tranche donc volontairement sur la page. */
+.btn-google {
+  display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+  width: 100%; padding: 0.95rem 1.2rem;
+  background: var(--ivory); color: #1f1f1f;
+  border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 3px;
+  font-family: var(--ff-b); font-size: 0.92rem; font-weight: 500;
+  letter-spacing: 0.01em; cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+}
+.btn-google svg { flex: none; }
+.btn-google:hover { background: #fff; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); }
+.btn-google:active { transform: translateY(1px); }
+.btn-google[disabled] { opacity: 0.55; cursor: progress; }
+
+/* Séparateur, sur le même dessin que celui de l'empreinte : le filet
+   passe derrière les mots plutôt que sous eux. */
+.auth-ou {
+  display: flex; align-items: center; gap: 0.9rem;
+  margin: 1.5rem 0 0.4rem;
+  font-family: var(--ff-m); font-size: 0.68rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--dust);
+}
+.auth-ou::before, .auth-ou::after {
+  content: ''; flex: 1; height: 1px; background: var(--line-soft);
+}
+
+@media (max-width: 720px) {
+  .auth-pour { font-size: 0.9rem; }
+  .btn-google { padding: 1.05rem 1rem; font-size: 0.95rem; }
+  .auth-ou { font-size: 0.72rem; letter-spacing: 0.08em; }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    PLANCHER TYPOGRAPHIQUE — TÉLÉPHONE
 

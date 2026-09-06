@@ -263,7 +263,12 @@ function intro() {
 
 function page(p) {
   /* content.js d'abord : le catalogue se remonte ensuite autour du contenu publié */
-  const scripts = ['assets/js/content.js', 'assets/js/main.js', 'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'].concat(p.scripts || []);
+  /* config.js en premier : content.js doit savoir où lire le contenu
+     publié avant de chercher à le lire. Il ne contient que l'adresse du
+     projet et la clé publique, celle qui est faite pour être lue. */
+  const base = ['assets/js/config.js', 'assets/js/content.js', 'assets/js/main.js',
+                'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'];
+  const scripts = base.concat((p.scripts || []).filter((s) => base.indexOf(s) === -1));
   return empreinterImages(`<!DOCTYPE html>
 <html lang="fr">
 <head>
