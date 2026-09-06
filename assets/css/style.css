@@ -859,6 +859,50 @@ ul { list-style: none; }
 .footer-legal { display: flex; gap: 1.2rem; flex-wrap: wrap; }
 .footer-legal a:hover { color: var(--or); }
 
+/* ─── Les options payantes ───
+   Une case à cocher nue ne donne envie de rien. Chaque option est une
+   ligne cliquable entière : le titre, le prix en or à droite, et une
+   phrase qui dit ce que l'on gagne — c'est elle qui décide, pas le
+   tarif. Cochée, la ligne s'allume, pour qu'on voie d'un coup d'œil
+   ce que l'on a ajouté avant de lire le total. */
+.opts { margin-top: 1.6rem; display: grid; gap: 0.6rem; }
+.opts-tete { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+.opts-titre {
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--or);
+}
+.opts-sous { font-size: 0.8rem; color: var(--dust); }
+
+.opt {
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  padding: 0.95rem 1rem; cursor: pointer;
+  border: 1px solid var(--line-soft); border-radius: 5px;
+  background: rgba(255, 255, 255, 0.014);
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.opt:hover { border-color: var(--line-strong); }
+.opt input { margin-top: 0.2rem; flex: none; accent-color: var(--or); width: 17px; height: 17px; }
+.opt:has(input:checked) { border-color: var(--line-strong); background: var(--or-soft); }
+.opt-corps { display: block; min-width: 0; }
+.opt-tete { display: flex; align-items: baseline; gap: 0.7rem; justify-content: space-between; }
+.opt-titre { font-size: 0.96rem; color: var(--paper); }
+.opt-prix {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.06em;
+  color: var(--or); white-space: nowrap; flex: none;
+}
+.opt-prix.opt-comprise { color: var(--green); }
+.opt-aide { display: block; font-size: 0.82rem; color: var(--ash); line-height: 1.65; margin-top: 0.35rem; }
+
+@media (max-width: 720px) {
+  .opts-titre { font-size: 0.66rem; letter-spacing: 0.12em; }
+  .opts-sous, .opt-aide { font-size: 0.88rem; }
+  .opt-titre { font-size: 1rem; }
+  .opt-prix { font-size: 0.86rem; }
+  /* Sous le pouce, le titre et le prix ne tiennent pas toujours sur
+     une ligne : le prix passe dessous plutôt que d'écraser le titre. */
+  .opt-tete { flex-wrap: wrap; gap: 0.2rem 0.7rem; }
+}
+
 /* ─── Le dépôt d'un CV ───
    Un « input type=file » brut est laid et, sur téléphone, sa cible est
    minuscule. On le cache et on présente un bouton pleine largeur qui

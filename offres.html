@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=65b6d178">
+<link rel="stylesheet" href="assets/css/style.css?v=5fccbeb4">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -178,7 +178,7 @@
             <tr><th scope="row">Paroles imprimables (PDF)</th><td class="no">—</td><td class="col-hl yes">✓</td><td class="yes">✓</td></tr>
             <tr><th scope="row">Fichier WAV sans perte</th><td class="no">—</td><td class="col-hl">Sur demande</td><td class="yes">✓</td></tr>
             <tr><th scope="row">Livret souvenir imprimé</th><td class="no">—</td><td class="col-hl no">—</td><td class="yes">✓</td></tr>
-            <tr><th scope="row">Priorité urgence 6 h</th><td>+ 49 €</td><td class="col-hl">+ 49 €</td><td class="yes">Incluse</td></tr>
+            <tr><th scope="row">Livraison sous 6 h</th><td>+ 199 €</td><td class="col-hl">+ 199 €</td><td class="yes">Incluse</td></tr>
           </tbody>
         </table>
       </div>
@@ -238,10 +238,52 @@
               <span class="choice-sub">L'héritage sonore complet, transmis aux générations.</span>
             </button>
             </div>
-            <label class="check" style="margin-top:1.4rem;">
-              <input type="checkbox" id="o-urgence">
-              <span>La cérémonie a lieu dans moins de 72 heures — priorité 6 heures <span style="color:var(--or);">(+ 49 €, incluse en Mémorial)</span></span>
-            </label>
+            <div class="opts">
+              <div class="opts-tete">
+                <span class="opts-titre">Pour aller plus loin</span>
+                <span class="opts-sous">Facultatif, et décochable jusqu'au paiement</span>
+              </div>
+              <label class="opt">
+                <input type="checkbox" class="opt-case" id="o-opt-longue" data-opt="longue" data-prix="80" data-inclus="">
+                <span class="opt-corps">
+                  <span class="opt-tete">
+                    <span class="opt-titre">Version longue — 7 minutes</span>
+                    <span class="opt-prix" data-prix-affiche="longue">+ 80 €</span>
+                  </span>
+                  <span class="opt-aide">Au lieu de deux à trois minutes. De quoi raconter une vie entière plutôt qu'un portrait : plusieurs couplets, un pont, et le temps de nommer chacun.</span>
+                </span>
+              </label>
+              <label class="opt">
+                <input type="checkbox" class="opt-case" id="o-opt-rares" data-opt="rares" data-prix="40" data-inclus="">
+                <span class="opt-corps">
+                  <span class="opt-tete">
+                    <span class="opt-titre">Instruments rares</span>
+                    <span class="opt-prix" data-prix-affiche="rares">+ 40 €</span>
+                  </span>
+                  <span class="opt-aide">Bandonéon, oud, cornemuse, kora, vielle à roue, tambour bélé… L'instrument qu'il jouait, ou celui de son pays.</span>
+                </span>
+              </label>
+              <label class="opt">
+                <input type="checkbox" class="opt-case" id="o-opt-langue" data-opt="langue" data-prix="49" data-inclus="">
+                <span class="opt-corps">
+                  <span class="opt-tete">
+                    <span class="opt-titre">Langue étrangère ou dialecte</span>
+                    <span class="opt-prix" data-prix-affiche="langue">+ 49 €</span>
+                  </span>
+                  <span class="opt-aide">Portugais, arabe, créole, corse, breton, occitan, hébreu… Couplets dans sa langue, refrains en français, ou l'inverse.</span>
+                </span>
+              </label>
+              <label class="opt">
+                <input type="checkbox" class="opt-case" id="o-opt-urgence" data-opt="urgence" data-prix="199" data-inclus="Mémorial">
+                <span class="opt-corps">
+                  <span class="opt-tete">
+                    <span class="opt-titre">Livraison sous 6 heures</span>
+                    <span class="opt-prix" data-prix-affiche="urgence">+ 199 €</span>
+                  </span>
+                  <span class="opt-aide">Pour une cérémonie imminente. Nous passons votre hommage devant tous les autres et la maison reste dessus jusqu'à la livraison.</span>
+                </span>
+              </label>
+            </div>
             <div class="wz-actions"><button type="button" class="btn btn-gold" data-wz-next>Continuer</button></div>
           </div>
 
@@ -288,7 +330,7 @@
             <h3 class="wz-title">Quelle musique lui ressemble ?</h3>
             <p class="wz-sub">Si vous hésitez, laissez le choix par défaut : nous en reparlons pendant l'entretien.</p>
             <div class="field-row">
-              <div class="field"><label class="field-label" for="o-style">Style musical</label><select class="field-select" id="o-style"><option selected>Chanson française</option><option>Folk acoustique</option><option>Piano classique</option><option>Jazz doux</option><option>Bossa nova</option><option>Gospel</option><option>Variété douce</option><option>Musique du monde</option><option>Polyphonie corse</option><option>Celtique</option><option>Klezmer</option><option>Bélé antillais</option><option>Reggae</option><option>Rock</option><option>Funk</option></select></div>
+              <div class="field"><label class="field-label" for="o-style">Style musical</label><select class="field-select" id="o-style"><option selected>Chanson française</option><option>Folk acoustique</option><option>Piano classique</option><option>Jazz doux</option><option>Bossa nova</option><option>Gospel</option><option>Variété douce</option><option>Musique du monde</option><option>Polyphonie corse</option><option>Celtique</option><option>Klezmer</option><option>Bélé antillais</option><option>Reggae</option><option>Rock</option><option>Ballade rock</option><option>Funk</option></select></div>
               <div class="field"><label class="field-label" for="o-ambiance">Ambiance</label><select class="field-select" id="o-ambiance"><option>Douce et lumineuse</option><option>Grave et recueillie</option><option>Joyeuse, à son image</option><option>Nostalgique</option><option>Solennelle</option></select></div>
             </div>
             <div class="field">
@@ -355,8 +397,7 @@
           <div class="wz-line"><span>Offre</span><b id="rc-offer">Prestige</b></div>
           <div class="wz-line"><span>Pour</span><b id="rc-defunt">—</b></div>
           <div class="wz-line"><span>Style</span><b id="rc-style">—</b></div>
-          <div class="wz-line"><span>Urgence</span><b id="rc-urgence">Non</b></div>
-          <div class="wz-line" id="rc-supp-line" style="display:none;"><span>Priorité 6 h</span><b>+ 49 €</b></div>
+          <div id="rc-options"></div>
           <div class="wz-total"><span>Total</span><b id="rc-total">299 €</b></div>
           <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--line-soft);">
             <div class="trust-item" style="margin-bottom:.7rem;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Livré 24 h après l'entretien</span></div>
@@ -410,7 +451,7 @@
       </div>
       <div class="faq-item">
         <button class="faq-q" type="button">Peut-on écouter avant de payer ?</button>
-        <div class="faq-a"><div class="faq-a-inner">Vous pouvez écouter les seize hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Vous pouvez écouter les dix-sept hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite.</div></div>
       </div>
       </div>
     </div>
@@ -480,8 +521,8 @@
 <script src="assets/js/rappel.js?v=1840ff2c"></script>
 <script src="assets/js/courrier.js?v=f9ff5aca"></script>
 <script src="assets/js/ornements.js?v=b123bb2c"></script>
-<script src="assets/js/auth.js?v=c7049a7e"></script>
-<script src="assets/js/order.js?v=e394fc32"></script>
+<script src="assets/js/auth.js?v=5e2d35c9"></script>
+<script src="assets/js/order.js?v=7fe7eb90"></script>
 <script>
 /* ═══ ENCAISSEMENT ═══════════════════════════════════════════════
    Trois modes, choisis d'après assets/js/config.js :

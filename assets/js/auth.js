@@ -376,7 +376,11 @@
         offer: o.offer, price: o.price, defunt: o.defunt,
         traits: o.traits || '', metier: o.metier || '', habitude: o.habitude || '',
         anecdote: o.anecdote || '', style: o.style || '',
-        urgence: !!o.urgence, paid: !!o.paid, paypal_id: o.paypal_id || ''
+        urgence: !!o.urgence, paid: !!o.paid,
+        /* Les suppléments retenus. Sans eux, l'atelier ignorerait
+           qu'il doit composer sept minutes dans une autre langue. */
+        options: Array.isArray(o.options) ? o.options : [],
+        paypal_id: o.paypal_id || ''
       };
       if (HAS_SB) {
         var rows = await sb('/rest/v1/orders', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(rec) });

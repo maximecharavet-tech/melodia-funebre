@@ -60,7 +60,7 @@ const FAQ = [
     a: "Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain." }
 ];
 
-const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae', 'Rock', 'Funk'];
+const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae', 'Rock', 'Ballade rock', 'Funk'];
 
 /* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
@@ -71,6 +71,11 @@ const TRACKS = [
     story: "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
     lyrics: "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
     brief: "lumineux · inachevé · aimé" },
+  { id: "demo-18", title: "Qui danse avec le vent", who: "Pierre, 40 ans", lieu: "",
+    style: "Ballade rock", file: "audio/pierre.mp3",
+    story: "Quarante ans, et ce rire qui déchirait l'orage. Il grimpait sans harnais, sautait dans le vide pour se sentir vivre, ramenait des routes du bout du monde — mais son vrai courage, disait sa famille, c'était d'aimer sans filet. Une seule étoile brillait au creux de ses aventures : Emeline. Elle a demandé que la chanson ne soit pas triste, et qu'on y entende ce qu'il lui aurait dit lui-même — qu'il est désormais l'air qui caresse sa peau, le voyageur infini. Piano en ouverture, guitare électrique en solo, et une fin qui s'éteint sur un arpège.",
+    lyrics: "Il était l'aventure, il était l'instant présent\nPour toi, pour nous, pour la vie…\nPierre, l'éternel sourire\nQui danse avec le vent",
+    brief: "intrépide · généreux · amoureux" },
   { id: "demo-16", title: "Le roi de la route", who: "Bernard, 69 ans", lieu: "Nord de la France",
     style: "Funk", file: "audio/bernard.mp3",
     story: "Né un matin de 1957 dans une famille modeste du Nord, d'un père à l'usine et d'une mère à l'école. À dix-huit ans son premier camion, un vieux Saviem qu'il bichonnait comme un enfant — et quarante ans d'autoroutes, de Paris à Berlin, de Marseille à Amsterdam, le funk dans les oreilles. Il a rencontré Marie un mardi soir de novembre dans un restoroute près de Lyon : elle servait les cafés. Sept enfants sont venus, puis quinze petits-enfants qu'il emmenait en balade le dimanche dans le vieux camion, en leur disant que la vie ressemble à la route — des virages, des lignes droites, des embouteillages, mais l'important est de garder le rythme. Le jour de l'adieu, ses copains chauffeurs sont venus de toute l'Europe, klaxons en l'air. Basse slappée, section de cuivres, Rhodes et batterie qui ne ralentit jamais.",
@@ -149,6 +154,30 @@ const TRACKS = [
     brief: "joyeux · bruyant · généreux" }
 ];
 
+/* ─── Les options ───
+   Une seule source pour les suppléments : les gabarits en tirent les
+   cases à cocher ET les prix affichés, et order.js relit ces prix dans
+   le DOM plutôt que de les recopier. Un tarif changé ici l'est
+   partout, y compris sur le tableau comparatif.
+
+   « inclusDans » évite de facturer deux fois : l'offre Mémorial
+   comprend déjà la priorité six heures. */
+const OPTIONS = [
+  { id: 'longue', prix: 80,
+    titre: 'Version longue — 7 minutes',
+    aide: "Au lieu de deux à trois minutes. De quoi raconter une vie entière plutôt qu'un portrait : plusieurs couplets, un pont, et le temps de nommer chacun." },
+  { id: 'rares', prix: 40,
+    titre: 'Instruments rares',
+    aide: "Bandonéon, oud, cornemuse, kora, vielle à roue, tambour bélé… L'instrument qu'il jouait, ou celui de son pays." },
+  { id: 'langue', prix: 49,
+    titre: 'Langue étrangère ou dialecte',
+    aide: "Portugais, arabe, créole, corse, breton, occitan, hébreu… Couplets dans sa langue, refrains en français, ou l'inverse." },
+  { id: 'urgence', prix: 199,
+    titre: 'Livraison sous 6 heures',
+    aide: "Pour une cérémonie imminente. Nous passons votre hommage devant tous les autres et la maison reste dessus jusqu'à la livraison.",
+    inclusDans: ['Mémorial'] }
+];
+
 /* ─── Le compte des hommages ───
    « Les trois hommages de démonstration » est resté écrit tel quel
    pendant que le catalogue passait de trois à seize : la page
@@ -176,4 +205,4 @@ function enLettres(n) {
   return String(n);            /* au-delà, le chiffre reste plus lisible */
 }
 
-module.exports = { OFFERS, TESTIS, FAQ, STYLES, TRACKS, enLettres };
+module.exports = { OFFERS, TESTIS, FAQ, STYLES, TRACKS, OPTIONS, enLettres };

@@ -204,6 +204,70 @@
   }, { passive: true });
   window.addEventListener('resize', function () { setTimeout(majFleches, 120); });
 
+  /* ─── Le défilement automatique ───
+     La frise avance seule, lentement, pour que les visages passent
+     sans qu'on ait à toucher quoi que ce soit. Ce qui l'arrête :
+     — le doigt ou la souris sur la frise, et le clavier qui y entre ;
+     — la lecture en cours, car on ne bouge pas la liste de quelqu'un
+       qui est en train d'écouter ;
+     — un réglage système qui demande moins d'animation.
+     Elle repart douze secondes après la dernière intervention : assez
+     pour lire un nom, pas assez pour que la frise ait l'air figée.
+
+     Arrivée au bout, elle repart de l'autre côté plutôt que de buter :
+     un catalogue tiré au sort n'a ni début ni fin. */
+  var VITESSE = 0.35;              /* pixels par image, soit ~21 px/s */
+  var REPRISE = 12000;
+  var autoActif = !REDUIT;
+  var autoPause = 0;
+  var autoSens = 1;
+  var autoImage = null;
+  var autoDernier = 0;
+  /* La position est tenue ici, en flottant, et non relue dans le DOM :
+     « scrollLeft » est arrondi à l'entier, si bien qu'un pas de 0,35 px
+     réécrit indéfiniment la même valeur et que la frise ne bouge
+     jamais. C'est exactement ce qui s'est produit au premier essai. */
+  var autoX = 0;
+
+  function suspendreAuto() { autoPause = Date.now() + REPRISE; }
+
+  ['pointerdown', 'wheel', 'touchstart', 'focusin'].forEach(function (ev) {
+    fPiste.addEventListener(ev, suspendreAuto, { passive: true });
+  });
+  /* Un glissé à la main devient la nouvelle référence, sinon la frise
+     reviendrait d'un coup là où l'automate croyait en être. */
+  fPiste.addEventListener('scroll', function () {
+    if (Math.abs(fPiste.scrollLeft - autoX) > 2) autoX = fPiste.scrollLeft;
+  }, { passive: true });
+  fPiste.addEventListener('pointerenter', function () { autoPause = Infinity; });
+  fPiste.addEventListener('pointerleave', function () { autoPause = Date.now() + 1200; });
+  [fPrec, fSuiv].forEach(function (b) { b.addEventListener('click', suspendreAuto); });
+
+  function pasAuto(t) {
+    autoImage = requestAnimationFrame(pasAuto);
+    var dt = autoDernier ? Math.min(t - autoDernier, 48) : 16;
+    autoDernier = t;
+
+    if (!autoActif || joue || Date.now() < autoPause) return;
+    if (document.hidden) return;
+    var max = fPiste.scrollWidth - fPiste.clientWidth;
+    if (max <= 2) return;
+
+    autoX += autoSens * VITESSE * (dt / 16);
+    /* Au lieu de s'arrêter net contre la butée, la frise fait
+       demi-tour : le mouvement reste continu dans les deux sens. */
+    if (autoX >= max) { autoX = max; autoSens = -1; }
+    else if (autoX <= 0) { autoX = 0; autoSens = 1; }
+    fPiste.scrollLeft = autoX;
+  }
+  if (autoActif) autoImage = requestAnimationFrame(pasAuto);
+
+  /* Un onglet en arrière-plan ne doit pas continuer de défiler : au
+     retour, la frise serait à l'autre bout sans raison. */
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) { autoDernier = 0; suspendreAuto(); }
+  });
+
   /* ═══ Peinture d'une œuvre dans la platine ═══ */
   function poser(i) {
     var o = OEUVRES[i];
@@ -643,11 +707,27 @@
     rendre();
     marquerFiltre();
   }
+  /* ─── L'ordre est tiré au sort ───
+     Un catalogue toujours servi dans le même ordre finit par ne
+     montrer que ses premiers : les derniers ne sont jamais entendus.
+     À chaque visite, la frise est rebattue. Le tirage est conservé
+     pendant la visite — le remélanger à chaque filtre ferait sauter
+     les visages sous le doigt. */
+  var TIRAGE = null;
+  function melanger(n) {
+    var t = [];
+    for (var i = 0; i < n; i++) t.push(i);
+    for (var j = t.length - 1; j > 0; j--) {
+      var k = Math.floor(Math.random() * (j + 1));
+      var tmp = t[j]; t[j] = t[k]; t[k] = tmp;
+    }
+    return t;
+  }
   function calculerVisibles() {
-    visibles = [];
-    OEUVRES.forEach(function (o, i) {
-      if (filtreActif && o.style !== filtreActif) return;
-      visibles.push(i);
+    if (!TIRAGE || TIRAGE.length !== OEUVRES.length) TIRAGE = melanger(OEUVRES.length);
+    visibles = TIRAGE.filter(function (i) {
+      var o = OEUVRES[i];
+      return o && (!filtreActif || o.style === filtreActif);
     });
   }
 
@@ -693,7 +773,7 @@
     grille.appendChild(frise);
     grille.classList.toggle('est-vide', !visibles.length);
 
-    if (visibles.length && cur < 0) poser(visibles[0]);
+    if (visibles.length && cur < 0) poser(visibles[0]);   /* premier du tirage */
     rendre();
     rendreFiltres();
     majCompteurs();

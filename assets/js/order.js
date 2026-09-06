@@ -14,15 +14,38 @@
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
   var OFFERS = {
-    'Essentiel': { price: 149, urgenceIncluse: false },
-    'Prestige': { price: 299, urgenceIncluse: false },
-    'Mémorial': { price: 499, urgenceIncluse: true }
+    'Essentiel': { price: 149 },
+    'Prestige': { price: 299 },
+    'Mémorial': { price: 499 }
   };
-  var SUPP_URGENCE = 49;
   var DRAFT = 'melodia_order_draft';
 
+  /* ─── Les options payantes ───
+     Les libellés et les prix ne sont pas écrits ici : ils sont lus
+     dans le DOM, où le gabarit les a posés depuis build/data.js. Un
+     tarif changé à la source l'est donc partout, et il n'existe pas
+     de version de ce fichier qui affiche 80 € et en facture 40. */
+  var OPTIONS = $$('.opt-case', wizard).map(function (c) {
+    return {
+      id: c.dataset.opt,
+      prix: Number(c.dataset.prix) || 0,
+      titre: (c.parentElement.querySelector('.opt-titre') || {}).textContent || c.dataset.opt,
+      inclus: (c.dataset.inclus || '').split(',').filter(Boolean),
+      case: c
+    };
+  });
+
+  /* Une option comprise dans l'offre choisie ne se facture pas. */
+  function comprise(o) { return o.inclus.indexOf(state.offer) !== -1; }
+  function retenues() {
+    return OPTIONS.filter(function (o) { return o.case.checked; });
+  }
+  function facturees() {
+    return retenues().filter(function (o) { return !comprise(o); });
+  }
+
   var state = {
-    offer: 'Prestige', urgence: false,
+    offer: 'Prestige', urgence: false, options: [],
     defunt: '', age: '', lien: '',
     traits: '', metier: '', habitude: '', anecdote: '',
     style: 'Chanson française', ambiance: 'Douce et lumineuse', voix: 'Peu importe',
@@ -36,9 +59,7 @@
 
   /* ═══ Prix ═══ */
   function priceOf() {
-    var base = OFFERS[state.offer].price;
-    var supp = (state.urgence && !OFFERS[state.offer].urgenceIncluse) ? SUPP_URGENCE : 0;
-    return base + supp;
+    return facturees().reduce(function (t, o) { return t + o.prix; }, OFFERS[state.offer].price);
   }
   function euro(n) { return n.toLocaleString('fr-FR') + ' €'; }
 
@@ -48,12 +69,26 @@
     set('rc-offer', state.offer);
     set('rc-defunt', state.defunt);
     set('rc-style', state.style);
-    set('rc-urgence', state.urgence
-      ? (OFFERS[state.offer].urgenceIncluse ? 'Incluse (6 h)' : 'Oui (+ ' + SUPP_URGENCE + ' €)')
-      : 'Non');
+    /* Une ligne par option retenue, et « Comprise » plutôt qu'un prix
+       quand l'offre la couvre déjà : voir « + 199 € » sur une offre
+       Mémorial qui l'inclut ferait croire à une double facturation. */
+    var zone = $('#rc-options');
+    if (zone) {
+      zone.innerHTML = retenues().map(function (o) {
+        return '<div class="wz-line"><span>' + o.titre.replace(/ —.*$/, '') + '</span><b>' +
+          (comprise(o) ? 'Comprise' : '+ ' + o.prix + ' €') + '</b></div>';
+      }).join('');
+    }
+    /* Le prix affiché sur la case suit l'offre : ce qui est compris
+       ne doit pas continuer d'annoncer un supplément. */
+    OPTIONS.forEach(function (o) {
+      var e = document.querySelector('[data-prix-affiche="' + o.id + '"]');
+      if (e) {
+        e.textContent = comprise(o) ? 'Comprise' : '+ ' + o.prix + ' €';
+        e.classList.toggle('opt-comprise', comprise(o));
+      }
+    });
     set('rc-total', euro(priceOf()));
-    var supLine = $('#rc-supp-line');
-    if (supLine) supLine.style.display = (state.urgence && !OFFERS[state.offer].urgenceIncluse) ? 'flex' : 'none';
   }
 
   /* ═══ Navigation entre étapes ═══ */
@@ -118,7 +153,16 @@
     bind('o-' + k, k);
   });
   bind('o-consent', 'consent');
-  bind('o-urgence', 'urgence');
+  /* Les cases d'option repeignent le récapitulatif et le total. La
+     livraison sous six heures alimente aussi « urgence », dont
+     dépendent les délais annoncés dans les courriels. */
+  OPTIONS.forEach(function (o) {
+    o.case.addEventListener('change', function () {
+      state.options = retenues().map(function (x) { return x.titre; });
+      state.urgence = OPTIONS.some(function (x) { return x.id === 'urgence' && x.case.checked; });
+      paintRecap(); saveDraft();
+    });
+  });
   ['style', 'ambiance', 'voix', 'rite'].forEach(function (k) { bind('o-' + k, k); });
 
   /* Cartes de choix (offre) */
@@ -156,6 +200,14 @@
     $$('[data-offer]', wizard).forEach(function (b) {
       b.classList.toggle('selected', b.getAttribute('data-offer') === state.offer);
     });
+    /* Les cases d'option ne portent pas d'identifiant « o-<clé> » :
+       la boucle générique ci-dessus les a manquées. On les recoche
+       depuis les libellés retenus, sinon un brouillon repris affiche
+       un total qui ne correspond à aucune case. */
+    if (Array.isArray(state.options)) {
+      OPTIONS.forEach(function (o) { o.case.checked = state.options.indexOf(o.titre) !== -1; });
+      state.urgence = OPTIONS.some(function (x) { return x.id === 'urgence' && x.case.checked; });
+    }
     var note = $('#o-draft-note');
     if (note) note.classList.add('show');
   }
@@ -227,6 +279,10 @@
         traits: state.traits, metier: state.metier, habitude: state.habitude,
         anecdote: briefComplet(), style: state.style,
         urgence: !!state.urgence, paid: !!paid,
+        /* Le prix total est déjà dans « price » ; les options y sont
+           listées pour que l'atelier sache quoi composer et que la
+           facture puisse être détaillée. */
+        options: facturees().map(function (o) { return { id: o.id, titre: o.titre, prix: o.prix }; }),
         /* « paypalme » signale un règlement parti sur un lien : PayPal ne
            nous en dit rien en retour, il est à pointer à la main. */
         paypal_id: pid || (moyen === 'paypalme' ? 'paypalme' : '')
@@ -239,7 +295,9 @@
         body: JSON.stringify({
           type: 'commande', ref: order.ref,
           nom: state.name, email: state.email, tel: state.tel,
-          defunt: state.defunt, offre: state.offer + ' · ' + euro(priceOf()),
+          defunt: state.defunt,
+          offre: state.offer + ' · ' + euro(priceOf()) +
+                 (facturees().length ? ' · ' + facturees().map(function (o) { return o.titre; }).join(' · ') : ''),
           urgent: !!state.urgence,
           message: briefComplet(), page: location.pathname
         })
@@ -261,7 +319,8 @@
       var ref = $('#confirm-ref');
       if (ref) ref.textContent = order.ref;
       var sum = $('#confirm-summary');
-      if (sum) sum.textContent = state.offer + ' · ' + euro(priceOf()) + (state.urgence ? ' · urgence' : '');
+      if (sum) sum.textContent = state.offer + ' · ' + euro(priceOf()) +
+        (facturees().length ? ' · ' + facturees().map(function (o) { return o.titre.replace(/ —.*$/, ''); }).join(' · ') : '');
       var notePaie = $('#confirm-paiement');
       if (notePaie) notePaie.hidden = (moyen !== 'paypalme');
       wizard.closest('section').style.display = 'none';
