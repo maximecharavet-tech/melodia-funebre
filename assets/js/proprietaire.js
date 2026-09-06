@@ -549,6 +549,29 @@
   }
 
   /* ═══ Publication ═══ */
+
+  /* La publication en un geste suppose la base ET le rôle de fondateur.
+     Sans l'un des deux, on montre la voie de secours plutôt qu'un
+     bouton qui échouerait. */
+  function enLigne() {
+    var u = window.MelodiaAuth && window.MelodiaAuth.current();
+    return !!(window.MelodiaContenu && window.MelodiaContenu.disponible() && u && u.role === 'master');
+  }
+
+  /* Ce qui est actuellement en ligne, pour que le fondateur sache
+     toujours ce que voient les familles. */
+  async function etatPublication() {
+    var e = $('pb-etat');
+    if (!e || !window.MelodiaContenu) return;
+    try {
+      var d = await window.MelodiaContenu.lire();
+      if (!d) { e.textContent = 'Rien n\'a encore été publié depuis la console : le site sert le contenu livré avec lui.'; return; }
+      var q = new Date(d.publie_le);
+      e.textContent = 'En ligne : version ' + d.version + ', publiée le ' +
+        q.toLocaleDateString('fr-FR') + ' à ' + q.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) + '.';
+    } catch (err) { e.textContent = ''; }
+  }
+
   function rendrePublication(hote) {
     var n = modifs();
     hote.innerHTML =
@@ -562,17 +585,22 @@
       '</div>' +
 
       '<div class="panel" style="margin-top:1.2rem;">' +
-        '<div class="panel-title">Publier pour <em>de bon</em></div>' +
+        '<div class="panel-title">Mettre à jour <em>le site</em></div>' +
         '<div class="panel-sub" style="margin-bottom:1.4rem;">' +
           (n ? n + ' bloc' + (n > 1 ? 's' : '') + ' à publier.' : 'Aucune modification en attente.') + '</div>' +
-        '<div style="font-size:.9rem;color:var(--bone);line-height:1.9;margin-bottom:1.3rem;">' +
-          '<p><b style="color:var(--or);">1.</b> Téléchargez le fichier de contenu ci-dessous.</p>' +
-          '<p><b style="color:var(--or);">2.</b> Sur GitHub, ouvrez <code style="color:var(--or);">assets/data/content.json</code>, ' +
-             'cliquez sur le crayon, remplacez tout le contenu par celui du fichier, puis <i>Commit changes</i>.</p>' +
-          '<p><b style="color:var(--or);">3.</b> Le site se redéploie seul en une à deux minutes.</p>' +
-        '</div>' +
-        '<button class="btn btn-gold" style="width:100%;" id="pb-export">Télécharger content.json</button>' +
-        '<div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.9rem;">' +
+        (enLigne()
+          ? '<div style="font-size:.9rem;color:var(--bone);line-height:1.9;margin-bottom:1.3rem;">' +
+              'Un seul geste : le contenu part dans la base, et le site l\'affiche à la prochaine ouverture ' +
+              'd\'une page. Aucun redéploiement, aucun fichier à manipuler.' +
+            '</div>' +
+            '<button class="btn btn-gold" style="width:100%;" id="pb-publier">Publier maintenant</button>' +
+            '<div class="panel-sub" id="pb-etat" style="margin-top:.9rem;"></div>'
+          : '<div style="font-size:.9rem;color:var(--amber);line-height:1.9;margin-bottom:1.3rem;">' +
+              'La base n\'est pas jointe depuis cet appareil : la publication en un geste est indisponible. ' +
+              'Le dépôt de fichier ci-dessous reste la voie de secours.' +
+            '</div>') +
+        '<div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.1rem;">' +
+          '<button class="btn btn-outline btn-sm" id="pb-export">Télécharger une sauvegarde</button>' +
           '<button class="btn btn-outline btn-sm" id="pb-copier">Copier dans le presse-papiers</button>' +
           '<label class="btn btn-outline btn-sm" style="cursor:pointer;">Restaurer une sauvegarde' +
             '<input type="file" id="pb-import" accept="application/json" style="display:none;"></label>' +
@@ -597,6 +625,30 @@
       etat.charge = false;
       charger().then(render);
     });
+    var bPub = $('pb-publier');
+    if (bPub) {
+      bPub.addEventListener('click', async function () {
+        bPub.disabled = true;
+        var avant = bPub.textContent;
+        bPub.textContent = 'Publication…';
+        try {
+          var r = await window.MelodiaContenu.publier(etat.contenu);
+          /* Le brouillon a rempli son office : le garder ferait croire à
+             des modifications en attente alors qu'elles sont en ligne. */
+          try { localStorage.removeItem(CLE_BROUILLON); sessionStorage.removeItem(CLE_APERCU); } catch (e) {}
+          message('En ligne. Version ' + ((r && r.version) || '?') +
+                  ' — visible dès la prochaine ouverture d\'une page du site.', 'ok');
+          etat.charge = false;
+          await charger();
+          render();
+        } catch (e) {
+          message('Publication refusée : ' + e.message, 'err');
+          bPub.disabled = false; bPub.textContent = avant;
+        }
+      });
+      etatPublication();
+    }
+
     $('pb-export').addEventListener('click', function () {
       var blob = new Blob([JSON.stringify(etat.contenu, null, 2)], { type: 'application/json' });
       var a = document.createElement('a');
@@ -604,7 +656,7 @@
       a.download = 'content.json';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
-      message('Fichier téléchargé. Déposez-le sur GitHub pour le mettre en ligne.', 'ok');
+      message('Sauvegarde téléchargée. C\u2019est une copie de secours : pour mettre en ligne, utilisez « Publier maintenant ».', 'ok');
     });
     $('pb-copier').addEventListener('click', function () {
       var t = JSON.stringify(etat.contenu, null, 2);

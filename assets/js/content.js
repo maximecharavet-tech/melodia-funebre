@@ -8,7 +8,14 @@
 
    Priorité de lecture :
      1. brouillon local (aperçu du propriétaire, cet appareil seulement)
-     2. assets/data/content.json (le contenu publié)
+     2. le contenu publié depuis la console, dans la base
+     3. assets/data/content.json (la version livrée avec le site)
+
+   Le fichier est lu en premier parce qu'il est servi par le réseau de
+   diffusion et arrive en quelques millisecondes ; la base est
+   interrogée en parallèle et ne repeint la page que si elle détient
+   quelque chose de plus récent. Le site ne dépend donc jamais d'un
+   aller-retour vers la base pour s'afficher.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -38,17 +45,48 @@
     } catch (e) { return null; }
   }
 
+  /* ─── Le contenu publié depuis la console ───
+     Lecture anonyme : la règle de la base autorise tout le monde à
+     lire cette ligne, personne d'autre que le fondateur à l'écrire. */
+  async function chargerPublie() {
+    var C = window.MELODIA_CONFIG || {};
+    if (!C.SUPABASE_URL || !C.SUPABASE_ANON_KEY) return null;
+    try {
+      var r = await fetch(
+        C.SUPABASE_URL.replace(/\/+$/, '') + '/rest/v1/site_contenu?id=eq.courant&select=contenu,version',
+        { headers: { apikey: C.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + C.SUPABASE_ANON_KEY },
+          cache: 'no-store' });
+      if (!r.ok) return null;
+      var l = await r.json();
+      return (l && l[0] && l[0].contenu) || null;
+    } catch (e) { return null; }
+  }
+
   var pret = (async function () {
     var local = chargerBrouillon();
     if (local) { contenu = local; contenu.__apercu = true; return contenu; }
+
+    /* Le fichier d'abord : il arrive du réseau de diffusion, la page
+       s'affiche sans attendre la base. */
     try {
       var r = await fetch(FICHIER, { cache: 'no-cache' });
-      if (!r.ok) return null;
-      contenu = await r.json();
-      return contenu;
-    } catch (e) {
-      return null;   /* hors ligne ou fichier absent : le HTML d'origine suffit */
-    }
+      if (r.ok) contenu = await r.json();
+    } catch (e) { /* hors ligne : le HTML d'origine suffit */ }
+
+    /* Puis la base, en second temps. Si elle porte une version plus
+       récente que le fichier livré, on repeint par-dessus. */
+    chargerPublie().then(function (publie) {
+      if (!publie) return;
+      var vFichier = (contenu && contenu.version) || 0;
+      var vPublie = publie.version || 0;
+      if (contenu && vPublie <= vFichier) return;
+      contenu = publie;
+      /* appliquer() est déclarée plus bas : une déclaration de fonction
+         est hissée, et cet appel est de toute façon différé. */
+      appliquer(contenu);
+    });
+
+    return contenu;
   })();
 
   /* ─── Applications ─── */
@@ -163,7 +201,9 @@
     document.body.appendChild(b);
   }
 
-  pret.then(function (c) {
+  /* Chaque bloc est appliqué à part et protégé : une offre mal formée
+     ne doit pas empêcher les témoignages de s'afficher. */
+  function appliquer(c) {
     if (!c) return;
     try { appliquerIntro(c); } catch (e) {}
     try { appliquerDemos(c); } catch (e) {}
@@ -173,7 +213,9 @@
     try { appliquerContact(c); } catch (e) {}
     if (c.__apercu) bandeauApercu();
     document.dispatchEvent(new CustomEvent('melodia:content', { detail: c }));
-  });
+  }
+
+  pret.then(appliquer);
 
   window.MelodiaContent = {
     ready: pret,

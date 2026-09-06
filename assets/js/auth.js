@@ -160,6 +160,79 @@
       return user;
     },
 
+    /* ═══ CONNEXION PAR COMPTE GOOGLE ═══
+       Deux raisons de la proposer : plus de mot de passe à retenir pour
+       une agence qui se connecte trois fois par an, et une adresse
+       vérifiée d'office — c'est Google qui l'atteste, pas nous.
+
+       Le bouton n'apparaît QUE si le fournisseur est réellement activé
+       côté Supabase. Un bouton qui mène à une page d'erreur coûte plus
+       de confiance qu'un bouton absent. */
+    async googleDisponible() {
+      if (!HAS_SB) return false;
+      if (this._google !== undefined) return this._google;
+      try {
+        var r = await fetch(SB + '/auth/v1/settings', { headers: { apikey: SBK } });
+        var d = r.ok ? await r.json() : null;
+        this._google = !!(d && d.external && d.external.google);
+      } catch (e) { this._google = false; }
+      return this._google;
+    },
+
+    /** Part vers Google. Le retour est repris par reprendreRetourOAuth(). */
+    google: function (destination) {
+      if (!HAS_SB) throw new Error('La base n\'est pas configurée.');
+      var retour = location.origin + '/compte';
+      if (destination) { try { sessionStorage.setItem('melodia_apres_oauth', destination); } catch (e) {} }
+      location.href = SB + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(retour);
+    },
+
+    /* Au retour de Google, la session arrive dans le fragment de
+       l'adresse (#access_token=…). Le fragment n'est jamais envoyé au
+       serveur : c'est ce qui rend ce passage sûr, et c'est aussi
+       pourquoi il faut le lire ici, puis l'effacer de la barre
+       d'adresse pour qu'il ne traîne pas dans l'historique. */
+    async reprendreRetourOAuth() {
+      if (!HAS_SB || !location.hash) return null;
+      var h = new URLSearchParams(location.hash.slice(1));
+      var jeton = h.get('access_token');
+      if (!jeton) {
+        if (h.get('error')) {
+          history.replaceState(null, '', location.pathname + location.search);
+          throw new Error(h.get('error_description') || h.get('error'));
+        }
+        return null;
+      }
+      var r = await fetch(SB + '/auth/v1/user', {
+        headers: { apikey: SBK, Authorization: 'Bearer ' + jeton }
+      });
+      if (!r.ok) throw new Error('Session Google refusée.');
+      var utilisateur = await r.json();
+      LS.set('melodia_session', {
+        access_token: jeton,
+        refresh_token: h.get('refresh_token') || '',
+        expires_in: Number(h.get('expires_in') || 3600),
+        token_type: h.get('token_type') || 'bearer',
+        user: utilisateur
+      });
+      history.replaceState(null, '', location.pathname + location.search);
+      await this.relireRole();
+      /* Un compte Google n'a pas rempli le formulaire d'agence : on
+         inscrit ce qu'on sait pour que le tableau de bord ne l'affiche
+         pas vide, sans jamais inventer le nom d'une agence. */
+      try { await this._completerProfil(utilisateur); } catch (e) {}
+      return this.current();
+    },
+
+    async _completerProfil(u) {
+      var m = (u && u.user_metadata) || {};
+      if (m.name || m.agence) return;
+      await sb('/auth/v1/user', {
+        method: 'PUT',
+        body: JSON.stringify({ data: { name: m.full_name || m.name || (u.email || '').split('@')[0] } })
+      });
+    },
+
     async resetPassword(email) {
       email = (email || '').trim().toLowerCase();
       if (!email) throw new Error('Renseignez votre email.');
@@ -240,6 +313,46 @@
     brief: { label: 'Brief validé', color: '#38bdf8' },
     composition: { label: 'En composition', color: '#a78bfa' },
     livree: { label: 'Livrée', color: '#4ade80' }
+  };
+
+  /* ═══ LE CONTENU PUBLIÉ ═══
+     « Publier » voulait dire jusqu'ici : télécharger content.json,
+     ouvrir GitHub, remplacer le fichier à la main, attendre le
+     redéploiement. Infaisable depuis un téléphone, et personne ne le
+     fait deux fois. Le contenu tient désormais dans une ligne de la
+     base : le site la lit sans être authentifié, le fondateur seul
+     peut l'écrire — c'est la règle RLS qui le garantit, pas le
+     navigateur. */
+  window.MelodiaContenu = {
+    disponible: function () { return HAS_SB; },
+
+    /** Le contenu publié, ou null s'il n'y en a pas encore. */
+    async lire() {
+      if (!HAS_SB) return null;
+      var r = await fetch(SB + '/rest/v1/site_contenu?id=eq.courant&select=contenu,version,publie_le',
+                          { headers: { apikey: SBK, Authorization: 'Bearer ' + SBK }, cache: 'no-store' });
+      if (!r.ok) return null;
+      var l = await r.json();
+      return (l && l[0]) || null;
+    },
+
+    /** Écrit le contenu. Réservé au fondateur par la base elle-même. */
+    async publier(contenu) {
+      if (!HAS_SB) throw new Error('La base n\'est pas configurée : rien à publier.');
+      var u = window.MelodiaAuth.current();
+      if (!u || u.role !== 'master') throw new Error('Seul le fondateur peut publier.');
+      var charge = JSON.stringify({
+        id: 'courant', contenu: contenu, publie_par: u.email || u.name || 'fondateur'
+      });
+      /* « merge-duplicates » : la première publication crée la ligne,
+         les suivantes la remplacent. Pas de cas particulier à écrire. */
+      var d = await sb('/rest/v1/site_contenu?on_conflict=id', {
+        method: 'POST',
+        headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
+        body: charge
+      });
+      return (d && d[0]) || null;
+    }
   };
 
   window.MelodiaDB = {

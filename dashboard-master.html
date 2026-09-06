@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=5920e451">
+<link rel="stylesheet" href="assets/css/style.css?v=e623acc0">
 <link rel="stylesheet" href="assets/css/dashboard.css?v=4243bdaa">
 </head>
 <body>
@@ -58,12 +58,12 @@
 </div>
 
 <script src="assets/js/config.js?v=13072ce7"></script>
-<script src="assets/js/auth.js?v=6ff8a2e5"></script>
+<script src="assets/js/auth.js?v=27e02f2b"></script>
 <script src="assets/js/courrier.js?v=f9ff5aca"></script>
 <script src="assets/js/main.js?v=5ed21030"></script>
 <script src="assets/js/livraison.js?v=8816d59c"></script>
 <script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
-<script src="assets/js/proprietaire.js?v=b1d5175b"></script>
+<script src="assets/js/proprietaire.js?v=7ca0ec75"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
@@ -90,10 +90,26 @@ window.MELODIA_REFRESH = async function () {
   return ORDERS;
 };
 
+/* Une base injoignable — réseau coupé, projet en pause — faisait
+   échouer boot() sur un rejet non capté : la console restait sur un
+   écran vide, sans un mot. Elle démarre désormais quand même, sur des
+   listes vides et avec un avertissement : le mode propriétaire, lui,
+   travaille sur un brouillon local et n'a pas besoin du réseau. */
 async function boot() {
-  await window.MelodiaDB.seedIfEmpty();
-  ORDERS = await window.MelodiaDB.all();
-  PARTNERS = await window.MelodiaDB.partners();
+  var panne = null;
+  try {
+    await window.MelodiaDB.seedIfEmpty();
+    ORDERS = await window.MelodiaDB.all();
+    PARTNERS = await window.MelodiaDB.partners();
+  } catch (e) {
+    ORDERS = ORDERS || []; PARTNERS = PARTNERS || []; panne = e;
+  }
+  if (panne) {
+    var av = document.getElementById('view');
+    if (av) av.insertAdjacentHTML('beforebegin',
+      '<div class="form-msg err" style="display:block; margin-top:1rem;">Base de données injoignable : les commandes et les agences ne sont pas chargées. ' +
+      'Le mode propriétaire reste utilisable ; la publication attendra le retour du réseau.</div>');
+  }
   document.getElementById('badge-cmd').textContent = ORDERS.length;
   document.getElementById('mode-badge').textContent = (window.MelodiaDB.mode === 'supabase' ? 'Base Supabase · ' : 'Base locale · ') + 'mode débutant';
   go('accueil');
