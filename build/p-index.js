@@ -24,9 +24,9 @@ module.exports = {
     <div class="hero-embleme" data-orn-embleme data-orn-priorite
          data-orn-alt="Melodia Funèbre" aria-hidden="true"></div>
     <div class="hero-caption">
-      <div class="badge reveal in" style="margin-bottom:1.6rem;">Composition originale · Livrée en 24 heures</div>
+      <div class="badge reveal in" style="margin-bottom:1.6rem;">Un service qui n'existait pas · Livré en 24 heures</div>
       <h1 class="h-hero reveal in reveal-d1">Chaque vie mérite<br><em>une chanson.</em></h1>
-      <p class="lead reveal in reveal-d2">Pour chaque personne qui s'en va, notre maison compose une œuvre originale — sa vie, ses gestes, sa mémoire — remise à la famille sous vingt-quatre heures. Sans droits à régler, à vous pour toujours.</p>
+      <p class="lead reveal in reveal-d2">Première maison française à le faire : pour chaque personne qui s'en va, nous composons une œuvre originale — sa vie, ses gestes, sa mémoire. Elle n'existe pas avant votre appel, elle ne sera jamais vendue à quelqu'un d'autre, et elle est à vous pour toujours.</p>
       <div class="hero-actions reveal in reveal-d3">
         <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
         <a href="/demos" class="btn btn-outline btn-lg">${ICON.note} Écouter {{HOMMAGES}} hommages</a>
@@ -57,6 +57,49 @@ ${P.marquee()}
       </div>
 ${P.vitrineBarre()}
 ${P.oeuvres()}
+    </div>
+  </section>
+
+  <!-- ═══ CE QUI N'EXISTE NULLE PART ═══ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:3.2rem;">
+        <div class="eyebrow">Sans équivalent</div>
+        <h2 class="h-xl">Une œuvre,<br><em>une seule fois.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:60ch;">
+          Vous venez d'écouter {{HOMMAGES}} hommages. Aucun ne ressemble à un autre, et aucun
+          n'existait avant qu'une famille ne décroche son téléphone.</p>
+      </div>
+      <div class="grid-4" data-cascade>
+        <div class="card card-lift reveal">
+          <div class="card-icon">${ICON.pen}</div>
+          <h3 class="h-lg">Elle naît de vous</h3>
+          <p>Rien n'est écrit d'avance. Le texte part de ce que vous racontez : son métier, sa manie,
+             la phrase qu'il répétait. Une chanson du commerce parle de quelqu'un d'autre — celle-ci
+             ne parle que de lui.</p>
+        </div>
+        <div class="card card-lift reveal">
+          <div class="card-icon">${ICON.gift}</div>
+          <h3 class="h-lg">Elle n'appartient qu'à vous</h3>
+          <p>Composée une fois, vendue une fois. Elle ne sera jamais reproposée à une autre famille,
+             ni versée à un catalogue. Personne d'autre au monde ne possède cet enregistrement.</p>
+        </div>
+        <div class="card card-lift reveal">
+          <div class="card-icon">${ICON.shield}</div>
+          <h3 class="h-lg">Elle est libre de droits</h3>
+          <p>Aucune déclaration, aucune redevance. Vous la diffusez à la cérémonie, vous la copiez
+             pour toute la famille, vous la remettez aux petits-enfants. Sans rien demander à personne.</p>
+        </div>
+        <div class="card card-lift reveal">
+          <div class="card-icon">${ICON.heart}</div>
+          <h3 class="h-lg">Elle vous survivra</h3>
+          <p>Les fleurs fanent, les discours s'oublient. Un enregistrement se garde, se transmet,
+             se réécoute dans dix ans — le jour où l'on veut réentendre qui il était.</p>
+        </div>
+      </div>
+      <p class="center reveal note" style="margin-top:2rem;max-width:56ch;margin-left:auto;margin-right:auto;line-height:1.9;">
+        Nous n'avons trouvé aucune autre maison française proposant cela. Si vous en connaissez une,
+        écrivez-nous : nous corrigerons cette page le jour même.</p>
     </div>
   </section>
 
@@ -242,7 +285,7 @@ ${P.faq(null, true)}
   <section class="section section-top" style="padding-bottom:6rem;">
     <div class="wrap center reveal">
       <h2 class="h-xl">Offrez-leur la chanson<br>qu'ils <em>méritaient.</em></h2>
-      <p class="lead" style="margin:1.6rem auto 2.4rem;">Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape. Et si l'œuvre ne vous touche pas, nous la reprenons.</p>
+      <p class="lead" style="margin:1.6rem auto 2.4rem;">Il n'y aura pas de deuxième cérémonie. Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape — et si l'œuvre ne vous touche pas, nous la reprenons.</p>
       <div class="hero-actions">
         <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
         <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>

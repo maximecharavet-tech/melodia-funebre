@@ -56,7 +56,7 @@ if (fs.existsSync(fichierContenu)) {
 
 /* ─── Génération ─── */
 const { page } = require('./gen.js');
-const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-agences', 'p-contact', 'p-compte', 'p-404'];
+const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-agences', 'p-rejoindre', 'p-contact', 'p-compte', 'p-404'];
 
 let total = 0;
 for (const m of pages) {
@@ -125,6 +125,7 @@ const PLAN = [
   ['processus.html', '0.9', 'monthly'],
   ['rites.html', '0.9', 'monthly'],
   ['agences.html', '0.9', 'monthly'],
+  ['rejoindre.html', '0.8', 'monthly'],
   ['contact.html', '0.7', 'yearly'],
   ['cgv.html', '0.4', 'yearly'],
   ['mentions-legales.html', '0.3', 'yearly'],

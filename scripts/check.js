@@ -3,15 +3,15 @@ const fs = require('fs');
 
 const files = [
   'index.html', 'processus.html', 'demos.html', 'rites.html', 'offres.html', 'agences.html',
-  'contact.html', 'compte.html', 'dashboard-partenaire.html', 'dashboard-master.html', 'dashboard-commercial.html',
+  'contact.html', 'rejoindre.html', 'compte.html', 'dashboard-partenaire.html', 'dashboard-master.html', 'dashboard-commercial.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
   'assets/css/style.css', 'assets/css/dashboard.css',
   'assets/js/main.js', 'assets/js/catalogue.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
   'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/intranet.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'assets/js/ornements.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
   'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js',
-  'assets/js/auth.js', 'assets/js/config.js',
+  'assets/js/auth.js', 'assets/js/config.js', 'assets/js/candidature.js',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-complet.jpg', 'assets/img/logo-melodia-anime.mp4',
-  'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'favicon.ico', 'site.webmanifest',
+  'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'assets/img/maxime.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
   'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
