@@ -18,6 +18,16 @@ module.exports = {
     </div>
   </section>
 
+  <!-- ═══ LA MAISON AU TRAVAIL ═══ -->
+  <section class="section-sm">
+    <div class="wrap">
+      <figure class="equipe reveal">
+        <img src="assets/img/equipe.jpg" alt="L'atelier de Melodia Funèbre : la maison au travail, casques sur les oreilles, devant les stations de composition." width="1600" height="900" loading="lazy" decoding="async">
+        <figcaption>L'atelier. Chaque écran, une famille qui attend.</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <section class="section section-tight">
     <div class="wrap">
       <div class="grid-3">
