@@ -127,8 +127,29 @@
     modeles: ['Ressources', 'Modèles de <em>courriel</em>', vModeles, brancherModeles],
     playbook: ['Ressources', 'Script et <em>objections</em>', vPlaybook, brancherPlaybook],
     plan: ['Ressources', 'Plan de <em>prospection</em>', vPlan, function () {}],
-    traditions: ['Ressources', 'Les <em>traditions</em>', vTraditions, brancherTraditions]
+    traditions: ['Ressources', 'Les <em>traditions</em>', vTraditions, brancherTraditions],
+
+    /* Les quatre outils de l'intranet se montent eux-mêmes dans un
+       hôte vide : ils sont asynchrones et partagés avec la console du
+       fondateur, d'où ce branchement en deux temps. */
+    agenda: ['Organisation', 'Mon <em>agenda</em>', hoteIntranet, monter('agenda')],
+    messagerie: ['Équipe', 'La <em>messagerie</em>', hoteIntranet, monter('messagerie')],
+    catalogue: ['Le fonds', 'Le <em>catalogue</em>', hoteIntranet, monter('catalogue')],
+    social: ['Croissance', 'Réseaux <em>sociaux</em>', hoteIntranet, monter('publications')]
   };
+
+  function hoteIntranet() { return '<div id="intra-root"></div>'; }
+  function monter(nom) {
+    return function () {
+      var h = $('intra-root');
+      if (!h) return;
+      if (!window.MelodiaIntranet) {
+        h.innerHTML = '<div class="form-msg err" style="display:block;">Le module intranet ne s\'est pas chargé.</div>';
+        return;
+      }
+      window.MelodiaIntranet.vues[nom](h);
+    };
+  }
 
   function go(v) {
     vueCourante = v;
@@ -1151,5 +1172,10 @@
     if (m) m.textContent = EST_MAITRE ? 'Vue fondateur' : 'Collaborateur';
     await charger();
     go('accueil');
+    /* Le compteur de messages non lus doit vivre dès l'ouverture :
+       sans cela, on ne sait qu'on a du courrier qu'en cliquant dessus. */
+    if (window.MelodiaIntranet && window.MelodiaIntranet.majBadgeMessages) {
+      window.MelodiaIntranet.majBadgeMessages();
+    }
   })();
 })();
