@@ -276,9 +276,13 @@
         (r.notes ? '<div class="own-detail" style="color:var(--dust);">' + esc(r.notes) + '</div>' : '') +
       '</div>' +
       '<div class="own-acts" style="gap:.4rem;flex-wrap:wrap;">' + pastilleType(r.type) +
-        (annule ? '' : '<button class="btn btn-outline btn-sm" data-fait="' + esc(r.id) + '">' +
-          (fini ? 'Rouvrir' : 'Fait') + '</button>') +
-        '<button class="btn btn-ghost btn-sm" data-edit="' + esc(r.id) + '">Modifier</button>' +
+        (r.calcule
+          /* Rien à cocher : cette ligne disparaîtra d'elle-même quand la
+             commande avancera. La toucher ici ne voudrait rien dire. */
+          ? '<span class="pill" style="border-color:var(--line-soft);color:var(--dust);">Suit la commande</span>'
+          : (annule ? '' : '<button class="btn btn-outline btn-sm" data-fait="' + esc(r.id) + '">' +
+              (fini ? 'Rouvrir' : 'Fait') + '</button>') +
+            '<button class="btn btn-ghost btn-sm" data-edit="' + esc(r.id) + '">Modifier</button>') +
       '</div></div>';
   }
 
@@ -480,6 +484,43 @@
     });
   }
 
+  /* ─── Ce que les commandes imposent ───
+     Une commande reçue appelle un rappel, et toute commande non livrée
+     a une échéance. Plutôt que de recopier ces rendez-vous dans
+     l'agenda — deux vérités qui finiraient par diverger — on les
+     calcule à l'affichage. Ils ne sont pas modifiables : ce sont des
+     faits, pas des notes. */
+  function depuisCommandes(cmds) {
+    var out = [];
+    (cmds || []).forEach(function (c) {
+      if (c.status === 'livree') return;
+      if (c.status === 'recue') {
+        /* Le rappel est dû sous deux heures ouvrées, une en urgence. */
+        var quand = new Date(new Date(c.created_at).getTime() + (c.urgence ? 1 : 2) * 3600000);
+        out.push({
+          id: 'cmd-appel-' + c.ref, calcule: true, type: 'appel',
+          titre: 'Appeler la famille — ' + (c.defunt || c.ref),
+          debut: quand.toISOString(), fin: null,
+          lieu: 'Par téléphone', contact: c.user_name || '', tel: c.tel || '',
+          ref: c.ref, assigne: c.assigne || '', assigne_nom: '',
+          notes: (c.urgence ? 'Urgence. ' : '') + 'Entretien de cinq minutes : le délai ne court qu\'après.',
+          statut: 'prevu', cree_par: ''
+        });
+      }
+      if (c.echeance) {
+        out.push({
+          id: 'cmd-fin-' + c.ref, calcule: true, type: 'composition',
+          titre: 'Livrer l\'hommage — ' + (c.defunt || c.ref),
+          debut: c.echeance, fin: null, lieu: '', contact: c.user_name || '', tel: '',
+          ref: c.ref, assigne: c.assigne || '', assigne_nom: '',
+          notes: c.offer + (c.urgence ? ' · urgence six heures' : ''),
+          statut: 'prevu', cree_par: ''
+        });
+      }
+    });
+    return out;
+  }
+
   I.vues.agenda = async function (hote) {
     etat.hote = hote;
     if (!O.enLigne()) return O.horsLigne(hote, 'L\'agenda');
@@ -487,8 +528,12 @@
     try {
       var depuis = O.ajouteJours(O.debutJour(new Date()), -60);
       var jusqua = O.ajouteJours(new Date(), etat.jours);
+      var cmds = [];
+      try { cmds = await window.MelodiaDB.all(); } catch (e) { cmds = []; }
       var r = await Promise.all([I.Agenda.liste(depuis, jusqua), I.equipe()]);
-      etat.rdv = r[0]; etat.equipe = r[1];
+      etat.rdv = r[0].concat(depuisCommandes(cmds));
+      etat.rdv.sort(function (a, b) { return new Date(a.debut) - new Date(b.debut); });
+      etat.equipe = r[1];
       rendre();
     } catch (e) { O.panne(hote, e); }
   };

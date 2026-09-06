@@ -903,6 +903,197 @@ ul { list-style: none; }
   .opt-tete { flex-wrap: wrap; gap: 0.2rem 0.7rem; }
 }
 
+/* ─── L'invitation à l'empreinte ─── */
+.emp-invite { text-align: center; padding: 0.5rem 0 1.4rem; }
+.emp-invite svg { width: 46px; height: 46px; color: var(--or); margin-bottom: 1rem; }
+.emp-invite p { color: var(--paper); font-size: 1.02rem; line-height: 1.7; margin: 0 auto 1.2rem; max-width: 34ch; }
+.emp-invite ul { list-style: none; margin: 0; padding: 0; text-align: left; display: grid; gap: 0.6rem; }
+.emp-invite li {
+  position: relative; padding-left: 1.3rem;
+  font-size: 0.86rem; color: var(--ash); line-height: 1.65;
+}
+.emp-invite li::before { content: '·'; position: absolute; left: 0.35rem; color: var(--or); font-size: 1.2rem; line-height: 1; }
+@media (max-width: 720px) { .emp-invite li { font-size: 0.92rem; } }
+
+/* ═══════════════════════════════════════════════════════════════
+   L'ESPACE DE LA FAMILLE
+
+   Pensé pour un téléphone tenu d'une main, dans les jours qui suivent
+   un décès. Peu de choses à l'écran, aucune information à chercher, et
+   la prochaine étape toujours annoncée. Les cibles font 48 px, parce
+   qu'on s'y reprend à deux fois quand on a les mains qui tremblent.
+   ═══════════════════════════════════════════════════════════════ */
+.page-espace { background: var(--ink); min-height: 100vh; }
+
+.esp-barre {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 0.9rem clamp(1rem, 4vw, 2.4rem);
+  background: rgba(4, 4, 7, 0.92); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.esp-marque { display: flex; align-items: center; gap: 0.6rem; }
+.esp-marque img { border-radius: 50%; border: 1px solid var(--line-strong); }
+.esp-marque span { display: flex; flex-direction: column; line-height: 1.1; }
+.esp-marque b { font-family: var(--ff-d); font-size: 1.05rem; color: var(--paper); font-weight: 400; }
+.esp-marque em {
+  font-family: var(--ff-m); font-size: 0.48rem; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--or-patina); font-style: normal;
+}
+.esp-joindre {
+  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ash); padding: 0.7rem 0;
+}
+.esp-joindre:hover { color: var(--or); }
+
+.esp-page { max-width: 760px; margin: 0 auto; padding: 2.2rem clamp(1rem, 4vw, 2rem) 5rem; }
+.esp-bonjour { margin-bottom: 2rem; }
+.esp-sous { color: var(--bone); font-size: 1.02rem; line-height: 1.7; margin-top: 0.8rem; }
+
+/* Les onglets défilent plutôt que de se serrer : trois mots illisibles
+   valent moins qu'un glissé. */
+.esp-onglets {
+  display: flex; gap: 0.5rem; margin-bottom: 1.6rem;
+  overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.2rem;
+}
+.esp-onglets::-webkit-scrollbar { display: none; }
+.esp-onglet {
+  flex: none; display: inline-flex; align-items: center; gap: 0.45rem;
+  min-height: 44px; padding: 0.6rem 1.05rem;
+  border: 1px solid var(--line-soft); border-radius: 999px;
+  background: transparent; color: var(--ash); cursor: pointer;
+  font-family: var(--ff-b); font-size: 0.92rem;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.esp-onglet:hover { color: var(--paper); border-color: var(--line-strong); }
+.esp-onglet.actif { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+.esp-compte {
+  font-family: var(--ff-m); font-size: 0.62rem; color: var(--ink);
+  background: var(--or-patina); border-radius: 999px; padding: 0.1rem 0.42rem;
+}
+.esp-onglet.actif .esp-compte { background: var(--or); }
+
+.esp-corps { display: grid; gap: 1.2rem; }
+
+.esp-carte {
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.015); padding: 1.3rem;
+}
+.esp-carte.ouverte { border-color: var(--line-strong); }
+.esp-tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.9rem; }
+.esp-nom { font-family: var(--ff-d); font-size: 1.35rem; color: var(--paper); margin: 0; line-height: 1.25; }
+.esp-meta {
+  font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--dust); margin-top: 0.35rem;
+  overflow-wrap: anywhere;
+}
+.esp-urgence { color: var(--amber); }
+
+/* Le délai est ce qu'on vient chercher : il passe avant le reste. */
+.esp-delai {
+  margin-top: 0.9rem; padding: 0.65rem 0.9rem; border-radius: 5px;
+  background: var(--or-soft); border: 1px solid var(--line-strong);
+  font-size: 0.92rem; color: var(--or-bright);
+}
+.esp-delai.presse { background: rgba(251, 191, 36, 0.09); border-color: rgba(251, 191, 36, 0.35); color: var(--amber); }
+.esp-delai.fini { background: rgba(74, 222, 128, 0.07); border-color: rgba(74, 222, 128, 0.28); color: var(--green); }
+
+/* La frise dit où l'on en est, et surtout ce qui se passe maintenant. */
+.esp-frise { list-style: none; margin: 1.2rem 0 0; padding: 0; display: grid; gap: 0.1rem; }
+.esp-frise li { display: flex; gap: 0.8rem; align-items: flex-start; padding: 0.45rem 0; position: relative; }
+.esp-frise li::before {
+  content: ''; position: absolute; left: 13px; top: 30px; bottom: -6px;
+  width: 1px; background: var(--line-soft);
+}
+.esp-frise li:last-child::before { display: none; }
+.esp-point {
+  flex: none; width: 27px; height: 27px; border-radius: 50%;
+  display: grid; place-items: center; position: relative; z-index: 1;
+  border: 1px solid var(--line-soft); background: var(--ink);
+  font-family: var(--ff-m); font-size: 0.66rem; color: var(--dust);
+}
+.esp-frise .faite .esp-point { border-color: rgba(74, 222, 128, 0.45); color: var(--green); }
+.esp-frise .ici .esp-point { border-color: var(--or); color: var(--or); background: var(--or-soft); }
+.esp-etape { display: block; min-width: 0; padding-top: 0.15rem; }
+.esp-etape b { display: block; font-size: 0.94rem; color: var(--ash); font-weight: 400; }
+.esp-frise .faite .esp-etape b { color: var(--bone); }
+.esp-frise .ici .esp-etape b { color: var(--paper); }
+.esp-etape em { display: block; font-style: normal; font-size: 0.86rem; color: var(--ash); line-height: 1.6; margin-top: 0.25rem; }
+
+.esp-audio { margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line-soft); }
+.esp-audio-titre { font-family: var(--ff-d); font-size: 1.1rem; color: var(--or); margin-bottom: 0.6rem; }
+.esp-audio audio { width: 100%; margin-bottom: 0.9rem; }
+.esp-aide { font-size: 0.84rem; color: var(--ash); line-height: 1.7; margin-top: 0.7rem; }
+.esp-note {
+  margin-top: 1.2rem; padding: 0.8rem 1rem; border-radius: 5px;
+  background: rgba(251, 191, 36, 0.07); border: 1px solid rgba(251, 191, 36, 0.28);
+  color: var(--amber); font-size: 0.88rem; line-height: 1.65;
+}
+
+.esp-plus {
+  display: block; width: 100%; min-height: 46px; margin-top: 1rem;
+  background: transparent; border: 1px dashed var(--line-soft); border-radius: 5px;
+  color: var(--ash); cursor: pointer; font-family: var(--ff-b); font-size: 0.88rem;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.esp-plus:hover { color: var(--or); border-color: var(--line-strong); }
+
+.esp-detail { margin-top: 1rem; display: grid; gap: 0.1rem; }
+.esp-ligne {
+  display: flex; justify-content: space-between; gap: 1rem;
+  padding: 0.6rem 0; border-bottom: 1px solid var(--line-soft);
+  font-size: 0.9rem;
+}
+.esp-ligne:last-child { border-bottom: 0; }
+.esp-ligne span { color: var(--ash); flex: none; }
+.esp-ligne b { color: var(--paper); font-weight: 400; text-align: right; overflow-wrap: anywhere; }
+
+.esp-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 1.1rem; }
+.esp-message { color: var(--bone); font-size: 0.94rem; line-height: 1.75; margin: 0.9rem 0 0; white-space: pre-wrap; }
+.esp-reponse {
+  margin-top: 1rem; padding: 0.9rem 1rem; border-radius: 5px;
+  background: var(--or-soft); border: 1px solid var(--line-strong);
+}
+.esp-reponse b {
+  display: block; font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--or); margin-bottom: 0.5rem;
+}
+.esp-reponse p { color: var(--paper); font-size: 0.94rem; line-height: 1.75; margin: 0; white-space: pre-wrap; }
+
+.esp-vide { text-align: center; padding: 2.4rem 1rem; color: var(--ash); }
+.esp-vide p { line-height: 1.8; margin-bottom: 0.6rem; }
+.esp-vide .btn { margin-top: 1.2rem; }
+.esp-empreinte { margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line-soft); }
+
+/* La fenêtre de demande : centrée, fermable au voile comme à l'échap. */
+.esp-voile {
+  position: fixed; inset: 0; z-index: 90; display: grid; place-items: center;
+  padding: 1rem; background: rgba(2, 2, 4, 0.82); backdrop-filter: blur(6px);
+  animation: espParaitre 0.22s ease;
+}
+.esp-fenetre {
+  width: min(520px, 100%); max-height: 88vh; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg); padding: 1.6rem;
+}
+.esp-fenetre h3 { margin: 0 0 0.5rem; }
+@keyframes espParaitre { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .esp-voile { animation: none; } }
+
+@media (max-width: 720px) {
+  .esp-joindre { font-size: 0.68rem; letter-spacing: 0.1em; }
+  .esp-meta { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .esp-nom { font-size: 1.25rem; }
+  .esp-aide { font-size: 0.9rem; }
+  .esp-ligne { font-size: 0.95rem; }
+  .esp-carte { padding: 1.1rem; }
+  /* Les deux colonnes d'une ligne de détail ne tiennent pas toujours :
+     la valeur passe dessous plutôt que de se comprimer. */
+  .esp-ligne { flex-wrap: wrap; }
+  .esp-ligne b { text-align: left; }
+}
+
 /* ─── L'atelier ───
    Une photo pleine largeur sur la page de recrutement : ce qu'on
    rejoint se montre mieux qu'il ne se décrit. Le voile dégradé du bas
