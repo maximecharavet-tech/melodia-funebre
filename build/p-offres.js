@@ -1,11 +1,26 @@
 const { ICON } = require('./gen.js');
 const P = require('./parts.js');
-const { OFFERS, FAQ, STYLES } = require('./data.js');
+const { OFFERS, FAQ, STYLES, OPTIONS } = require('./data.js');
 
 const offerChoices = OFFERS.map(o => `            <button type="button" class="choice${o.name === 'Prestige' ? ' selected' : ''}" data-offer="${o.name}">
               <span class="choice-title">${o.name} — ${o.price} €</span>
               <span class="choice-sub">${o.desc}</span>
             </button>`).join('\n');
+
+/* Les cases portent leur prix en attribut : order.js les relit dans le
+   DOM plutôt que de recopier un tarif qui divergerait au premier
+   changement. « data-inclus » nomme les offres où l'option est déjà
+   comprise, pour ne pas la facturer deux fois. */
+const optionsBloc = OPTIONS.map(o => `              <label class="opt">
+                <input type="checkbox" class="opt-case" id="o-opt-${o.id}" data-opt="${o.id}" data-prix="${o.prix}" data-inclus="${(o.inclusDans || []).join(',')}">
+                <span class="opt-corps">
+                  <span class="opt-tete">
+                    <span class="opt-titre">${o.titre}</span>
+                    <span class="opt-prix" data-prix-affiche="${o.id}">+ ${o.prix} €</span>
+                  </span>
+                  <span class="opt-aide">${o.aide}</span>
+                </span>
+              </label>`).join('\n');
 
 const styleOpts = STYLES.map(s => `<option${s === 'Chanson française' ? ' selected' : ''}>${s}</option>`).join('');
 
@@ -59,7 +74,7 @@ ${P.scrollHint()}
             <tr><th scope="row">Paroles imprimables (PDF)</th><td class="no">—</td><td class="col-hl yes">✓</td><td class="yes">✓</td></tr>
             <tr><th scope="row">Fichier WAV sans perte</th><td class="no">—</td><td class="col-hl">Sur demande</td><td class="yes">✓</td></tr>
             <tr><th scope="row">Livret souvenir imprimé</th><td class="no">—</td><td class="col-hl no">—</td><td class="yes">✓</td></tr>
-            <tr><th scope="row">Priorité urgence 6 h</th><td>+ 49 €</td><td class="col-hl">+ 49 €</td><td class="yes">Incluse</td></tr>
+            <tr><th scope="row">Livraison sous 6 h</th><td>+ 199 €</td><td class="col-hl">+ 199 €</td><td class="yes">Incluse</td></tr>
           </tbody>
         </table>
       </div>
@@ -100,10 +115,13 @@ ${P.urgency()}
             <div class="choices">
 ${offerChoices}
             </div>
-            <label class="check" style="margin-top:1.4rem;">
-              <input type="checkbox" id="o-urgence">
-              <span>La cérémonie a lieu dans moins de 72 heures — priorité 6 heures <span style="color:var(--or);">(+ 49 €, incluse en Mémorial)</span></span>
-            </label>
+            <div class="opts">
+              <div class="opts-tete">
+                <span class="opts-titre">Pour aller plus loin</span>
+                <span class="opts-sous">Facultatif, et décochable jusqu'au paiement</span>
+              </div>
+${optionsBloc}
+            </div>
             <div class="wz-actions"><button type="button" class="btn btn-gold" data-wz-next>Continuer</button></div>
           </div>
 
@@ -217,8 +235,7 @@ ${offerChoices}
           <div class="wz-line"><span>Offre</span><b id="rc-offer">Prestige</b></div>
           <div class="wz-line"><span>Pour</span><b id="rc-defunt">—</b></div>
           <div class="wz-line"><span>Style</span><b id="rc-style">—</b></div>
-          <div class="wz-line"><span>Urgence</span><b id="rc-urgence">Non</b></div>
-          <div class="wz-line" id="rc-supp-line" style="display:none;"><span>Priorité 6 h</span><b>+ 49 €</b></div>
+          <div id="rc-options"></div>
           <div class="wz-total"><span>Total</span><b id="rc-total">299 €</b></div>
           <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--line-soft);">
             <div class="trust-item" style="margin-bottom:.7rem;">${ICON.clock}<span>Livré 24 h après l'entretien</span></div>
