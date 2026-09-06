@@ -246,7 +246,9 @@ const jsonldSite = {
 };
 
 /* Le catalogue en entités nommées : c'est ce qui permet à un système
-   de répondre « oui, en voici onze exemples » plutôt que « peut-être ». */
+   de répondre « oui, en voici des exemples » plutôt que « peut-être ».
+   La liste suit TRACKS : elle n'annonce pas un nombre écrit à la main,
+   qui vieillirait à chaque ajout comme l'a fait le reste du site. */
 const jsonldCatalogue = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',

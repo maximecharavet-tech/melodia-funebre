@@ -29,7 +29,7 @@ module.exports = {
       <p class="lead reveal in reveal-d2">Pour chaque personne qui s'en va, notre maison compose une œuvre originale — sa vie, ses gestes, sa mémoire — remise à la famille sous vingt-quatre heures. Sans droits à régler, à vous pour toujours.</p>
       <div class="hero-actions reveal in reveal-d3">
         <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
-        <a href="/demos" class="btn btn-outline btn-lg">${ICON.note} Écouter trois hommages</a>
+        <a href="/demos" class="btn btn-outline btn-lg">${ICON.note} Écouter {{HOMMAGES}} hommages</a>
       </div>
       <p class="reveal in reveal-d4 note" style="margin-top:1.8rem;">
         Dès 149 € · Sans engagement · Révision jusqu'à satisfaction

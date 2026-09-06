@@ -29,7 +29,7 @@ const FAQ = [
   { q: "La voix est-elle générée ou chantée ?",
     a: "La composition s'appuie sur des outils de création musicale assistée, supervisés à chaque étape par la maison : le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant livraison. Aucun hommage n'est envoyé sans avoir été écouté par un humain." },
   { q: "Peut-on écouter avant de payer ?",
-    a: "Vous pouvez écouter les trois hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite." },
+    a: "Vous pouvez écouter les {{HOMMAGES}} hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite." },
   { q: "Comment se passe le paiement ?",
     a: "Par carte bancaire ou PayPal, en paiement sécurisé au moment de la commande. Vous pouvez aussi enregistrer votre commande et régler après l'entretien téléphonique. Rétractation de 14 jours dans les conditions prévues par la loi." },
   { q: "Travaillez-vous avec les pompes funèbres ?",
@@ -149,4 +149,31 @@ const TRACKS = [
     brief: "joyeux · bruyant · généreux" }
 ];
 
-module.exports = { OFFERS, TESTIS, FAQ, STYLES, TRACKS };
+/* ─── Le compte des hommages ───
+   « Les trois hommages de démonstration » est resté écrit tel quel
+   pendant que le catalogue passait de trois à seize : la page
+   d'accueil, la page agences et la foire aux questions annonçaient
+   toutes les trois un chiffre faux. Un nombre qui décrit le
+   catalogue ne doit pas être saisi à la main quelque part — il se
+   déduit du catalogue, et il se corrige tout seul au prochain ajout.
+
+   Les gabarits écrivent {{HOMMAGES}} ; la substitution a lieu tout à
+   la fin, dans gen.js, une fois le contenu publié repris — sinon un
+   hommage ajouté depuis la console laisserait le chiffre en arrière. */
+const UNITES = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit',
+  'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize'];
+const DIZAINES = { 20: 'vingt', 30: 'trente', 40: 'quarante', 50: 'cinquante', 60: 'soixante' };
+
+function enLettres(n) {
+  if (n <= 16) return UNITES[n];
+  if (n < 20) return 'dix-' + UNITES[n - 10];
+  if (n < 70) {
+    const d = Math.floor(n / 10) * 10;
+    const u = n % 10;
+    if (!u) return DIZAINES[d];
+    return DIZAINES[d] + (u === 1 ? ' et un' : '-' + UNITES[u]);
+  }
+  return String(n);            /* au-delà, le chiffre reste plus lisible */
+}
+
+module.exports = { OFFERS, TESTIS, FAQ, STYLES, TRACKS, enLettres };
