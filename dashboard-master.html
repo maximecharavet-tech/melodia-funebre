@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=e623acc0">
+<link rel="stylesheet" href="assets/css/style.css?v=486fed45">
 <link rel="stylesheet" href="assets/css/dashboard.css?v=4243bdaa">
 </head>
 <body>
@@ -136,7 +136,7 @@ function go(v) {
   document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, proprietaire:vProprietaire, systeme:vSysteme })[v]();
   if (v === 'atelier') restoreAtelier();
   if (v === 'proprietaire' && window.MelodiaOwner) window.MelodiaOwner.mount();
-  if (v === 'systeme') majEtatMusique();
+  if (v === 'systeme') { majEtatMusique(); majEtatCourriel(); }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -225,6 +225,119 @@ async function majEtatMusique() {
       ? '<span style="color:var(--green);">API ' + esc(cfg.engine || 'Mureka') + ' active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
       : '<span style="color:var(--or);">Manuelle</span> — Suno, votre abonnement';
   } catch (e) { c.textContent = 'Indéterminé'; }
+}
+
+/* ─── L'état de la chaîne d'envoi ───
+   Six enregistrements DNS et cinq variables se règlent mal à l'aveugle :
+   sans ce panneau, la seule façon de savoir si le courriel fonctionne
+   était de passer une vraie commande et d'attendre. */
+var LIB_VAR = {
+  RESEND_API_KEY: 'Clé Resend',
+  COURRIER_FROM: 'Expéditeur des hommages',
+  PROSPECT_FROM: 'Expéditeur du démarchage',
+  LEAD_TO: 'Boîte de la maison',
+  SITE_URL: 'Adresse du site'
+};
+
+function ligneEtat(nom, ok, detail) {
+  return '<tr><td style="color:var(--ash);">' + esc(nom) + '</td><td>' +
+    (ok ? '<span style="color:var(--green);">✓ posée</span>' : '<span style="color:var(--amber);">absente</span>') +
+    (detail ? ' <span style="color:var(--dust); font-size:0.85em;">' + esc(detail) + '</span>' : '') +
+    '</td></tr>';
+}
+
+async function majEtatCourriel() {
+  var c = document.getElementById('sys-courriel');
+  if (!c) return;
+  c.innerHTML = '<span class="status-live" style="display:inline-flex;">Vérification…</span>';
+  var e;
+  try {
+    var r = await fetch('/api/courrier-etat', { headers: { 'Content-Type': 'application/json' } });
+    e = await r.json();
+    if (!r.ok) throw new Error(e && e.error ? e.error : 'HTTP ' + r.status);
+  } catch (err) {
+    c.innerHTML = '<div class="form-msg err" style="display:block;">Vérification impossible : ' + esc(err.message) +
+      '. Cette page doit tourner sur le vrai site, pas depuis un fichier ouvert localement.</div>';
+    return;
+  }
+
+  var h = e.pret
+    ? '<div class="form-msg ok" style="display:block; margin-bottom:1.2rem;">Le courriel est opérationnel. Les familles reçoivent confirmations et livraisons.</div>'
+    : '<div class="form-msg err" style="display:block; margin-bottom:1.2rem;"><b>Aucun courriel ne part encore.</b><br>' +
+      e.manque.map(esc).join('<br>') + '</div>';
+
+  h += '<table class="tbl"><tbody>';
+  Object.keys(LIB_VAR).forEach(function (k) {
+    var det = '';
+    if (k === 'COURRIER_FROM' && e.expediteurs.courrier) det = e.expediteurs.courrier;
+    if (k === 'PROSPECT_FROM' && e.expediteurs.prospection) det = e.expediteurs.prospection;
+    if (k === 'LEAD_TO' && e.maison) det = e.maison + ' destinataire(s)';
+    /* Afficher l'adresse de repli en face d'une variable « absente »
+       se lit comme une contradiction : on ne montre le détail que
+       lorsque la variable est réellement posée. */
+    if (k === 'SITE_URL' && e.variables.SITE_URL) det = e.site;
+    h += ligneEtat(LIB_VAR[k], e.variables[k], det);
+  });
+  h += '</tbody></table>';
+
+  if (e.resend && e.resend.lisible) {
+    h += '<div class="panel-sub" style="margin:1.4rem 0 0.6rem;">Domaines chez Resend</div><table class="tbl"><tbody>';
+    if (!e.resend.domaines.length) {
+      h += '<tr><td colspan="2" style="color:var(--amber);">Aucun domaine créé dans votre compte Resend.</td></tr>';
+    }
+    e.resend.domaines.forEach(function (d) {
+      var vert = d.statut === 'verified';
+      h += '<tr><td style="color:var(--ash);">' + esc(d.nom) + '</td><td>' +
+        '<span style="color:var(--' + (vert ? 'green' : 'amber') + ');">' +
+        (vert ? '✓ vérifié' : esc(d.statut)) + '</span>' +
+        (d.region ? ' <span style="color:var(--dust); font-size:0.85em;">' + esc(d.region) + '</span>' : '') +
+        '</td></tr>';
+    });
+    h += '</tbody></table>';
+  } else if (e.resend && e.resend.motif) {
+    h += '<p style="color:var(--ash); font-size:0.85rem; margin-top:1rem;">' + esc(e.resend.motif) + '</p>';
+  }
+
+  /* L'essai réel : le seul verdict qui vaille. Il emprunte exactement
+     le chemin d'une vraie confirmation de commande. */
+  h += '<div class="panel-sub" style="margin:1.6rem 0 0.6rem;">Essai réel</div>' +
+       '<p style="color:var(--ash); font-size:0.85rem; line-height:1.7; margin-bottom:0.9rem;">' +
+       'Ce bouton emprunte exactement le chemin d\'une vraie confirmation de commande. ' +
+       'Essayez d\'abord une adresse Gmail ou Outlook : un courriel qui arrive dans votre propre ' +
+       'boîte OVH ne prouve rien sur ce que voient les familles.</p>' +
+       '<div style="display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center;">' +
+       '<input class="field-input" id="sys-courriel-a" type="email" style="flex:1 1 240px; min-width:0;" ' +
+       'value="' + esc((U && U.email) || '') + '" placeholder="vous@gmail.com">' +
+       '<button class="btn btn-outline btn-sm" onclick="essaiCourriel()">Envoyer l\'essai</button></div>' +
+       '<div id="sys-courriel-essai" style="color:var(--ash); font-size:0.85rem; margin-top:0.8rem;"></div>';
+
+  c.innerHTML = h;
+}
+
+async function essaiCourriel() {
+  var r = document.getElementById('sys-courriel-essai');
+  var champ = document.getElementById('sys-courriel-a');
+  var moi = (champ ? champ.value : '').trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(moi)) {
+    r.innerHTML = '<span style="color:var(--amber);">Renseignez une adresse valide.</span>'; return;
+  }
+  r.textContent = 'Envoi à ' + moi + '…';
+  try {
+    var rep = await fetch('/api/famille', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'confirmation', email: moi, nom: (U.name || '').split(' ')[0],
+        ref: 'ESSAI-' + Date.now().toString(36).toUpperCase().slice(-5),
+        defunt: 'un essai de configuration', offre: 'Essai', urgence: false
+      })
+    });
+    var j = await rep.json();
+    if (!rep.ok) throw new Error((j && (j.error || j.hint)) || 'HTTP ' + rep.status);
+    r.innerHTML = '<span style="color:var(--green);">Parti. Regardez ' + esc(moi) +
+      ', et le dossier « indésirables » si rien n\'arrive.</span>';
+  } catch (err) {
+    r.innerHTML = '<span style="color:var(--red);">Échec : ' + esc(err.message) + '</span>';
+  }
 }
 
 /* ═══ VUES ═══ */
@@ -418,6 +531,10 @@ function vSysteme() {
     '<p><b style="color:var(--or);">III.</b> Activer la composition automatique</p>' +
     '<p style="color:var(--ash); font-size:0.85rem; margin-top:1rem;">Les fonctions serveur sont déjà écrites dans le dossier <code style="color:var(--or);">/api</code>. Tant que le volume reste inférieur à dix hommages par jour, le mode manuel garantit une qualité supérieure.</p>' +
     '</div></div>' +
+    '<div class="panel" style="grid-column:1/-1;"><div class="panel-head"><div><div class="panel-title">Le <em>courriel</em></div>' +
+    '<div class="panel-sub">Ce que le site sait envoyer, et ce qui manque</div></div>' +
+    '<button class="btn btn-outline btn-sm" onclick="majEtatCourriel()">Revérifier</button></div>' +
+    '<div id="sys-courriel">Vérification…</div></div>' +
     '<div class="panel"><div class="panel-title">Accès <em>maître</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Sécurité</div>' +
     '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">L\'identifiant maître ouvre toutes les fonctions. Il est défini dans <code style="color:var(--or);">assets/js/auth.js</code>.</p>' +
     '<p style="font-size:0.85rem; color:var(--amber); margin-top:1rem;">Avant l\'ouverture au public : changez ce mot de passe et passez en base Supabase, afin que l\'accès ne repose plus sur du code côté navigateur.</p></div>' +
