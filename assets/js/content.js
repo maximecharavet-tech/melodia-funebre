@@ -203,8 +203,49 @@
 
   /* Chaque bloc est appliqué à part et protégé : une offre mal formée
      ne doit pas empêcher les témoignages de s'afficher. */
+  /* ─── Le compte des hommages, à l'exécution ───
+     Les textes portent {{HOMMAGES}} et gen.js le remplace à la
+     construction. Mais ce module réhydrate les pages depuis
+     content.json, où le jeton est encore là : sans cette substitution,
+     un visiteur lisait « écouter les {{HOMMAGES}} hommages » sur
+     l'accueil. C'était le cas en production, et c'est cette ligne qui
+     manquait. */
+  var UNITES = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit',
+    'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize'];
+  var DIZAINES = { 20: 'vingt', 30: 'trente', 40: 'quarante', 50: 'cinquante', 60: 'soixante' };
+  function enLettres(n) {
+    if (n <= 16) return UNITES[n];
+    if (n < 20) return 'dix-' + UNITES[n - 10];
+    if (n < 70) {
+      var d = Math.floor(n / 10) * 10, u = n % 10;
+      if (!u) return DIZAINES[d];
+      return DIZAINES[d] + (u === 1 ? ' et un' : '-' + UNITES[u]);
+    }
+    return String(n);
+  }
+
+  /* Le contenu reçu est recopié plutôt que modifié sur place : il est
+     aussi remis à d'autres modules par l'événement de fin. */
+  function comblerJetons(c) {
+    var n = visibles(c.demos || []).filter(function (d) { return d && d.audio; }).length;
+    if (!n) return c;
+    var mot = enLettres(n);
+    var passe = function (v) {
+      if (typeof v === 'string') return v.split('{{HOMMAGES}}').join(mot);
+      if (Array.isArray(v)) return v.map(passe);
+      if (v && typeof v === 'object') {
+        var o = {};
+        for (var k in v) if (Object.prototype.hasOwnProperty.call(v, k)) o[k] = passe(v[k]);
+        return o;
+      }
+      return v;
+    };
+    return passe(c);
+  }
+
   function appliquer(c) {
     if (!c) return;
+    c = comblerJetons(c);
     try { appliquerIntro(c); } catch (e) {}
     try { appliquerDemos(c); } catch (e) {}
     try { appliquerOffres(c); } catch (e) {}
