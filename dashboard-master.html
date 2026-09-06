@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css?v=486fed45">
-<link rel="stylesheet" href="assets/css/dashboard.css?v=4243bdaa">
+<link rel="stylesheet" href="assets/css/dashboard.css?v=f695ec59">
 </head>
 <body>
 <div class="dash">
@@ -24,6 +24,10 @@
     <button class="side-item" data-v="commandes"><span class="ico">♪</span>Commandes<span class="side-badge" id="badge-cmd">0</span></button>
     <button class="side-item" data-v="atelier"><span class="ico">✦</span>Atelier de composition</button>
     <button class="side-item" data-v="proprietaire"><span class="ico">✎</span>Mode propriétaire</button>
+    <button class="side-item" data-v="agenda"><span class="ico">◷</span>Agenda</button>
+    <button class="side-item" data-v="messagerie"><span class="ico">✉</span>Messagerie<span class="side-badge" id="badge-msg" style="display:none;">0</span></button>
+    <button class="side-item" data-v="catalogue"><span class="ico">♫</span>Catalogue</button>
+    <button class="side-item" data-v="social"><span class="ico">◉</span>Réseaux sociaux</button>
     <div class="side-label">Développement</div>
     <button class="side-item" data-v="partenaires"><span class="ico">◇</span>Partenaires</button>
     <button class="side-item" data-v="finances"><span class="ico">€</span>Finances</button>
@@ -58,12 +62,13 @@
 </div>
 
 <script src="assets/js/config.js?v=e792fc99"></script>
-<script src="assets/js/auth.js?v=27e02f2b"></script>
+<script src="assets/js/auth.js?v=c7049a7e"></script>
 <script src="assets/js/courrier.js?v=f9ff5aca"></script>
 <script src="assets/js/main.js?v=5ed21030"></script>
 <script src="assets/js/livraison.js?v=8816d59c"></script>
 <script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
 <script src="assets/js/proprietaire.js?v=7ca0ec75"></script>
+<script src="assets/js/intranet.js?v=91f192b8"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
@@ -113,6 +118,11 @@ async function boot() {
   document.getElementById('badge-cmd').textContent = ORDERS.length;
   document.getElementById('mode-badge').textContent = (window.MelodiaDB.mode === 'supabase' ? 'Base Supabase · ' : 'Base locale · ') + 'mode débutant';
   go('accueil');
+  /* Le compteur de messages doit vivre dès l'ouverture de la console :
+     sans cela, on ne sait qu'on a du courrier qu'en cliquant dessus. */
+  if (window.MelodiaIntranet && window.MelodiaIntranet.majBadgeMessages) {
+    window.MelodiaIntranet.majBadgeMessages();
+  }
 }
 
 document.querySelectorAll('.side-item').forEach(function(b){
@@ -129,10 +139,23 @@ function go(v) {
     finances: ['Comptabilité', 'Vue <em>financière</em>'],
     prospection: ['Croissance', 'Plan de <em>prospection</em>'],
     proprietaire: ['Contrôle total', 'Mode <em>propriétaire</em>'],
+    agenda: ['Organisation', 'L\'<em>agenda</em>'],
+    messagerie: ['Équipe', 'La <em>messagerie</em>'],
+    catalogue: ['Le fonds', 'Le <em>catalogue</em>'],
+    social: ['Croissance', 'Réseaux <em>sociaux</em>'],
     systeme: ['Configuration', 'Le <em>système</em>']
   }[v];
   document.getElementById('head-eyebrow').textContent = H[0];
   document.getElementById('head-title').innerHTML = H[1];
+  var INTRA = { agenda: 'agenda', messagerie: 'messagerie', catalogue: 'catalogue', social: 'publications' };
+  if (INTRA[v]) {
+    document.getElementById('view').innerHTML = '<div id="intra-root"></div>';
+    if (window.MelodiaIntranet) window.MelodiaIntranet.vues[INTRA[v]](document.getElementById('intra-root'));
+    else document.getElementById('intra-root').innerHTML =
+      '<div class="form-msg err" style="display:block;">Le module intranet ne s\'est pas chargé.</div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
   document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, proprietaire:vProprietaire, systeme:vSysteme })[v]();
   if (v === 'atelier') restoreAtelier();
   if (v === 'proprietaire' && window.MelodiaOwner) window.MelodiaOwner.mount();

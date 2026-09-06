@@ -323,6 +323,12 @@
      base : le site la lit sans être authentifié, le fondateur seul
      peut l'écrire — c'est la règle RLS qui le garantit, pas le
      navigateur. */
+  /* Le pont REST est ouvert aux autres modules : l'intranet (agenda,
+     messagerie, publications) parle aux mêmes tables, avec la même
+     session et les mêmes en-têtes. Le recopier ailleurs, c'était se
+     condamner à corriger l'authentification à deux endroits. */
+  window.MelodiaRest = { appel: sb, actif: HAS_SB };
+
   window.MelodiaContenu = {
     disponible: function () { return HAS_SB; },
 

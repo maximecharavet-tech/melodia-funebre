@@ -124,6 +124,30 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 @keyframes ownPulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
 
 .own-list { display: grid; gap: .5rem; }
+/* Même défaut que sur les grilles du site, même correctif : un enfant
+   de grille conserve « min-width: auto », si bien qu'un lecteur audio
+   ou une ligne de détail sans espace insécable élargit la piste
+   au-delà de l'écran — et c'est toute la console qui part de travers
+   sur un téléphone. On autorise la piste à se rétrécir, et ce qui
+   déborde revient à la ligne plutôt que de pousser la page. */
+.own-list > *, .own-row > * { min-width: 0; }
+.own-row { min-width: 0; }
+/* Sous téléphone, une règle plus bas replie les rangées
+   (« .own-row { flex-wrap: wrap } »). Sur une rangée passée en
+   colonne, ce repli ne fabrique pas des lignes mais des COLONNES
+   supplémentaires : la fiche du catalogue s'étalait sur 669 px dans
+   un téléphone de 412. Une rangée en colonne doit donc refuser le
+   repli, faute de quoi elle sort de l'écran. */
+.own-row[data-colonne] { flex-direction: column; align-items: stretch; flex-wrap: nowrap; }
+/* Le titre d'une rangée est tronqué à l'ellipse, ce qui convient à une
+   liste dense — mais pas quand il porte une étiquette : « Composé
+   pour une vivante » se faisait couper sous téléphone, et c'est
+   précisément ce qu'il ne faut pas manquer. Dans une fiche en
+   colonne, le titre revient donc à la ligne. */
+.own-row[data-colonne] .own-name,
+.own-row[data-colonne] .own-detail { white-space: normal; overflow: visible; }
+.own-detail { overflow-wrap: anywhere; }
+.own-row audio { max-width: 100%; }
 .own-item {
   border: 1px solid var(--line-soft); border-radius: 6px; overflow: hidden;
   background: rgba(255,255,255,.015); transition: border-color .2s;
