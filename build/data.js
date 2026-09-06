@@ -60,7 +60,7 @@ const FAQ = [
     a: "Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain." }
 ];
 
-const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae', 'Rock'];
+const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae', 'Rock', 'Funk'];
 
 /* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le
@@ -71,6 +71,11 @@ const TRACKS = [
     story: "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
     lyrics: "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
     brief: "lumineux · inachevé · aimé" },
+  { id: "demo-16", title: "Le roi de la route", who: "Bernard, 69 ans", lieu: "Nord de la France",
+    style: "Funk", file: "audio/bernard.mp3",
+    story: "Né un matin de 1957 dans une famille modeste du Nord, d'un père à l'usine et d'une mère à l'école. À dix-huit ans son premier camion, un vieux Saviem qu'il bichonnait comme un enfant — et quarante ans d'autoroutes, de Paris à Berlin, de Marseille à Amsterdam, le funk dans les oreilles. Il a rencontré Marie un mardi soir de novembre dans un restoroute près de Lyon : elle servait les cafés. Sept enfants sont venus, puis quinze petits-enfants qu'il emmenait en balade le dimanche dans le vieux camion, en leur disant que la vie ressemble à la route — des virages, des lignes droites, des embouteillages, mais l'important est de garder le rythme. Le jour de l'adieu, ses copains chauffeurs sont venus de toute l'Europe, klaxons en l'air. Basse slappée, section de cuivres, Rhodes et batterie qui ne ralentit jamais.",
+    lyrics: "Oh Bernard, roi de la route\nQuarante ans sur les autoroutes\nTu as sillonné l'Europe entière\nAvec ton funk dans les oreilles",
+    brief: "increvable · rieur · fidèle" },
   { id: "demo-15", title: "Le rocker au cœur d'or", who: "Gilbert, rocker de Lyon", lieu: "Lyon",
     style: "Rock", file: "audio/gilbert.mp3",
     story: "Né un soir de 1956 dans un quartier populaire de Lyon. À quinze ans il entend à la radio une voix qui hurlait comme un loup — c'était Johnny, et il a couru acheter son premier 45 tours. À dix-huit ans, une vieille Triumph retapée de ses mains, et toutes les routes de France pour suivre la tournée : Paris, Marseille, Toulouse. Il a épousé Martine, qui supportait les vinyles et les week-ends sur la route. À soixante-dix ans il est allé au dernier concert, au Stade de France ; il a levé les bras comme à vingt ans et dit à son fils : « un jour, tu iras pour moi ». Il est rentré, a mis son vinyle préféré, et s'est endormi le sourire aux lèvres. Aujourd'hui les motos sont alignées devant son garage et ses petits-enfants ont découvert Johnny ce soir-là. Guitares électriques, orgue Hammond, et une foule qui chante.",

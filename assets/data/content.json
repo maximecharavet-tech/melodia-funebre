@@ -1,6 +1,6 @@
 {
-  "version": 6,
-  "updated": "2026-09-05",
+  "version": 8,
+  "updated": "2026-09-06",
   "contact": {
     "email": "contact@melodia-funebre.fr"
   },
@@ -20,6 +20,18 @@
       "story": "Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.",
       "lyrics": "Tu n'es plus là où nos mains peuvent te rejoindre,\nMais tu es partout où nos souvenirs respirent.\nEt tant qu'un cœur prononcera ton nom,\nTu ne disparaîtras jamais.",
       "brief": "lumineux · inachevé · aimé"
+    },
+    {
+      "id": "demo-16",
+      "visible": true,
+      "title": "Le roi de la route",
+      "who": "Bernard, 69 ans",
+      "lieu": "Nord de la France",
+      "style": "Funk",
+      "audio": "audio/bernard.mp3",
+      "story": "Né un matin de 1957 dans une famille modeste du Nord, d'un père à l'usine et d'une mère à l'école. À dix-huit ans son premier camion, un vieux Saviem qu'il bichonnait comme un enfant — et quarante ans d'autoroutes, de Paris à Berlin, de Marseille à Amsterdam, le funk dans les oreilles. Il a rencontré Marie un mardi soir de novembre dans un restoroute près de Lyon : elle servait les cafés. Sept enfants sont venus, puis quinze petits-enfants qu'il emmenait en balade le dimanche dans le vieux camion, en leur disant que la vie ressemble à la route — des virages, des lignes droites, des embouteillages, mais l'important est de garder le rythme. Le jour de l'adieu, ses copains chauffeurs sont venus de toute l'Europe, klaxons en l'air. Basse slappée, section de cuivres, Rhodes et batterie qui ne ralentit jamais.",
+      "lyrics": "Oh Bernard, roi de la route\nQuarante ans sur les autoroutes\nTu as sillonné l'Europe entière\nAvec ton funk dans les oreilles",
+      "brief": "increvable · rieur · fidèle"
     },
     {
       "id": "demo-15",
