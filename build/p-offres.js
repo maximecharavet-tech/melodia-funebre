@@ -238,7 +238,12 @@ ${offerChoices}
       <h2 class="h-xl">Nous prenons<br>le <em>relais.</em></h2>
       <p class="lead" style="margin:1.4rem auto .6rem;">Référence <b id="confirm-ref" style="color:var(--or);"></b></p>
       <p style="color:var(--ash);margin-bottom:.4rem;" id="confirm-summary"></p>
-      <p style="color:var(--ash);margin-bottom:2.4rem;max-width:46ch;margin-left:auto;margin-right:auto;">Nous vous appelons sous deux heures ouvrées pour l'entretien de cinq minutes. La composition démarre juste après.</p>
+      <p style="color:var(--ash);margin-bottom:1.2rem;max-width:46ch;margin-left:auto;margin-right:auto;">Nous vous appelons sous deux heures ouvrées pour l'entretien de cinq minutes. La composition démarre juste après.</p>
+      <!-- Le règlement par lien PayPal se fait dans un autre onglet : sans
+           ce rappel, une famille croit avoir payé alors que l'onglet
+           attend encore, ou l'inverse. -->
+      <p id="confirm-paiement" hidden style="color:var(--or);margin-bottom:2.4rem;max-width:46ch;margin-left:auto;margin-right:auto;font-size:.92rem;line-height:1.7;">PayPal s'est ouvert dans un autre onglet pour le règlement. Si vous l'avez fermé, écrivez-nous : nous vous renvoyons le lien. Votre commande, elle, est bien enregistrée.</p>
+      <div style="height:1.2rem;"></div>
       <div class="hero-actions" style="justify-content:center;">
         <a href="/compte" class="btn btn-gold">Suivre ma commande</a>
         <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
@@ -257,20 +262,103 @@ ${P.faq([FAQ[6], FAQ[2], FAQ[1], FAQ[5]])}
       </div>
     </div>
   </section>`,
-  inline: `<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR&components=buttons" data-namespace="paypal_sdk"></script>
-<script>
-/* Bouton PayPal — le montant est relu à l'ouverture pour refléter
-   l'offre et l'option urgence choisies dans le tunnel. */
-if (typeof paypal_sdk !== 'undefined') {
-  paypal_sdk.Buttons({
-    style: { layout: 'horizontal', color: 'gold', shape: 'rect', height: 46, tagline: false },
-    createOrder: function (d, a) {
-      var info = window.melodiaOrderInfo ? window.melodiaOrderInfo() : { offer: 'Prestige', price: 299 };
-      return a.order.create({ purchase_units: [{ description: 'Melodia Funèbre — ' + info.offer, amount: { currency_code: 'EUR', value: info.price + '.00' } }] });
-    },
-    onApprove: function (d, a) { return a.order.capture().then(function (x) { sendOrder(true, x.id); }); },
-    onError: function () { window.melodiaToast('Paiement interrompu — vous pouvez enregistrer et régler plus tard.'); }
-  }).render('#paypal-zone');
-}
+  inline: `<script>
+/* ═══ ENCAISSEMENT ═══════════════════════════════════════════════
+   Trois modes, choisis d'après assets/js/config.js :
+
+   1. Identifiant client PayPal renseigné → le bouton officiel. La
+      famille paie sans quitter le site et la commande arrive marquée
+      « payée », avec son numéro de transaction.
+   2. Sinon, un pseudonyme PayPal.me → la commande est enregistrée,
+      puis la famille part régler sur un lien au montant pré-rempli.
+      PayPal ne nous répond pas : le règlement est à pointer à la main.
+   3. Ni l'un ni l'autre → bac à sable, aucun encaissement réel.
+
+   Le script du SDK est injecté ici plutôt que posé dans la page :
+   son adresse contient l'identifiant, qui n'est connu qu'à
+   l'exécution. Une balise figée obligerait à reconstruire le site
+   pour changer de compte d'encaissement. */
+(function () {
+  var CFG = window.MELODIA_CONFIG || {};
+  var zone = document.getElementById('paypal-zone');
+  if (!zone) return;
+
+  var info = function () {
+    return window.melodiaOrderInfo
+      ? window.melodiaOrderInfo()
+      : { offer: 'Prestige', price: 299 };
+  };
+
+  /* ─── 1 et 3 : le bouton officiel ─── */
+  function sdk(identifiant) {
+    var el = document.createElement('script');
+    el.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(identifiant) +
+             '&currency=EUR&components=buttons';
+    el.setAttribute('data-namespace', 'paypal_sdk');
+    el.onload = function () {
+      if (typeof paypal_sdk === 'undefined') return replier();
+      paypal_sdk.Buttons({
+        style: { layout: 'horizontal', color: 'gold', shape: 'rect', height: 46, tagline: false },
+        createOrder: function (d, a) {
+          var i = info();
+          return a.order.create({ purchase_units: [{
+            description: 'Melodia Funèbre — ' + i.offer,
+            amount: { currency_code: 'EUR', value: i.price + '.00' }
+          }] });
+        },
+        onApprove: function (d, a) { return a.order.capture().then(function (x) { sendOrder(true, x.id); }); },
+        onError: function () { window.melodiaToast('Paiement interrompu — vous pouvez enregistrer et régler plus tard.'); }
+      }).render('#paypal-zone');
+    };
+    /* PayPal injoignable — bloqueur, réseau coupé — ne doit pas laisser
+       une zone vide en face d'une famille prête à payer. */
+    el.onerror = replier;
+    document.head.appendChild(el);
+  }
+
+  /* ─── 2 : le lien PayPal.me ─── */
+  function lienPaypalMe(pseudo, prix) {
+    return 'https://www.paypal.com/paypalme/' + encodeURIComponent(pseudo) +
+           '/' + prix + 'EUR';
+  }
+
+  function replier() {
+    var pseudo = CFG.PAYPAL_ME;
+    if (!pseudo) { zone.innerHTML = ''; return; }
+    zone.innerHTML =
+      '<button type="button" class="btn btn-gold btn-block" id="pp-me">' +
+        'Régler <span id="pp-me-prix"></span> par PayPal' +
+      '</button>' +
+      '<p style="font-size:.78rem;color:var(--dust);margin:.7rem 0 0;line-height:1.6;">' +
+        'PayPal s\\'ouvre dans un nouvel onglet, le montant déjà rempli. ' +
+        'Votre commande est enregistrée avant l\\'ouverture : rien n\\'est perdu ' +
+        'si le paiement échoue.</p>';
+
+    var prix = zone.querySelector('#pp-me-prix');
+    var majPrix = function () { prix.textContent = info().price + ' €'; };
+    majPrix();
+    /* Le montant dépend de l'offre et de l'option urgence, choisies
+       plus haut dans le tunnel. On le relit à chaque navigation dans
+       le tunnel plutôt qu'une seule fois : afficher 199 € sur un
+       bouton qui en prélèvera 299 serait la pire des erreurs ici. */
+    var tunnel = document.querySelector('.wizard') || zone.closest('form') || document;
+    tunnel.addEventListener('click', majPrix, true);
+    tunnel.addEventListener('change', majPrix, true);
+
+    zone.querySelector('#pp-me').addEventListener('click', function () {
+      /* La validation doit être synchrone : un navigateur ne laisse
+         ouvrir une fenêtre que dans le geste même du clic. */
+      if (window.melodiaOrderPret && !window.melodiaOrderPret()) return;
+      var i = info();
+      window.open(lienPaypalMe(pseudo, i.price), '_blank', 'noopener');
+      if (window.sendOrder) window.sendOrder(false, '', 'paypalme');
+    });
+  }
+
+  var id = (CFG.PAYPAL_CLIENT_ID || '').trim();
+  if (id) sdk(id);
+  else if (CFG.PAYPAL_ME) replier();
+  else sdk('sb');
+})();
 </script>`
 };
