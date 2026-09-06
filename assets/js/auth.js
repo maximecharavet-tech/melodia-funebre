@@ -60,7 +60,14 @@
         return {
           id: s.user.id, email: s.user.email,
           name: meta.name || s.user.email.split('@')[0],
-          role: role || 'partner',
+          /* Sans ligne dans « roles », tout le monde était partenaire :
+             une famille atterrissait sur la console des agences, avec
+             son simulateur de marge et son kit de prospection. Le repli
+             suit désormais ce qui a été déclaré à l'inscription — une
+             agence a donné son nom, une famille non. Ce choix ne décide
+             que de l'écran : l'accès aux données reste tenu par les
+             règles de la base, qui filtrent sur l'adresse. */
+          role: role || (meta.agence ? 'partner' : 'client'),
           agence: meta.agence || ''
         };
       }
@@ -100,10 +107,16 @@
         var s = LS.get('melodia_session', null);
         if (!s || !s.user) return null;
         var r = await sb('/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(s.user.email));
-        var role = (r && r[0] && r[0].role) || 'partner';
+        var meta = (s.user.user_metadata || {});
+        var repli = meta.agence ? 'partner' : 'client';
+        var role = (r && r[0] && r[0].role) || repli;
         LS.set('melodia_role', role);
         return role;
-      } catch (e) { LS.set('melodia_role', 'partner'); return 'partner'; }
+      } catch (e) {
+        var m = (LS.get('melodia_session', {}).user || {}).user_metadata || {};
+        var d = m.agence ? 'partner' : 'client';
+        LS.set('melodia_role', d); return d;
+      }
     },
 
     async login(identifiant, password) {
@@ -147,7 +160,7 @@
       if (data.password.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.');
       if (email === MASTER_ID) throw new Error('Cet identifiant est réservé.');
       if (HAS_SB) {
-        var d = await sb('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: email, password: data.password, data: { name: data.name, role: 'partner', agence: data.agence || '', ville: data.ville || '', tel: data.tel || '' } }) });
+        var d = await sb('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: email, password: data.password, data: { name: data.name, role: (data.agence ? 'partner' : 'client'), agence: data.agence || '', ville: data.ville || '', tel: data.tel || '' } }) });
         if (d.access_token) LS.set('melodia_session', d);
         return this.current() || { email: email, name: data.name, role: 'partner', pending: true };
       }
@@ -301,7 +314,8 @@
       if (!u) return 'compte.html';
       if (u.role === 'master') return 'dashboard-master.html';
       if (u.role === 'commercial') return 'dashboard-commercial.html';
-      return 'dashboard-partenaire.html';
+      if (u.role === 'partner') return 'dashboard-partenaire.html';
+      return 'espace.html';
     }
   };
 
@@ -361,6 +375,28 @@
     }
   };
 
+  /* ─── Prévenir la famille, sans y penser ───
+     Le suivi par courriel existait, mais il fallait songer à
+     l'envoyer : autant dire qu'il ne partait pas. Chaque changement
+     d'état déclenche désormais le message correspondant — brief,
+     composition, livraison. L'envoi n'est jamais attendu et n'échoue
+     jamais bruyamment : la console ne doit pas rester bloquée parce
+     qu'un service de messagerie tousse. */
+  function prevenirFamille(statut, o) {
+    try {
+      if (!window.MelodiaCourrier || !o || !o.user_email) return;
+      window.MelodiaCourrier.etape(statut, {
+        email: o.user_email,
+        nom: (o.user_name || '').split(' ')[0],
+        defunt: o.defunt || '',
+        ref: o.ref || '',
+        offre: o.offer || '',
+        urgence: !!o.urgence,
+        lien: o.audio_url && /^https:\/\//i.test(o.audio_url) ? o.audio_url : ''
+      });
+    } catch (e) { /* un suivi manqué ne doit pas casser la console */ }
+  }
+
   window.MelodiaDB = {
     mode: HAS_SB ? 'supabase' : 'local',
 
@@ -405,10 +441,26 @@
     },
 
     async setStatus(ref, status) {
-      if (HAS_SB) { await sb('/rest/v1/orders?ref=eq.' + encodeURIComponent(ref), { method: 'PATCH', body: JSON.stringify({ status: status }) }); return true; }
+      if (HAS_SB) {
+        /* Le filtre « status différent de » fait tout le travail : si
+           la commande était déjà dans cet état, aucune ligne n'est
+           touchée, aucune ligne n'est renvoyée, et la famille ne reçoit
+           pas deux fois le même courriel parce qu'on a recliqué. */
+        var rows = await sb('/rest/v1/orders?ref=eq.' + encodeURIComponent(ref) +
+                            '&status=neq.' + encodeURIComponent(status), {
+          method: 'PATCH', headers: { Prefer: 'return=representation' },
+          body: JSON.stringify({ status: status })
+        });
+        var o = rows && rows[0];
+        if (o) prevenirFamille(status, o);
+        return true;
+      }
       var all = LS.get('melodia_orders', []);
-      var o = all.filter(function (x) { return x.ref === ref; })[0];
-      if (o) { o.status = status; LS.set('melodia_orders', all); }
+      var o2 = all.filter(function (x) { return x.ref === ref; })[0];
+      if (o2 && o2.status !== status) {
+        o2.status = status; LS.set('melodia_orders', all);
+        prevenirFamille(status, o2);
+      }
       return true;
     },
 

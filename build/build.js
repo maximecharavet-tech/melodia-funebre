@@ -85,7 +85,7 @@ console.log('  ' + String(total).padStart(28) + ' octets au total');
    On réécrit donc leurs adresses d'actifs à la construction, comme
    pour le reste du site. */
 const { versionne, empreinterImages } = require('./gen.js');
-const CONSOLES = ['dashboard-master.html', 'dashboard-partenaire.html', 'dashboard-commercial.html'];
+const CONSOLES = ['dashboard-master.html', 'dashboard-partenaire.html', 'dashboard-commercial.html', 'espace.html'];
 let marquees = 0;
 for (const f of CONSOLES) {
   const chemin = path.join(RACINE, f);

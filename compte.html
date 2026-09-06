@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=a12ac594">
+<link rel="stylesheet" href="assets/css/style.css?v=5f68b295">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -113,6 +113,31 @@
             <span>Continuer avec Google</span>
           </button>
           <div class="auth-ou"><span>ou par mot de passe</span></div>
+        </div>
+
+        <!-- L'invitation à poser l'empreinte, à la place de la boîte
+             « confirm() » du navigateur : mêmes mots, même forme que
+             le reste de la page, et deux boutons qu'on vise sans se
+             tromper. -->
+        <div id="view-proposition" hidden>
+          <div class="emp-invite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M12 2a9 9 0 00-9 9c0 1.4.2 2.7.7 4"/>
+              <path d="M12 6a5 5 0 00-5 5c0 3 .6 5.3 1.7 7.6"/>
+              <path d="M12 10a1 1 0 00-1 1c0 3.5.6 6.5 1.8 9"/>
+              <path d="M15.6 20.5A22 22 0 0116 11a4 4 0 00-4-4"/>
+              <path d="M20.3 17A24 24 0 0021 11a9 9 0 00-4.5-7.8"/>
+            </svg>
+            <p>La prochaine fois, votre espace s'ouvrira d'un doigt, sans mot de passe.</p>
+            <ul>
+              <li>La session est chiffrée sur cet appareil et ne s'y rouvre qu'après vérification de votre empreinte ou de votre visage.</li>
+              <li>Rien n'est envoyé : votre empreinte ne quitte pas le téléphone, nous ne la voyons jamais.</li>
+              <li>Votre mot de passe reste possible, et vous pouvez retirer l'empreinte à tout moment.</li>
+            </ul>
+          </div>
+          <div class="form-msg" id="emp-etat"></div>
+          <button type="button" class="btn btn-gold btn-block" id="emp-oui">Activer</button>
+          <button type="button" class="btn btn-ghost btn-block" id="emp-non" style="margin-top:.7rem;">Plus tard</button>
         </div>
 
         <!-- Déverrouillage par empreinte : n'apparaît que sur un appareil
@@ -283,7 +308,7 @@
 <script src="assets/js/rappel.js?v=1840ff2c"></script>
 <script src="assets/js/courrier.js?v=f9ff5aca"></script>
 <script src="assets/js/ornements.js?v=b123bb2c"></script>
-<script src="assets/js/auth.js?v=5e2d35c9"></script>
+<script src="assets/js/auth.js?v=069e267f"></script>
 <script src="assets/js/empreinte.js?v=d4610d73"></script>
 <script src="assets/js/accueil-connexion.js?v=ebad0e50"></script>
 <script>window.MELODIA_ACCUEIL_FILM = "assets/img/connexion.mp4?v=44886729";</script>
@@ -380,27 +405,63 @@ async function doLogin(e) {
 /* ─── Empreinte ─── */
 var E = window.MelodiaEmpreinte;
 
-async function proposerEmpreinte(u) {
-  if (!E || E.enrole()) return;
-  try {
-    if (!(await E.disponible())) return;
-    /* Une seule proposition par appareil : un refus n'est pas une
-       question à reposer à chaque connexion. */
-    if (localStorage.getItem('melodia_empreinte_refus')) return;
-    if (!confirm("Ouvrir votre tableau de bord avec votre empreinte la prochaine fois ?\n\n"
-               + "Votre session sera chiffrée sur cet appareil et ne se rouvrira qu'après "
-               + "vérification de votre empreinte ou de votre visage. Votre mot de passe "
-               + "restera toujours possible.")) {
-      try { localStorage.setItem('melodia_empreinte_refus', '1'); } catch (er) {}
-      return;
-    }
-    await E.activer(prenomDe(u));
-  } catch (err) {
-    /* Un échec ici ne doit jamais empêcher d'entrer : on vient de se
-       connecter, l'empreinte n'était qu'un confort. */
-    msg("Empreinte non activée : " + err.message);
-    await new Promise(function (r) { setTimeout(r, 2200); });
-  }
+/* ─── Proposer l'ouverture rapide ───
+   C'était une boîte « confirm() » du navigateur : un pavé système
+   surgi au milieu d'une connexion, dans une langue et une forme qui
+   n'ont rien à voir avec la page. Beaucoup de gens y répondent non par
+   réflexe. L'invitation est maintenant dans la page, avec ce qu'elle
+   engage écrit en clair, et deux boutons de taille normale.
+
+   Elle ne s'affiche qu'une fois par appareil : un refus n'est pas une
+   question à reposer à chaque connexion. */
+function proposerEmpreinte(u) {
+  return new Promise(function (fini) {
+    if (!E) return fini();
+    if (E.enrole()) return fini();
+    var refus = null;
+    try { refus = localStorage.getItem('melodia_empreinte_refus'); } catch (e) {}
+    if (refus) return fini();
+
+    E.disponible().then(function (dispo) {
+      if (!dispo) return fini();
+
+      var carte = document.getElementById('view-proposition');
+      var oui = document.getElementById('emp-oui');
+      var non = document.getElementById('emp-non');
+      var etat = document.getElementById('emp-etat');
+      if (!carte || !oui || !non) return fini();
+
+      ['view-login', 'view-signup', 'view-forgot', 'view-empreinte', 'bloc-google'].forEach(function (id) {
+        var e = document.getElementById(id);
+        if (e) { e.style.display = 'none'; e.hidden = true; }
+      });
+      carte.hidden = false;
+      document.getElementById('auth-title').innerHTML = 'Ouvrir plus vite la <em>prochaine fois</em>';
+      var p = document.getElementById('auth-pour');
+      if (p) p.textContent = 'Vous êtes connecté. Reste une question, une seule.';
+
+      non.addEventListener('click', function () {
+        try { localStorage.setItem('melodia_empreinte_refus', '1'); } catch (e) {}
+        fini();
+      });
+      oui.addEventListener('click', async function () {
+        oui.disabled = true; non.disabled = true;
+        oui.textContent = 'Suivez votre appareil…';
+        try {
+          await E.activer(prenomDe(u));
+          etat.className = 'form-msg ok';
+          etat.textContent = 'C\'est fait. Un doigt suffira désormais.';
+          setTimeout(fini, 1100);
+        } catch (err) {
+          etat.className = 'form-msg err';
+          etat.textContent = err.message + ' Vous entrerez votre mot de passe comme avant.';
+          oui.disabled = false; non.disabled = false;
+          oui.textContent = 'Activer';
+          setTimeout(fini, 2600);
+        }
+      });
+    }, fini);
+  });
 }
 
 async function ouvrirParEmpreinte() {
