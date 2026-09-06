@@ -3,8 +3,8 @@ const path = require('path');
 const S = __dirname;
 module.exports = {
   file: 'compte.html',
-  title: 'Mon compte — Espace client et partenaire | Melodia Funèbre',
-  desc: "Connectez-vous à votre espace Melodia Funèbre pour suivre vos commandes, ou créez un compte partenaire si vous êtes une agence de pompes funèbres.",
+  title: 'Mon espace — Melodia Funèbre',
+  desc: "Connectez-vous à votre espace Melodia Funèbre : les familles y retrouvent leur hommage et le suivi de leur commande, les agences funéraires les leurs.",
   noindex: true,
   sticky: false,
   scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/empreinte.js', 'assets/js/accueil-connexion.js'],
