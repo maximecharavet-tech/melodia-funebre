@@ -267,6 +267,7 @@ ul { list-style: none; }
 .nav-mobile {
   position: fixed; top: 0; left: 0; right: 0; z-index: 99;
   background: rgba(4, 4, 7, 0.98); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   padding: 5.5rem var(--pad) 2rem; display: flex; flex-direction: column; gap: 0.3rem;
   transform: translateY(-100%); transition: transform var(--t-mid) var(--ease);
   border-bottom: 1px solid var(--line);
@@ -803,6 +804,7 @@ ul { list-style: none; }
 .sticky-cta {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 95; display: none;
   background: rgba(4, 4, 7, 0.96); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--line); padding: 0.7rem var(--pad);
   padding-bottom: calc(0.7rem + env(safe-area-inset-bottom));
   gap: 0.6rem; transform: translateY(110%); transition: transform var(--t-mid) var(--ease);
@@ -817,6 +819,7 @@ ul { list-style: none; }
   position: fixed; inset: 0; z-index: 200; display: none;
   align-items: center; justify-content: center; padding: var(--pad);
   background: rgba(4, 4, 7, 0.88); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .modal.open { display: flex; animation: fadeIn var(--t-fast) ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -907,6 +910,15 @@ ul { list-style: none; }
 }
 .opt:hover { border-color: var(--line-strong); }
 .opt input { margin-top: 0.2rem; flex: none; accent-color: var(--or); width: 17px; height: 17px; }
+/* La mise en évidence d'une option retenue passait par « :has() »,
+   que ne connaissent ni Safari d'avant 2022 ni les navigateurs
+   Chromium anciens encore répandus sur les téléphones Huawei et les
+   Android d'entrée de gamme. Une famille y cochait un supplément à
+   80 € sans qu'aucun retour visuel ne le confirme.
+   La classe est posée par le script à chaque changement, donc partout ;
+   « :has() » reste en second pour les navigateurs qui l'ont, au cas où
+   le script n'aurait pas encore tourné. */
+.opt.opt-choisie,
 .opt:has(input:checked) { border-color: var(--line-strong); background: var(--or-soft); }
 .opt-corps { display: block; min-width: 0; }
 .opt-tete { display: flex; align-items: baseline; gap: 0.7rem; justify-content: space-between; }
@@ -955,6 +967,7 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: space-between;
   gap: 1rem; padding: 0.9rem clamp(1rem, 4vw, 2.4rem);
   background: rgba(4, 4, 7, 0.92); backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line-soft);
 }
 .esp-marque { display: flex; align-items: center; gap: 0.6rem; }
@@ -1095,6 +1108,7 @@ ul { list-style: none; }
 .esp-voile {
   position: fixed; inset: 0; z-index: 90; display: grid; place-items: center;
   padding: 1rem; background: rgba(2, 2, 4, 0.82); backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   animation: espParaitre 0.22s ease;
 }
 .esp-fenetre {
@@ -3743,4 +3757,57 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (max-width: 560px) {
   .rs-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
   .rs-ligne .lien-bascule { min-height: 44px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARTAGER LA PAGE
+
+   Discret : c'est une invitation, pas un appel à l'action. Le bloc
+   se pose sur une ligne à côté de son explication sur grand écran,
+   et passe en colonne dès que la place manque. Les cibles font
+   44 pixels partout — c'est ce qu'un pouce vise sans se tromper.
+   ═══════════════════════════════════════════════════════════════ */
+.partage-sec { padding-top: 0; }
+.partage {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.6rem 2rem; flex-wrap: wrap; min-width: 0;
+  padding: 1.4rem clamp(1.1rem, 3vw, 1.8rem);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.partage-mot { min-width: 0; flex: 1 1 22rem; }
+.partage-mot .eyebrow { margin-bottom: 0.5rem; }
+.partage-mot p {
+  margin: 0; color: var(--ash); font-size: 0.92rem;
+  line-height: 1.7; max-width: 46ch;
+}
+.partage-liens { display: flex; gap: 0.5rem; flex-wrap: wrap; min-width: 0; }
+
+.partage-b {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0 0.9rem;
+  font-family: var(--ff-m); font-size: 0.62rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ash); background: var(--ink-2);
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  white-space: nowrap;
+}
+.partage-b svg { width: 16px; height: 16px; flex: none; }
+.partage-b:hover { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+.partage-b.copie { color: var(--green); border-color: rgba(74, 222, 128, 0.45); }
+
+/* Le partage natif est le chemin le plus court là où il existe : il
+   passe donc devant, en or, et les autres restent en retrait. */
+.partage-natif { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+.partage-natif:hover { color: var(--or-bright); }
+
+@media (max-width: 860px) {
+  .partage { flex-direction: column; align-items: stretch; }
+  .partage-liens { gap: 0.45rem; }
+  .partage-b { flex: 1 1 auto; justify-content: center; font-size: 0.7rem; letter-spacing: 0.06em; }
+}
+@media (max-width: 460px) {
+  .partage-b { flex: 1 1 calc(50% - 0.25rem); }
+  .partage-mot p { font-size: 0.95rem; }
 }

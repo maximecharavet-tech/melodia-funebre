@@ -635,6 +635,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   padding-top: 0.15rem;
 }
 .reg-bascule input:checked ~ .reg-etat { color: var(--green); }
+.reg-bascule.reg-active,
 .reg-bascule:has(input:checked) { border-color: rgba(74, 222, 128, 0.22); }
 
 .reg-pied {
@@ -1181,4 +1182,11 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .mdp-ligne { flex-wrap: wrap; }
   .mdp-ligne .btn { flex: 1 1 auto; min-height: 44px; justify-content: center; }
   .mdp-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+}
+
+/* La flèche qui montre le chemin du courrier, d'une adresse à l'autre :
+   une redirection se comprend d'un coup d'œil, ou pas du tout. */
+.bo-fleche {
+  text-align: center; color: var(--or-patina);
+  font-size: 1.1rem; line-height: 1; margin: 0.35rem 0 0.55rem;
 }

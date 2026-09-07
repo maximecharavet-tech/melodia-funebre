@@ -1529,6 +1529,12 @@
     { cle: 'margeAgence', l: 'Marge des agences', t: 'pourcent', d: 60,
       aide: 'Sert à vos récapitulatifs financiers dans la console. Le taux annoncé sur la page Agences se change à la publication.' },
 
+    { section: 'Messagerie des collaborateurs', aide: 'Ce que la page « Ma boîte mail » explique à votre équipe. Une redirection est gratuite mais ne se branche pas sur un téléphone ; une vraie boîte, si.' },
+    { cle: 'montage', l: 'Montage des adresses @melodia-funebre.fr', t: 'texte', d: 'redirection',
+      aide: 'Écrivez « redirection » ou « boite ». La page bascule entre les deux marches à suivre, qui n\'ont rien à voir.' },
+    { cle: 'redirectionVers', l: 'Le courrier redirigé arrive dans', t: 'texte', d: 'melodiafunebre@gmail.com',
+      aide: 'Sans objet si vous passez sur de vraies boîtes.' },
+
     { section: 'Coordonnées', aide: 'Ce que voient les familles.' },
     { cle: 'emailMaison', l: 'Adresse de la maison', t: 'texte', d: 'contact@melodia-funebre.fr' },
     { cle: 'reponseSous', l: 'Réponse annoncée sous', t: 'texte', d: 'deux heures ouvrées' },
@@ -1638,8 +1644,13 @@
            que d'en enregistrer une qui ne change rien. */
         if (String(v) === String(ref)) delete etat.brouillon[e.dataset.reg];
         else etat.brouillon[e.dataset.reg] = v;
-        if (e.type === 'checkbox') rendre();
-        else majPied();
+        /* Même repli que sur les options du site : « :has() » manque
+           sur les navigateurs anciens, la classe est donc posée ici. */
+        if (e.type === 'checkbox') {
+          var l = e.closest ? e.closest('.reg-bascule') : null;
+          if (l) l.classList.toggle('reg-active', e.checked);
+          rendre();
+        } else majPied();
       });
     });
 

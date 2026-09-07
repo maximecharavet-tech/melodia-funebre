@@ -126,6 +126,7 @@ function guide(g) {
 ${g.corps}
 ${questions(g)}
 ${proposition(g.proposition)}
+${P.partage(g.h1texte, g.desc)}
 ${P.urgency()}`
   };
 }

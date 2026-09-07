@@ -69,6 +69,7 @@ ${STYLES.map(s => `        <div class="acte reveal" style="text-align:center;pad
     </div>
   </section>
 
+${P.partage('Dix-sept hommages composés sur mesure', "Chacun écrit pour une seule personne, d'après ce que sa famille en a raconté.")}
 ${P.urgency()}
 
   <section class="section section-top" style="padding-bottom:6rem;">

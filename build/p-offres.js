@@ -86,6 +86,7 @@ ${P.scrollHint()}
     </div>
   </section>
 
+${P.partage('Un hommage musical dès 149 €', "Trois offres, livraison en 24 h, aucun droit SACEM à déclarer.")}
 ${P.urgency()}
 
   <!-- ═══ TUNNEL DE COMMANDE ═══ -->

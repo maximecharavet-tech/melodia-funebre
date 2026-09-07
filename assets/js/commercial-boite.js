@@ -34,10 +34,27 @@
     });
   };
 
-  /* Réglages de l'offre MX Plan, celle incluse avec un domaine OVH.
-     Le fondateur les remplace dans « Réglages » s'il prend une autre
-     offre : Email Pro et Exchange utilisent d'autres serveurs. */
+  /* ─── DEUX MONTAGES, ET ILS N'ONT RIEN À VOIR ───
+
+     Cette page ne donnait que les réglages IMAP d'une vraie boîte.
+     C'était faux pour la moitié des cas, et notamment pour la première
+     adresse ouverte : julie@melodia-funebre.fr n'est pas une boîte,
+     c'est une REDIRECTION OVH vers un compte Gmail. Une redirection
+     n'a ni serveur IMAP ni mot de passe propre — il n'y a rien à
+     brancher, et suivre les instructions IMAP menait droit à un
+     message d'erreur incompréhensible.
+
+     Les deux montages sont donc décrits séparément :
+
+     · REDIRECTION — gratuite avec le domaine. Le courrier arrive dans
+       une boîte existante. Rien à configurer pour recevoir ; pour
+       répondre depuis l'adresse professionnelle, il faut le déclarer
+       dans le compte qui reçoit.
+     · BOÎTE RÉELLE — le courrier vit chez OVH, avec son mot de passe,
+       et se branche en IMAP sur le téléphone et l'ordinateur. */
   var DEFAUTS = {
+    montage: 'redirection',
+    redirectionVers: 'melodiafunebre@gmail.com',
     imapServeur: 'ssl0.ovh.net', imapPort: 993, imapChiffrement: 'SSL/TLS',
     smtpServeur: 'ssl0.ovh.net', smtpPort: 465, smtpChiffrement: 'SSL/TLS',
     webmail: 'https://www.ovhcloud.com/fr/mail/',
@@ -73,19 +90,57 @@
     '</div>';
   }
 
-  /* Les trois parcours, dans l'ordre où on les rencontre : le
-     téléphone d'abord, parce que c'est là qu'on lit ses messages entre
-     deux rendez-vous. */
-  function parcours(m) {
+  /* ─── LES PARCOURS ───
+     Ils dépendent entièrement du montage. Une redirection n'a pas de
+     serveur IMAP : proposer d'en saisir un mène à un échec que
+     l'appareil explique mal. */
+  function parcoursRedirection(m, vers) {
+    return [
+      {
+        id: 'recevoir', nom: 'Recevoir : rien à faire', duree: 'déjà en place',
+        ico: '<path d="M20 6 9 17l-5-5"/>',
+        intro: 'Votre adresse <b>' + esc(m.email || 'professionnelle') + '</b> est une redirection : ' +
+               'tout ce qu\'on lui écrit arrive automatiquement dans <b>' + esc(vers) + '</b>. ' +
+               'Il n\'y a aucun réglage à saisir, et aucun mot de passe propre à cette adresse — elle n\'en a pas.',
+        etapes: [
+          ['Sur le téléphone', 'Ouvrez l\'application de ' + esc(vers) + ' comme d\'habitude. Les messages destinés à votre adresse professionnelle y sont déjà.'],
+          ['Les repérer', 'Créez un filtre sur « Destinataire : ' + esc(m.email || 'votre adresse') + ' » avec un libellé « Melodia ». Sans cela, les réponses des agences se noient dans le courrier personnel.']
+        ]
+      },
+      {
+        id: 'repondre', nom: 'Répondre depuis l\'adresse professionnelle', duree: '5 minutes',
+        ico: '<path d="M9 17H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4l-3 4z"/>',
+        intro: 'C\'est l\'étape qui compte. Sans elle vous recevez sur l\'adresse de la maison mais répondez depuis une adresse personnelle — et tout l\'effet est perdu.',
+        etapes: [
+          ['Ouvrir le réglage', 'Dans ' + esc(vers) + ' : roue dentée → Voir tous les paramètres → onglet <b>Comptes et importation</b> → « Envoyer des e-mails en tant que » → <b>Ajouter une autre adresse</b>.'],
+          ['Saisir l\'adresse', 'Nom : votre prénom et nom. Adresse : <b>' + esc(m.email || 'votre adresse professionnelle') + '</b>. Laissez « Traiter comme un alias » coché.'],
+          ['Le code de confirmation', 'Un code est envoyé à l\'adresse professionnelle — donc il arrive dans cette même boîte, puisque tout y est redirigé. Relevez-le et saisissez-le.'],
+          ['La rendre par défaut', 'Toujours dans cet onglet, cliquez « Définir par défaut » à côté de l\'adresse professionnelle. Sinon un message écrit vite partira de la mauvaise adresse.']
+        ]
+      },
+      {
+        id: 'limite', nom: 'Ce que la redirection ne permet pas', duree: 'à savoir',
+        ico: '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/>',
+        intro: 'Une redirection est gratuite et suffit pour commencer. Elle a deux limites qu\'il vaut mieux connaître avant de s\'en apercevoir sur une campagne.',
+        etapes: [
+          ['Pas de branchement IMAP', 'Il n\'y a pas de serveur à configurer sur le téléphone ou dans Outlook : l\'adresse n\'a pas de boîte à elle. Tout passe par le compte qui reçoit.'],
+          ['La distribution peut souffrir', 'Un message parti des serveurs de Gmail avec une adresse en melodia-funebre.fr peut être jugé suspect et finir en indésirables. Pour de la prospection vers des agences, c\'est un vrai risque.'],
+          ['La suite, quand le volume monte', 'Ouvrir une vraie boîte chez OVH — quelques euros par mois — fait partir les messages depuis les serveurs du domaine, et lève les deux limites. Cette page bascule alors sur les réglages IMAP.']
+        ]
+      }
+    ];
+  }
+
+  function parcoursBoite(m) {
     return [
       {
         id: 'tel', nom: 'Sur le téléphone', duree: '3 minutes',
         ico: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
         intro: 'Le plus important : c\'est là que vous lirez les réponses des agences, souvent dans la voiture entre deux rendez-vous.',
         etapes: [
-          ['iPhone', 'Réglages → Applications → Mail → Comptes Mail → Ajouter un compte → Autre → Ajouter un compte Mail.'],
+          ['iPhone', 'Réglages → Applications → Mail → Comptes → Ajouter un compte → Autre → Ajouter un compte Mail.'],
           ['Android', 'Ouvrez Gmail → votre portrait en haut à droite → Ajouter un autre compte → Autre.'],
-          ['Ensuite, pour les deux', 'Saisissez l\'adresse et le mot de passe ci-dessus. Si l\'appareil ne trouve pas les réglages tout seul, choisissez <b>IMAP</b> et recopiez les serveurs de la colonne de droite.'],
+          ['Ensuite, pour les deux', 'Saisissez l\'adresse et le mot de passe. Si l\'appareil ne trouve pas les réglages tout seul, choisissez <b>IMAP</b> et recopiez les serveurs de la colonne de droite.'],
           ['Le piège', 'L\'identifiant est <b>l\'adresse complète</b>, pas seulement ce qui précède l\'arobase. C\'est l\'erreur qui fait échouer neuf configurations sur dix.']
         ]
       },
@@ -94,7 +149,7 @@
         ico: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>',
         intro: 'Sur ordinateur, pour rédiger confortablement les messages de prospection.',
         etapes: [
-          ['Ajouter le compte', 'Fichier → Informations → Ajouter un compte. Saisissez ' + (m.email || 'votre adresse') + '.'],
+          ['Ajouter le compte', 'Fichier → Informations → Ajouter un compte. Saisissez ' + esc(m.email || 'votre adresse') + '.'],
           ['Choisir le type', 'Si Outlook propose plusieurs types, choisissez <b>IMAP</b> — jamais POP. IMAP garde vos messages sur le serveur, donc lisibles aussi depuis le téléphone. POP les télécharge et les efface du serveur : vous ne les retrouveriez nulle part ailleurs.'],
           ['Les serveurs', 'Recopiez entrant et sortant depuis la colonne de droite. Cochez « Le serveur sortant requiert une authentification », avec les mêmes identifiants que l\'entrant.'],
           ['La signature', 'Fichier → Options → Courrier → Signatures. Le bloc à coller est plus bas sur cette page.']
@@ -103,15 +158,21 @@
       {
         id: 'gmail', nom: 'Depuis Gmail', duree: '5 minutes',
         ico: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/>',
-        intro: 'Pour recevoir et <b>envoyer</b> depuis votre adresse professionnelle sans quitter Gmail. C\'est la solution la plus confortable si Gmail est déjà votre habitude.',
+        intro: 'Pour recevoir et <b>envoyer</b> depuis votre adresse professionnelle sans quitter Gmail.',
         etapes: [
-          ['Recevoir', 'Gmail → roue dentée → Voir tous les paramètres → onglet <b>Comptes et importation</b> → « Consulter d\'autres comptes » → Ajouter un compte de messagerie. Saisissez l\'adresse, puis les réglages IMAP.'],
-          ['Envoyer — l\'étape à ne pas sauter', 'Même onglet → « Envoyer des e-mails en tant que » → Ajouter une autre adresse. Renseignez les réglages <b>SMTP</b>. Sans cela vous recevez sur l\'adresse professionnelle mais répondez depuis votre adresse personnelle, ce qui ruine l\'effet.'],
-          ['Par défaut', 'Toujours dans cet onglet, cliquez « Définir par défaut » à côté de l\'adresse professionnelle. Sinon un message écrit vite partira de la mauvaise adresse.'],
-          ['Vérifier', 'Gmail envoie un code de confirmation à l\'adresse professionnelle : relevez-la une première fois par le webmail pour le récupérer.']
+          ['Recevoir', 'Gmail → roue dentée → Voir tous les paramètres → onglet <b>Comptes et importation</b> → « Consulter d\'autres comptes » → Ajouter un compte de messagerie, puis les réglages IMAP.'],
+          ['Envoyer — l\'étape à ne pas sauter', 'Même onglet → « Envoyer des e-mails en tant que » → Ajouter une autre adresse, avec les réglages <b>SMTP</b>. Sans cela vous recevez sur l\'adresse professionnelle mais répondez depuis la personnelle.'],
+          ['Par défaut', 'Cliquez « Définir par défaut » à côté de l\'adresse professionnelle.'],
+          ['Vérifier', 'Gmail envoie un code à l\'adresse professionnelle : relevez-la une fois par le webmail pour le récupérer.']
         ]
       }
     ];
+  }
+
+  function parcours(m) {
+    return reg('montage') === 'redirection'
+      ? parcoursRedirection(m, reg('redirectionVers'))
+      : parcoursBoite(m);
   }
 
   function signature(m) {
@@ -150,34 +211,54 @@
             'Les réglages ci-dessous vous serviront le jour même.</div>') +
     '</div>';
 
-    /* ─── Les réglages, à droite de la marche à suivre ─── */
+    /* ─── Les réglages, à droite de la marche à suivre ───
+       Sur une redirection il n'y a pas de serveur à saisir : afficher
+       des champs IMAP inutilisables inviterait à les recopier, et
+       l'échec qui suit est incompréhensible pour qui l'a fait
+       consciencieusement. */
+    var redir = reg('montage') === 'redirection';
     h += '<div class="bo-grille">' +
       '<div class="panel bo-reglages">' +
-        '<div class="panel-title" style="font-size:1.1rem;">Les <em>réglages</em></div>' +
-        '<div class="panel-sub" style="margin-bottom:1.2rem;">À recopier tels quels</div>' +
+        '<div class="panel-title" style="font-size:1.1rem;">' +
+          (redir ? 'Votre <em>montage</em>' : 'Les <em>réglages</em>') + '</div>' +
+        '<div class="panel-sub" style="margin-bottom:1.2rem;">' +
+          (redir ? 'Redirection — rien à saisir' : 'À recopier tels quels') + '</div>' +
 
-        '<div class="bo-bloc"><div class="bo-bloc-t">Identifiant</div>' +
-          champ('Nom d\'utilisateur', m.email || 'votre adresse complète',
-                'L\'adresse entière, arobase comprise.') +
-        '</div>' +
+        (redir
+          ? '<div class="bo-bloc"><div class="bo-bloc-t">Le chemin du courrier</div>' +
+              champ('Adresse professionnelle', m.email || 'votre adresse') +
+              '<div class="bo-fleche" aria-hidden="true">↓</div>' +
+              champ('Arrive dans', reg('redirectionVers'),
+                    'C\'est là que vous lisez et répondez.') +
+            '</div>' +
+            '<div class="bo-bloc"><div class="bo-bloc-t">Mot de passe</div>' +
+              '<p class="bo-aide" style="margin:0;">Une redirection n\'en a pas : elle ne s\'ouvre pas, ' +
+              'elle transmet. Le seul mot de passe utile est celui du compte qui reçoit.</p>' +
+            '</div>'
+          : '<div class="bo-bloc"><div class="bo-bloc-t">Identifiant</div>' +
+              champ('Nom d\'utilisateur', m.email || 'votre adresse complète',
+                    'L\'adresse entière, arobase comprise.') +
+            '</div>' +
+            '<div class="bo-bloc"><div class="bo-bloc-t">Courrier entrant — IMAP</div>' +
+              champ('Serveur', reg('imapServeur')) +
+              champ('Port', reg('imapPort')) +
+              champ('Chiffrement', reg('imapChiffrement')) +
+            '</div>' +
+            '<div class="bo-bloc"><div class="bo-bloc-t">Courrier sortant — SMTP</div>' +
+              champ('Serveur', reg('smtpServeur')) +
+              champ('Port', reg('smtpPort')) +
+              champ('Chiffrement', reg('smtpChiffrement'),
+                    'Authentification requise, mêmes identifiants que l\'entrant.') +
+            '</div>') +
 
-        '<div class="bo-bloc"><div class="bo-bloc-t">Courrier entrant — IMAP</div>' +
-          champ('Serveur', reg('imapServeur')) +
-          champ('Port', reg('imapPort')) +
-          champ('Chiffrement', reg('imapChiffrement')) +
-        '</div>' +
-
-        '<div class="bo-bloc"><div class="bo-bloc-t">Courrier sortant — SMTP</div>' +
-          champ('Serveur', reg('smtpServeur')) +
-          champ('Port', reg('smtpPort')) +
-          champ('Chiffrement', reg('smtpChiffrement'),
-                'Authentification requise, mêmes identifiants que l\'entrant.') +
-        '</div>' +
-
-        '<a class="btn btn-outline btn-sm bo-webmail" href="' + esc(reg('webmail')) + '" target="_blank" rel="noopener">' +
-          'Ouvrir le webmail OVH</a>' +
-        '<p class="bo-secours">Le webmail dépanne toujours : il ne demande aucun réglage, ' +
-        'seulement l\'adresse et le mot de passe. Utilisez-le en attendant d\'avoir branché le reste.</p>' +
+        '<a class="btn btn-outline btn-sm bo-webmail" href="' +
+          esc(redir ? 'https://mail.google.com/' : reg('webmail')) + '" target="_blank" rel="noopener">' +
+          (redir ? 'Ouvrir la boîte qui reçoit' : 'Ouvrir le webmail OVH') + '</a>' +
+        '<p class="bo-secours">' +
+          (redir
+            ? 'Le fondateur gère les redirections dans son espace OVH : Web Cloud → Emails → le domaine → onglet Redirections.'
+            : 'Le webmail dépanne toujours : il ne demande aucun réglage, seulement l\'adresse et le mot de passe.') +
+        '</p>' +
       '</div>' +
 
       '<div class="bo-parcours">' +
@@ -217,9 +298,9 @@
       '<div class="panel-sub" style="margin-bottom:1rem;">Côté fondateur, dans l\'espace client OVH</div>' +
       '<ol class="bo-liste bo-liste-ovh">' +
         '<li><b>Espace client OVH</b><span>Web Cloud → Emails → le domaine melodia-funebre.fr.</span></li>' +
-        '<li><b>Ajouter un compte</b><span>Renseignez prenom@melodia-funebre.fr et un mot de passe solide.</span></li>' +
-        '<li><b>Transmettre</b><span>L\'adresse et le mot de passe, de la main à la main. Le collaborateur les change à sa première connexion au webmail.</span></li>' +
-        '<li><b>Vérifier l\'envoi</b><span>Envoyez-vous un message depuis la nouvelle boîte : s\'il arrive en indésirables, les enregistrements SPF et DKIM du domaine sont à revoir chez OVH.</span></li>' +
+        '<li><b>Le choix : redirection ou boîte</b><span>Une <b>redirection</b> est gratuite et immédiate — le courrier part vers une boîte existante, mais l\'adresse n\'a ni mot de passe ni IMAP. Une <b>boîte</b> coûte quelques euros par mois et se branche partout ; c\'est ce qu\'il faut dès qu\'on prospecte sérieusement.</span></li>' +
+        '<li><b>Transmettre</b><span>Pour une boîte : l\'adresse et le mot de passe, de la main à la main. Pour une redirection : dites simplement vers quel compte le courrier arrive.</span></li>' +
+        '<li><b>Vérifier l\'envoi</b><span>Envoyez-vous un message depuis la nouvelle adresse. S\'il arrive en indésirables, les enregistrements SPF et DKIM du domaine sont à revoir chez OVH — c\'est fréquent quand on envoie depuis Gmail avec une adresse d\'un autre domaine.</span></li>' +
       '</ol>' +
     '</div>';
 

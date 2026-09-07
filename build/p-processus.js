@@ -87,6 +87,7 @@ module.exports = {
     </div>
   </section>
 
+${P.partage('Comment se compose un hommage musical', "Cinq questions, un entretien de cinq minutes, une œuvre en 24 h.")}
 ${P.urgency()}
 
   <!-- ═══ CE QU'ON VOUS DEMANDE ═══ -->

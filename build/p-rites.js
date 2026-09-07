@@ -281,6 +281,7 @@ ${t.non.map((x) => `              <li>${x}</li>`).join('\n')}
     </div>
   </section>
 
+${P.partage('La musique funéraire selon le rite', "Ce qui se compose pour chaque tradition, et ce qui ne se compose pas.")}
 ${P.urgency()}
 
   <section class="section section-top" style="padding-bottom:6rem;">
