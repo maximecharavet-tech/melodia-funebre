@@ -216,6 +216,7 @@
             'écrivez-nous ici, c\'est suivi et daté.</p></div>';
     } else {
       h += vueCompte(u);
+      setTimeout(function () { if (window.MelodiaMotDePasse) window.MelodiaMotDePasse.brancher(); }, 0);
     }
     h += '</div>';
     h += '<div id="esp-modale"></div>';
@@ -232,7 +233,11 @@
       '<div class="esp-actions" style="margin-top:1.4rem;">' +
         '<a href="/contact" class="btn btn-outline btn-sm">Nous joindre</a>' +
         '<button type="button" class="btn btn-ghost btn-sm" id="esp-sortir">Se déconnecter</button>' +
-      '</div></div>';
+      '</div></div>' +
+      /* Le changement de mot de passe n'existait nulle part ailleurs
+         que par « mot de passe oublié », qui obligeait à se
+         déconnecter et à attendre un courriel. */
+      (window.MelodiaMotDePasse ? window.MelodiaMotDePasse.vue() : '');
   }
 
   /* ═══ La demande, en fenêtre ═══ */

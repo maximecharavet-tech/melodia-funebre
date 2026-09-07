@@ -1152,3 +1152,33 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .pa-ecart { font-size: 0.95rem; }
   .gr-note { font-size: 0.9rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CHANGER SON MOT DE PASSE
+   Le même bloc dans les quatre espaces : ce qu'on cherche au même
+   endroit doit se présenter de la même façon.
+   ═══════════════════════════════════════════════════════════════ */
+.mdp-bloc { max-width: 620px; margin-top: 1.4rem; }
+.mdp-ligne { display: flex; gap: 0.5rem; align-items: stretch; min-width: 0; }
+.mdp-ligne .field-input { flex: 1; min-width: 0; }
+.mdp-ligne .btn { flex: none; white-space: nowrap; }
+.mdp-force {
+  position: relative; height: 3px; margin-top: 0.5rem;
+  background: var(--line-soft); border-radius: 2px;
+}
+.mdp-force > span {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: var(--red);
+  transition: width 0.35s var(--ease), background 0.35s var(--ease);
+}
+.mdp-force::after {
+  content: attr(data-mot); position: absolute; right: 0; top: 7px;
+  font-family: var(--ff-m); font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+.mdp-bloc .form-msg { margin: 1rem 0; }
+@media (max-width: 720px) {
+  .mdp-ligne { flex-wrap: wrap; }
+  .mdp-ligne .btn { flex: 1 1 auto; min-height: 44px; justify-content: center; }
+  .mdp-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+}

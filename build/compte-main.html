@@ -148,6 +148,27 @@
             <button type="button" class="lien-bascule" onclick="showView('login')">← Retour à la connexion</button>
           </div>
         </form>
+
+        <!-- NOUVEAU MOT DE PASSE — après avoir suivi le lien reçu par courriel.
+             Cette vue manquait : le lien ouvrait une session et menait droit au
+             tableau de bord, sans jamais demander de nouveau mot de passe. La
+             réinitialisation ne réinitialisait donc rien. -->
+        <form id="view-reset" style="display:none;" onsubmit="return doReset(event)">
+          <p class="auth-intro">Choisissez votre nouveau mot de passe. Il sera actif immédiatement.</p>
+          <div class="field">
+            <label class="field-label" for="rs-pw">Nouveau mot de passe</label>
+            <div class="rs-ligne">
+              <input class="field-input" id="rs-pw" type="password" autocomplete="new-password" placeholder="8 caractères minimum">
+              <button type="button" class="lien-bascule" id="rs-voir">Afficher</button>
+            </div>
+            <div class="rs-force" id="rs-force"><span></span></div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="rs-pw2">Confirmez</label>
+            <input class="field-input" id="rs-pw2" type="password" autocomplete="new-password" placeholder="Le même, pour être sûr">
+          </div>
+          <button class="btn btn-gold btn-block" type="submit">Enregistrer mon nouveau mot de passe</button>
+        </form>
       </div>
 
       <p class="center auth-note">

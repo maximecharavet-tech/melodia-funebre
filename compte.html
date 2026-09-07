@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=f5b464c0">
+<link rel="stylesheet" href="assets/css/style.css?v=186c6f51">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -229,6 +229,27 @@
             <button type="button" class="lien-bascule" onclick="showView('login')">← Retour à la connexion</button>
           </div>
         </form>
+
+        <!-- NOUVEAU MOT DE PASSE — après avoir suivi le lien reçu par courriel.
+             Cette vue manquait : le lien ouvrait une session et menait droit au
+             tableau de bord, sans jamais demander de nouveau mot de passe. La
+             réinitialisation ne réinitialisait donc rien. -->
+        <form id="view-reset" style="display:none;" onsubmit="return doReset(event)">
+          <p class="auth-intro">Choisissez votre nouveau mot de passe. Il sera actif immédiatement.</p>
+          <div class="field">
+            <label class="field-label" for="rs-pw">Nouveau mot de passe</label>
+            <div class="rs-ligne">
+              <input class="field-input" id="rs-pw" type="password" autocomplete="new-password" placeholder="8 caractères minimum">
+              <button type="button" class="lien-bascule" id="rs-voir">Afficher</button>
+            </div>
+            <div class="rs-force" id="rs-force"><span></span></div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="rs-pw2">Confirmez</label>
+            <input class="field-input" id="rs-pw2" type="password" autocomplete="new-password" placeholder="Le même, pour être sûr">
+          </div>
+          <button class="btn btn-gold btn-block" type="submit">Enregistrer mon nouveau mot de passe</button>
+        </form>
       </div>
 
       <p class="center auth-note">
@@ -321,26 +342,37 @@
 <script src="assets/js/rappel.js?v=1840ff2c"></script>
 <script src="assets/js/courrier.js?v=7feee7d2"></script>
 <script src="assets/js/ornements.js?v=b123bb2c"></script>
-<script src="assets/js/auth.js?v=ab01fa35"></script>
+<script src="assets/js/auth.js?v=b40681b6"></script>
 <script src="assets/js/empreinte.js?v=d4610d73"></script>
 <script src="assets/js/accueil-connexion.js?v=ebad0e50"></script>
 <script>window.MELODIA_ACCUEIL_FILM = "assets/img/connexion.mp4?v=44886729";</script>
 <script>
-var TITLES = { login: 'Accès à votre <em>espace</em>', signup: 'Créer votre <em>compte</em>', forgot: 'Réinitialiser le <em>mot de passe</em>' };
+var TITLES = { login: 'Accès à votre <em>espace</em>', signup: 'Créer votre <em>compte</em>', forgot: 'Réinitialiser le <em>mot de passe</em>', reset: 'Votre nouveau <em>mot de passe</em>' };
 var POUR = {
   login: 'Les familles y retrouvent leur hommage et le suivi de leur commande. Les agences funéraires y suivent les leurs.',
   signup: 'Quelques secondes suffisent. Aucune information n\'est demandée qui ne serve au suivi de votre commande.',
-  forgot: 'Nous vous envoyons un lien de réinitialisation à l\'adresse de votre compte.'
+  forgot: 'Nous vous envoyons un lien de réinitialisation à l\'adresse de votre compte.',
+  reset: 'Le lien vous a identifié. Il ne reste qu\'à choisir votre nouveau mot de passe.'
 };
 function showView(v) {
-  ['login','signup','forgot'].forEach(function (x) { document.getElementById('view-' + x).style.display = (x === v) ? 'block' : 'none'; });
+  ['login','signup','forgot','reset'].forEach(function (x) {
+    var e = document.getElementById('view-' + x);
+    if (e) e.style.display = (x === v) ? 'block' : 'none';
+  });
   document.getElementById('auth-title').innerHTML = TITLES[v];
   var p = document.getElementById('auth-pour');
   if (p) p.textContent = POUR[v] || '';
   /* Google ouvre une session : sur « mot de passe oublié », il n'a rien
      à faire — c'est un autre geste. */
   var g = document.getElementById('bloc-google');
-  if (g && !g.dataset.absent) g.hidden = (v === 'forgot');
+  /* Google n'a rien à faire sur « mot de passe oublié » ni sur le
+     choix d'un nouveau mot de passe : ce sont d'autres gestes. */
+  if (g && !g.dataset.absent) g.hidden = (v === 'forgot' || v === 'reset');
+  /* Sur la vue de réinitialisation, on n'offre pas de repartir vers la
+     connexion : le lien n'est valable qu'une fois, et l'abandonner
+     oblige à en redemander un. */
+  var bascules = document.querySelectorAll('.auth-switch');
+  Array.prototype.forEach.call(bascules, function (b) { b.hidden = (v === 'reset'); });
   msg('');
 }
 function msg(t, ok) {
@@ -399,7 +431,34 @@ async function doLogin(e) {
 /* Au retour de Google, la session arrive dans le fragment de l'adresse.
    On la reprend avant tout le reste : inutile de montrer un formulaire
    de connexion à quelqu'un qui vient de se connecter. */
+/* ─── Retour d'un lien de réinitialisation ───
+   À traiter AVANT le retour Google : les deux arrivent avec un
+   « access_token » dans le fragment, et c'est la confusion entre les
+   deux qui rendait toute la réinitialisation inopérante. Le lien
+   connectait la personne et l'envoyait au tableau de bord sans jamais
+   lui demander de nouveau mot de passe. */
+var EN_RECUPERATION = false;
+(function retourRecuperation() {
+  if (!window.MelodiaAuth || !window.MelodiaAuth.retourRecuperation) return;
+  var r = window.MelodiaAuth.retourRecuperation();
+  if (!r) return;
+  if (r.erreur) {
+    /* Le fragment d'erreur ne dit pas s'il vient d'un lien de
+       réinitialisation ou d'un retour Google : on ne devine donc pas,
+       et on écrit ce qui est vrai des deux. Il faut aussi arrêter le
+       gestionnaire suivant, sinon il réécrit par-dessus « Connexion
+       Google interrompue » — un message faux une fois sur deux. */
+    EN_RECUPERATION = true;
+    showView('forgot');
+    msg('Ce lien n\'est plus valable : ' + r.erreur + '. Demandez-en un nouveau ci-dessous.');
+    return;
+  }
+  EN_RECUPERATION = true;
+  showView('reset');
+})();
+
 (async function retourGoogle() {
+  if (EN_RECUPERATION) return;
   if (!window.MelodiaAuth || !location.hash || location.hash.indexOf('access_token') === -1) {
     if (location.hash.indexOf('error') === -1) return;
   }
@@ -529,6 +588,60 @@ async function doForgot(e) {
   e.preventDefault();
   try { msg(await window.MelodiaAuth.resetPassword(document.getElementById('fg-email').value), true); }
   catch (err) { msg(err.message); }
+  return false;
+}
+
+/* ─── Poser le nouveau mot de passe ─── */
+function forceMot(v) {
+  var n = 0;
+  if (v.length >= 8) n++;
+  if (v.length >= 14) n++;
+  if (/[0-9]/.test(v) && /[a-zA-Z]/.test(v)) n++;
+  if (/[^a-zA-Z0-9]/.test(v)) n++;
+  return n;
+}
+(function jaugeReset() {
+  var champ = document.getElementById('rs-pw');
+  var jauge = document.getElementById('rs-force');
+  var voir = document.getElementById('rs-voir');
+  if (!champ || !jauge) return;
+  var mots = ['Trop court', 'Faible', 'Correct', 'Solide', 'Excellent'];
+  var teintes = ['var(--red)', 'var(--red)', 'var(--amber)', 'var(--green)', 'var(--green)'];
+  champ.addEventListener('input', function () {
+    var v = champ.value;
+    if (!v) { jauge.firstChild.style.width = '0'; jauge.dataset.mot = ''; return; }
+    var n = forceMot(v);
+    jauge.firstChild.style.width = (25 * Math.max(n, 1)) + '%';
+    jauge.firstChild.style.background = teintes[n];
+    jauge.dataset.mot = mots[n];
+  });
+  if (voir) voir.addEventListener('click', function () {
+    var cache = champ.type === 'password';
+    champ.type = cache ? 'text' : 'password';
+    document.getElementById('rs-pw2').type = cache ? 'text' : 'password';
+    voir.textContent = cache ? 'Masquer' : 'Afficher';
+  });
+})();
+
+async function doReset(e) {
+  e.preventDefault();
+  var pw = document.getElementById('rs-pw').value;
+  var pw2 = document.getElementById('rs-pw2').value;
+  if (pw !== pw2) return msg('Les deux mots de passe ne sont pas identiques.');
+  if (pw.length < 8) return msg('Huit caractères minimum : ce compte ouvre des données de familles.');
+  var b = e.target.querySelector('button[type=submit]');
+  b.disabled = true; b.textContent = 'Enregistrement…';
+  try {
+    msg(await window.MelodiaAuth.changerMotDePasse(pw), true);
+    /* Le nouveau mot de passe est actif : la session ouverte par le
+       lien devient une session normale, on relit le rôle et on mène
+       la personne à son espace plutôt que de la faire ressaisir. */
+    await window.MelodiaAuth.relireRole();
+    setTimeout(function () { location.href = window.MelodiaAuth.home(); }, 1400);
+  } catch (err) {
+    b.disabled = false; b.textContent = 'Enregistrer mon nouveau mot de passe';
+    msg(err.message);
+  }
   return false;
 }
 if (window.MelodiaAuth.current()) location.href = window.MelodiaAuth.home();

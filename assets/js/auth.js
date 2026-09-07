@@ -261,6 +261,61 @@
       return 'Mode démo — mot de passe provisoire : ' + temp + ' (à changer après connexion). En production, un email est envoyé.';
     },
 
+    /* ─── Poser un nouveau mot de passe ───
+       Vaut dans les deux cas, parce que Supabase les traite pareil :
+       après avoir suivi un lien de réinitialisation (le lien ouvre une
+       session le temps de le faire), et depuis un compte déjà
+       connecté qui veut simplement en changer.
+
+       Huit caractères minimum : ces comptes ouvrent les commandes de
+       familles en deuil. Le seuil était à six, il ne l'est plus
+       nulle part. */
+    async changerMotDePasse(nouveau) {
+      nouveau = String(nouveau || '');
+      if (nouveau.length < 8) {
+        throw new Error('Le mot de passe doit contenir au moins huit caractères.');
+      }
+      if (!HAS_SB) {
+        var u = this.current();
+        if (!u) throw new Error('Vous n\'êtes pas connecté.');
+        var users = LS.get('melodia_users', {});
+        if (!users[u.email]) throw new Error('Compte introuvable.');
+        users[u.email].pw = hash(nouveau);
+        LS.set('melodia_users', users);
+        return 'Mot de passe modifié.';
+      }
+      var s = LS.get('melodia_session', null);
+      if (!s || !s.access_token) {
+        throw new Error('Votre session a expiré. Redemandez un lien de réinitialisation.');
+      }
+      await sb('/auth/v1/user', { method: 'PUT', body: JSON.stringify({ password: nouveau }) });
+      return 'Mot de passe modifié. Il est actif immédiatement.';
+    },
+
+    /* ─── Reconnaître un retour de réinitialisation ───
+       Supabase renvoie le jeton dans le fragment de l'adresse, comme
+       pour une connexion Google — d'où la confusion qui rendait toute
+       la réinitialisation inopérante : la page connectait la personne
+       et l'envoyait au tableau de bord sans jamais lui demander de
+       nouveau mot de passe. C'est « type=recovery » qui distingue les
+       deux, et lui seul. */
+    retourRecuperation: function () {
+      var h = (location.hash || '').replace(/^#/, '');
+      if (!h) return null;
+      var q = new URLSearchParams(h);
+      if (q.get('error')) return { erreur: q.get('error_description') || q.get('error') };
+      if (q.get('type') !== 'recovery' || !q.get('access_token')) return null;
+      /* La session ouverte par le lien ne sert qu'à poser le nouveau
+         mot de passe : on la garde le temps de l'appel, pas plus. */
+      LS.set('melodia_session', {
+        access_token: q.get('access_token'),
+        refresh_token: q.get('refresh_token') || '',
+        user: null
+      });
+      try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+      return { pret: true };
+    },
+
     /* Le rôle en cache part avec la session : sans cela, le compte
        suivant ouvert sur le même navigateur hériterait du précédent. */
     logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); LS.del('melodia_role'); },

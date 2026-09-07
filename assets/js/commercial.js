@@ -125,6 +125,22 @@
     recherche: ['Annuaire', 'Trouver des <em>agences</em>', vRecherche, brancherRecherche],
     prospects: ['Portefeuille', 'Mes <em>prospects</em>', vProspects, brancherProspects],
     modeles: ['Ressources', 'Modèles de <em>courriel</em>', vModeles, brancherModeles],
+    compte: ['Mon poste', 'Mon <em>compte</em>',
+             function () {
+               var u = (window.MelodiaAuth && window.MelodiaAuth.current()) || {};
+               return '<div class="panel" style="max-width:620px;">' +
+                 '<div class="panel-title">Vos <em>informations</em></div>' +
+                 '<div class="panel-sub" style="margin-bottom:1.2rem;">Compte collaborateur</div>' +
+                 '<table class="tbl"><tbody>' +
+                   '<tr><td style="color:var(--ash);">Nom</td><td>' + esc(u.name || u.nom || '—') + '</td></tr>' +
+                   '<tr><td style="color:var(--ash);">Identifiant</td><td>' + esc(u.email || '—') + '</td></tr>' +
+                   '<tr><td style="color:var(--ash);">Secteur</td><td>' + esc(u.secteur || '—') + '</td></tr>' +
+                 '</tbody></table>' +
+                 '<button class="btn btn-outline" style="margin-top:1.6rem;" onclick="window.MelodiaAuth.logout();location.href=\'compte.html\';">Se déconnecter</button>' +
+               '</div>' +
+               (window.MelodiaMotDePasse ? window.MelodiaMotDePasse.vue() : '');
+             },
+             function () { if (window.MelodiaMotDePasse) window.MelodiaMotDePasse.brancher(); }],
     boite: ['Mon poste', 'Ma <em>boîte mail</em>',
             function () { return window.MelodiaBoite ? window.MelodiaBoite.vue() : '<div class="form-msg err" style="display:block;">Le module n\'a pas été chargé.</div>'; },
             function () { if (window.MelodiaBoite) window.MelodiaBoite.brancher(); }],

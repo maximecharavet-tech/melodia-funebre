@@ -3718,3 +3718,29 @@ body.a-ecoute { padding-bottom: 5rem; }
   .esp-partage { flex-direction: column; }
   .esp-partage .btn { width: 100%; min-height: 44px; }
 }
+
+/* ─── Choix d'un nouveau mot de passe ───
+   Le champ est masqué par défaut, mais quelqu'un qui vient de perdre
+   son mot de passe a besoin de voir ce qu'il tape : le bouton
+   « Afficher » évite la deuxième erreur de saisie. */
+.rs-ligne { display: flex; align-items: center; gap: 0.7rem; }
+.rs-ligne .field-input { flex: 1; min-width: 0; }
+.rs-ligne .lien-bascule { flex: none; white-space: nowrap; }
+.rs-force {
+  position: relative; height: 3px; margin-top: 0.55rem;
+  background: var(--line-soft); border-radius: 2px;
+}
+.rs-force > span {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: var(--red);
+  transition: width 0.35s var(--ease), background 0.35s var(--ease);
+}
+.rs-force::after {
+  content: attr(data-mot); position: absolute; right: 0; top: 7px;
+  font-family: var(--ff-m); font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+@media (max-width: 560px) {
+  .rs-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .rs-ligne .lien-bascule { min-height: 44px; }
+}
