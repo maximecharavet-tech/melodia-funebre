@@ -65,6 +65,20 @@
     }).join('') + '</ol>';
   }
 
+  /* Le message est écrit d'avance : une famille en deuil ne doit pas
+     avoir à trouver les mots pour expliquer ce qu'elle envoie. */
+  function texteProches(o) {
+    return 'Voici l\'hommage musical composé pour ' + (o.defunt || 'notre proche') + '.' +
+      (o.audio_title ? '\n\n« ' + o.audio_title + ' »' : '') +
+      '\n\n' + o.audio_url +
+      '\n\nCette œuvre a été écrite pour ' + (o.defunt || 'lui') + ' et pour personne d\'autre. ' +
+      'Vous pouvez l\'écouter, la télécharger et la garder.';
+  }
+  function courrielProches(o) {
+    return 'mailto:?subject=' + encodeURIComponent('En souvenir de ' + (o.defunt || 'notre proche')) +
+      '&body=' + encodeURIComponent(texteProches(o));
+  }
+
   function lecteur(o) {
     if (!o.audio_url) return '';
     if (/^local:/.test(o.audio_url)) {
@@ -77,6 +91,17 @@
       (estAudio ? '<audio controls preload="none" src="' + esc(o.audio_url) + '"></audio>' : '') +
       '<a class="btn btn-gold btn-block" href="' + esc(o.audio_url) + '" download target="_blank" rel="noopener">' +
         'Télécharger l\'hommage</a>' +
+      /* ─── Transmettre aux proches ───
+         C'est la demande que les familles nous adressent le plus
+         après la livraison : l'envoyer à la tante qui n'a pas pu
+         venir, au cousin à l'étranger. Elles le faisaient en nous
+         réécrivant. Le partage natif du téléphone est proposé quand
+         il existe, le lien copiable partout ailleurs. */
+      '<div class="esp-partage">' +
+        '<button type="button" class="btn btn-outline btn-sm" data-partager="' + esc(o.ref) + '">' +
+          'Envoyer à mes proches</button>' +
+        '<a class="btn btn-ghost btn-sm" href="' + esc(courrielProches(o)) + '">Par courriel</a>' +
+      '</div>' +
       '<p class="esp-aide">Il est à vous, sans limite : diffusez-le à la cérémonie, copiez-le pour la famille, ' +
         'gardez-le. Aucun droit n\'est à déclarer.</p>' +
     '</div>';
@@ -296,6 +321,33 @@
     });
     hote.querySelectorAll('[data-demande]').forEach(function (b) {
       b.addEventListener('click', function () { ouvrirDemande(b.dataset.demande); });
+    });
+
+    /* Le partage natif ouvre l'application que la famille utilise déjà
+       — messages, WhatsApp, courriel. Là où il n'existe pas, on copie
+       le lien et on le dit : un bouton qui ne fait rien de visible
+       laisse croire à une panne. */
+    hote.querySelectorAll('[data-partager]').forEach(function (b) {
+      b.addEventListener('click', async function () {
+        var o = etat.commandes.filter(function (x) { return x.ref === b.dataset.partager; })[0];
+        if (!o || !o.audio_url) return;
+        var titre = 'En souvenir de ' + (o.defunt || 'notre proche');
+        if (navigator.share) {
+          try { await navigator.share({ title: titre, text: texteProches(o), url: o.audio_url }); return; }
+          catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        var dire = function (t) {
+          var avant = b.textContent;
+          b.textContent = t;
+          setTimeout(function () { b.textContent = avant; }, 2200);
+        };
+        try {
+          await navigator.clipboard.writeText(texteProches(o));
+          dire('Lien copié — collez-le où vous voulez');
+        } catch (e) {
+          dire('Copie impossible : utilisez « Par courriel »');
+        }
+      });
     });
     var sortir = hote.querySelector('#esp-sortir');
     if (sortir) sortir.addEventListener('click', function () {

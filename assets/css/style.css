@@ -3703,3 +3703,18 @@ body.a-ecoute { padding-bottom: 5rem; }
   .guide-fin p { font-size: 1rem; }
   .guide-fin .hero-actions .btn { width: 100%; justify-content: center; }
 }
+
+/* ─── Transmettre l'hommage aux proches ───
+   La demande la plus fréquente après la livraison : l'envoyer à la
+   tante qui n'a pas pu venir. Deux chemins côte à côte, parce que le
+   partage natif n'existe pas sur tous les appareils — et le second
+   n'est pas un repli honteux, c'est celui que beaucoup préfèrent. */
+.esp-partage {
+  display: flex; gap: 0.6rem; flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+.esp-partage .btn { flex: 1 1 auto; justify-content: center; text-align: center; }
+@media (max-width: 560px) {
+  .esp-partage { flex-direction: column; }
+  .esp-partage .btn { width: 100%; min-height: 44px; }
+}
