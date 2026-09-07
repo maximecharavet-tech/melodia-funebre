@@ -12,8 +12,8 @@ const FAQ_B2B = [
 
 module.exports = {
   file: 'agences.html',
-  title: 'Espace agences — 60 % de marge, zéro investissement | Melodia Funèbre',
-  desc: "Pompes funèbres : proposez à vos familles un hommage musical composé sur mesure. 60 % de marge, aucun investissement, première composition offerte. Simulez vos revenus en ligne.",
+  title: 'Pompes funèbres : devenir partenaire | Melodia Funèbre',
+  desc: "Proposez à vos familles un hommage musical sur mesure. 60 % de marge, aucun investissement, première composition offerte. Simulateur en ligne.",
   jsonld: [P.jsonldFil('Espace agences', '/agences')],
   body: `
   <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">

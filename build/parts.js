@@ -177,21 +177,46 @@ function urgency() {
   </section>`;
 }
 
+/* ─── L'entité « maison » ───
+   Déclarée en Organization, et non en LocalBusiness : ce dernier type
+   attend une adresse postale (« address », obligatoire pour Google) et
+   décrit un commerce où l'on se rend. La maison travaille par
+   téléphone pour toute la France, n'a pas de boutique où recevoir, et
+   son adresse de siège n'est pas encore arrêtée. Un LocalBusiness sans
+   adresse est signalé invalide par l'outil de test de Google et ne
+   produit aucun résultat enrichi — Organization en produit un, et dit
+   la vérité.
+
+   Le jour où le siège est déclaré, deux ajouts suffisent : « address »
+   (PostalAddress complet) et le retour au type LocalBusiness, avec
+   « priceRange » qui n'a de sens que sur ce type-là. */
 const jsonldOrg = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': 'Organization',
   '@id': SITE + '/#organisation',
   name: 'Melodia Funèbre',
+  alternateName: 'Melodia',
   description: "Maison française de composition musicale personnalisée pour cérémonies funéraires. Une œuvre originale par défunt, livrée en 24 heures, sans droits SACEM.",
   url: SITE,
   /* Pas de « telephone » : ces données sont publiques et indexées. */
   email: 'contact@melodia-funebre.fr',
   image: SITE + '/assets/img/logo-melodia.jpg',
-  logo: SITE + '/assets/img/logo-melodia.jpg',
+  logo: { '@type': 'ImageObject', url: SITE + '/assets/img/logo-melodia.jpg' },
   founder: { '@type': 'Person', name: 'Maxime Charavet' },
+  foundingDate: '2026',
   areaServed: { '@type': 'Country', name: 'France' },
-  priceRange: '149€ – 499€',
-  aggregateRating: undefined
+  knowsLanguage: ['fr', 'co', 'br', 'he', 'it', 'pt'],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: 'contact@melodia-funebre.fr',
+    areaServed: 'FR',
+    availableLanguage: 'French'
+  }
+  /* « sameAs » viendra lister les comptes officiels (Instagram,
+     Facebook, LinkedIn) dès qu'ils existeront : c'est ce qui permet
+     aux moteurs de rattacher ces profils à cette entité plutôt que
+     d'en déduire deux entreprises distinctes. */
 };
 
 const jsonldFaq = {

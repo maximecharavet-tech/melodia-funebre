@@ -4,7 +4,11 @@ const P = require('./parts.js');
 module.exports = {
   file: 'rejoindre.html',
   title: 'Nous rejoindre — devenir collaborateur | Melodia Funèbre',
-  desc: "Melodia Funèbre recrute des collaborateurs commerciaux et des compositeurs. Métier inédit, marché sans concurrent, rémunération à la commission. Déposez votre candidature et votre CV.",
+  desc: "Melodia Funèbre recrute commerciaux et compositeurs. Métier inédit, marché sans concurrent, rémunération à la commission. Déposez votre CV.",
+  /* Le fil d'Ariane manquait sur cette seule page : les moteurs
+     l'affichent sous le titre, et son absence faisait apparaître
+     l'adresse brute là où les autres pages montrent leur chemin. */
+  jsonld: [P.jsonldFil('Nous rejoindre', '/rejoindre')],
   body: `
   <section class="section" style="padding-top:9rem;padding-bottom:0;">
     <div class="wrap">

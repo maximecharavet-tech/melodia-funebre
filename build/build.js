@@ -14,6 +14,7 @@
    ═══════════════════════════════════════════════════════════════ */
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const RACINE = path.resolve(__dirname, '..');
 const data = require('./data.js');
@@ -131,13 +132,38 @@ const PLAN = [
   ['mentions-legales.html', '0.3', 'yearly'],
   ['confidentialite.html', '0.3', 'yearly']
 ];
-/* La page de connexion est hors du plan : elle est interdite aux
-   robots dans robots.txt, l'y lister serait se contredire. */
+/* La page de connexion et l'espace des familles sont hors du plan :
+   ils portent « noindex », et lister dans son plan une page qu'on
+   demande de ne pas indexer est une contradiction que les moteurs
+   relèvent. */
+
+/* ─── La date de dernière modification ───
+   Elle venait de la date du fichier. Mais chaque génération réécrit
+   les onze pages, même celles dont pas un octet ne change : le plan
+   annonçait donc onze pages modifiées à chaque déploiement. Un plan
+   qui crie au changement tout le temps ne dit plus rien, et les
+   moteurs finissent par ignorer sa date — exactement ce qu'on ne
+   veut pas.
+
+   La date suit maintenant le contenu : on garde l'empreinte de
+   chaque page d'une génération à l'autre, et la date ne bouge que
+   si l'empreinte bouge. Le registre est versionné, pour que la
+   date soit la même quelle que soit la machine qui génère. */
+const REGISTRE = path.join(__dirname, 'dates-sitemap.json');
+let dates = {};
+try { dates = JSON.parse(fs.readFileSync(REGISTRE, 'utf8')); } catch (e) { dates = {}; }
+const aujourdhui = new Date().toISOString().slice(0, 10);
+
 const entrees = PLAN.map(([f, prio, freq]) => {
   const chemin = path.join(RACINE, f);
-  const quand = fs.existsSync(chemin)
-    ? fs.statSync(chemin).mtime.toISOString().slice(0, 10)
-    : new Date().toISOString().slice(0, 10);
+  let quand = aujourdhui;
+  if (fs.existsSync(chemin)) {
+    const empreinte = crypto.createHash('sha1')
+      .update(fs.readFileSync(chemin)).digest('hex');
+    const connu = dates[f];
+    quand = (connu && connu.empreinte === empreinte) ? connu.date : aujourdhui;
+    dates[f] = { empreinte: empreinte, date: quand };
+  }
   const url = SITE_URL + '/' + (f === 'index.html' ? '' : f.replace('.html', ''));
   return `  <url><loc>${url}</loc><lastmod>${quand}</lastmod>` +
          `<changefreq>${freq}</changefreq><priority>${prio}</priority></url>`;
@@ -147,4 +173,5 @@ fs.writeFileSync(path.join(RACINE, 'sitemap.xml'),
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   entrees + '\n</urlset>\n');
+fs.writeFileSync(REGISTRE, JSON.stringify(dates, null, 2) + '\n');
 console.log('  sitemap.xml            ' + PLAN.length + ' adresses');

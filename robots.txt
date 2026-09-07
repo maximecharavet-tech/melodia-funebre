@@ -7,15 +7,23 @@
 # générale suffirait techniquement, mais l'autorisation nommée lève
 # toute ambiguïté pour ceux qui la cherchent.
 
+# ─── Pages privées : « noindex » plutôt que « Disallow » ───
+# Le piège est classique et se retournait contre nous. Une page à la
+# fois interdite ici ET marquée « noindex » dans son en-tête ne sort
+# jamais de l'index : le robot n'a pas le droit de la charger, donc il
+# ne lit jamais le « noindex » qui l'en ferait sortir — et si un lien
+# pointe vers elle, elle reste listée, adresse nue et sans résumé.
+#
+# Les consoles, l'espace des familles et la page de compte portent
+# toutes « noindex » dans leur en-tête. On les laisse donc charger :
+# le robot lit la consigne et les retire pour de bon. Ce qui reste
+# interdit ci-dessous n'a aucune page HTML, donc aucun en-tête où
+# écrire la consigne — c'est le seul cas où « Disallow » est le bon
+# outil.
+
 User-agent: *
 Allow: /
-Disallow: /dashboard-master
-Disallow: /dashboard-partenaire
-Disallow: /compte
-Disallow: /dashboard-master.html
-Disallow: /dashboard-partenaire.html
-Disallow: /compte.html
-Disallow: /MELODIA_DASHBOARD_V2.html
+Disallow: /api/
 
 # ─── Robots d'indexation et de réponse des systèmes d'IA ───
 # Autorisés : c'est par eux que passe une part croissante des

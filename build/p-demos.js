@@ -4,10 +4,13 @@ const { STYLES } = require('./data.js');
 
 module.exports = {
   file: 'demos.html',
-  title: 'Nos réalisations — Le catalogue des hommages composés | Melodia Funèbre',
-  desc: "Le catalogue des hommages composés par la maison : pour chacun, la personne, son histoire, les mots que sa famille nous avait confiés, et l'œuvre qui en est née — écoutable en ligne.",
+  title: 'Écouter 17 hommages composés sur mesure | Melodia Funèbre',
+  desc: "Pour chaque hommage : la personne, son histoire, les mots que sa famille nous avait confiés, et l'œuvre qui en est née — écoutable en ligne.",
   scripts: ['assets/js/catalogue.js'],
-  jsonld: [P.jsonldCatalogue, P.jsonldFil('Nos réalisations', '/demos')],
+  /* Chaque œuvre porte « byArtist » vers l'entité « maison » : elle
+     est donc déclarée sur cette page, sans quoi les dix-sept
+     références pointent dans le vide. */
+  jsonld: [P.jsonldOrg, P.jsonldCatalogue, P.jsonldFil('Nos réalisations', '/demos')],
   body: `
   <section class="page-head">
     <div class="wrap">

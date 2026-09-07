@@ -120,8 +120,8 @@ const TRADITIONS = [
 
 module.exports = {
   file: 'rites.html',
-  title: 'L\'hommage selon le rite — Traditions religieuses et cérémonies civiles | Melodia Funèbre',
-  desc: "Comment notre travail s'accorde à chaque tradition : catholique, protestante, orthodoxe, juive, musulmane, ou cérémonie civile. Ce que nous composons, et ce que nous ne composons pas.",
+  title: 'Musique funéraire selon le rite | Melodia Funèbre',
+  desc: "Catholique, protestant, orthodoxe, juif, musulman ou civil : ce que nous composons pour chaque tradition, et ce que nous refusons de composer.",
   scripts: [],
   jsonld: [P.jsonldFil('Rites et traditions', '/rites')],
   body: `

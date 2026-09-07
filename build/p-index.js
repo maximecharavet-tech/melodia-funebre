@@ -3,9 +3,15 @@ const P = require('./parts.js');
 
 module.exports = {
   file: 'index.html',
-  title: 'Melodia Funèbre — La chanson qu\'il méritait, composée en 24 h',
-  desc: "Maison française de composition musicale pour cérémonies funéraires. Une œuvre originale écrite pour votre défunt, livrée en 24 heures, sans droits SACEM. Dès 149 €.",
-  jsonld: [P.jsonldSite, P.jsonldOrg, P.jsonldService, P.jsonldFaq, P.jsonldCatalogue],
+  title: 'Chanson d\'hommage pour obsèques, en 24 h | Melodia Funèbre',
+  desc: "Une chanson originale composée pour votre défunt, d'après ce que vous nous racontez de lui. Livrée en 24 h, sans droit SACEM. Dès 149 €.",
+  /* Le catalogue des dix-sept œuvres n'est plus déclaré ici. Il porte
+     l'identifiant « /demos#catalogue » et il est déjà déclaré sur
+     /demos : le répéter sur l'accueil décrivait le même nœud à deux
+     adresses, et alourdissait de 14 Ko la page la plus consultée du
+     site pour ne rien dire de neuf. Un lien mène de l'une à l'autre —
+     c'est ce que les moteurs suivent. */
+  jsonld: [P.jsonldSite, P.jsonldOrg, P.jsonldService, P.jsonldFaq],
   intro: true,
   scripts: ['assets/js/catalogue.js'],
   body: `
