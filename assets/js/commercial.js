@@ -125,6 +125,9 @@
     recherche: ['Annuaire', 'Trouver des <em>agences</em>', vRecherche, brancherRecherche],
     prospects: ['Portefeuille', 'Mes <em>prospects</em>', vProspects, brancherProspects],
     modeles: ['Ressources', 'Modèles de <em>courriel</em>', vModeles, brancherModeles],
+    boite: ['Mon poste', 'Ma <em>boîte mail</em>',
+            function () { return window.MelodiaBoite ? window.MelodiaBoite.vue() : '<div class="form-msg err" style="display:block;">Le module n\'a pas été chargé.</div>'; },
+            function () { if (window.MelodiaBoite) window.MelodiaBoite.brancher(); }],
     playbook: ['Ressources', 'Script et <em>objections</em>', vPlaybook, brancherPlaybook],
     plan: ['Ressources', 'Plan de <em>prospection</em>', vPlan, function () {}],
     traditions: ['Ressources', 'Les <em>traditions</em>', vTraditions, brancherTraditions],
@@ -935,41 +938,283 @@
   /* ═══════════════════════════════════════════════════════════
      Vue : modèles de courriel
      ═══════════════════════════════════════════════════════════ */
-  function vModeles() {
-    var exemple = { nom: 'Pompes Funèbres Roblot', ville: 'Lyon', dirigeant: 'Monsieur Roblot', cp: '69003' };
-    return '<div class="panel" style="margin-bottom:1.4rem;">' +
-        '<div class="panel-title">Six <em>modèles</em>, une séquence</div>' +
-        '<div class="panel-sub">La séquence complète</div>' +
-        '<p class="panel-note">Le nom de l\'agence, la ville et l\'interlocuteur sont remplacés pour chaque fiche — et remis en casse lisible, la base SIRENE ne connaissant que les capitales. Vous relisez et modifiez chaque message avant l\'envoi.</p>' +
-        '<div style="font-size:.9rem;color:var(--bone);line-height:1.9;">' +
-          (V.PLAN ? V.PLAN.sequence.map(function (e) {
-            return '<div style="display:flex;gap:1rem;padding:.4rem 0;border-bottom:1px solid var(--line-soft);">' +
-              '<b style="color:var(--or-patina);min-width:70px;font-family:var(--ff-m);font-size:.7rem;letter-spacing:.1em;">' + esc(e.jour) + '</b>' +
-              '<span><b style="color:var(--paper);">' + esc(e.action) + '</b><br>' +
-              '<span style="color:var(--ash);font-size:.86rem;">' + esc(e.detail) + '</span></span></div>';
-          }).join('') : '') +
-        '</div>' +
-      '</div>' +
-      Object.keys(MODELES).map(function (k) {
-        var m = MODELES[k];
-        return '<div class="panel" style="margin-bottom:1.2rem;">' +
-          '<div class="panel-head"><div>' +
-            '<div class="panel-title">' + esc(m.nom) + '</div>' +
-            '<div class="panel-sub">' + esc(m.quand || '') + '</div></div></div>' +
-          '<div class="modele-objet">Objet : ' + esc(m.objet(exemple)) + '</div>' +
-          '<textarea class="field-area" readonly style="min-height:280px;font-size:.86rem;line-height:1.75;">' + esc(m.texte(exemple)) + '</textarea>' +
-        '</div>';
-      }).join('') +
-      '<div class="panel">' +
-        '<div class="panel-title">Ce que dit la <em>loi</em></div>' +
-        '<div style="font-size:.9rem;color:var(--bone);line-height:1.8;margin-top:1rem;">' +
-          '<p>La prospection entre professionnels est autorisée en France sans accord préalable, à trois conditions : le message concerne leur activité professionnelle, votre identité est claire, et un moyen de refuser figure dans le message.</p>' +
-          '<p style="margin-top:.8rem;">Le pied de page de chaque courriel porte la mention d\'opposition. <b style="color:var(--paper);">Une agence qui répond « STOP » doit être marquée en opposition immédiatement</b> — le bouton est sur sa fiche, et la console lui interdit alors tout nouvel envoi.</p>' +
-        '</div>' +
-      '</div>';
+  /* ═══════════════════════════════════════════════════════════
+     Vue : les modèles de courriel, prêts à partir
+
+     L'écran affichait six textes en lecture seule, avec une agence
+     fictive. Pour s'en servir il fallait tout sélectionner à la
+     souris, coller ailleurs, remplacer le nom à la main, retrouver
+     un lien d'écoute — cinq gestes avant le premier envoi, et autant
+     d'occasions de se tromper de nom d'agence.
+
+     Ici, on choisit une fiche de son portefeuille et un hommage à
+     faire écouter ; le message est prêt, avec le bon nom, le bon
+     lien, et la signature. Un bouton copie, un autre ouvre la
+     messagerie. L'envoi reste manuel : c'est le collaborateur qui
+     relit et qui décide, pas la console.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Trois hommages qui ne se ressemblent pas : un directeur d'agence
+     doit entendre l'écart, pas trois fois la même chose. Le funk
+     surprend et prouve qu'on ne fait pas que du triste ; le folk
+     émeut ; la chanson française rassure. */
+  var ECOUTES = [
+    { id: 'demo-16', titre: 'Le roi de la route', qui: 'Bernard, 69 ans — chauffeur routier',
+      style: 'Funk', pour: 'Surprend : personne n\'attend du funk à des obsèques. Le meilleur pour ouvrir.' },
+    { id: 'demo-14', titre: 'Paula, le vent te porte', qui: 'Paula, 54 ans',
+      style: 'Folk acoustique', pour: 'Émeut vite. À garder pour un interlocuteur déjà attentif.' },
+    { id: 'demo-1', titre: 'Le Papi Pêcheur', qui: 'Maurice, 78 ans — pêcheur en Loire',
+      style: 'Chanson française', pour: 'Le plus proche de ce qu\'une agence imagine. Rassure les prudents.' }
+  ];
+
+  var etatMod = { fiche: '', modele: 'contact', ecoute: 'demo-16' };
+
+  function ficheChoisie() {
+    if (etatMod.fiche) {
+      var p = PROSPECTS.filter(function (x) { return String(x.id) === etatMod.fiche; })[0];
+      if (p) return p;
+    }
+    return { nom: 'Pompes Funèbres Roblot', ville: 'Lyon', dirigeant: 'Monsieur Roblot', cp: '69003', _exemple: true };
   }
 
-  function brancherModeles() {}
+  function ecouteChoisie() {
+    return ECOUTES.filter(function (e) { return e.id === etatMod.ecoute; })[0] || ECOUTES[0];
+  }
+
+  /* Le lien d'écoute mène à l'ancre de l'hommage dans le catalogue :
+     le destinataire tombe sur celui dont on lui parle, pas sur une
+     page où il faudrait le chercher. */
+  function lienEcoute() {
+    return 'https://melodia-funebre.fr/demos#' + ecouteChoisie().id;
+  }
+
+  function signatureDe() {
+    var u = (window.MelodiaAuth && window.MelodiaAuth.current()) || {};
+    return [
+      '—',
+      u.name || u.nom || '',
+      'Melodia Funèbre — composition musicale pour cérémonies',
+      u.email || '',
+      'melodia-funebre.fr'
+    ].filter(Boolean).join('\n');
+  }
+
+  function corpsMessage() {
+    var p = ficheChoisie();
+    var jeu = modelesDe(p);
+    var m = jeu[etatMod.modele] || jeu.contact;
+    var e = ecouteChoisie();
+    return m.texte(p) +
+      '\n\n' + e.titre + ' — ' + e.qui + '\n' + lienEcoute() +
+      '\n\n' + signatureDe() +
+      '\n\nPour ne plus recevoir de message de notre part, répondez « STOP » à ce courriel.';
+  }
+
+  function objetMessage() {
+    var p = ficheChoisie();
+    var jeu = modelesDe(p);
+    var m = jeu[etatMod.modele] || jeu.contact;
+    return m.objet(p);
+  }
+
+  function vModeles() {
+    var p = ficheChoisie();
+    var jeu = modelesDe(p);
+    var ouvrables = PROSPECTS.filter(function (x) { return x.email && !estClos(x); });
+
+    var h = '<div class="panel mod-atelier">' +
+      '<div class="panel-head"><div>' +
+        '<div class="panel-title">Un message <em>prêt à partir</em></div>' +
+        '<div class="panel-sub">' + (p._exemple ? 'Agence d\'exemple' : esc(p.nom)) + '</div>' +
+      '</div></div>' +
+
+      '<div class="mod-choix">' +
+        '<div class="field"><label class="field-label">Pour quelle agence</label>' +
+          '<select class="field-select" id="mod-fiche">' +
+            '<option value="">— Agence d\'exemple —</option>' +
+            ouvrables.map(function (x) {
+              return '<option value="' + esc(x.id) + '"' + (String(x.id) === etatMod.fiche ? ' selected' : '') + '>' +
+                esc(x.nom) + (x.ville ? ' · ' + esc(x.ville) : '') + '</option>';
+            }).join('') +
+          '</select>' +
+          (ouvrables.length ? '' : '<div class="mod-vide">Aucune fiche avec une adresse courriel. Ajoutez-en depuis « Rechercher ».</div>') +
+        '</div>' +
+        '<div class="field"><label class="field-label">Quel moment de la séquence</label>' +
+          '<select class="field-select" id="mod-modele">' +
+            Object.keys(jeu).map(function (k) {
+              return '<option value="' + k + '"' + (k === etatMod.modele ? ' selected' : '') + '>' + esc(jeu[k].nom) + '</option>';
+            }).join('') +
+          '</select>' +
+          '<div class="mod-vide">' + esc((jeu[etatMod.modele] || jeu.contact).quand || '') + '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="mod-ecoutes">' +
+        '<div class="field-label" style="margin-bottom:.6rem;">L\'hommage à faire écouter</div>' +
+        '<div class="mod-cartes">' +
+          ECOUTES.map(function (e) {
+            return '<button type="button" class="mod-carte' + (e.id === etatMod.ecoute ? ' active' : '') + '" data-ecoute="' + esc(e.id) + '">' +
+              '<span class="mod-style">' + esc(e.style) + '</span>' +
+              '<span class="mod-titre">' + esc(e.titre) + '</span>' +
+              '<span class="mod-qui">' + esc(e.qui) + '</span>' +
+              '<span class="mod-pour">' + esc(e.pour) + '</span>' +
+            '</button>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+
+      '<div class="mod-objet-ligne">' +
+        '<span class="mod-etiq">Objet</span>' +
+        '<span class="mod-objet" id="mod-objet">' + esc(objetMessage()) + '</span>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-copie="objet">Copier</button>' +
+      '</div>' +
+
+      '<textarea class="field-area mod-corps" id="mod-corps" rows="18">' + esc(corpsMessage()) + '</textarea>' +
+      '<div class="mod-compte" id="mod-compte"></div>' +
+
+      '<div class="mod-actions">' +
+        '<button type="button" class="btn btn-gold" data-copie="tout">Copier le message</button>' +
+        '<a class="btn btn-outline" id="mod-mailto" href="#">Ouvrir ma messagerie</a>' +
+        '<a class="btn btn-ghost" id="mod-gmail" href="#" target="_blank" rel="noopener">Rédiger dans Gmail</a>' +
+        (p._exemple ? '' : '<button type="button" class="btn btn-ghost" data-marquer>Marquer comme contactée</button>') +
+      '</div>' +
+      '<p class="mod-avis">Relisez avant d\'envoyer : le texte est modifiable ici même. ' +
+      'La mention d\'opposition en bas du message est une obligation légale — ne la retirez pas.</p>' +
+    '</div>';
+
+    /* La séquence, en repère */
+    h += '<div class="panel">' +
+      '<div class="panel-title">La <em>séquence</em></div>' +
+      '<div class="panel-sub">Dans quel ordre, à quel rythme</div>' +
+      '<div class="mod-sequence">' +
+        (V.PLAN ? V.PLAN.sequence.map(function (e) {
+          return '<div class="mod-seq-l"><b>' + esc(e.jour) + '</b>' +
+            '<span><b>' + esc(e.action) + '</b><em>' + esc(e.detail) + '</em></span></div>';
+        }).join('') : '') +
+      '</div>' +
+    '</div>';
+
+    h += '<div class="panel">' +
+      '<div class="panel-title">Ce que dit la <em>loi</em></div>' +
+      '<div style="font-size:.9rem;color:var(--bone);line-height:1.8;margin-top:1rem;">' +
+        '<p>La prospection entre professionnels est autorisée en France sans accord préalable, à trois conditions : le message concerne leur activité professionnelle, votre identité est claire, et un moyen de refuser figure dans le message.</p>' +
+        '<p style="margin-top:.8rem;">Chaque message porte la mention d\'opposition. <b style="color:var(--paper);">Une agence qui répond « STOP » doit être marquée en opposition immédiatement</b> — le bouton est sur sa fiche, et la console lui interdit alors tout nouvel envoi.</p>' +
+      '</div>' +
+    '</div>';
+
+    return h;
+  }
+
+  function majMessage() {
+    var c = $('mod-corps'), o = $('mod-objet');
+    if (c) c.value = corpsMessage();
+    if (o) o.textContent = objetMessage();
+    majLiens();
+  }
+
+  /* mailto tronque au-delà d'environ deux mille signes selon les
+     clients : on prévient plutôt que de laisser partir un message
+     coupé en plein milieu. Le bouton « Copier » ne souffre pas de
+     cette limite, c'est pourquoi il est le premier. */
+  function majLiens() {
+    var p = ficheChoisie();
+    var corps = ($('mod-corps') || {}).value || '';
+    var objet = ($('mod-objet') || {}).textContent || '';
+    var dest = p.email || '';
+
+    var ml = $('mod-mailto');
+    if (ml) {
+      ml.href = 'mailto:' + encodeURIComponent(dest) +
+        '?subject=' + encodeURIComponent(objet) + '&body=' + encodeURIComponent(corps);
+    }
+    var gm = $('mod-gmail');
+    if (gm) {
+      gm.href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(dest) +
+        '&su=' + encodeURIComponent(objet) + '&body=' + encodeURIComponent(corps);
+    }
+    var cpt = $('mod-compte');
+    if (cpt) {
+      var n = corps.length;
+      cpt.textContent = n + ' signes' +
+        (n > 1800 ? ' — au-delà de 1 800, « Ouvrir ma messagerie » risque de couper le texte. Préférez « Copier le message ».' : '');
+      cpt.className = 'mod-compte' + (n > 1800 ? ' alerte' : '');
+    }
+  }
+
+  function copierTexte(t, b) {
+    var fini = function (ok) {
+      if (!b) return;
+      var avant = b.textContent;
+      b.textContent = ok ? 'Copié' : 'Échec';
+      b.classList.add(ok ? 'copie' : 'rate');
+      setTimeout(function () { b.textContent = avant; b.classList.remove('copie', 'rate'); }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () { fini(true); }, function () { fini(false); });
+      return;
+    }
+    try {
+      var z = document.createElement('textarea');
+      z.value = t; z.style.position = 'fixed'; z.style.opacity = '0';
+      document.body.appendChild(z); z.select(); document.execCommand('copy');
+      document.body.removeChild(z); fini(true);
+    } catch (e) { fini(false); }
+  }
+
+  function brancherModeles() {
+    var f = $('mod-fiche');
+    if (f) f.addEventListener('change', function () { etatMod.fiche = f.value; go('modeles'); });
+    var m = $('mod-modele');
+    if (m) m.addEventListener('change', function () { etatMod.modele = m.value; go('modeles'); });
+
+    /* Changer d'hommage ne redessine que le message : reconstruire la
+       vue entière ferait perdre les retouches déjà tapées dans le
+       texte, et sauter la page en haut. */
+    document.querySelectorAll('[data-ecoute]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        etatMod.ecoute = b.dataset.ecoute;
+        document.querySelectorAll('[data-ecoute]').forEach(function (x) {
+          x.classList.toggle('active', x === b);
+        });
+        majMessage();
+      });
+    });
+
+    document.querySelectorAll('[data-copie]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var quoi = b.dataset.copie;
+        copierTexte(quoi === 'objet' ? (($('mod-objet') || {}).textContent || '')
+                                     : (($('mod-corps') || {}).value || ''), b);
+      });
+    });
+
+    var corps = $('mod-corps');
+    if (corps) corps.addEventListener('input', majLiens);
+
+    /* Marquer la fiche évite le double envoi : c'est l'erreur qui
+       fâche vraiment un directeur d'agence. */
+    var mq = document.querySelector('[data-marquer]');
+    if (mq) mq.addEventListener('click', async function () {
+      var p = ficheChoisie();
+      if (p._exemple) return;
+      mq.disabled = true;
+      try {
+        var jeu = modelesDe(p);
+        var mod = jeu[etatMod.modele] || jeu.contact;
+        await window.MelodiaProspects.enregistrer(Object.assign({}, p, {
+          statut: mod.etape || p.statut,
+          journal: (p.journal || []).concat([{ le: new Date().toISOString(), quoi: 'Courriel — ' + mod.nom }])
+        }));
+        await charger();
+        mq.textContent = 'Fiche mise à jour';
+      } catch (e) {
+        mq.disabled = false;
+        mq.textContent = 'Refusé : ' + e.message;
+      }
+    });
+
+    majLiens();
+  }
 
   /* ═══════════════════════════════════════════════════════════
      Vue : script d'appel et objections
