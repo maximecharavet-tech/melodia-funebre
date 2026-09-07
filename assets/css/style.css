@@ -3114,31 +3114,90 @@ body.a-ecoute { padding-bottom: 5rem; }
 @keyframes rosace { to { transform: rotate(-360deg); } }
 
 /* ─── Le disque ─── */
+/* Un peu plus grand qu'avant — 212 px au maximum, 248 désormais.
+   Au-delà de 280 il écraserait le récit posé à côté de lui : c'est
+   la limite trouvée en le poussant. */
 .disque-cadre {
   position: relative; z-index: 1; isolation: isolate;
-  width: clamp(148px, 38vw, 212px); aspect-ratio: 1;
+  width: clamp(170px, 40vw, 248px); aspect-ratio: 1;
 }
+
+/* ─── L'OR PATINÉ ───
+   De la feuille d'or posée à la main sur un objet ancien, plutôt
+   qu'un disque d'or de maison de disques : des plages brillantes,
+   des creux ternis, une trace de vert-de-gris dans les sillons. Ce
+   n'est pas une récompense, c'est un objet qui a traversé le temps —
+   ce que la maison compose, précisément.
+
+   La rotation est pilotée en JavaScript sur .disque lui-même : la
+   matière et l'usure vivent donc dans ses deux pseudo-éléments, qui
+   tournent avec lui. L'étiquette et le bord sont ses frères, restent
+   immobiles, et l'initiale demeure lisible. */
 .disque {
   position: absolute; inset: 0; border-radius: 50%;
   background:
-    repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.032) 0 1px, rgba(0,0,0,0) 1px 3.5px),
-    repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.5) 0 2px, rgba(0,0,0,0) 2px 7px),
-    radial-gradient(circle at 33% 28%, #22222e 0%, #0d0d15 46%, #050509 78%);
+    /* Les sillons, au-dessus de tout : deux trames de pas différents.
+       Une seule donnerait un moiré régulier, donc faux. */
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(0,0,0,.30) 0 1px, rgba(255,255,255,.05) 1px 2px, rgba(0,0,0,0) 2px 4.5px),
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(0,0,0,.16) 0 2px, rgba(0,0,0,0) 2px 9px),
+    /* Les plages de feuille : jamais alignées, jamais de la même
+       taille. C'est leur irrégularité qui fait lire « feuille d'or »
+       plutôt que « rayons de soleil ». */
+    /* Les plages claires tiraient vers l'argent une fois posées sur le
+       disque, l'ombre interne les ayant désaturées : elles sont
+       réchauffées pour rester de l'or, jamais du métal froid. */
+    radial-gradient(ellipse 38% 24% at 22% 26%, rgba(255,236,178,.50) 0 40%, transparent 74%),
+    radial-gradient(ellipse 26% 40% at 71% 20%, rgba(255,226,164,.34) 0 38%, transparent 72%),
+    radial-gradient(ellipse 44% 20% at 78% 71%, rgba(96,110,76,.40) 0 42%, transparent 78%),
+    radial-gradient(ellipse 22% 34% at 32% 76%, rgba(70,84,54,.34) 0 40%, transparent 76%),
+    radial-gradient(ellipse 18% 18% at 54% 48%, rgba(255,231,172,.24) 0 44%, transparent 80%),
+    /* Un grain conique très fin et peu contrasté : la vibration du
+       métal battu, sans dessiner de rayons. */
+    repeating-conic-gradient(from 37deg,
+      rgba(0,0,0,.05) 0deg 0.7deg, rgba(255,255,255,.03) 0.7deg 1.5deg,
+      rgba(0,0,0,0) 1.5deg 2.6deg),
+    conic-gradient(from 140deg,
+      #6d5620 0deg, #a98b34 44deg, #d8c283 88deg, #977c2e 140deg,
+      #5f4d1d 190deg, #b59a44 238deg, #e0cd93 286deg, #7c6526 340deg, #6d5620 360deg);
   box-shadow:
-    inset 0 0 46px rgba(0,0,0,.95), inset 0 2px 3px rgba(255,255,255,.06),
-    0 34px 64px -26px rgba(0,0,0,.95),
-    0 0 calc(28px + var(--lueur) * 54px) -14px rgba(201,168,76, calc(.16 + var(--lueur) * .4));
+    inset 0 0 40px rgba(0,0,0,.5), inset 0 2px 3px rgba(255,255,255,.10),
+    0 30px 60px -26px rgba(0,0,0,.95),
+    0 0 calc(30px + var(--lueur) * 56px) -14px rgba(201,168,76, calc(.22 + var(--lueur) * .42));
   transition: box-shadow .4s;
 }
-.disque::after {
-  content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,.075) 22deg, transparent 60deg,
-    transparent 180deg, rgba(201,168,76,.075) 202deg, transparent 240deg);
+
+/* Le vert-de-gris se loge dans les creux, donc dans les sillons : il
+   suit leur trame plutôt que de flotter par-dessus. En multiplication,
+   parce qu'une salissure assombrit, elle n'ajoute pas de lumière. */
+.disque::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  pointer-events: none; mix-blend-mode: multiply;
+  background:
+    radial-gradient(ellipse 30% 18% at 28% 72%, rgba(58,72,46,.46) 0 44%, transparent 80%),
+    radial-gradient(ellipse 16% 26% at 84% 38%, rgba(44,36,18,.40) 0 42%, transparent 78%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(72,86,58,.13) 0 2px, transparent 2px 8px);
 }
+
+/* Le reflet qui balaie : c'est lui qui fait lire « métal » plutôt que
+   « peinture dorée ». En superposition d'écran, comme une lumière. */
+.disque::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  pointer-events: none; mix-blend-mode: screen;
+  background: conic-gradient(from 0deg,
+    transparent 0deg, rgba(255,242,206,.14) 26deg, rgba(255,250,232,.24) 40deg,
+    rgba(255,242,206,.10) 56deg, transparent 92deg,
+    transparent 176deg, rgba(255,238,196,.09) 200deg, rgba(255,247,222,.16) 214deg,
+    rgba(255,238,196,.07) 228deg, transparent 262deg);
+}
+
+/* Le liseré était à peine visible sur du noir ; sur de l'or il doit
+   au contraire contenir la matière, donc se voir. */
 .disque-bord {
   position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
-  border: 1px solid rgba(201,168,76,.22);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.6), inset 0 0 0 7px rgba(255,255,255,.018);
+  border: 1px solid rgba(255,238,196,.34);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.55), inset 0 0 0 6px rgba(255,255,255,.04);
 }
 
 /* L'étiquette ne tourne pas avec le disque : une initiale à l'envers
@@ -3147,10 +3206,13 @@ body.a-ecoute { padding-bottom: 5rem; }
   position: absolute; left: 50%; top: 50%; width: 39%; aspect-ratio: 1;
   transform: translate(-50%, -50%); border-radius: 50%;
   display: grid; place-items: center; z-index: 2; overflow: hidden;
-  background: radial-gradient(circle at 36% 30%, #1c1a12, #0a0a0e 74%);
-  border: 1px solid rgba(201,168,76,.4);
-  box-shadow: 0 0 0 3px rgba(4,4,7,.9), 0 4px 14px rgba(0,0,0,.7),
-    inset 0 0 calc(8px + var(--lueur) * 22px) rgba(201,168,76, calc(.14 + var(--lueur) * .34));
+  background: radial-gradient(circle at 36% 30%, #1d1a10, #090a08 76%);
+  border: 1px solid rgba(216,194,131,.55);
+  /* Le cerne noir était pensé pour un disque noir, où il ne se voyait
+     pas. Sur de l'or, c'est lui qui détache l'étiquette et rend le
+     portrait du défunt lisible. */
+  box-shadow: 0 0 0 4px rgba(6,6,10,.94), 0 6px 18px rgba(0,0,0,.75),
+    inset 0 0 calc(8px + var(--lueur) * 22px) rgba(216,194,131, calc(.16 + var(--lueur) * .34));
 }
 .etiquette b {
   font-family: var(--ff-d); font-weight: 300; font-size: clamp(1.5rem, 4.6vw, 2.1rem); line-height: 1;
