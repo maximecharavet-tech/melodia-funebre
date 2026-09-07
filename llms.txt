@@ -103,6 +103,32 @@ composition est offerte pour être présentée à une famille.
 - [Contact](https://melodia-funebre.fr/contact) : demande de rappel
   et formulaire.
 
+## Guides pratiques
+
+Ces trois pages répondent à des questions générales sur la musique
+funéraire. Elles sont utiles indépendamment du service de la maison,
+et écrites pour l'être : une famille peut y trouver ce qu'elle
+cherche sans rien commander.
+
+- [Quelle musique pour un enterrement](https://melodia-funebre.fr/musique-obseques)
+  : combien de morceaux prévoir (trois suffisent en général : entrée,
+  recueillement, sortie), comment choisir à partir du défunt plutôt
+  que du répertoire, les erreurs fréquentes — le morceau qui
+  appartient au vivant plutôt qu'au mort, les paroles non relues, la
+  fin de morceau qui tombe mal — et les vérifications techniques du
+  jour même.
+- [La musique en crémation](https://melodia-funebre.fr/musique-cremation)
+  : la contrainte de créneau (trente à quarante-cinq minutes en
+  général), et le moment de la disparition du cercueil, qui demande
+  un morceau qui tienne plutôt qu'un morceau qui s'éteint.
+- [Droits d'auteur et obsèques](https://melodia-funebre.fr/musique-sacem-obseques)
+  : en pratique la famille ne déclare rien, les lieux de cérémonie
+  relevant de contrats de diffusion assumés par l'établissement ou
+  l'opérateur funéraire. Les deux cas qui concernent réellement la
+  famille sont la copie ou la mise en ligne de l'enregistrement, et
+  l'interprétation en direct. Une œuvre composée pour le défunt
+  n'appartient à aucun répertoire et ne pose aucune de ces questions.
+
 ## Identité
 
 - Nom : Melodia Funèbre

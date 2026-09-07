@@ -285,6 +285,39 @@ ${P.faq(null, true)}
     </div>
   </section>
 
+  <!-- ═══ LES GUIDES ═══
+       Ils ne vendent rien : ils répondent à ce qu'une famille cherche
+       avant même de savoir que cette maison existe. Les placer ici, et
+       non dans un coin, leur donne le lien le plus fort du site — et
+       donne à la famille pressée quelque chose d'utile tout de suite,
+       même si elle ne commande rien. -->
+  <section class="section-sm" id="conseils">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Nos guides</div>
+        <h2 class="h-xl">Ce qu'il faut savoir,<br><em>même sans nous.</em></h2>
+        <p class="lead" style="margin:1.2rem auto 0;max-width:56ch;">Trois questions reviennent dans presque tous nos appels. Nous y avons répondu en entier, pour les familles qui ne feront jamais appel à nous comme pour les autres.</p>
+      </div>
+      <div class="grid-3">
+        <a href="/musique-obseques" class="card card-lift reveal">
+          <div class="card-icon">${ICON.note}</div>
+          <h3 class="h-lg">Quelle musique pour un enterrement</h3>
+          <p>Combien de morceaux, à quel moment, comment choisir sans se tromper — et les vérifications qui évitent l'accident du jour même.</p>
+        </a>
+        <a href="/musique-cremation" class="card card-lift reveal">
+          <div class="card-icon">${ICON.clock}</div>
+          <h3 class="h-lg">La musique en crémation</h3>
+          <p>Le créneau qui commande tout, et cet instant qui n'existe nulle part ailleurs : la disparition du cercueil.</p>
+        </a>
+        <a href="/musique-sacem-obseques" class="card card-lift reveal">
+          <div class="card-icon">${ICON.shield}</div>
+          <h3 class="h-lg">Droits d'auteur et obsèques</h3>
+          <p>A-t-on le droit de passer cette chanson ? Qui déclare quoi, à l'église, au crématorium — et les deux cas où cela vous concerne vraiment.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
   
   <div class="orn-portee-hote" data-orn-portee="final"></div>
   <!-- ═══ APPEL FINAL ═══ -->

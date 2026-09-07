@@ -67,11 +67,13 @@ for (const m of pages) {
   total += html.length;
   console.log('  ' + p.file.padEnd(22) + html.length + ' octets');
 }
-for (const p of require('./p-legal.js')) {
-  const html = page(p);
-  fs.writeFileSync(path.join(RACINE, p.file), html);
-  total += html.length;
-  console.log('  ' + p.file.padEnd(22) + html.length + ' octets');
+for (const module of ['./p-legal.js', './p-guides.js']) {
+  for (const p of require(module)) {
+    const html = page(p);
+    fs.writeFileSync(path.join(RACINE, p.file), html);
+    total += html.length;
+    console.log('  ' + p.file.padEnd(22) + html.length + ' octets');
+  }
 }
 console.log('  ' + String(total).padStart(28) + ' octets au total');
 
@@ -126,6 +128,9 @@ const PLAN = [
   ['processus.html', '0.9', 'monthly'],
   ['rites.html', '0.9', 'monthly'],
   ['agences.html', '0.9', 'monthly'],
+  ['musique-obseques.html', '0.9', 'monthly'],
+  ['musique-sacem-obseques.html', '0.8', 'monthly'],
+  ['musique-cremation.html', '0.8', 'monthly'],
   ['rejoindre.html', '0.8', 'monthly'],
   ['contact.html', '0.7', 'yearly'],
   ['cgv.html', '0.4', 'yearly'],
