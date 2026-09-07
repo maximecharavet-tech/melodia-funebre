@@ -87,7 +87,10 @@
     var pas = largeurUtile / 30;
     var barre = pas * 0.62;
     var hautUtile = H - bas;
-    var ech = max ? hautUtile / max : 0;
+    /* Même réserve que sur la console partenaire : le vide entre
+       segments doit être pris sur l'échelle, sinon la colonne la
+       plus haute dépasse par le haut. */
+    var ech = max ? (hautUtile - 0.4) / max : 0;
 
     var colonnes = jours.map(function (j, k) {
       var v = par[j];

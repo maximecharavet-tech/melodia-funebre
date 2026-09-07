@@ -681,7 +681,11 @@
     etat.hote.innerHTML =
       '<div class="panel"><div class="panel-head"><div>' +
         '<div class="panel-title">La <em>messagerie</em></div>' +
-        '<div class="panel-sub">Entre la maison et ses collaborateurs' +
+        /* Le sous-titre parlait de « collaborateurs » y compris dans la
+           console d'une agence partenaire, qui n'en est pas un : elle
+           écrit à la maison, pas à une équipe dont elle ferait partie. */
+        '<div class="panel-sub">' +
+          (O.moi().role === 'partner' ? 'Entre votre agence et la maison' : 'Entre la maison et ses collaborateurs') +
           (nonLus ? ' · <span style="color:var(--or);">' + nonLus + ' non lu(s)</span>' : '') + '</div>' +
       '</div><button class="btn btn-outline btn-sm" id="ms-rafraichir">Rafraîchir</button></div>' +
       '<div class="grid-2" style="gap:1.4rem;align-items:start;margin-top:1.2rem;">' +

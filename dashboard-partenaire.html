@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css?v=cbf2dcec">
-<link rel="stylesheet" href="assets/css/dashboard.css?v=b50756a9">
+<link rel="stylesheet" href="assets/css/dashboard.css?v=0b943c0d">
 </head>
 <body>
 <div class="dash">
@@ -25,6 +25,8 @@
     <button class="side-item" data-v="nouvelle"><span class="ico">✚</span>Nouvelle commande</button>
     <div class="side-label">Ressources</div>
     <button class="side-item" data-v="ressources"><span class="ico">◇</span>Kit de vente</button>
+    <button class="side-item" data-v="catalogue"><span class="ico">♫</span>Faire écouter</button>
+    <button class="side-item" data-v="messagerie"><span class="ico">✉</span>Écrire à la maison<span class="side-badge" id="badge-msg" style="display:none;">0</span></button>
     <button class="side-item" data-v="compte"><span class="ico">◎</span>Mon compte</button>
     <div class="side-foot">
       <div class="side-user">
@@ -59,6 +61,8 @@
 <script src="assets/js/main.js?v=5ed21030"></script>
 <script src="assets/js/content.js?v=c3932222"></script>
 <script src="assets/js/catalogue.js?v=2dcf70b7"></script>
+<script src="assets/js/intranet.js?v=feeff7a4"></script>
+<script src="assets/js/partenaire-graphes.js?v=2c123e13"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
@@ -71,7 +75,17 @@ var U = window.MelodiaAuth.guard();
 window.MelodiaAuth.orienter('partner').then(function (u) { if (u) U = u; });
 
 function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
-function eur(n){return (n||0).toLocaleString('fr-FR')+' €';}
+function eur(n){return (Math.round(n)||0).toLocaleString('fr-FR')+' €';}
+/* Le taux de reversement se règle dans la console du fondateur. Il
+   valait 60 % en dur à cinq endroits de ce fichier : une agence
+   négociée à 55 % lisait des montants faux sur son propre écran. */
+function tauxAgence(){
+  return window.MelodiaPartenaireGraphes ? window.MelodiaPartenaireGraphes.taux() : 60;
+}
+function marge(prix){
+  return window.MelodiaPartenaireGraphes ? window.MelodiaPartenaireGraphes.margeDe(prix)
+                                         : Math.round((prix||0)*0.6);
+}
 function logout(){window.MelodiaAuth.logout();location.href='compte.html';}
 
 var ORDERS = [];
@@ -85,7 +99,15 @@ async function boot() {
   await window.MelodiaDB.seedIfEmpty();
   ORDERS = await window.MelodiaDB.mine();
   document.getElementById('badge-cmd').textContent = ORDERS.length;
+  /* Les réglages portent le taux de marge : ils doivent arriver avant
+     le premier dessin, sinon l'agence voit 60 % puis son vrai taux. */
+  if (window.MelodiaIntranet && window.MelodiaIntranet.reglages) {
+    try { await window.MelodiaIntranet.reglages.charger(); } catch (e) {}
+  }
   go('accueil');
+  if (window.MelodiaIntranet && window.MelodiaIntranet.majBadgeMessages) {
+    window.MelodiaIntranet.majBadgeMessages();
+  }
 }
 
 document.querySelectorAll('.side-item').forEach(function(b){
@@ -99,11 +121,27 @@ function go(v) {
     commandes: ['Suivi', 'Mes <em>commandes</em>'],
     nouvelle: ['Nouvelle demande', 'Composer un <em>hommage</em>'],
     ressources: ['Ressources', 'Kit de <em>vente</em>'],
+    catalogue: ['Le fonds', 'Faire <em>écouter</em>'],
+    messagerie: ['La maison', 'Écrire à la <em>maison</em>'],
     compte: ['Paramètres', 'Mon <em>compte</em>']
   }[v];
   document.getElementById('head-eyebrow').textContent = H[0];
   document.getElementById('head-title').innerHTML = H[1];
+  /* Le catalogue et la messagerie sont les modules de l'intranet,
+     partagés avec les consoles de la maison : ils se montent
+     eux-mêmes dans un hôte vide, et savent dire poliment quand la
+     base ne répond pas. */
+  var INTRA = { catalogue: 'catalogue', messagerie: 'messagerie' };
+  if (INTRA[v]) {
+    document.getElementById('view').innerHTML = '<div id="intra-root"></div>';
+    if (window.MelodiaIntranet) window.MelodiaIntranet.vues[INTRA[v]](document.getElementById('intra-root'));
+    else document.getElementById('intra-root').innerHTML =
+      '<div class="form-msg err" style="display:block;">Le module ne s\'est pas chargé. Rechargez la page.</div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
   document.getElementById('view').innerHTML = ({ accueil: vAccueil, commandes: vCommandes, nouvelle: vNouvelle, ressources: vRessources, compte: vCompte })[v]();
+  if (v === 'accueil' && window.MelodiaPartenaireGraphes) window.MelodiaPartenaireGraphes.brancher();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -119,7 +157,7 @@ function orderCard(o) {
   var m = ST[o.status] || { label: o.status, color: '#888' };
   return '<div class="o-row"><div class="o-head">' +
     '<div><div class="o-name">Hommage à ' + esc(o.defunt) + (o.urgence ? ' ⚡' : '') + '</div>' +
-    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' · ' + eur(o.price) + ' · marge ' + eur(Math.round(o.price * 0.6)) + '</div></div>' +
+    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' · ' + eur(o.price) + ' · marge ' + eur(marge(o.price)) + '</div></div>' +
     '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span></div>' +
     timeline(o.status) +
     '<div class="o-brief">Style : ' + esc(o.style || '—') + ' · ' + esc(o.traits || '—') + (o.metier ? ' · ' + esc(o.metier) : '') + '</div>' +
@@ -132,14 +170,19 @@ function orderCard(o) {
 function vAccueil() {
   var livrees = ORDERS.filter(function(o){return o.status==='livree';}).length;
   var ca = ORDERS.reduce(function(s,o){return s+(o.price||0);},0);
-  var marge = Math.round(ca * 0.6);
+  var margeTotale = ORDERS.reduce(function(s,o){return s+marge(o.price);},0);
   var encours = ORDERS.filter(function(o){return o.status!=='livree';});
+  var graphes = window.MelodiaPartenaireGraphes
+    ? '<div class="gr-duo">' + window.MelodiaPartenaireGraphes.revenus(ORDERS) +
+      window.MelodiaPartenaireGraphes.avancement(ORDERS, FLOW, ST) + '</div>'
+    : '';
   return '<div class="kpi-grid">' +
     '<div class="kpi"><div class="kpi-label">Commandes</div><div class="kpi-value">' + ORDERS.length + '</div><div class="kpi-foot">Depuis l\'ouverture</div></div>' +
     '<div class="kpi"><div class="kpi-label">Hommages livrés</div><div class="kpi-value">' + livrees + '</div><div class="kpi-foot">Familles accompagnées</div></div>' +
-    '<div class="kpi"><div class="kpi-label">Votre marge</div><div class="kpi-value">' + marge + '<span class="u"> €</span></div><div class="kpi-foot">60 % du volume</div></div>' +
+    '<div class="kpi"><div class="kpi-label">Votre marge</div><div class="kpi-value">' + margeTotale + '<span class="u"> €</span></div><div class="kpi-foot">' + tauxAgence() + ' % du volume</div></div>' +
     '<div class="kpi"><div class="kpi-label">En cours</div><div class="kpi-value">' + encours.length + '</div><div class="kpi-foot">Compositions actives</div></div>' +
     '</div>' +
+    graphes +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Compositions <em>en cours</em></div><div class="panel-sub">Suivi en temps réel</div></div>' +
     '<button class="btn btn-outline btn-sm" onclick="go(\'commandes\')">Tout voir</button></div>' +
     (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune composition en cours. <a href="#" onclick="go(\'nouvelle\');return false;" style="color:var(--or);">Lancer une commande →</a></p>') +
@@ -147,7 +190,7 @@ function vAccueil() {
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Votre <em>argumentaire</em></div><div class="panel-sub">À présenter aux familles</div></div></div>' +
     '<p style="color:var(--bone); font-family:var(--ff-d); font-size:1.15rem; line-height:1.7; font-style:italic;">« Nous pouvons créer un hommage musical unique pour [Prénom] — une œuvre originale composée à partir de sa vie, de ses gestes, de ce qui faisait sa personne. Souhaitez-vous l\'écouter ? »</p>' +
     '<div class="grid-3" style="margin-top:1.8rem; gap:1rem;">' +
-    '<div><div class="kpi-label">Marge agence</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">60 %</div></div>' +
+    '<div><div class="kpi-label">Marge agence</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">' + tauxAgence() + ' %</div></div>' +
     '<div><div class="kpi-label">Droits SACEM</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">0 €</div></div>' +
     '<div><div class="kpi-label">Délai</div><div style="font-family:var(--ff-d); font-size:1.6rem; color:var(--or);">24 h</div></div>' +
     '</div></div>';
@@ -235,7 +278,7 @@ function vCompte() {
     '<tr><td style="color:var(--ash);">Responsable</td><td>' + esc(U.name) + '</td></tr>' +
     '<tr><td style="color:var(--ash);">Identifiant</td><td>' + esc(U.email) + '</td></tr>' +
     '<tr><td style="color:var(--ash);">Statut</td><td style="color:var(--green);">Partenaire actif</td></tr>' +
-    '<tr><td style="color:var(--ash);">Marge contractuelle</td><td style="color:var(--or);">60 %</td></tr>' +
+    '<tr><td style="color:var(--ash);">Marge contractuelle</td><td style="color:var(--or);">' + tauxAgence() + ' %</td></tr>' +
     '</tbody></table>' +
     '<p style="color:var(--ash); font-size:0.88rem; margin-top:1.6rem;">Pour modifier vos informations ou votre mot de passe, écrivez à <a href="mailto:contact@melodia-funebre.fr" style="color:var(--or);">contact@melodia-funebre.fr</a> ou demandez à être rappelé depuis la page Contact.</p>' +
     '<button class="btn btn-outline" style="margin-top:1.6rem;" onclick="logout()">Se déconnecter</button></div>';

@@ -1074,3 +1074,81 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .ent-pied { font-size: 0.86rem; }
   .gr-vide { font-size: 0.95rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CONSOLE PARTENAIRE — le mois en cours, et l'avancement
+
+   Une agence regarde d'abord un chiffre : ce que le mois lui a
+   rapporté. L'écart avec le mois précédent est ce qui le rend
+   lisible — un montant seul ne dit ni bien ni mal.
+   ═══════════════════════════════════════════════════════════════ */
+.pa-mois {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 1.2rem; flex-wrap: wrap; margin-top: 1.3rem;
+  padding-bottom: 1rem; border-bottom: 1px solid var(--line-soft);
+}
+.pa-mois > div { min-width: 0; }
+.pa-mois b {
+  display: block; font-family: var(--ff-d); font-size: 2.1rem;
+  font-weight: 300; color: var(--or); line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pa-mois span {
+  display: block; font-family: var(--ff-m); font-size: 0.54rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash);
+  margin-top: 0.35rem;
+}
+.pa-ecart {
+  text-align: right; font-family: var(--ff-m); font-size: 0.9rem;
+  color: var(--ash); font-variant-numeric: tabular-nums;
+}
+.pa-ecart.haut { color: var(--green); }
+.pa-ecart.bas { color: var(--amber); }
+.pa-ecart span { text-align: right; }
+
+/* Étiquettes de mois sous les colonnes : centrées sur leur barre, et
+   non étirées par le viewBox — d'où l'ancrage au milieu. */
+.gr-mois { text-anchor: middle; }
+
+.gr-note {
+  font-size: 0.82rem; color: var(--ash); line-height: 1.65;
+  margin-top: 1rem; max-width: 62ch;
+}
+
+/* ─── L'avancement des hommages ─── */
+.pa-etapes { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1.3rem; }
+.pa-etape {
+  min-width: 0;
+  animation: pa-venir 0.45s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+@keyframes pa-venir {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+.pa-e-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.pa-e-nom { font-size: 0.9rem; color: var(--paper); min-width: 0; overflow-wrap: anywhere; }
+.pa-e-n {
+  font-family: var(--ff-d); font-size: 1.25rem; color: var(--paper);
+  line-height: 1; flex: none; font-variant-numeric: tabular-nums;
+}
+.pa-e-piste {
+  height: 6px; margin-top: 0.4rem;
+  background: var(--ink-2); border-radius: 4px; overflow: hidden;
+}
+.pa-e-piste > span {
+  display: block; height: 100%; border-radius: 4px; transform-origin: left center;
+  animation: pa-pousse 0.6s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms + 110ms);
+}
+@keyframes pa-pousse { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pa-etape, .pa-e-piste > span { animation: none; }
+}
+@media (max-width: 720px) {
+  .pa-mois b { font-size: 1.75rem; }
+  .pa-mois span { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .pa-ecart { font-size: 0.95rem; }
+  .gr-note { font-size: 0.9rem; }
+}
