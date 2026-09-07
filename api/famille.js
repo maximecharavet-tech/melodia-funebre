@@ -200,7 +200,10 @@ export default async function handler(req, res) {
   const maison = boiteMaison();
   if (maison.length) {
     charge.reply_to = maison[0];
-    if (m.copieMaison) charge.bcc = maison;
+    /* `copie: false` vient du réglage « M'envoyer une copie des
+       livraisons » : il ne peut que retirer la copie invisible, jamais
+       en ajouter une là où le modèle n'en prévoit pas. */
+    if (m.copieMaison && d.copie !== false) charge.bcc = maison;
   }
 
   const r = await envoyer(charge);
