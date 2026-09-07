@@ -3811,3 +3811,131 @@ body.a-ecoute { padding-bottom: 5rem; }
   .partage-b { flex: 1 1 calc(50% - 0.25rem); }
   .partage-mot p { font-size: 0.95rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LISIBILITÉ ET GESTE SUR PETIT ÉCRAN — deuxième passe
+
+   Mesuré sur huit profils, du Huawei P30 à 360 px à l'iPad Pro.
+   Aucun débordement, mais des tailles héritées du dessin sur grand
+   écran qui deviennent illisibles une fois posées sur un téléphone —
+   et deux d'entre elles sont sur le chemin de l'achat.
+
+   Le repère : rien sous 11,5 px pour du texte, rien sous 44 px pour
+   ce qu'on vise au doigt. Nos familles ont souvent soixante ou
+   soixante-dix ans, et lisent la page dans une voiture, en deuil.
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+
+  /* Les étapes du tunnel de commande étaient à 7,4 px : on ne pouvait
+     pas lire à quelle étape on se trouvait. C'est le seul repère de
+     progression du parcours d'achat. */
+  .wz-label { font-size: 0.72rem; letter-spacing: 0.06em; }
+
+  /* Le titre du bloc des suppléments payants, et les registres du
+     défilé d'hommages, à 7,2 px. */
+  .opts-titre { font-size: 0.76rem; letter-spacing: 0.1em; }
+  .past-style { font-size: 0.7rem; letter-spacing: 0.05em; }
+  .past-nom { font-size: 0.86rem; }
+  .pup-style { font-size: 0.76rem; letter-spacing: 0.06em; }
+  .signature-role { font-size: 0.7rem; letter-spacing: 0.1em; }
+
+  /* La case d'une option à 80 € mesurait 17 px de côté. L'étiquette
+     entière est cliquable — c'est un <label> — mais une case qu'on
+     distingue à peine n'invite pas à la cocher, et ne dit pas
+     clairement qu'elle l'est. */
+  .opt input { width: 22px; height: 22px; margin-top: 0.1rem; }
+  .opt { padding: 1.05rem 1rem; min-height: 44px; }
+
+  /* Les flèches du défilé : 34 px, sous le seuil du pouce. */
+  .frise-fleche { width: 44px; height: 44px; }
+  .frise-fleche svg { width: 18px; height: 18px; }
+
+  /* « Les mots de la famille », en tête de ce que la famille a
+     raconté du défunt : c'est la phrase qui explique tout le
+     service, et elle était à 8,8 px. */
+  .pup-brief > span, .mono { font-size: 0.72rem; letter-spacing: 0.12em; }
+
+  /* L'étiquette d'une option est un <label> : la viser n'importe où
+     la coche. Mesurée entre 161 et 261 px de haut sur téléphone, elle
+     dépasse largement la hauteur du pouce — la vraie cible n'a donc
+     jamais été la case, seulement sa lisibilité. La case reste en
+     haut, à côté du titre : la centrer dans une carte de 261 px la
+     ferait flotter au milieu du vide, loin de ce qu'elle désigne. */
+  .opt { align-items: flex-start; }
+}
+
+/* Les tablettes tombaient entre deux règles : trop larges pour les
+   ajustements téléphone, trop étroites pour la mise en page de
+   bureau. Le cas se voit surtout sur iPad mini en portrait. */
+@media (min-width: 721px) and (max-width: 1024px) {
+  .wrap, .wrap-tight { padding-left: 2rem; padding-right: 2rem; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOUT CE QUI SE TOUCHE, QUELLE QUE SOIT LA LARGEUR
+
+   L'audit a montré le trou : un iPad mini en portrait fait 768 px de
+   large, un iPad Pro en paysage 1024. Les deux passaient donc sous
+   les règles de bureau — texte à dix pixels, boutons de 28 — alors
+   qu'on y navigue au doigt exactement comme sur un téléphone. Vingt
+   et une cibles trop petites sur l'accueil, contre zéro sur mobile.
+
+   La largeur était le mauvais critère. « pointer: coarse » dit ce
+   qui compte vraiment : cet écran se touche. Il attrape les iPad,
+   les tablettes Android et Huawei, les portables tactiles, et les
+   téléphones en paysage — que la largeur laissait aussi passer.
+   ═══════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+
+  /* Le plancher du doigt. 44 px est la mesure d'Apple, 48 celle de
+     Google : on prend la plus basse, qui suffit et ne déforme pas
+     la page. */
+  a.btn, button, .side-item, .esp-onglet, .own-tab,
+  .partage-b, .lien-bascule, .faq-q, .frise-fleche, .report {
+    min-height: 44px;
+  }
+  input[type="checkbox"], input[type="radio"] { width: 22px; height: 22px; }
+  .field-input, .field-select, .field-area { min-height: 44px; }
+
+  /* Le plancher de lecture. Les étiquettes en mono capitalisé
+     descendaient à dix pixels : lisibles sur un écran à trente
+     centimètres, plus du tout sur une tablette tenue à bout de bras. */
+  .eyebrow, .mono, .panel-sub, .kpi-label, .kpi-foot,
+  .o-meta, .side-label, .side-urole, .past-style, .pup-style,
+  .wz-label, .opts-titre, .signature-role, .footer-baseline {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+  .pill, .side-badge { font-size: 0.72rem; letter-spacing: 0.08em; }
+
+  /* Mesuré sur iPad mini : ces étiquettes-là descendaient entre 7,4 et
+     9,6 px, et la plupart sont sur la page qui vend — le nom des trois
+     offres à 9,3 px, les garanties à 8,8, la mention de TVA à 7,7. */
+  .nav-sub, .price-note, .price-tag, .scroll-hint, .badge,
+  .trust-item span, .intro-name, .pup-t, .opt-prix, .legal-date {
+    font-size: 0.72rem; letter-spacing: 0.09em;
+  }
+  .price-name { font-size: 0.86rem; letter-spacing: 0.14em; }
+  .wz-dot { font-size: 0.8rem; }
+
+  /* Les liens du pied de page faisaient 16 px de haut : dix-huit
+     cibles impossibles à viser au doigt sur une tablette, alors que
+     c'est par là qu'on rejoint les guides et l'espace agences. */
+  .footer-links a, .footer-links button, .footer-legal a {
+    display: inline-flex; align-items: center; min-height: 44px;
+  }
+
+  /* Le survol n'existe pas au doigt : un effet qui ne se déclenche
+     qu'au survol reste invisible, et pire, il peut rester « collé »
+     après un tapotement sur certains navigateurs mobiles. */
+  .card-lift:hover { transform: none; }
+}
+
+/* Les tablettes en portrait : deux colonnes plutôt que quatre, sans
+   quoi chaque carte devient une colonne de mots. */
+@media (pointer: coarse) and (max-width: 1080px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
