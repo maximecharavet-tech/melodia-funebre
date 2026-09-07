@@ -267,6 +267,7 @@ ul { list-style: none; }
 .nav-mobile {
   position: fixed; top: 0; left: 0; right: 0; z-index: 99;
   background: rgba(4, 4, 7, 0.98); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   padding: 5.5rem var(--pad) 2rem; display: flex; flex-direction: column; gap: 0.3rem;
   transform: translateY(-100%); transition: transform var(--t-mid) var(--ease);
   border-bottom: 1px solid var(--line);
@@ -803,6 +804,7 @@ ul { list-style: none; }
 .sticky-cta {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 95; display: none;
   background: rgba(4, 4, 7, 0.96); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--line); padding: 0.7rem var(--pad);
   padding-bottom: calc(0.7rem + env(safe-area-inset-bottom));
   gap: 0.6rem; transform: translateY(110%); transition: transform var(--t-mid) var(--ease);
@@ -817,6 +819,7 @@ ul { list-style: none; }
   position: fixed; inset: 0; z-index: 200; display: none;
   align-items: center; justify-content: center; padding: var(--pad);
   background: rgba(4, 4, 7, 0.88); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .modal.open { display: flex; animation: fadeIn var(--t-fast) ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -858,7 +861,9 @@ ul { list-style: none; }
    PIED DE PAGE
    ═══════════════════════════════════════════════════════════════ */
 .footer { border-top: 1px solid var(--line-soft); padding: clamp(3rem, 6vw, 4.5rem) 0 2rem; background: var(--ink-2); position: relative; z-index: 2; }
-.footer-grid { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 2.6rem; margin-bottom: 3rem; }
+/* Cinq colonnes depuis l'ajout des guides. La première reste la plus
+   large : elle porte le logo et la phrase de la maison. */
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr; gap: 2.2rem; margin-bottom: 3rem; }
 .footer-logo { height: 52px; width: 52px; object-fit: cover; border-radius: 50%; border: 1px solid var(--line); margin-bottom: 1.1rem; }
 .footer-tag { color: var(--ash); font-size: 0.86rem; line-height: 1.65; max-width: 30ch; }
 .footer-baseline {
@@ -905,6 +910,15 @@ ul { list-style: none; }
 }
 .opt:hover { border-color: var(--line-strong); }
 .opt input { margin-top: 0.2rem; flex: none; accent-color: var(--or); width: 17px; height: 17px; }
+/* La mise en évidence d'une option retenue passait par « :has() »,
+   que ne connaissent ni Safari d'avant 2022 ni les navigateurs
+   Chromium anciens encore répandus sur les téléphones Huawei et les
+   Android d'entrée de gamme. Une famille y cochait un supplément à
+   80 € sans qu'aucun retour visuel ne le confirme.
+   La classe est posée par le script à chaque changement, donc partout ;
+   « :has() » reste en second pour les navigateurs qui l'ont, au cas où
+   le script n'aurait pas encore tourné. */
+.opt.opt-choisie,
 .opt:has(input:checked) { border-color: var(--line-strong); background: var(--or-soft); }
 .opt-corps { display: block; min-width: 0; }
 .opt-tete { display: flex; align-items: baseline; gap: 0.7rem; justify-content: space-between; }
@@ -953,6 +967,7 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: space-between;
   gap: 1rem; padding: 0.9rem clamp(1rem, 4vw, 2.4rem);
   background: rgba(4, 4, 7, 0.92); backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line-soft);
 }
 .esp-marque { display: flex; align-items: center; gap: 0.6rem; }
@@ -1093,6 +1108,7 @@ ul { list-style: none; }
 .esp-voile {
   position: fixed; inset: 0; z-index: 90; display: grid; place-items: center;
   padding: 1rem; background: rgba(2, 2, 4, 0.82); backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   animation: espParaitre 0.22s ease;
 }
 .esp-fenetre {
@@ -3098,31 +3114,90 @@ body.a-ecoute { padding-bottom: 5rem; }
 @keyframes rosace { to { transform: rotate(-360deg); } }
 
 /* ─── Le disque ─── */
+/* Un peu plus grand qu'avant — 212 px au maximum, 248 désormais.
+   Au-delà de 280 il écraserait le récit posé à côté de lui : c'est
+   la limite trouvée en le poussant. */
 .disque-cadre {
   position: relative; z-index: 1; isolation: isolate;
-  width: clamp(148px, 38vw, 212px); aspect-ratio: 1;
+  width: clamp(170px, 40vw, 248px); aspect-ratio: 1;
 }
+
+/* ─── L'OR PATINÉ ───
+   De la feuille d'or posée à la main sur un objet ancien, plutôt
+   qu'un disque d'or de maison de disques : des plages brillantes,
+   des creux ternis, une trace de vert-de-gris dans les sillons. Ce
+   n'est pas une récompense, c'est un objet qui a traversé le temps —
+   ce que la maison compose, précisément.
+
+   La rotation est pilotée en JavaScript sur .disque lui-même : la
+   matière et l'usure vivent donc dans ses deux pseudo-éléments, qui
+   tournent avec lui. L'étiquette et le bord sont ses frères, restent
+   immobiles, et l'initiale demeure lisible. */
 .disque {
   position: absolute; inset: 0; border-radius: 50%;
   background:
-    repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.032) 0 1px, rgba(0,0,0,0) 1px 3.5px),
-    repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.5) 0 2px, rgba(0,0,0,0) 2px 7px),
-    radial-gradient(circle at 33% 28%, #22222e 0%, #0d0d15 46%, #050509 78%);
+    /* Les sillons, au-dessus de tout : deux trames de pas différents.
+       Une seule donnerait un moiré régulier, donc faux. */
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(0,0,0,.30) 0 1px, rgba(255,255,255,.05) 1px 2px, rgba(0,0,0,0) 2px 4.5px),
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(0,0,0,.16) 0 2px, rgba(0,0,0,0) 2px 9px),
+    /* Les plages de feuille : jamais alignées, jamais de la même
+       taille. C'est leur irrégularité qui fait lire « feuille d'or »
+       plutôt que « rayons de soleil ». */
+    /* Les plages claires tiraient vers l'argent une fois posées sur le
+       disque, l'ombre interne les ayant désaturées : elles sont
+       réchauffées pour rester de l'or, jamais du métal froid. */
+    radial-gradient(ellipse 38% 24% at 22% 26%, rgba(255,236,178,.50) 0 40%, transparent 74%),
+    radial-gradient(ellipse 26% 40% at 71% 20%, rgba(255,226,164,.34) 0 38%, transparent 72%),
+    radial-gradient(ellipse 44% 20% at 78% 71%, rgba(96,110,76,.40) 0 42%, transparent 78%),
+    radial-gradient(ellipse 22% 34% at 32% 76%, rgba(70,84,54,.34) 0 40%, transparent 76%),
+    radial-gradient(ellipse 18% 18% at 54% 48%, rgba(255,231,172,.24) 0 44%, transparent 80%),
+    /* Un grain conique très fin et peu contrasté : la vibration du
+       métal battu, sans dessiner de rayons. */
+    repeating-conic-gradient(from 37deg,
+      rgba(0,0,0,.05) 0deg 0.7deg, rgba(255,255,255,.03) 0.7deg 1.5deg,
+      rgba(0,0,0,0) 1.5deg 2.6deg),
+    conic-gradient(from 140deg,
+      #6d5620 0deg, #a98b34 44deg, #d8c283 88deg, #977c2e 140deg,
+      #5f4d1d 190deg, #b59a44 238deg, #e0cd93 286deg, #7c6526 340deg, #6d5620 360deg);
   box-shadow:
-    inset 0 0 46px rgba(0,0,0,.95), inset 0 2px 3px rgba(255,255,255,.06),
-    0 34px 64px -26px rgba(0,0,0,.95),
-    0 0 calc(28px + var(--lueur) * 54px) -14px rgba(201,168,76, calc(.16 + var(--lueur) * .4));
+    inset 0 0 40px rgba(0,0,0,.5), inset 0 2px 3px rgba(255,255,255,.10),
+    0 30px 60px -26px rgba(0,0,0,.95),
+    0 0 calc(30px + var(--lueur) * 56px) -14px rgba(201,168,76, calc(.22 + var(--lueur) * .42));
   transition: box-shadow .4s;
 }
-.disque::after {
-  content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,.075) 22deg, transparent 60deg,
-    transparent 180deg, rgba(201,168,76,.075) 202deg, transparent 240deg);
+
+/* Le vert-de-gris se loge dans les creux, donc dans les sillons : il
+   suit leur trame plutôt que de flotter par-dessus. En multiplication,
+   parce qu'une salissure assombrit, elle n'ajoute pas de lumière. */
+.disque::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  pointer-events: none; mix-blend-mode: multiply;
+  background:
+    radial-gradient(ellipse 30% 18% at 28% 72%, rgba(58,72,46,.46) 0 44%, transparent 80%),
+    radial-gradient(ellipse 16% 26% at 84% 38%, rgba(44,36,18,.40) 0 42%, transparent 78%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(72,86,58,.13) 0 2px, transparent 2px 8px);
 }
+
+/* Le reflet qui balaie : c'est lui qui fait lire « métal » plutôt que
+   « peinture dorée ». En superposition d'écran, comme une lumière. */
+.disque::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  pointer-events: none; mix-blend-mode: screen;
+  background: conic-gradient(from 0deg,
+    transparent 0deg, rgba(255,242,206,.14) 26deg, rgba(255,250,232,.24) 40deg,
+    rgba(255,242,206,.10) 56deg, transparent 92deg,
+    transparent 176deg, rgba(255,238,196,.09) 200deg, rgba(255,247,222,.16) 214deg,
+    rgba(255,238,196,.07) 228deg, transparent 262deg);
+}
+
+/* Le liseré était à peine visible sur du noir ; sur de l'or il doit
+   au contraire contenir la matière, donc se voir. */
 .disque-bord {
   position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
-  border: 1px solid rgba(201,168,76,.22);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.6), inset 0 0 0 7px rgba(255,255,255,.018);
+  border: 1px solid rgba(255,238,196,.34);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.55), inset 0 0 0 6px rgba(255,255,255,.04);
 }
 
 /* L'étiquette ne tourne pas avec le disque : une initiale à l'envers
@@ -3131,10 +3206,13 @@ body.a-ecoute { padding-bottom: 5rem; }
   position: absolute; left: 50%; top: 50%; width: 39%; aspect-ratio: 1;
   transform: translate(-50%, -50%); border-radius: 50%;
   display: grid; place-items: center; z-index: 2; overflow: hidden;
-  background: radial-gradient(circle at 36% 30%, #1c1a12, #0a0a0e 74%);
-  border: 1px solid rgba(201,168,76,.4);
-  box-shadow: 0 0 0 3px rgba(4,4,7,.9), 0 4px 14px rgba(0,0,0,.7),
-    inset 0 0 calc(8px + var(--lueur) * 22px) rgba(201,168,76, calc(.14 + var(--lueur) * .34));
+  background: radial-gradient(circle at 36% 30%, #1d1a10, #090a08 76%);
+  border: 1px solid rgba(216,194,131,.55);
+  /* Le cerne noir était pensé pour un disque noir, où il ne se voyait
+     pas. Sur de l'or, c'est lui qui détache l'étiquette et rend le
+     portrait du défunt lisible. */
+  box-shadow: 0 0 0 4px rgba(6,6,10,.94), 0 6px 18px rgba(0,0,0,.75),
+    inset 0 0 calc(8px + var(--lueur) * 22px) rgba(216,194,131, calc(.16 + var(--lueur) * .34));
 }
 .etiquette b {
   font-family: var(--ff-d); font-weight: 300; font-size: clamp(1.5rem, 4.6vw, 2.1rem); line-height: 1;
@@ -3655,3 +3733,271 @@ body.a-ecoute { padding-bottom: 5rem; }
 .step-dot .orn-sceau .orn-svg path { stroke: var(--or); stroke-width: .5; }
 .section-light .step-dot .orn-sceau .orn-svg path { stroke: var(--or-deep); }
 .section-light .step-dot .orn-sceau { opacity: .6; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LES GUIDES — pages de conseil
+
+   Elles s'adressent à une famille qui ne connaît pas encore la
+   maison et cherche seulement quoi faire. Elles se lisent donc
+   comme un article, pas comme une page de vente : peu d'ornement,
+   une colonne, et la proposition de la maison à la fin seulement.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* L'avertissement de prudence du guide sur les droits d'auteur.
+   Il doit se lire comme une phrase, pas comme une étiquette : c'est
+   pourquoi il ne reprend pas « .note », qui est du monospace
+   capitalisé de dix pixels. */
+.guide-avis {
+  border-left: 2px solid var(--amber);
+  background: rgba(251, 191, 36, 0.05);
+  padding: 1rem 1.2rem;
+  margin: 1.8rem 0 0;
+  font-size: 0.9rem; line-height: 1.75; color: var(--bone);
+  max-width: 72ch;
+}
+
+/* Le renvoi vers la maison, en fin de guide. Encadré et distinct du
+   texte : la famille doit voir d'un coup d'œil où s'arrête le
+   conseil et où commence la proposition. */
+.guide-fin {
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.6rem, 4vw, 2.4rem);
+  max-width: 72ch;
+}
+.guide-fin .eyebrow { margin-bottom: 0.9rem; }
+.guide-fin p {
+  margin: 0; color: var(--bone);
+  font-size: 1rem; line-height: 1.8;
+}
+.guide-fin .hero-actions { flex-wrap: wrap; }
+
+@media (max-width: 720px) {
+  .guide-avis { font-size: 0.95rem; }
+  .guide-fin p { font-size: 1rem; }
+  .guide-fin .hero-actions .btn { width: 100%; justify-content: center; }
+}
+
+/* ─── Transmettre l'hommage aux proches ───
+   La demande la plus fréquente après la livraison : l'envoyer à la
+   tante qui n'a pas pu venir. Deux chemins côte à côte, parce que le
+   partage natif n'existe pas sur tous les appareils — et le second
+   n'est pas un repli honteux, c'est celui que beaucoup préfèrent. */
+.esp-partage {
+  display: flex; gap: 0.6rem; flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+.esp-partage .btn { flex: 1 1 auto; justify-content: center; text-align: center; }
+@media (max-width: 560px) {
+  .esp-partage { flex-direction: column; }
+  .esp-partage .btn { width: 100%; min-height: 44px; }
+}
+
+/* ─── Choix d'un nouveau mot de passe ───
+   Le champ est masqué par défaut, mais quelqu'un qui vient de perdre
+   son mot de passe a besoin de voir ce qu'il tape : le bouton
+   « Afficher » évite la deuxième erreur de saisie. */
+.rs-ligne { display: flex; align-items: center; gap: 0.7rem; }
+.rs-ligne .field-input { flex: 1; min-width: 0; }
+.rs-ligne .lien-bascule { flex: none; white-space: nowrap; }
+.rs-force {
+  position: relative; height: 3px; margin-top: 0.55rem;
+  background: var(--line-soft); border-radius: 2px;
+}
+.rs-force > span {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: var(--red);
+  transition: width 0.35s var(--ease), background 0.35s var(--ease);
+}
+.rs-force::after {
+  content: attr(data-mot); position: absolute; right: 0; top: 7px;
+  font-family: var(--ff-m); font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+@media (max-width: 560px) {
+  .rs-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .rs-ligne .lien-bascule { min-height: 44px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARTAGER LA PAGE
+
+   Discret : c'est une invitation, pas un appel à l'action. Le bloc
+   se pose sur une ligne à côté de son explication sur grand écran,
+   et passe en colonne dès que la place manque. Les cibles font
+   44 pixels partout — c'est ce qu'un pouce vise sans se tromper.
+   ═══════════════════════════════════════════════════════════════ */
+.partage-sec { padding-top: 0; }
+.partage {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.6rem 2rem; flex-wrap: wrap; min-width: 0;
+  padding: 1.4rem clamp(1.1rem, 3vw, 1.8rem);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.partage-mot { min-width: 0; flex: 1 1 22rem; }
+.partage-mot .eyebrow { margin-bottom: 0.5rem; }
+.partage-mot p {
+  margin: 0; color: var(--ash); font-size: 0.92rem;
+  line-height: 1.7; max-width: 46ch;
+}
+.partage-liens { display: flex; gap: 0.5rem; flex-wrap: wrap; min-width: 0; }
+
+.partage-b {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0 0.9rem;
+  font-family: var(--ff-m); font-size: 0.62rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ash); background: var(--ink-2);
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  white-space: nowrap;
+}
+.partage-b svg { width: 16px; height: 16px; flex: none; }
+.partage-b:hover { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+.partage-b.copie { color: var(--green); border-color: rgba(74, 222, 128, 0.45); }
+
+/* Le partage natif est le chemin le plus court là où il existe : il
+   passe donc devant, en or, et les autres restent en retrait. */
+.partage-natif { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+.partage-natif:hover { color: var(--or-bright); }
+
+@media (max-width: 860px) {
+  .partage { flex-direction: column; align-items: stretch; }
+  .partage-liens { gap: 0.45rem; }
+  .partage-b { flex: 1 1 auto; justify-content: center; font-size: 0.7rem; letter-spacing: 0.06em; }
+}
+@media (max-width: 460px) {
+  .partage-b { flex: 1 1 calc(50% - 0.25rem); }
+  .partage-mot p { font-size: 0.95rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LISIBILITÉ ET GESTE SUR PETIT ÉCRAN — deuxième passe
+
+   Mesuré sur huit profils, du Huawei P30 à 360 px à l'iPad Pro.
+   Aucun débordement, mais des tailles héritées du dessin sur grand
+   écran qui deviennent illisibles une fois posées sur un téléphone —
+   et deux d'entre elles sont sur le chemin de l'achat.
+
+   Le repère : rien sous 11,5 px pour du texte, rien sous 44 px pour
+   ce qu'on vise au doigt. Nos familles ont souvent soixante ou
+   soixante-dix ans, et lisent la page dans une voiture, en deuil.
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+
+  /* Les étapes du tunnel de commande étaient à 7,4 px : on ne pouvait
+     pas lire à quelle étape on se trouvait. C'est le seul repère de
+     progression du parcours d'achat. */
+  .wz-label { font-size: 0.72rem; letter-spacing: 0.06em; }
+
+  /* Le titre du bloc des suppléments payants, et les registres du
+     défilé d'hommages, à 7,2 px. */
+  .opts-titre { font-size: 0.76rem; letter-spacing: 0.1em; }
+  .past-style { font-size: 0.7rem; letter-spacing: 0.05em; }
+  .past-nom { font-size: 0.86rem; }
+  .pup-style { font-size: 0.76rem; letter-spacing: 0.06em; }
+  .signature-role { font-size: 0.7rem; letter-spacing: 0.1em; }
+
+  /* La case d'une option à 80 € mesurait 17 px de côté. L'étiquette
+     entière est cliquable — c'est un <label> — mais une case qu'on
+     distingue à peine n'invite pas à la cocher, et ne dit pas
+     clairement qu'elle l'est. */
+  .opt input { width: 22px; height: 22px; margin-top: 0.1rem; }
+  .opt { padding: 1.05rem 1rem; min-height: 44px; }
+
+  /* Les flèches du défilé : 34 px, sous le seuil du pouce. */
+  .frise-fleche { width: 44px; height: 44px; }
+  .frise-fleche svg { width: 18px; height: 18px; }
+
+  /* « Les mots de la famille », en tête de ce que la famille a
+     raconté du défunt : c'est la phrase qui explique tout le
+     service, et elle était à 8,8 px. */
+  .pup-brief > span, .mono { font-size: 0.72rem; letter-spacing: 0.12em; }
+
+  /* L'étiquette d'une option est un <label> : la viser n'importe où
+     la coche. Mesurée entre 161 et 261 px de haut sur téléphone, elle
+     dépasse largement la hauteur du pouce — la vraie cible n'a donc
+     jamais été la case, seulement sa lisibilité. La case reste en
+     haut, à côté du titre : la centrer dans une carte de 261 px la
+     ferait flotter au milieu du vide, loin de ce qu'elle désigne. */
+  .opt { align-items: flex-start; }
+}
+
+/* Les tablettes tombaient entre deux règles : trop larges pour les
+   ajustements téléphone, trop étroites pour la mise en page de
+   bureau. Le cas se voit surtout sur iPad mini en portrait. */
+@media (min-width: 721px) and (max-width: 1024px) {
+  .wrap, .wrap-tight { padding-left: 2rem; padding-right: 2rem; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOUT CE QUI SE TOUCHE, QUELLE QUE SOIT LA LARGEUR
+
+   L'audit a montré le trou : un iPad mini en portrait fait 768 px de
+   large, un iPad Pro en paysage 1024. Les deux passaient donc sous
+   les règles de bureau — texte à dix pixels, boutons de 28 — alors
+   qu'on y navigue au doigt exactement comme sur un téléphone. Vingt
+   et une cibles trop petites sur l'accueil, contre zéro sur mobile.
+
+   La largeur était le mauvais critère. « pointer: coarse » dit ce
+   qui compte vraiment : cet écran se touche. Il attrape les iPad,
+   les tablettes Android et Huawei, les portables tactiles, et les
+   téléphones en paysage — que la largeur laissait aussi passer.
+   ═══════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+
+  /* Le plancher du doigt. 44 px est la mesure d'Apple, 48 celle de
+     Google : on prend la plus basse, qui suffit et ne déforme pas
+     la page. */
+  a.btn, button, .side-item, .esp-onglet, .own-tab,
+  .partage-b, .lien-bascule, .faq-q, .frise-fleche, .report {
+    min-height: 44px;
+  }
+  input[type="checkbox"], input[type="radio"] { width: 22px; height: 22px; }
+  .field-input, .field-select, .field-area { min-height: 44px; }
+
+  /* Le plancher de lecture. Les étiquettes en mono capitalisé
+     descendaient à dix pixels : lisibles sur un écran à trente
+     centimètres, plus du tout sur une tablette tenue à bout de bras. */
+  .eyebrow, .mono, .panel-sub, .kpi-label, .kpi-foot,
+  .o-meta, .side-label, .side-urole, .past-style, .pup-style,
+  .wz-label, .opts-titre, .signature-role, .footer-baseline {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+  .pill, .side-badge { font-size: 0.72rem; letter-spacing: 0.08em; }
+
+  /* Mesuré sur iPad mini : ces étiquettes-là descendaient entre 7,4 et
+     9,6 px, et la plupart sont sur la page qui vend — le nom des trois
+     offres à 9,3 px, les garanties à 8,8, la mention de TVA à 7,7. */
+  .nav-sub, .price-note, .price-tag, .scroll-hint, .badge,
+  .trust-item span, .intro-name, .pup-t, .opt-prix, .legal-date {
+    font-size: 0.72rem; letter-spacing: 0.09em;
+  }
+  .price-name { font-size: 0.86rem; letter-spacing: 0.14em; }
+  .wz-dot { font-size: 0.8rem; }
+
+  /* Les liens du pied de page faisaient 16 px de haut : dix-huit
+     cibles impossibles à viser au doigt sur une tablette, alors que
+     c'est par là qu'on rejoint les guides et l'espace agences. */
+  .footer-links a, .footer-links button, .footer-legal a {
+    display: inline-flex; align-items: center; min-height: 44px;
+  }
+
+  /* Le survol n'existe pas au doigt : un effet qui ne se déclenche
+     qu'au survol reste invisible, et pire, il peut rester « collé »
+     après un tapotement sur certains navigateurs mobiles. */
+  .card-lift:hover { transform: none; }
+}
+
+/* Les tablettes en portrait : deux colonnes plutôt que quatre, sans
+   quoi chaque carte devient une colonne de mots. */
+@media (pointer: coarse) and (max-width: 1080px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}

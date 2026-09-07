@@ -493,3 +493,700 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
     padding-right: 0.4rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LE POSTE DE PILOTAGE
+
+   Premier écran du fondateur : quatre chiffres, puis la liste de
+   ce qui a dépassé un seuil. Chaque ligne est un bouton qui mène
+   à l'endroit où on la règle — la gravité se lit à la pastille,
+   pas à la couleur du texte, qui reste lisible.
+   ═══════════════════════════════════════════════════════════════ */
+.pil-kpis {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem; margin-bottom: 1.4rem;
+}
+.pil-kpi {
+  border: 1px solid var(--line-soft); background: var(--surface);
+  padding: 1.4rem 1.5rem; min-width: 0;
+}
+.pil-kpi-l {
+  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ash);
+}
+.pil-kpi-v {
+  font-family: var(--ff-d); font-size: 2.3rem; font-weight: 300;
+  line-height: 1; margin: 0.85rem 0 0.4rem;
+  font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+.pil-kpi-f {
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.09em;
+  color: var(--or-patina); line-height: 1.5;
+}
+
+.pil-alertes { display: flex; flex-direction: column; gap: 0.6rem; }
+.pil-alerte {
+  display: flex; align-items: center; gap: 0.9rem; width: 100%;
+  text-align: left; padding: 0.95rem 1.1rem; min-width: 0;
+  border: 1px solid var(--line-soft); background: var(--ink-2);
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.pil-alerte:hover { border-color: var(--line-strong); background: var(--or-soft); }
+.pil-puce {
+  width: 8px; height: 8px; border-radius: 50%; flex: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.03);
+}
+.pil-txt { flex: 1; min-width: 0; display: block; }
+.pil-txt b {
+  display: block; font-weight: 400; font-size: 0.92rem;
+  color: var(--paper); line-height: 1.4; overflow-wrap: anywhere;
+}
+.pil-txt em {
+  display: block; font-style: normal; margin-top: 3px;
+  font-size: 0.82rem; color: var(--ash); line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.pil-fleche {
+  flex: none; color: var(--or-patina); font-size: 1.1rem;
+  transition: transform var(--t-fast) var(--ease), color var(--t-fast);
+}
+.pil-alerte:hover .pil-fleche { color: var(--or); transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .pil-alerte:hover .pil-fleche { transform: none; }
+}
+
+.pil-calme { padding: 0.4rem 0 0.6rem; }
+.pil-calme p { margin: 0; color: var(--bone); font-size: 0.95rem; line-height: 1.8; max-width: 66ch; }
+.pil-aide { margin-top: 0.7rem !important; color: var(--ash) !important; font-size: 0.86rem !important; }
+
+/* ═══════════════════════════════════════════════════════════════
+   LES RÉGLAGES DE LA MAISON
+
+   Une colonne, pas une grille : chaque réglage engage une promesse
+   faite aux familles et se lit en entier avant d'être touché. Le
+   pied colle en bas de l'écran tant qu'un changement n'est pas
+   enregistré — on ne quitte pas la page sans le voir.
+   ═══════════════════════════════════════════════════════════════ */
+.reg-liste { display: flex; flex-direction: column; gap: 1.1rem; max-width: 70ch; }
+
+.reg-section { margin-top: 1.4rem; }
+.reg-section:first-child { margin-top: 0; }
+.reg-section h3 {
+  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--or-patina); font-weight: 500;
+  padding-bottom: 0.6rem; border-bottom: 1px solid var(--line-soft);
+}
+.reg-section p {
+  margin: 0.6rem 0 0; font-size: 0.86rem; color: var(--ash); line-height: 1.7;
+}
+
+.reg-champ { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.reg-titre {
+  font-size: 0.92rem; color: var(--paper); font-weight: 300;
+  line-height: 1.45; overflow-wrap: anywhere;
+}
+.reg-aide { font-size: 0.82rem; color: var(--ash); line-height: 1.65; }
+.reg-champ > .field-input { margin-top: 0.2rem; max-width: 34rem; }
+
+/* Le nombre et son unité forment un seul objet : l'unité est
+   posée dans le champ, pas écrite à côté comme une légende. */
+.reg-nombre {
+  position: relative; display: block; margin-top: 0.2rem;
+  /* Un délai tient en deux chiffres : un champ pleine largeur laisserait
+     l'unité dériver à un demi-écran de la valeur qu'elle qualifie. */
+  width: 11rem; max-width: 100%;
+}
+.reg-nombre .field-input { width: 100%; padding-right: 2.6rem; font-variant-numeric: tabular-nums; }
+/* Les flèches natives apparaissent au survol, exactement là où se
+   trouve l'unité, et passent par-dessus. Les flèches du clavier
+   incrémentent toujours ; le pavé numérique reste celui d'un nombre. */
+.reg-nombre .field-input::-webkit-outer-spin-button,
+.reg-nombre .field-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.reg-nombre .field-input { -moz-appearance: textfield; appearance: textfield; }
+.reg-unite {
+  position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%);
+  font-family: var(--ff-m); font-size: 0.7rem; letter-spacing: 0.08em;
+  color: var(--or-patina); pointer-events: none;
+}
+.reg-unite:empty { display: none; }
+
+.reg-retablir {
+  align-self: flex-start; margin-top: 0.15rem;
+  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.11em;
+  text-transform: uppercase; color: var(--or-patina);
+  border-bottom: 1px solid transparent; transition: color var(--t-fast), border-color var(--t-fast);
+}
+.reg-retablir:hover { color: var(--or-bright); border-bottom-color: var(--or-deep); }
+.reg-retablir[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+/* Une bascule se clique en entier, pas seulement sur sa case. */
+.reg-bascule {
+  display: flex; align-items: flex-start; gap: 0.9rem; cursor: pointer;
+  padding: 0.9rem 1rem; min-width: 0;
+  border: 1px solid var(--line-soft); background: var(--ink-2);
+  transition: border-color var(--t-fast);
+}
+.reg-bascule:hover { border-color: var(--line-strong); }
+.reg-bascule input { margin-top: 0.28rem; flex: none; accent-color: var(--or); width: 16px; height: 16px; }
+.reg-corps { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+.reg-etat {
+  flex: none; font-family: var(--ff-m); font-size: 0.55rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--dust);
+  padding-top: 0.15rem;
+}
+.reg-bascule input:checked ~ .reg-etat { color: var(--green); }
+.reg-bascule.reg-active,
+.reg-bascule:has(input:checked) { border-color: rgba(74, 222, 128, 0.22); }
+
+.reg-pied {
+  position: sticky; bottom: 0; z-index: 2;
+  margin: 1.8rem -1.8rem -1.8rem; padding: 1.1rem 1.8rem;
+  border-top: 1px solid var(--line-soft);
+  background: var(--surface);
+  box-shadow: 0 -14px 26px -18px rgba(0, 0, 0, 0.9);
+}
+.reg-pied .form-msg { margin-bottom: 0.8rem; }
+.reg-actions { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+
+@media (max-width: 720px) {
+  .pil-kpis { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+  .pil-kpi { padding: 1rem 1.1rem; }
+  .pil-kpi-l { font-size: 0.72rem; letter-spacing: 0.1em; }
+  .pil-kpi-v { font-size: 1.75rem; }
+  .pil-kpi-f { font-size: 0.7rem; letter-spacing: 0.05em; }
+  .pil-alerte { min-height: 44px; padding: 0.85rem 0.9rem; gap: 0.7rem; }
+  .pil-txt b { font-size: 0.95rem; }
+  .pil-txt em { font-size: 0.88rem; }
+  .pil-aide { font-size: 0.92rem !important; }
+
+  .reg-liste { max-width: none; }
+  .reg-section h3 { font-size: 0.72rem; letter-spacing: 0.13em; }
+  .reg-section p, .reg-aide { font-size: 0.9rem; }
+  .reg-titre { font-size: 0.98rem; }
+  .reg-retablir { font-size: 0.74rem; letter-spacing: 0.06em; min-height: 44px; display: inline-flex; align-items: center; }
+  .reg-unite { font-size: 0.8rem; }
+  .reg-bascule { min-height: 44px; }
+  .reg-etat { font-size: 0.72rem; letter-spacing: 0.08em; }
+  /* Sur un écran court, un pied collant mange la moitié de la vue :
+     il redescend en fin de page et se lit d'un seul tenant. */
+  .reg-pied {
+    position: static;
+    margin: 1.4rem -1.8rem -1.8rem;
+    box-shadow: none;
+  }
+  .reg-actions .btn { flex: 1 1 auto; }
+  .reg-actions #reg-tout-defaut { flex-basis: 100%; margin-left: 0 !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CRÉATION D'UN ACCÈS COLLABORATEUR
+
+   Le mot de passe est le seul rempart devant les commandes de
+   familles en deuil. Il mérite donc plus qu'un champ nu : un bouton
+   qui en propose un solide, et une jauge qui dit ce que vaut celui
+   qu'on vient de taper.
+   ═══════════════════════════════════════════════════════════════ */
+.eq-pw-ligne { display: flex; gap: 0.5rem; align-items: stretch; min-width: 0; }
+.eq-pw-ligne .field-input { flex: 1; min-width: 0; }
+.eq-pw-ligne .btn { flex: none; white-space: nowrap; }
+
+.eq-force {
+  position: relative; height: 3px; margin-top: 0.5rem;
+  background: var(--line-soft); border-radius: 2px; overflow: visible;
+}
+.eq-force > span {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: var(--red);
+  transition: width 0.35s var(--ease), background 0.35s var(--ease);
+}
+.eq-force::after {
+  content: attr(data-mot);
+  position: absolute; right: 0; top: 7px;
+  font-family: var(--ff-m); font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+
+/* Les identifiants affichés une seule fois après la création : ils
+   doivent se sélectionner et se recopier sans effort. */
+.eq-code {
+  display: inline-block; font-family: var(--ff-m); font-size: 0.85rem;
+  background: var(--ink-2); border: 1px solid var(--line);
+  padding: 0.15rem 0.5rem; border-radius: 3px; color: var(--or-bright);
+  user-select: all; overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .eq-pw-ligne { flex-wrap: wrap; }
+  .eq-pw-ligne .btn { width: 100%; min-height: 44px; }
+  .eq-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .eq-code { font-size: 0.92rem; }
+  /* Trois actions par ligne débordent sur un téléphone */
+  .tbl .own-mini { min-height: 38px; margin-bottom: 3px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MA BOÎTE @MELODIA-FUNEBRE.FR
+
+   Une page qu'on lit le téléphone dans une main : les réglages
+   doivent se copier d'un doigt, et la marche à suivre se lire sans
+   revenir en arrière. D'où deux colonnes sur grand écran — les
+   réglages restent visibles pendant qu'on suit les étapes — et une
+   seule colonne dès que la place manque, réglages en premier.
+   ═══════════════════════════════════════════════════════════════ */
+.bo-identite {
+  display: flex; align-items: flex-start; gap: 0.9rem;
+  margin-top: 1.2rem; padding: 1rem 1.2rem; min-width: 0;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  background: rgba(74, 222, 128, 0.05); border-radius: var(--radius);
+}
+.bo-pastille {
+  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 0.8rem;
+  color: var(--green); border: 1px solid rgba(74, 222, 128, 0.4);
+}
+.bo-adresse {
+  font-family: var(--ff-m); font-size: 0.95rem; color: var(--paper);
+  overflow-wrap: anywhere;
+}
+.bo-note { font-size: 0.86rem; color: var(--ash); line-height: 1.65; margin-top: 0.3rem; }
+
+.bo-grille {
+  display: grid; grid-template-columns: 20rem 1fr;
+  gap: 1.2rem; align-items: start; margin: 1.2rem 0;
+}
+.bo-reglages { position: sticky; top: 1.2rem; min-width: 0; }
+.bo-parcours { display: flex; flex-direction: column; gap: 1.2rem; min-width: 0; }
+
+.bo-bloc { margin-bottom: 1.3rem; }
+.bo-bloc-t {
+  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--or-patina);
+  padding-bottom: 0.5rem; border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 0.7rem;
+}
+.bo-champ { margin-bottom: 0.7rem; min-width: 0; }
+.bo-l { font-size: 0.78rem; color: var(--ash); margin-bottom: 0.25rem; }
+.bo-v {
+  display: flex; align-items: center; gap: 0.6rem; width: 100%;
+  text-align: left; padding: 0.5rem 0.7rem; min-width: 0;
+  font-family: var(--ff-m); font-size: 0.86rem; color: var(--paper);
+  background: var(--ink-2); border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+}
+.bo-v span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.bo-v svg { flex: none; width: 15px; height: 15px; color: var(--or-patina); }
+.bo-v:hover { border-color: var(--line-strong); background: var(--or-soft); }
+.bo-v.copie { border-color: rgba(74, 222, 128, 0.45); color: var(--green); }
+.bo-v.copie svg { color: var(--green); }
+.bo-v.rate { border-color: rgba(248, 113, 113, 0.45); color: var(--red); }
+.bo-aide { font-size: 0.76rem; color: var(--dust); line-height: 1.5; margin-top: 0.3rem; }
+
+.bo-webmail { width: 100%; margin-top: 0.4rem; }
+.bo-secours { font-size: 0.8rem; color: var(--ash); line-height: 1.6; margin-top: 0.7rem; }
+
+/* Les trois parcours arrivent l'un après l'autre : l'ordre compte,
+   le téléphone d'abord. L'animation le souligne sans retarder la
+   lecture — 90 ms d'écart, pas davantage. */
+.bo-etape {
+  animation: bo-venir 0.5s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 90ms);
+}
+@keyframes bo-venir {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bo-etape { animation: none; }
+}
+
+.bo-etape-tete { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.9rem; min-width: 0; }
+.bo-ico {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-strong); background: var(--or-soft);
+}
+.bo-ico svg { width: 18px; height: 18px; color: var(--or); }
+.bo-intro { font-size: 0.92rem; color: var(--bone); line-height: 1.75; margin: 0 0 1rem; max-width: 66ch; }
+
+.bo-liste { list-style: none; padding: 0; margin: 0; counter-reset: bo; }
+.bo-liste li {
+  display: grid; grid-template-columns: 1.7rem 1fr; gap: 0 0.8rem;
+  padding: 0.75rem 0; border-top: 1px solid var(--line-soft); min-width: 0;
+}
+.bo-liste li::before {
+  counter-increment: bo; content: counter(bo);
+  font-family: var(--ff-m); font-size: 0.7rem; color: var(--or-patina); padding-top: 0.15rem;
+}
+.bo-liste b { display: block; color: var(--paper); font-weight: 400; font-size: 0.92rem; }
+.bo-liste span { display: block; color: var(--ash); font-size: 0.88rem; line-height: 1.7; margin-top: 0.2rem; }
+.bo-liste b + span { grid-column: 2; }
+.bo-liste li > b, .bo-liste li > span { min-width: 0; overflow-wrap: anywhere; }
+
+.bo-signature {
+  font-family: var(--ff-m); font-size: 0.85rem; line-height: 1.9;
+  color: var(--bone); background: var(--ink-2);
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  padding: 1rem 1.2rem; margin: 0; white-space: pre-wrap;
+  overflow-wrap: anywhere; user-select: all;
+}
+
+@media (max-width: 900px) {
+  .bo-grille { grid-template-columns: 1fr; }
+  .bo-reglages { position: static; }
+}
+@media (max-width: 720px) {
+  .bo-v { min-height: 44px; font-size: 0.92rem; }
+  .bo-l { font-size: 0.86rem; }
+  .bo-aide { font-size: 0.84rem; }
+  .bo-bloc-t { font-size: 0.72rem; letter-spacing: 0.12em; }
+  .bo-liste span, .bo-intro { font-size: 0.95rem; }
+  .bo-signature { font-size: 0.9rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODÈLES DE COURRIEL — l'atelier d'envoi
+   ═══════════════════════════════════════════════════════════════ */
+.mod-choix {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1rem; margin-bottom: 1.4rem;
+}
+.mod-choix .field { min-width: 0; }
+.mod-vide { font-size: 0.8rem; color: var(--ash); line-height: 1.6; margin-top: 0.4rem; }
+
+.mod-ecoutes { margin-bottom: 1.4rem; }
+.mod-cartes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+.mod-carte {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  text-align: left; padding: 0.9rem 1rem; min-width: 0;
+  border: 1px solid var(--line-soft); background: var(--ink-2);
+  border-radius: var(--radius);
+  transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+}
+.mod-carte:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.mod-carte.active { border-color: var(--or); background: var(--or-soft); }
+@media (prefers-reduced-motion: reduce) { .mod-carte:hover { transform: none; } }
+.mod-style {
+  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--or-patina);
+}
+.mod-titre { font-family: var(--ff-d); font-size: 1.05rem; color: var(--paper); line-height: 1.25; }
+.mod-qui { font-size: 0.8rem; color: var(--ash); }
+.mod-pour { font-size: 0.8rem; color: var(--dust); line-height: 1.55; margin-top: 0.35rem; }
+.mod-carte.active .mod-pour { color: var(--bone); }
+
+.mod-objet-ligne {
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+  padding: 0.7rem 0.9rem; margin-bottom: 0.7rem; min-width: 0;
+  border: 1px solid var(--line-soft); background: var(--ink-2); border-radius: var(--radius);
+}
+.mod-etiq {
+  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--or-patina); flex: none;
+}
+.mod-objet { flex: 1; min-width: 0; color: var(--paper); font-size: 0.92rem; overflow-wrap: anywhere; }
+
+.mod-corps {
+  min-height: 22rem; font-size: 0.88rem; line-height: 1.8;
+  font-family: inherit; width: 100%;
+}
+.mod-compte {
+  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.1em;
+  color: var(--dust); margin-top: 0.4rem;
+}
+.mod-compte.alerte { color: var(--amber); letter-spacing: 0.04em; }
+
+.mod-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
+.mod-actions .btn.copie { border-color: rgba(74, 222, 128, 0.5); color: var(--green); }
+.mod-actions .btn.rate { border-color: rgba(248, 113, 113, 0.5); color: var(--red); }
+.mod-avis { font-size: 0.82rem; color: var(--ash); line-height: 1.65; margin-top: 0.9rem; max-width: 70ch; }
+
+.mod-sequence { margin-top: 1rem; }
+.mod-seq-l {
+  display: flex; gap: 1rem; padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line-soft); min-width: 0;
+}
+.mod-seq-l > b {
+  flex: none; min-width: 74px; font-family: var(--ff-m);
+  font-size: 0.62rem; letter-spacing: 0.1em; color: var(--or-patina); padding-top: 0.2rem;
+}
+.mod-seq-l > span { min-width: 0; }
+.mod-seq-l b { color: var(--paper); font-weight: 400; }
+.mod-seq-l em { display: block; font-style: normal; color: var(--ash); font-size: 0.86rem; line-height: 1.6; }
+
+@media (max-width: 720px) {
+  .mod-choix { grid-template-columns: 1fr; }
+  .mod-cartes { grid-template-columns: 1fr; }
+  .mod-carte { min-height: 44px; }
+  .mod-titre { font-size: 1.1rem; }
+  .mod-qui, .mod-pour { font-size: 0.88rem; }
+  .mod-objet { font-size: 0.95rem; }
+  .mod-etiq { font-size: 0.7rem; letter-spacing: 0.1em; }
+  .mod-compte { font-size: 0.74rem; letter-spacing: 0.04em; }
+  .mod-actions .btn { flex: 1 1 100%; min-height: 44px; justify-content: center; }
+  .mod-seq-l > b { font-size: 0.74rem; min-width: 66px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LES GRAPHIQUES DU TABLEAU DE BORD
+
+   Deux dessins, deux questions : est-ce que je travaille
+   régulièrement, et où est-ce que ça bloque. Les couleurs des séries
+   restent sur les marques ; le texte garde les tons du texte, sans
+   quoi une étiquette dorée sur fond sombre devient illisible pour un
+   œil qui distingue mal les jaunes.
+   ═══════════════════════════════════════════════════════════════ */
+.gr-duo {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.2rem; margin-top: 1.4rem; align-items: start;
+}
+.gr-panel { margin: 0; min-width: 0; }
+
+.gr-legende {
+  display: flex; gap: 1.1rem; flex-wrap: wrap;
+  font-family: var(--ff-m); font-size: 0.58rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash);
+}
+.gr-legende span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.gr-legende i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.gr-legende b { color: var(--paper); font-weight: 500; }
+
+.gr-toile { position: relative; margin-top: 1.4rem; color: var(--ash); }
+.gr-toile svg { width: 100%; height: 168px; display: block; overflow: visible; }
+.gr-ech {
+  font-family: var(--ff-m); font-size: 2.6px; fill: var(--dust);
+  /* Le texte d'un SVG étiré horizontalement se déformerait : on le
+     laisse à l'échelle du dessin plutôt que de l'étirer. */
+}
+.gr-cible { cursor: crosshair; }
+.gr-cible:hover { fill: rgba(255, 255, 255, 0.035); }
+
+/* La bulle se plaçait au-dessus de la toile et recouvrait la légende
+   — donc précisément les deux chiffres qu'on venait y chercher. Elle
+   reste maintenant dans le cadre du dessin, en haut. */
+.gr-bulle {
+  position: absolute; top: 2px; transform: translateX(-50%);
+  padding: 0.45rem 0.7rem; white-space: nowrap; pointer-events: none;
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.04em;
+  color: var(--paper); background: var(--surface-3);
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); z-index: 3;
+}
+
+.gr-axe {
+  display: flex; justify-content: space-between; margin-top: 0.5rem;
+  font-family: var(--ff-m); font-size: 0.54rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
+}
+.gr-vide { color: var(--ash); font-size: 0.9rem; line-height: 1.8; margin-top: 1rem; max-width: 52ch; }
+
+/* Les mêmes nombres en toutes lettres, pour qui ne lit pas le
+   dessin — lecteur d'écran, impression, ou simple préférence. */
+.gr-table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; }
+.gr-table caption {
+  text-align: left; font-family: var(--ff-m); font-size: 0.52rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--or-patina);
+  padding-bottom: 0.5rem;
+}
+.gr-table th, .gr-table td {
+  text-align: left; padding: 0.4rem 0.5rem; font-size: 0.82rem;
+  border-bottom: 1px solid var(--line-soft); color: var(--ash);
+}
+.gr-table th {
+  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--dust); font-weight: 400;
+}
+.gr-table td + td, .gr-table th + th { text-align: right; font-variant-numeric: tabular-nums; }
+.gr-table tr:last-child td { border-bottom: 0; }
+
+/* ─── L'entonnoir ─── */
+.ent-resume { text-align: right; }
+.ent-resume b {
+  display: block; font-family: var(--ff-d); font-size: 1.9rem;
+  font-weight: 300; color: var(--or); line-height: 1;
+}
+.ent-resume span {
+  font-family: var(--ff-m); font-size: 0.52rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+
+.ent-corps { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.2rem; }
+.ent-l {
+  min-width: 0;
+  animation: ent-venir 0.5s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+@keyframes ent-venir {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+.ent-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.ent-nom { font-size: 0.9rem; color: var(--paper); min-width: 0; overflow-wrap: anywhere; }
+.ent-n {
+  font-family: var(--ff-d); font-size: 1.3rem; color: var(--paper);
+  line-height: 1; flex: none; font-variant-numeric: tabular-nums;
+}
+.ent-piste {
+  height: 7px; margin: 0.4rem 0 0.35rem;
+  background: var(--ink-2); border-radius: 4px; overflow: hidden;
+}
+.ent-piste > span {
+  display: block; height: 100%; border-radius: 4px;
+  transform-origin: left center;
+  animation: ent-pousse 0.7s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms + 120ms);
+}
+@keyframes ent-pousse { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.ent-pied {
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font-size: 0.79rem; color: var(--dust); line-height: 1.5;
+}
+.ent-dit { min-width: 0; }
+.ent-conv {
+  font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.08em;
+  color: var(--ash); flex: none; white-space: nowrap;
+}
+/* Une étape qui perd plus de six fiches sur dix est le vrai sujet de
+   la semaine : elle se signale, sans crier. */
+.ent-conv.faible { color: var(--amber); }
+
+.ent-refus {
+  margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line-soft);
+  font-size: 0.82rem; color: var(--ash); line-height: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ent-l, .ent-piste > span { animation: none; }
+}
+
+@media (max-width: 1080px) {
+  .gr-duo { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .gr-toile svg { height: 128px; }
+  .gr-legende { font-size: 0.72rem; letter-spacing: 0.05em; }
+  .gr-axe { font-size: 0.7rem; letter-spacing: 0.06em; }
+  .gr-bulle { font-size: 0.75rem; }
+  .gr-table th { font-size: 0.7rem; letter-spacing: 0.08em; }
+  .gr-table td { font-size: 0.88rem; }
+  .gr-table caption { font-size: 0.7rem; letter-spacing: 0.12em; }
+  .ent-conv { font-size: 0.74rem; letter-spacing: 0.03em; white-space: normal; }
+  .ent-pied { font-size: 0.86rem; }
+  .gr-vide { font-size: 0.95rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONSOLE PARTENAIRE — le mois en cours, et l'avancement
+
+   Une agence regarde d'abord un chiffre : ce que le mois lui a
+   rapporté. L'écart avec le mois précédent est ce qui le rend
+   lisible — un montant seul ne dit ni bien ni mal.
+   ═══════════════════════════════════════════════════════════════ */
+.pa-mois {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 1.2rem; flex-wrap: wrap; margin-top: 1.3rem;
+  padding-bottom: 1rem; border-bottom: 1px solid var(--line-soft);
+}
+.pa-mois > div { min-width: 0; }
+.pa-mois b {
+  display: block; font-family: var(--ff-d); font-size: 2.1rem;
+  font-weight: 300; color: var(--or); line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pa-mois span {
+  display: block; font-family: var(--ff-m); font-size: 0.54rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash);
+  margin-top: 0.35rem;
+}
+.pa-ecart {
+  text-align: right; font-family: var(--ff-m); font-size: 0.9rem;
+  color: var(--ash); font-variant-numeric: tabular-nums;
+}
+.pa-ecart.haut { color: var(--green); }
+.pa-ecart.bas { color: var(--amber); }
+.pa-ecart span { text-align: right; }
+
+/* Étiquettes de mois sous les colonnes : centrées sur leur barre, et
+   non étirées par le viewBox — d'où l'ancrage au milieu. */
+.gr-mois { text-anchor: middle; }
+
+.gr-note {
+  font-size: 0.82rem; color: var(--ash); line-height: 1.65;
+  margin-top: 1rem; max-width: 62ch;
+}
+
+/* ─── L'avancement des hommages ─── */
+.pa-etapes { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1.3rem; }
+.pa-etape {
+  min-width: 0;
+  animation: pa-venir 0.45s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+@keyframes pa-venir {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+.pa-e-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.pa-e-nom { font-size: 0.9rem; color: var(--paper); min-width: 0; overflow-wrap: anywhere; }
+.pa-e-n {
+  font-family: var(--ff-d); font-size: 1.25rem; color: var(--paper);
+  line-height: 1; flex: none; font-variant-numeric: tabular-nums;
+}
+.pa-e-piste {
+  height: 6px; margin-top: 0.4rem;
+  background: var(--ink-2); border-radius: 4px; overflow: hidden;
+}
+.pa-e-piste > span {
+  display: block; height: 100%; border-radius: 4px; transform-origin: left center;
+  animation: pa-pousse 0.6s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms + 110ms);
+}
+@keyframes pa-pousse { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pa-etape, .pa-e-piste > span { animation: none; }
+}
+@media (max-width: 720px) {
+  .pa-mois b { font-size: 1.75rem; }
+  .pa-mois span { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .pa-ecart { font-size: 0.95rem; }
+  .gr-note { font-size: 0.9rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHANGER SON MOT DE PASSE
+   Le même bloc dans les quatre espaces : ce qu'on cherche au même
+   endroit doit se présenter de la même façon.
+   ═══════════════════════════════════════════════════════════════ */
+.mdp-bloc { max-width: 620px; margin-top: 1.4rem; }
+.mdp-ligne { display: flex; gap: 0.5rem; align-items: stretch; min-width: 0; }
+.mdp-ligne .field-input { flex: 1; min-width: 0; }
+.mdp-ligne .btn { flex: none; white-space: nowrap; }
+.mdp-force {
+  position: relative; height: 3px; margin-top: 0.5rem;
+  background: var(--line-soft); border-radius: 2px;
+}
+.mdp-force > span {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: var(--red);
+  transition: width 0.35s var(--ease), background 0.35s var(--ease);
+}
+.mdp-force::after {
+  content: attr(data-mot); position: absolute; right: 0; top: 7px;
+  font-family: var(--ff-m); font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+.mdp-bloc .form-msg { margin: 1rem 0; }
+@media (max-width: 720px) {
+  .mdp-ligne { flex-wrap: wrap; }
+  .mdp-ligne .btn { flex: 1 1 auto; min-height: 44px; justify-content: center; }
+  .mdp-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+}
+
+/* La flèche qui montre le chemin du courrier, d'une adresse à l'autre :
+   une redirection se comprend d'un coup d'œil, ou pas du tout. */
+.bo-fleche {
+  text-align: center; color: var(--or-patina);
+  font-size: 1.1rem; line-height: 1; margin: 0.35rem 0 0.55rem;
+}

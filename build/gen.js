@@ -178,6 +178,19 @@ function footer() {
         </ul>
       </div>
       <div>
+        <!-- Les guides répondent à ce que les familles cherchent avant
+             de nous connaître. Les placer au pied de chaque page leur
+             donne un lien depuis tout le site, sans encombrer une barre
+             de navigation déjà pleine — et sans reproduire le
+             débordement du menu mobile. -->
+        <h4>Conseils</h4>
+        <ul class="footer-links">
+          <li><a href="/musique-obseques">Quelle musique pour un enterrement</a></li>
+          <li><a href="/musique-cremation">La musique en crémation</a></li>
+          <li><a href="/musique-sacem-obseques">Droits d'auteur et obsèques</a></li>
+        </ul>
+      </div>
+      <div>
         <h4>Professionnels</h4>
         <ul class="footer-links">
           <li><a href="/agences">Espace agences</a></li>

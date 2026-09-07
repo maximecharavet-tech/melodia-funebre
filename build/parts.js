@@ -177,21 +177,46 @@ function urgency() {
   </section>`;
 }
 
+/* ─── L'entité « maison » ───
+   Déclarée en Organization, et non en LocalBusiness : ce dernier type
+   attend une adresse postale (« address », obligatoire pour Google) et
+   décrit un commerce où l'on se rend. La maison travaille par
+   téléphone pour toute la France, n'a pas de boutique où recevoir, et
+   son adresse de siège n'est pas encore arrêtée. Un LocalBusiness sans
+   adresse est signalé invalide par l'outil de test de Google et ne
+   produit aucun résultat enrichi — Organization en produit un, et dit
+   la vérité.
+
+   Le jour où le siège est déclaré, deux ajouts suffisent : « address »
+   (PostalAddress complet) et le retour au type LocalBusiness, avec
+   « priceRange » qui n'a de sens que sur ce type-là. */
 const jsonldOrg = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': 'Organization',
   '@id': SITE + '/#organisation',
   name: 'Melodia Funèbre',
+  alternateName: 'Melodia',
   description: "Maison française de composition musicale personnalisée pour cérémonies funéraires. Une œuvre originale par défunt, livrée en 24 heures, sans droits SACEM.",
   url: SITE,
   /* Pas de « telephone » : ces données sont publiques et indexées. */
   email: 'contact@melodia-funebre.fr',
   image: SITE + '/assets/img/logo-melodia.jpg',
-  logo: SITE + '/assets/img/logo-melodia.jpg',
+  logo: { '@type': 'ImageObject', url: SITE + '/assets/img/logo-melodia.jpg' },
   founder: { '@type': 'Person', name: 'Maxime Charavet' },
+  foundingDate: '2026',
   areaServed: { '@type': 'Country', name: 'France' },
-  priceRange: '149€ – 499€',
-  aggregateRating: undefined
+  knowsLanguage: ['fr', 'co', 'br', 'he', 'it', 'pt'],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: 'contact@melodia-funebre.fr',
+    areaServed: 'FR',
+    availableLanguage: 'French'
+  }
+  /* « sameAs » viendra lister les comptes officiels (Instagram,
+     Facebook, LinkedIn) dès qu'ils existeront : c'est ce qui permet
+     aux moteurs de rattacher ces profils à cette entité plutôt que
+     d'en déduire deux entreprises distinctes. */
 };
 
 const jsonldFaq = {
@@ -303,10 +328,70 @@ const jsonldProcessus = {
 
 /* Fil d'Ariane : il dit à un robot où se situe la page dans le site,
    et s'affiche tel quel dans les résultats de recherche. */
+/* ═══════════════════════════════════════════════════════════════
+   PARTAGER LA PAGE
+
+   Le bouche-à-oreille est le seul canal qui fonctionne d'emblée pour
+   ce service : une famille qui a été touchée en parle à une autre, un
+   conseiller funéraire envoie le lien à un confrère. Encore faut-il
+   que partager tienne en un geste — copier l'adresse dans la barre du
+   navigateur en est trois, sur un téléphone.
+
+   Le partage natif d'abord, quand l'appareil le propose : il ouvre
+   l'application que la personne utilise déjà, y compris celles que
+   nous ne connaissons pas. Les liens directs ensuite, pour les
+   ordinateurs qui n'ont pas ce partage.
+
+   Pas de boutons officiels des plateformes : ce sont des scripts
+   extérieurs qui pistent le visiteur et ralentissent la page. Ce sont
+   ici de simples liens, et rien ne part avant le clic.
+   ═══════════════════════════════════════════════════════════════ */
+function partage(titre, texte) {
+  const t = esc(titre || 'Melodia Funèbre');
+  const d = esc(texte || 'Une chanson originale composée pour votre défunt, à partir de ce que vous racontez de lui.');
+  return `
+  <section class="section-sm partage-sec">
+    <div class="wrap">
+      <div class="partage" data-partage data-titre="${t}" data-texte="${d}">
+        <div class="partage-mot">
+          <span class="eyebrow">Faire connaître</span>
+          <p>Quelqu'un autour de vous en aurait besoin ? Ce service est si récent que personne ne pense à le chercher.</p>
+        </div>
+        <div class="partage-liens">
+          <button type="button" class="partage-b partage-natif" data-natif hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+            Partager
+          </button>
+          <a class="partage-b" data-reseau="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.1-.3 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.6 4c1.9.8 2.3.7 2.7.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .1-1.2z"/></svg>
+            WhatsApp
+          </a>
+          <a class="partage-b" data-reseau="facebook" href="#" target="_blank" rel="noopener" aria-label="Partager sur Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+            Facebook
+          </a>
+          <a class="partage-b" data-reseau="linkedin" href="#" target="_blank" rel="noopener" aria-label="Partager sur LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1a4.2 4.2 0 0 1 3.8-2c4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>
+            LinkedIn
+          </a>
+          <a class="partage-b" data-reseau="mail" href="#" aria-label="Partager par courriel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+            Courriel
+          </a>
+          <button type="button" class="partage-b" data-copier-lien aria-label="Copier le lien">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            Copier le lien
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
 function jsonldFil(titre, chemin) {
   const fil = [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE + '/' }];
   if (chemin) fil.push({ '@type': 'ListItem', position: 2, name: titre, item: SITE + chemin });
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: fil };
 }
 
-module.exports = { pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldProcessus, jsonldFil };
+module.exports = { partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldProcessus, jsonldFil };

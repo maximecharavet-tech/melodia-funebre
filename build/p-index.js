@@ -3,9 +3,15 @@ const P = require('./parts.js');
 
 module.exports = {
   file: 'index.html',
-  title: 'Melodia Funèbre — La chanson qu\'il méritait, composée en 24 h',
-  desc: "Maison française de composition musicale pour cérémonies funéraires. Une œuvre originale écrite pour votre défunt, livrée en 24 heures, sans droits SACEM. Dès 149 €.",
-  jsonld: [P.jsonldSite, P.jsonldOrg, P.jsonldService, P.jsonldFaq, P.jsonldCatalogue],
+  title: 'Chanson d\'hommage pour obsèques, en 24 h | Melodia Funèbre',
+  desc: "Une chanson originale composée pour votre défunt, d'après ce que vous nous racontez de lui. Livrée en 24 h, sans droit SACEM. Dès 149 €.",
+  /* Le catalogue des dix-sept œuvres n'est plus déclaré ici. Il porte
+     l'identifiant « /demos#catalogue » et il est déjà déclaré sur
+     /demos : le répéter sur l'accueil décrivait le même nœud à deux
+     adresses, et alourdissait de 14 Ko la page la plus consultée du
+     site pour ne rien dire de neuf. Un lien mène de l'une à l'autre —
+     c'est ce que les moteurs suivent. */
+  jsonld: [P.jsonldSite, P.jsonldOrg, P.jsonldService, P.jsonldFaq],
   intro: true,
   scripts: ['assets/js/catalogue.js'],
   body: `
@@ -126,6 +132,7 @@ ${P.oeuvres()}
     </div>
   </section>
 
+${P.partage('Melodia Funèbre — une chanson composée pour votre défunt', "Une œuvre originale écrite à partir de ce que vous racontez de lui, livrée en 24 h.")}
 ${P.urgency()}
 
   
@@ -275,6 +282,39 @@ ${P.faq(null, true)}
       <div class="center reveal" style="margin-top:2.5rem;">
         <p class="lead" style="margin-bottom:1.4rem;">Une question qui n'est pas ici ?</p>
         <div class="hero-actions"><button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button><a href="/contact" class="btn btn-ghost">Nous écrire</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LES GUIDES ═══
+       Ils ne vendent rien : ils répondent à ce qu'une famille cherche
+       avant même de savoir que cette maison existe. Les placer ici, et
+       non dans un coin, leur donne le lien le plus fort du site — et
+       donne à la famille pressée quelque chose d'utile tout de suite,
+       même si elle ne commande rien. -->
+  <section class="section-sm" id="conseils">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Nos guides</div>
+        <h2 class="h-xl">Ce qu'il faut savoir,<br><em>même sans nous.</em></h2>
+        <p class="lead" style="margin:1.2rem auto 0;max-width:56ch;">Trois questions reviennent dans presque tous nos appels. Nous y avons répondu en entier, pour les familles qui ne feront jamais appel à nous comme pour les autres.</p>
+      </div>
+      <div class="grid-3">
+        <a href="/musique-obseques" class="card card-lift reveal">
+          <div class="card-icon">${ICON.note}</div>
+          <h3 class="h-lg">Quelle musique pour un enterrement</h3>
+          <p>Combien de morceaux, à quel moment, comment choisir sans se tromper — et les vérifications qui évitent l'accident du jour même.</p>
+        </a>
+        <a href="/musique-cremation" class="card card-lift reveal">
+          <div class="card-icon">${ICON.clock}</div>
+          <h3 class="h-lg">La musique en crémation</h3>
+          <p>Le créneau qui commande tout, et cet instant qui n'existe nulle part ailleurs : la disparition du cercueil.</p>
+        </a>
+        <a href="/musique-sacem-obseques" class="card card-lift reveal">
+          <div class="card-icon">${ICON.shield}</div>
+          <h3 class="h-lg">Droits d'auteur et obsèques</h3>
+          <p>A-t-on le droit de passer cette chanson ? Qui déclare quoi, à l'église, au crématorium — et les deux cas où cela vous concerne vraiment.</p>
+        </a>
       </div>
     </div>
   </section>

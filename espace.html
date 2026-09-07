@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#040407">
 <title>Mon espace — Melodia Funèbre</title>
-<meta name="robots" content="noindex">
+<meta name="description" content="L'espace des familles : suivez votre hommage, écoutez-le, téléchargez-le, et adressez vos demandes à la maison.">
+<!-- Page privée : jamais indexée, et jamais suivie non plus. « follow »
+     conviendrait à une page publique sans intérêt pour la recherche ;
+     ici les liens mènent à des données de familles. La canonique
+     évite qu'un lien partagé avec des paramètres soit vu comme une
+     seconde page. -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://melodia-funebre.fr/espace">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/assets/img/icons/icon-180.png?v=77f4ddbf">
 <link rel="manifest" href="/site.webmanifest">
@@ -14,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=2619af09">
+<link rel="stylesheet" href="assets/css/style.css?v=a3ef1dca">
 </head>
 <body class="page-espace">
 <div class="grain" aria-hidden="true"></div>
@@ -30,10 +37,11 @@
 <main id="esp-root" class="esp-page"></main>
 
 <script src="assets/js/config.js?v=e792fc99"></script>
-<script src="assets/js/auth.js?v=82cc7547"></script>
-<script src="assets/js/main.js?v=5ed21030"></script>
+<script src="assets/js/auth.js?v=b40681b6"></script>
+<script src="assets/js/main.js?v=1507b8e5"></script>
 <script src="assets/js/empreinte.js?v=d4610d73"></script>
-<script src="assets/js/espace.js?v=1bbb24ec"></script>
+<script src="assets/js/motdepasse.js?v=865738d9"></script>
+<script src="assets/js/espace.js?v=3a370d42"></script>
 <script>
 /* La garde d'abord : sans session, il n'y a rien à montrer. Puis on
    vérifie que le rôle correspond bien à cet espace — un partenaire ou

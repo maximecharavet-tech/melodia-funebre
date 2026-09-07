@@ -482,3 +482,74 @@
   /* ═══ ANNÉE COURANTE ═══ */
   $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 })();
+
+/* ═══════════════════════════════════════════════════════════════
+   PARTAGER LA PAGE
+
+   Le partage natif d'abord quand l'appareil le propose : il ouvre
+   l'application que la personne utilise déjà — messages, WhatsApp,
+   AirDrop, et celles que nous ne connaissons pas. Il n'existe pas sur
+   la plupart des ordinateurs de bureau, d'où les liens directs à côté
+   plutôt qu'à la place.
+
+   Les adresses sont construites au chargement, à partir de l'adresse
+   réelle de la page : ainsi le bloc fonctionne sur les onze pages sans
+   qu'aucune n'ait à se nommer.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var bloc = document.querySelector('[data-partage]');
+  if (!bloc) return;
+
+  var url = location.origin + location.pathname;
+  var titre = bloc.dataset.titre || document.title;
+  var texte = bloc.dataset.texte || '';
+  var e = encodeURIComponent;
+
+  var LIENS = {
+    whatsapp: 'https://wa.me/?text=' + e(titre + '\n' + url),
+    facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + e(url),
+    linkedin: 'https://www.linkedin.com/sharing/share-offsite/?url=' + e(url),
+    mail: 'mailto:?subject=' + e(titre) + '&body=' + e(texte + '\n\n' + url)
+  };
+  Array.prototype.forEach.call(bloc.querySelectorAll('[data-reseau]'), function (a) {
+    var h = LIENS[a.dataset.reseau];
+    if (h) a.href = h;
+  });
+
+  /* Le bouton natif reste caché tant qu'on ne sait pas s'il marche :
+     un bouton « Partager » qui ne fait rien vaut moins que pas de
+     bouton du tout. */
+  var natif = bloc.querySelector('[data-natif]');
+  if (natif && navigator.share) {
+    natif.hidden = false;
+    natif.addEventListener('click', function () {
+      navigator.share({ title: titre, text: texte, url: url }).catch(function () {});
+    });
+  }
+
+  var copier = bloc.querySelector('[data-copier-lien]');
+  if (copier) copier.addEventListener('click', function () {
+    var dire = function (t, ok) {
+      var avant = copier.getAttribute('data-avant') || copier.textContent.trim();
+      copier.setAttribute('data-avant', avant);
+      copier.classList.toggle('copie', !!ok);
+      copier.lastChild.textContent = ' ' + t;
+      setTimeout(function () {
+        copier.classList.remove('copie');
+        copier.lastChild.textContent = ' ' + avant;
+      }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { dire('Lien copié', true); },
+                                             function () { dire('Copie refusée'); });
+      return;
+    }
+    try {
+      var z = document.createElement('textarea');
+      z.value = url; z.style.position = 'fixed'; z.style.opacity = '0';
+      document.body.appendChild(z); z.select(); document.execCommand('copy');
+      document.body.removeChild(z); dire('Lien copié', true);
+    } catch (err) { dire('Copie refusée'); }
+  });
+})();

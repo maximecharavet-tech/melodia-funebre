@@ -16,17 +16,51 @@
 (function () {
   'use strict';
 
+  /* ─── Les interrupteurs du panneau de réglages ───
+     Le fondateur peut couper un courriel automatique depuis la
+     console. La règle est lue ici, une seule fois par page, pour que
+     tous les points d'envoi l'appliquent sans y penser — et faute de
+     réponse, tout reste allumé : un accusé de réception manquant se
+     remarque moins qu'un envoi non désiré, mais coûte plus cher. */
+  var INTERRUPTEUR = {
+    confirmation: 'mailConfirmation', brief: 'mailBrief',
+    composition: 'mailComposition', livraison: 'mailLivraison'
+  };
+  var reglages = null;
+
+  function chargerReglages() {
+    if (reglages) return reglages;
+    reglages = (window.MelodiaRest && window.MelodiaRest.actif
+      ? window.MelodiaRest.appel('/rest/v1/reglages?id=eq.courant&select=valeurs')
+          .then(function (r) { return (r && r[0] && r[0].valeurs) || {}; }, function () { return {}; })
+      : Promise.resolve({}));
+    return reglages;
+  }
+
   function envoyer(type, donnees) {
     var d = donnees || {};
     if (!d.email) return Promise.resolve({ ok: false, code: 'NO_EMAIL' });
 
+    var cle = INTERRUPTEUR[type];
+    if (!cle) return poster(type, d, true);
+
+    return chargerReglages().then(function (v) {
+      if (v[cle] === false) return { ok: false, code: 'COUPE_PAR_REGLAGE' };
+      return poster(type, d, v.mailCopieMaison !== false);
+    });
+  }
+
+  function poster(type, d, copie) {
     return fetch('/api/famille', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: type,
         email: d.email, nom: d.nom, defunt: d.defunt, ref: d.ref,
-        offre: d.offre, moment: d.moment, urgence: !!d.urgence, lien: d.lien
+        offre: d.offre, moment: d.moment, urgence: !!d.urgence, lien: d.lien,
+        /* Ne sert qu'à retirer la copie invisible de la maison : le
+           serveur ne l'ajoute jamais là où son modèle n'en prévoit pas. */
+        copie: copie !== false
       })
     }).then(function (r) {
       return r.json().then(function (j) { return j; }, function () { return {}; })

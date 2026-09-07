@@ -16,6 +16,7 @@ module.exports = {
     </div>
   </section>
 
+${P.partage('Melodia Funèbre', "Une chanson originale composée pour votre défunt.")}
 ${P.urgency()}
 
   <section class="section section-tight">

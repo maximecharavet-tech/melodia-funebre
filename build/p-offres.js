@@ -26,9 +26,14 @@ const styleOpts = STYLES.map(s => `<option${s === 'Chanson française' ? ' selec
 
 module.exports = {
   file: 'offres.html',
-  title: 'Offres et tarifs — Un hommage musical dès 149 € | Melodia Funèbre',
-  desc: "Trois offres de composition musicale funéraire : Essentiel 149 €, Prestige 299 €, Mémorial 499 €. Livraison en 24 h, aucun droit SACEM, révision incluse. Commande en ligne sécurisée.",
-  jsonld: [P.jsonldService, P.jsonldFil('Offres et tarifs', '/offres')],
+  title: 'Tarifs d\'un hommage musical, dès 149 € | Melodia Funèbre',
+  desc: "Trois offres : Essentiel 149 €, Prestige 299 €, Mémorial 499 €. Livraison en 24 h, aucun droit SACEM, révision incluse, commande en ligne.",
+  /* L'entité « maison » est déclarée ici aussi : le Service la
+     désigne par identifiant, et une référence dont la cible n'est
+     déclarée sur aucune page lue en même temps ne se résout pas. Le
+     nœud est léger, et le répéter rend le graphe de la page complet
+     à lui seul. */
+  jsonld: [P.jsonldOrg, P.jsonldService, P.jsonldFil('Offres et tarifs', '/offres')],
   scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/order.js'],
   body: `
   <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
@@ -81,6 +86,7 @@ ${P.scrollHint()}
     </div>
   </section>
 
+${P.partage('Un hommage musical dès 149 €', "Trois offres, livraison en 24 h, aucun droit SACEM à déclarer.")}
 ${P.urgency()}
 
   <!-- ═══ TUNNEL DE COMMANDE ═══ -->

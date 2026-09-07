@@ -469,6 +469,21 @@
     var equipe = await window.MelodiaTeam.liste();
     var prospects = await window.MelodiaProspects.all();
 
+    /* Une fiche n'a d'accès que si un rôle lui est déclaré dans la
+       base. C'est la seule vérification qui distingue un collaborateur
+       qui peut entrer d'un nom écrit dans un tableau. */
+    var orphelins = [];
+    if (window.MelodiaTeam.mode === 'supabase' && window.MelodiaRest && window.MelodiaRest.session() && equipe.length) {
+      try {
+        var lus = await window.MelodiaRest.appel('/rest/v1/roles?select=email');
+        var connus = {};
+        (lus || []).forEach(function (r) { connus[(r.email || '').toLowerCase()] = 1; });
+        equipe.forEach(function (c) {
+          if (!connus[(c.email || '').toLowerCase()]) orphelins.push(c.email);
+        });
+      } catch (e) { /* la vérification est un confort, pas une condition */ }
+    }
+
     /* Chiffres par collaborateur : c'est là que se lit le travail réel */
     var parPersonne = {};
     prospects.forEach(function (pr) {
@@ -488,12 +503,20 @@
           '<div class="field"><label class="field-label">Email *</label><input class="field-input" id="eq-email" type="email" placeholder="julie@melodia-funebre.fr"></div>' +
         '</div>' +
         '<div class="field-row">' +
-          '<div class="field"><label class="field-label">Mot de passe *</label><input class="field-input" id="eq-pw" placeholder="6 caractères minimum"></div>' +
+          '<div class="field"><label class="field-label">Mot de passe *</label>' +
+            '<div class="eq-pw-ligne">' +
+              '<input class="field-input" id="eq-pw" placeholder="8 caractères minimum">' +
+              '<button type="button" class="btn btn-ghost btn-sm" id="eq-generer" title="Proposer un mot de passe solide">Générer</button>' +
+            '</div>' +
+            '<div class="eq-force" id="eq-force"><span></span></div>' +
+          '</div>' +
           '<div class="field"><label class="field-label">Secteur</label><input class="field-input" id="eq-secteur" placeholder="Rhône-Alpes"></div>' +
         '</div>' +
-        '<button class="btn btn-gold" style="width:100%;" id="eq-creer">Créer le compte</button>' +
+        '<button class="btn btn-gold" style="width:100%;" id="eq-creer">Créer le compte et ouvrir l\'accès</button>' +
+        '<div class="form-msg" id="eq-msg"></div>' +
         '<p style="font-size:.8rem;color:var(--ash);margin-top:.9rem;line-height:1.6;">' +
-          'Transmettez-lui l\'adresse et le mot de passe : il se connecte sur <b style="color:var(--bone);">/compte</b> et arrive directement sur sa console.</p>' +
+          'L\'enregistrement crée le compte de connexion, pose les droits et enregistre la fiche — les trois d\'un coup. ' +
+          'Transmettez ensuite l\'adresse et le mot de passe : la connexion se fait sur <b style="color:var(--bone);">/compte</b>.</p>' +
       '</div>' +
 
       '<div class="panel" style="margin-top:1.2rem;">' +
@@ -504,30 +527,123 @@
           '<table class="tbl"><thead><tr><th>Collaborateur</th><th>Secteur</th><th>Fiches</th><th>Contactées</th><th>Partenaires</th><th></th></tr></thead><tbody>' +
           equipe.map(function (c) {
             var st = parPersonne[(c.email || '').toLowerCase()] || { total: 0, contactes: 0, partenaires: 0 };
-            return '<tr>' +
-              '<td><div style="color:var(--paper);">' + esc(c.nom || c.name) + '</div>' +
+            var suspendu = c.actif === false;
+            return '<tr' + (suspendu ? ' style="opacity:.55;"' : '') + '>' +
+              '<td><div style="color:var(--paper);">' + esc(c.nom || c.name) +
+                (suspendu ? ' <span class="pill" style="border-color:var(--amber);color:var(--amber);">Suspendu</span>' : '') + '</div>' +
               '<div style="color:var(--dust);font-size:.8rem;">' + esc(c.email) + '</div></td>' +
               '<td style="color:var(--ash);">' + esc(c.secteur || '—') + '</td>' +
               '<td>' + st.total + '</td>' +
               '<td>' + st.contactes + '</td>' +
               '<td style="color:' + (st.partenaires ? 'var(--green)' : 'var(--ash)') + ';">' + st.partenaires + '</td>' +
-              '<td style="text-align:right;"><button class="own-mini danger" data-suppr-eq="' + esc(c.email) + '" title="Supprimer le compte">✕</button></td>' +
+              '<td style="text-align:right;white-space:nowrap;">' +
+                '<button class="own-mini" data-mdp-eq="' + esc(c.email) + '" title="Remplacer son mot de passe">Mot de passe</button> ' +
+                '<button class="own-mini" data-etat-eq="' + esc(c.email) + '" data-actif="' + (suspendu ? '1' : '0') + '" title="' + (suspendu ? 'Rétablir l\'accès' : 'Suspendre l\'accès sans rien effacer') + '">' + (suspendu ? 'Rétablir' : 'Suspendre') + '</button> ' +
+                '<button class="own-mini danger" data-suppr-eq="' + esc(c.email) + '" title="Supprimer le compte et son accès">✕</button>' +
+              '</td>' +
             '</tr>';
           }).join('') + '</tbody></table>'
           : '<p style="color:var(--ash);font-size:.9rem;">Aucun collaborateur pour l\'instant.</p>') +
         (window.MelodiaTeam.mode === 'local' ?
           '<div class="form-msg info" style="display:block;margin-top:1.2rem;">' +
           'Base locale : les comptes créés ici n\'existent que dans ce navigateur. Pour qu\'un collaborateur se connecte depuis sa propre machine, activez Supabase (voir README).</div>' : '') +
+        /* Un accès sans compte de connexion est le défaut qui a fait
+           perdre le plus de temps : la fiche s'affichait, la personne
+           ne pouvait pas entrer, et rien ne le disait. On le dit. */
+        (orphelins.length ?
+          '<div class="form-msg err" style="display:block;margin-top:1.2rem;">' +
+          '<b>' + orphelins.length + ' fiche' + (orphelins.length > 1 ? 's' : '') + ' sans accès.</b><br>' +
+          esc(orphelins.join(', ')) + ' ' + (orphelins.length > 1 ? 'apparaissent' : 'apparaît') +
+          ' dans cette liste mais n\'' + (orphelins.length > 1 ? 'ont' : 'a') + ' pas de compte de connexion : ' +
+          'ces fiches datent d\'avant la correction, quand l\'enregistrement n\'en créait pas.<br>' +
+          'Recréez-les avec le formulaire ci-dessus, en reprenant la même adresse : le compte et les droits seront posés cette fois.</div>' : '') +
       '</div>';
 
     $('eq-creer').addEventListener('click', creerCollaborateur);
-    Array.prototype.forEach.call(hote.querySelectorAll('[data-suppr-eq]'), function (b) {
+
+    /* Un mot de passe proposé par la machine vaut mieux qu'un mot de
+       passe inventé à la volée : c'est le seul rempart devant les
+       commandes de familles en deuil. */
+    var gen = $('eq-generer');
+    if (gen) gen.addEventListener('click', function () {
+      var champ = $('eq-pw');
+      champ.value = motDePasseSolide();
+      champ.type = 'text';
+      jauge();
+    });
+    var champPw = $('eq-pw');
+    if (champPw) champPw.addEventListener('input', jauge);
+
+    Array.prototype.forEach.call(hote.querySelectorAll('[data-mdp-eq]'), function (b) {
       b.addEventListener('click', async function () {
-        if (!confirm('Supprimer le compte de ' + b.dataset.supprEq + ' ?\n\nSes fiches de prospection sont conservées.')) return;
-        await window.MelodiaTeam.supprimer(b.dataset.supprEq);
-        rendreEquipe(hote);
+        var neuf = prompt('Nouveau mot de passe pour ' + b.dataset.mdpEq + ' :\n\nHuit caractères minimum.', motDePasseSolide());
+        if (!neuf) return;
+        b.disabled = true;
+        try {
+          var r = await window.MelodiaTeam.motDePasse(b.dataset.mdpEq, neuf);
+          message((r && r.message) || 'Mot de passe remplacé.', 'ok');
+        } catch (e) { message(e.message, 'err'); }
+        finally { b.disabled = false; }
       });
     });
+
+    Array.prototype.forEach.call(hote.querySelectorAll('[data-etat-eq]'), function (b) {
+      b.addEventListener('click', async function () {
+        var remettre = b.dataset.actif === '1';
+        if (!remettre && !confirm('Suspendre l\'accès de ' + b.dataset.etatEq + ' ?\n\nIl ne pourra plus se connecter. Sa fiche et ses prospects sont conservés, et vous pouvez rétablir à tout moment.')) return;
+        b.disabled = true;
+        try {
+          var r = await window.MelodiaTeam.basculer(b.dataset.etatEq, remettre);
+          message((r && r.message) || 'Modifié.', 'ok');
+          rendreEquipe(hote);
+        } catch (e) { message(e.message, 'err'); b.disabled = false; }
+      });
+    });
+
+    Array.prototype.forEach.call(hote.querySelectorAll('[data-suppr-eq]'), function (b) {
+      b.addEventListener('click', async function () {
+        if (!confirm('Supprimer définitivement l\'accès de ' + b.dataset.supprEq + ' ?\n\nSon compte de connexion, ses droits et sa fiche sont effacés. Ses fiches de prospection restent à la maison.\n\nPour fermer la porte sans rien perdre, préférez « Suspendre ».')) return;
+        b.disabled = true;
+        try {
+          var r = await window.MelodiaTeam.supprimer(b.dataset.supprEq);
+          message((r && r.message) || 'Accès supprimé.', 'ok');
+          rendreEquipe(hote);
+        } catch (e) { message(e.message, 'err'); b.disabled = false; }
+      });
+    });
+  }
+
+  /* Quatre mots courts et deux chiffres : plus facile à dicter au
+     téléphone qu'une suite de symboles, et largement assez solide. */
+  function motDePasseSolide() {
+    var mots = ['saule', 'orgue', 'cendre', 'archet', 'brume', 'colline', 'ivoire', 'lampe',
+                'marbre', 'nacre', 'oiseau', 'pluie', 'racine', 'silence', 'tilleul', 'velours'];
+    var tirer = function (n) {
+      var out = [], t = new Uint32Array(n);
+      (window.crypto || window.msCrypto).getRandomValues(t);
+      for (var i = 0; i < n; i++) out.push(mots[t[i] % mots.length]);
+      return out;
+    };
+    var n = new Uint32Array(1);
+    (window.crypto || window.msCrypto).getRandomValues(n);
+    return tirer(3).join('-') + '-' + (10 + (n[0] % 90));
+  }
+
+  function jauge() {
+    var v = ($('eq-pw') || {}).value || '';
+    var b = $('eq-force');
+    if (!b) return;
+    var score = 0;
+    if (v.length >= 8) score++;
+    if (v.length >= 14) score++;
+    if (/[0-9]/.test(v) && /[a-zA-Z]/.test(v)) score++;
+    if (/[^a-zA-Z0-9]/.test(v)) score++;
+    var mots = ['Trop court', 'Faible', 'Correct', 'Solide', 'Excellent'];
+    var teintes = ['var(--red)', 'var(--red)', 'var(--amber)', 'var(--green)', 'var(--green)'];
+    if (!v) { b.className = 'eq-force'; b.firstChild.style.width = '0'; b.dataset.mot = ''; return; }
+    b.firstChild.style.width = (25 * Math.max(score, 1)) + '%';
+    b.firstChild.style.background = teintes[score];
+    b.dataset.mot = mots[score];
   }
 
   async function creerCollaborateur() {
@@ -535,16 +651,39 @@
     var btn = $('eq-creer');
     btn.disabled = true; btn.textContent = 'Création…';
     try {
+      var pw = v('eq-pw');
       var c = await window.MelodiaTeam.creer({
-        nom: v('eq-nom'), email: v('eq-email'), pw: v('eq-pw'), secteur: v('eq-secteur')
+        nom: v('eq-nom'), email: v('eq-email'), pw: pw, secteur: v('eq-secteur')
       });
-      message('Compte créé pour ' + c.nom + '. Transmettez-lui son adresse et son mot de passe.', 'ok');
+      /* Le mot de passe n'est plus jamais lisible après cet instant :
+         il est haché côté base. On le remet donc sous les yeux du
+         fondateur, une fois, pour qu'il le transmette — plutôt que de
+         vider le champ et le lui faire redemander. */
+      var m = $('eq-msg');
+      if (m) {
+        m.className = 'form-msg ok';
+        m.style.display = 'block';
+        m.innerHTML = esc(c._message || 'Accès créé.') +
+          '<br><br><b>À transmettre à ' + esc(c.nom) + '</b><br>' +
+          'Adresse : <code class="eq-code">' + esc(c.email) + '</code><br>' +
+          'Mot de passe : <code class="eq-code">' + esc(pw) + '</code><br>' +
+          '<span style="color:var(--ash);">Ce mot de passe ne sera plus affiché : la base ne le conserve que sous forme chiffrée. ' +
+          'Notez-le maintenant, ou utilisez « Mot de passe » dans la liste pour en poser un autre.</span>';
+      }
       ['eq-nom', 'eq-email', 'eq-pw', 'eq-secteur'].forEach(function (id) { $(id).value = ''; });
-      rendreEquipe($('own-corps'));
+      var liste = $('own-corps');
+      /* On redessine la liste sans effacer le bloc d'identifiants
+         qu'on vient d'afficher : il est encore utile. */
+      var garde = m ? m.innerHTML : '';
+      await rendreEquipe(liste);
+      var m2 = $('eq-msg');
+      if (m2 && garde) { m2.className = 'form-msg ok'; m2.style.display = 'block'; m2.innerHTML = garde; }
     } catch (e) {
-      message(e.message, 'err');
+      var me = $('eq-msg');
+      if (me) { me.className = 'form-msg err'; me.style.display = 'block'; me.textContent = e.message; }
+      else message(e.message, 'err');
     } finally {
-      btn.disabled = false; btn.textContent = 'Créer le compte';
+      btn.disabled = false; btn.textContent = 'Créer le compte et ouvrir l\'accès';
     }
   }
 

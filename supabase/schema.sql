@@ -4,6 +4,15 @@
 -- À coller tel quel dans Supabase → SQL Editor → New query → Run.
 -- Le script est idempotent : le relancer ne casse rien.
 --
+-- ⚠ CE FICHIER NE COUVRE QUE LA FONDATION (5 septembre 2026).
+-- Tout ce qui a été ajouté ensuite vit dans les migrations du projet,
+-- pas ici : agenda, messages, publications, candidatures et casier
+-- CV, options payantes des commandes, rôle « client » et table
+-- « demandes », réglages de la maison, échéance calculée depuis ces
+-- réglages. Pour repartir de zéro, appliquez ce fichier PUIS les
+-- migrations, dans l'ordre — la liste se lit dans le tableau de bord
+-- Supabase, section Database → Migrations.
+--
 -- ─────────────────────────────────────────────────────────────
 -- POURQUOI LA SÉCURITÉ OCCUPE LA MOITIÉ DE CE FICHIER
 --

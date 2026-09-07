@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=2619af09">
-<link rel="stylesheet" href="assets/css/dashboard.css?v=f695ec59">
+<link rel="stylesheet" href="assets/css/style.css?v=a3ef1dca">
+<link rel="stylesheet" href="assets/css/dashboard.css?v=45721b4b">
 </head>
 <body>
 <div class="dash">
@@ -21,6 +21,7 @@
     </a>
     <div class="side-label">Direction</div>
     <button class="side-item active" data-v="accueil"><span class="ico">◈</span>Vue générale</button>
+    <button class="side-item" data-v="pilotage"><span class="ico">◉</span>À traiter<span class="side-badge" id="badge-pil" style="display:none;">0</span></button>
     <button class="side-item" data-v="commandes"><span class="ico">♪</span>Commandes<span class="side-badge" id="badge-cmd">0</span></button>
     <button class="side-item" data-v="atelier"><span class="ico">✦</span>Atelier de composition</button>
     <button class="side-item" data-v="proprietaire"><span class="ico">✎</span>Mode propriétaire</button>
@@ -29,6 +30,8 @@
     <button class="side-item" data-v="catalogue"><span class="ico">♫</span>Catalogue</button>
     <button class="side-item" data-v="social"><span class="ico">◉</span>Réseaux sociaux</button>
     <button class="side-item" data-v="candidatures"><span class="ico">✦</span>Candidatures<span class="side-badge" id="badge-cand" style="display:none;">0</span></button>
+    <button class="side-item" data-v="demandes"><span class="ico">✉</span>Demandes<span class="side-badge" id="badge-dem" style="display:none;">0</span></button>
+    <button class="side-item" data-v="reglages"><span class="ico">⚙</span>Réglages</button>
     <div class="side-label">Développement</div>
     <button class="side-item" data-v="partenaires"><span class="ico">◇</span>Partenaires</button>
     <button class="side-item" data-v="finances"><span class="ico">€</span>Finances</button>
@@ -63,13 +66,14 @@
 </div>
 
 <script src="assets/js/config.js?v=e792fc99"></script>
-<script src="assets/js/auth.js?v=82cc7547"></script>
-<script src="assets/js/courrier.js?v=f9ff5aca"></script>
-<script src="assets/js/main.js?v=5ed21030"></script>
+<script src="assets/js/auth.js?v=b40681b6"></script>
+<script src="assets/js/courrier.js?v=7feee7d2"></script>
+<script src="assets/js/main.js?v=1507b8e5"></script>
 <script src="assets/js/livraison.js?v=8816d59c"></script>
 <script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
-<script src="assets/js/proprietaire.js?v=7ca0ec75"></script>
-<script src="assets/js/intranet.js?v=a0b10734"></script>
+<script src="assets/js/proprietaire.js?v=0e7fe552"></script>
+<script src="assets/js/motdepasse.js?v=865738d9"></script>
+<script src="assets/js/intranet.js?v=4b2436ff"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
@@ -137,6 +141,11 @@ async function boot() {
   if (window.MelodiaIntranet) {
     if (window.MelodiaIntranet.majBadgeMessages) window.MelodiaIntranet.majBadgeMessages();
     if (window.MelodiaIntranet.majBadgeCandidatures) window.MelodiaIntranet.majBadgeCandidatures();
+    if (window.MelodiaIntranet.majBadgeDemandes) window.MelodiaIntranet.majBadgeDemandes();
+    if (window.MelodiaIntranet.majBadgePilotage) window.MelodiaIntranet.majBadgePilotage();
+    /* Les réglages arrivent une fois pour toute la session : les écrans
+       qui les lisent (finances, pilotage) les trouvent déjà là. */
+    if (window.MelodiaIntranet.reglages) window.MelodiaIntranet.reglages.charger();
   }
 }
 
@@ -159,12 +168,16 @@ function go(v) {
     catalogue: ['Le fonds', 'Le <em>catalogue</em>'],
     social: ['Croissance', 'Réseaux <em>sociaux</em>'],
     candidatures: ['Recrutement', 'Les <em>candidatures</em>'],
+    pilotage: ['Poste de pilotage', 'Ce qui <em>appelle une action</em>'],
+    demandes: ['Familles', 'Les <em>demandes</em>'],
+    reglages: ['Configuration', 'Les <em>réglages</em>'],
     systeme: ['Configuration', 'Le <em>système</em>']
   }[v];
   document.getElementById('head-eyebrow').textContent = H[0];
   document.getElementById('head-title').innerHTML = H[1];
   var INTRA = { agenda: 'agenda', messagerie: 'messagerie', catalogue: 'catalogue',
-                social: 'publications', candidatures: 'candidatures' };
+                social: 'publications', candidatures: 'candidatures',
+                pilotage: 'pilotage', demandes: 'demandes', reglages: 'reglages' };
   if (INTRA[v]) {
     document.getElementById('view').innerHTML = '<div id="intra-root"></div>';
     if (window.MelodiaIntranet) window.MelodiaIntranet.vues[INTRA[v]](document.getElementById('intra-root'));
@@ -176,7 +189,7 @@ function go(v) {
   document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, proprietaire:vProprietaire, systeme:vSysteme })[v]();
   if (v === 'atelier') restoreAtelier();
   if (v === 'proprietaire' && window.MelodiaOwner) window.MelodiaOwner.mount();
-  if (v === 'systeme') { majEtatMusique(); majEtatCourriel(); }
+  if (v === 'systeme') { majEtatMusique(); majEtatCourriel(); if (window.MelodiaMotDePasse) window.MelodiaMotDePasse.brancher(); }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -521,6 +534,11 @@ function vPartenaires() {
 }
 
 function vFinances() {
+  /* Le taux de reversement aux agences se règle dans la console :
+     ce tableau le lit plutôt que de le graver à 60 %. */
+  var tauxAgence = (window.MelodiaIntranet && window.MelodiaIntranet.reglages)
+    ? Number(window.MelodiaIntranet.reglages.valeur('margeAgence')) : 60;
+  if (!(tauxAgence >= 0 && tauxAgence <= 100)) tauxAgence = 60;
   var ca = ORDERS.reduce(function(s,o){return s+(o.price||0);},0);
   var paid = ORDERS.filter(function(o){return o.paid;}).reduce(function(s,o){return s+(o.price||0);},0);
   var duMois = ORDERS.filter(function(o){ return new Date(o.created_at).getMonth() === new Date().getMonth(); });
@@ -533,9 +551,9 @@ function vFinances() {
     '<div class="kpi"><div class="kpi-label">Coût production</div><div class="kpi-value">' + cout + '<span class="u"> €</span></div><div class="kpi-foot">abonnement Suno</div></div>' +
     '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Détail des <em>commandes</em></div><div class="panel-sub">Base de facturation</div></div></div>' +
-    '<table class="tbl"><thead><tr><th>Référence</th><th>Date</th><th>Défunt</th><th>Offre</th><th>Montant</th><th>Marge agence</th><th>Net maison</th></tr></thead><tbody>' +
+    '<table class="tbl"><thead><tr><th>Référence</th><th>Date</th><th>Défunt</th><th>Offre</th><th>Montant</th><th>Marge agence (' + tauxAgence + ' %)</th><th>Net maison</th></tr></thead><tbody>' +
     (ORDERS.length ? ORDERS.map(function(o){
-      var agence = o.agence ? Math.round(o.price*0.6) : 0;
+      var agence = o.agence ? Math.round(o.price * tauxAgence / 100) : 0;
       return '<tr><td>' + esc(o.ref) + '</td><td>' + new Date(o.created_at).toLocaleDateString('fr-FR') + '</td><td>' + esc(o.defunt) + '</td><td>' + esc(o.offer) + '</td><td>' + eur(o.price) + '</td><td>' + (agence ? eur(agence) : '—') + '</td><td style="color:var(--or);">' + eur(o.price - agence) + '</td></tr>';
     }).join('') : '<tr><td colspan="7" style="color:var(--ash);">Aucune commande.</td></tr>') +
     '</tbody></table></div>' +
@@ -601,12 +619,18 @@ function vSysteme() {
     '<button class="btn btn-outline btn-sm" onclick="majEtatCourriel()">Revérifier</button></div>' +
     '<div id="sys-courriel">Vérification…</div></div>' +
     '<div class="panel"><div class="panel-title">Accès <em>maître</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Sécurité</div>' +
-    '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">L\'identifiant maître ouvre toutes les fonctions. Il est défini dans <code style="color:var(--or);">assets/js/auth.js</code>.</p>' +
-    '<p style="font-size:0.85rem; color:var(--amber); margin-top:1rem;">Avant l\'ouverture au public : changez ce mot de passe et passez en base Supabase, afin que l\'accès ne repose plus sur du code côté navigateur.</p></div>' +
+    (window.MelodiaDB.mode === 'supabase'
+      ? '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">Votre accès repose sur un compte de la base, avec un mot de passe que personne ne peut lire dans le code. Vous pouvez le changer en bas de cette page.</p>'
+      : '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">L\'identifiant maître ouvre toutes les fonctions. Il est défini dans <code style="color:var(--or);">assets/js/auth.js</code>.</p>' +
+        '<p style="font-size:0.85rem; color:var(--amber); margin-top:1rem;">Avant l\'ouverture au public : changez ce mot de passe et passez en base Supabase, afin que l\'accès ne repose plus sur du code côté navigateur.</p>') + '</div>' +
     '<div class="panel"><div class="panel-title">Actions <em>rapides</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Outils</div>' +
     '<button class="btn btn-outline" style="width:100%; margin-bottom:0.8rem;" onclick="exportCSV()">Exporter les commandes (CSV)</button>' +
     '<button class="btn btn-outline" style="width:100%;" onclick="window.open(\'index.html\')">Voir le site public</button></div>' +
-    '</div>';
+    '</div>' +
+    /* Le mot de passe du fondateur a transité par une conversation :
+       il devait être changé, et jusqu'ici cela demandait de passer par
+       le tableau de bord Supabase. Il se change ici. */
+    (window.MelodiaMotDePasse ? window.MelodiaMotDePasse.vue('Changer <em>mon mot de passe</em>') : '');
 }
 
 function exportCSV() {

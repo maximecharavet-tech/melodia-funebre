@@ -4,8 +4,8 @@ const { FAQ } = require('./data.js');
 
 module.exports = {
   file: 'processus.html',
-  title: 'Le processus — De cinq questions à une œuvre, en 24 h | Melodia Funèbre',
-  desc: "Comment nous composons un hommage musical : entretien de 5 minutes, écriture des paroles, composition, relecture humaine, livraison en 24 heures. Ce que nous vous demandons, et ce que nous garantissons.",
+  title: 'Comment se compose un hommage musical | Melodia Funèbre',
+  desc: "Entretien de cinq minutes, écriture des paroles, composition, relecture humaine, livraison en 24 h. Ce que nous demandons, ce que nous garantissons.",
   jsonld: [P.jsonldProcessus, P.jsonldFil('Le processus', '/processus')],
   body: `
   <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
@@ -87,6 +87,7 @@ module.exports = {
     </div>
   </section>
 
+${P.partage('Comment se compose un hommage musical', "Cinq questions, un entretien de cinq minutes, une œuvre en 24 h.")}
 ${P.urgency()}
 
   <!-- ═══ CE QU'ON VOUS DEMANDE ═══ -->

@@ -681,7 +681,11 @@
     etat.hote.innerHTML =
       '<div class="panel"><div class="panel-head"><div>' +
         '<div class="panel-title">La <em>messagerie</em></div>' +
-        '<div class="panel-sub">Entre la maison et ses collaborateurs' +
+        /* Le sous-titre parlait de « collaborateurs » y compris dans la
+           console d'une agence partenaire, qui n'en est pas un : elle
+           écrit à la maison, pas à une équipe dont elle ferait partie. */
+        '<div class="panel-sub">' +
+          (O.moi().role === 'partner' ? 'Entre votre agence et la maison' : 'Entre la maison et ses collaborateurs') +
           (nonLus ? ' · <span style="color:var(--or);">' + nonLus + ' non lu(s)</span>' : '') + '</div>' +
       '</div><button class="btn btn-outline btn-sm" id="ms-rafraichir">Rafraîchir</button></div>' +
       '<div class="grid-2" style="gap:1.4rem;align-items:start;margin-top:1.2rem;">' +
@@ -1470,4 +1474,707 @@
     } catch (e) { /* la console démarre même si la base est muette */ }
   }
   I.majBadgeCandidatures = majBadgeCandidatures;
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   VUE — LES RÉGLAGES
+
+   Ce qui était écrit dans le code et ne pouvait changer qu'en
+   reconstruisant le site : délais, seuils d'alerte, courriels
+   déclenchés, tarifs des options, coordonnées. Tout tient dans une
+   ligne de la base, lisible par le site et écrite par le seul
+   fondateur.
+
+   Les valeurs par défaut restent dans le code. Ce panneau ne fait
+   que les remplacer : un réglage jamais touché suit donc le code, et
+   « Rétablir » redevient possible à tout moment.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var I = window.MelodiaIntranet, O = I._outils;
+  var esc = O.esc;
+
+  /* ─── Le catalogue des réglages ───
+     Une seule table décrit tout : le libellé, l'aide, le type et la
+     valeur par défaut. Ajouter un réglage tient en une ligne, et
+     l'écran se construit tout seul autour. */
+  var DEFS = [
+    { section: 'Délais', aide: 'Le délai court à partir de l\'entretien téléphonique, jamais de la commande.' },
+    { cle: 'delaiNormal', l: 'Délai normal', t: 'heures', d: 24,
+      aide: 'Calcule l\'échéance de chaque nouvelle commande et les alertes de retard. Le délai écrit sur les pages du site se change, lui, à la publication.' },
+    { cle: 'delaiUrgence', l: 'Délai en urgence', t: 'heures', d: 6,
+      aide: 'S\'applique aux commandes portant l\'option « sous six heures ». Doit rester plus court que le délai normal.' },
+    { cle: 'rappelHeures', l: 'Rappeler la famille sous', t: 'heures', d: 2,
+      aide: 'Le rappel apparaît tout seul dans l\'agenda, à cette échéance.' },
+    { cle: 'rappelUrgence', l: 'Rappeler en urgence sous', t: 'heures', d: 1 },
+
+    { section: 'Alertes', aide: 'Ce qui doit vous sauter aux yeux dans la console.' },
+    { cle: 'alerteRetard', l: 'Signaler une commande en retard après', t: 'heures', d: 0,
+      aide: 'Zéro : dès l\'échéance dépassée. Deux : une marge de deux heures avant l\'alerte.' },
+    { cle: 'alerteDemande', l: 'Demande sans réponse après', t: 'heures', d: 12,
+      aide: 'Une famille qui écrit et n\'obtient rien s\'inquiète vite.' },
+    { cle: 'alerteCandidature', l: 'Candidature sans réponse après', t: 'jours', d: 7 },
+
+    { section: 'Courriels automatiques', aide: 'Envoyés seuls au changement d\'état. Décocher n\'efface rien : le message ne part simplement pas.' },
+    { cle: 'mailConfirmation', l: 'Accusé de commande', t: 'bool', d: true },
+    { cle: 'mailBrief', l: 'Après l\'entretien', t: 'bool', d: true },
+    { cle: 'mailComposition', l: 'À la mise en composition', t: 'bool', d: true },
+    { cle: 'mailLivraison', l: 'À la livraison', t: 'bool', d: true },
+    { cle: 'mailCopieMaison', l: 'M\'envoyer une copie des livraisons', t: 'bool', d: true },
+
+    { section: 'Production', aide: 'Ce que la maison s\'impose.' },
+    { cle: 'capaciteJour', l: 'Hommages par jour au maximum', t: 'nombre', d: 6,
+      aide: 'Au-delà, la console prévient plutôt que de laisser accepter ce qui ne sera pas tenu.' },
+    { cle: 'revisionEssentiel', l: 'Révision sur l\'offre Essentiel', t: 'euros', d: 49 },
+    { cle: 'margeAgence', l: 'Marge des agences', t: 'pourcent', d: 60,
+      aide: 'Sert à vos récapitulatifs financiers dans la console. Le taux annoncé sur la page Agences se change à la publication.' },
+
+    { section: 'Messagerie des collaborateurs', aide: 'Ce que la page « Ma boîte mail » explique à votre équipe. Une redirection est gratuite mais ne se branche pas sur un téléphone ; une vraie boîte, si.' },
+    { cle: 'montage', l: 'Montage des adresses @melodia-funebre.fr', t: 'texte', d: 'redirection',
+      aide: 'Écrivez « redirection » ou « boite ». La page bascule entre les deux marches à suivre, qui n\'ont rien à voir.' },
+    { cle: 'redirectionVers', l: 'Le courrier redirigé arrive dans', t: 'texte', d: 'melodiafunebre@gmail.com',
+      aide: 'Sans objet si vous passez sur de vraies boîtes.' },
+
+    { section: 'Coordonnées', aide: 'Ce que voient les familles.' },
+    { cle: 'emailMaison', l: 'Adresse de la maison', t: 'texte', d: 'contact@melodia-funebre.fr' },
+    { cle: 'reponseSous', l: 'Réponse annoncée sous', t: 'texte', d: 'deux heures ouvrées' },
+    { cle: 'joursOuverture', l: 'Jours d\'ouverture', t: 'texte', d: 'sept jours sur sept pour les urgences' }
+  ];
+
+  var DEFAUTS = {};
+  DEFS.forEach(function (d) { if (d.cle) DEFAUTS[d.cle] = d.d; });
+
+  var etat = { hote: null, valeurs: {}, version: 0, majLe: null, brouillon: {}, sale: false };
+
+  function val(cle) {
+    return etat.brouillon[cle] !== undefined ? etat.brouillon[cle]
+         : (etat.valeurs[cle] !== undefined ? etat.valeurs[cle] : DEFAUTS[cle]);
+  }
+  function parDefaut(cle) {
+    var v = val(cle);
+    return String(v) === String(DEFAUTS[cle]);
+  }
+
+  var UNITES = { heures: 'h', jours: 'j', euros: '€', pourcent: '%', nombre: '' };
+
+  function champ(d) {
+    var v = val(d.cle);
+    if (d.t === 'bool') {
+      return '<label class="reg-bascule">' +
+        '<input type="checkbox" data-reg="' + esc(d.cle) + '"' + (v ? ' checked' : '') + '>' +
+        '<span class="reg-corps"><span class="reg-titre">' + esc(d.l) + '</span>' +
+        (d.aide ? '<span class="reg-aide">' + esc(d.aide) + '</span>' : '') + '</span>' +
+        '<span class="reg-etat">' + (v ? 'Actif' : 'Éteint') + '</span></label>';
+    }
+    if (d.t === 'texte') {
+      return '<div class="reg-champ">' +
+        '<label class="reg-titre" for="reg-' + esc(d.cle) + '">' + esc(d.l) + '</label>' +
+        (d.aide ? '<span class="reg-aide">' + esc(d.aide) + '</span>' : '') +
+        '<input class="field-input" id="reg-' + esc(d.cle) + '" data-reg="' + esc(d.cle) + '" value="' + esc(v) + '">' +
+        (parDefaut(d.cle) ? '' : '<button type="button" class="reg-retablir" data-retablir="' + esc(d.cle) + '">Rétablir « ' + esc(DEFAUTS[d.cle]) + ' »</button>') +
+      '</div>';
+    }
+    return '<div class="reg-champ">' +
+      '<label class="reg-titre" for="reg-' + esc(d.cle) + '">' + esc(d.l) + '</label>' +
+      (d.aide ? '<span class="reg-aide">' + esc(d.aide) + '</span>' : '') +
+      '<div class="reg-nombre">' +
+        '<input class="field-input" id="reg-' + esc(d.cle) + '" data-reg="' + esc(d.cle) + '" type="number" min="0" step="1" value="' + esc(v) + '">' +
+        '<span class="reg-unite">' + esc(UNITES[d.t] || '') + '</span>' +
+      '</div>' +
+      (parDefaut(d.cle) ? '' : '<button type="button" class="reg-retablir" data-retablir="' + esc(d.cle) + '">Rétablir ' + esc(DEFAUTS[d.cle]) + '</button>') +
+    '</div>';
+  }
+
+  function rendre() {
+    var modifies = Object.keys(etat.brouillon).length;
+    var horsDefaut = DEFS.filter(function (d) { return d.cle && !parDefaut(d.cle); }).length;
+
+    var h = '<div class="panel"><div class="panel-head"><div>' +
+      '<div class="panel-title">Les <em>réglages</em></div>' +
+      '<div class="panel-sub">' +
+        (etat.majLe ? 'Version ' + etat.version + ' · modifiée le ' +
+          new Date(etat.majLe).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+          : 'Jamais modifiés — tout suit les valeurs par défaut') +
+        (horsDefaut ? ' · ' + horsDefaut + ' réglage(s) personnalisé(s)' : '') +
+      '</div></div>' +
+      '<button class="btn btn-outline btn-sm" id="reg-recharger">Recharger</button></div>';
+
+    if (!O.estMaitre()) {
+      h += '<div class="form-msg err" style="display:block;margin-top:1rem;">' +
+        'Ces réglages engagent ce que le site promet aux familles : seul le fondateur les modifie. ' +
+        'Vous pouvez les consulter.</div>';
+    }
+
+    h += '<div class="reg-liste">';
+    DEFS.forEach(function (d) {
+      if (d.section) {
+        h += '<div class="reg-section"><h3>' + esc(d.section) + '</h3>' +
+             (d.aide ? '<p>' + esc(d.aide) + '</p>' : '') + '</div>';
+      } else {
+        h += champ(d);
+      }
+    });
+    h += '</div>';
+
+    h += '<div class="reg-pied">' +
+      '<div class="form-msg" id="reg-etat"></div>' +
+      '<div class="reg-actions">' +
+        '<button class="btn btn-gold" id="reg-enregistrer"' + (modifies ? '' : ' disabled') + '>' +
+          (modifies ? 'Enregistrer ' + modifies + ' changement(s)' : 'Aucun changement') + '</button>' +
+        (modifies ? '<button class="btn btn-ghost" id="reg-abandonner">Abandonner</button>' : '') +
+        (horsDefaut ? '<button class="btn btn-ghost" id="reg-tout-defaut" style="margin-left:auto;color:var(--amber);">Tout remettre par défaut</button>' : '') +
+      '</div></div></div>';
+
+    etat.hote.innerHTML = h;
+    brancher();
+  }
+
+  function brancher() {
+    var hote = etat.hote;
+    var lecture = !O.estMaitre();
+
+    hote.querySelectorAll('[data-reg]').forEach(function (e) {
+      if (lecture) { e.disabled = true; return; }
+      var ev = e.type === 'checkbox' ? 'change' : 'input';
+      e.addEventListener(ev, function () {
+        var v = e.type === 'checkbox' ? e.checked
+              : (e.type === 'number' ? Number(e.value) : e.value);
+        var ref = etat.valeurs[e.dataset.reg] !== undefined ? etat.valeurs[e.dataset.reg] : DEFAUTS[e.dataset.reg];
+        /* Revenir à la valeur d'origine retire la modification plutôt
+           que d'en enregistrer une qui ne change rien. */
+        if (String(v) === String(ref)) delete etat.brouillon[e.dataset.reg];
+        else etat.brouillon[e.dataset.reg] = v;
+        /* Même repli que sur les options du site : « :has() » manque
+           sur les navigateurs anciens, la classe est donc posée ici. */
+        if (e.type === 'checkbox') {
+          var l = e.closest ? e.closest('.reg-bascule') : null;
+          if (l) l.classList.toggle('reg-active', e.checked);
+          rendre();
+        } else majPied();
+      });
+    });
+
+    hote.querySelectorAll('[data-retablir]').forEach(function (b) {
+      if (lecture) { b.disabled = true; return; }
+      b.addEventListener('click', function () {
+        var c = b.dataset.retablir;
+        etat.brouillon[c] = DEFAUTS[c];
+        if (String(DEFAUTS[c]) === String(etat.valeurs[c])) delete etat.brouillon[c];
+        rendre();
+      });
+    });
+
+    var r = hote.querySelector('#reg-recharger');
+    if (r) r.addEventListener('click', function () { etat.brouillon = {}; I.vues.reglages(hote); });
+
+    var a = hote.querySelector('#reg-abandonner');
+    if (a) a.addEventListener('click', function () { etat.brouillon = {}; rendre(); });
+
+    var t = hote.querySelector('#reg-tout-defaut');
+    if (t) t.addEventListener('click', function () {
+      if (!confirm('Remettre tous les réglages à leur valeur d\'origine ?\n\nRien n\'est enregistré tant que vous n\'avez pas cliqué sur Enregistrer.')) return;
+      etat.brouillon = {};
+      DEFS.forEach(function (d) {
+        if (d.cle && etat.valeurs[d.cle] !== undefined && String(etat.valeurs[d.cle]) !== String(DEFAUTS[d.cle])) {
+          etat.brouillon[d.cle] = DEFAUTS[d.cle];
+        }
+      });
+      rendre();
+    });
+
+    var e = hote.querySelector('#reg-enregistrer');
+    if (e) e.addEventListener('click', enregistrer);
+  }
+
+  /* Le pied se met à jour à la frappe, sans reconstruire toute la
+     page : refaire le HTML à chaque touche ferait perdre le curseur. */
+  function majPied() {
+    var n = Object.keys(etat.brouillon).length;
+    var b = etat.hote.querySelector('#reg-enregistrer');
+    if (!b) return;
+    b.disabled = !n;
+    b.textContent = n ? 'Enregistrer ' + n + ' changement(s)' : 'Aucun changement';
+  }
+
+  async function enregistrer() {
+    var b = etat.hote.querySelector('#reg-enregistrer');
+    /* Le message se retrouve à chaque fois plutôt qu'une seule au
+       début : rendre() remplace tout le panneau, et un noeud gardé
+       dans une variable se retrouve détaché — l'accusé de bonne fin
+       s'écrivait alors dans le vide. */
+    var dire = function (t, ok) {
+      var m = etat.hote.querySelector('#reg-etat');
+      if (!m) return;
+      m.className = 'form-msg' + (t ? (ok ? ' ok' : ' err') : '');
+      m.textContent = t || '';
+      m.style.display = t ? 'block' : '';
+    };
+
+    /* Un délai à zéro heure promettrait une livraison immédiate. */
+    var faux = [];
+    ['delaiNormal', 'delaiUrgence'].forEach(function (c) {
+      if (Number(val(c)) < 1) faux.push('Le ' + (c === 'delaiNormal' ? 'délai normal' : 'délai en urgence') + ' doit valoir au moins une heure.');
+    });
+    if (Number(val('delaiUrgence')) >= Number(val('delaiNormal'))) {
+      faux.push('Le délai en urgence doit être plus court que le délai normal : sinon l\'option se vend sans rien apporter.');
+    }
+    if (Number(val('margeAgence')) > 100) faux.push('La marge des agences ne peut pas dépasser cent pour cent.');
+    if (faux.length) return dire(faux.join(' '));
+
+    var neuf = {};
+    Object.keys(etat.valeurs).forEach(function (k) { neuf[k] = etat.valeurs[k]; });
+    Object.keys(etat.brouillon).forEach(function (k) {
+      /* Une valeur revenue au défaut sort de la ligne plutôt que d'y
+         rester en double : le fichier de réglages ne garde que les
+         écarts, et « Rétablir » redevient vraiment neutre. */
+      if (String(etat.brouillon[k]) === String(DEFAUTS[k])) delete neuf[k];
+      else neuf[k] = etat.brouillon[k];
+    });
+
+    b.disabled = true; b.textContent = 'Enregistrement…';
+    try {
+      var u = O.moi();
+      await window.MelodiaRest.appel('/rest/v1/reglages?on_conflict=id', {
+        method: 'POST',
+        headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
+        body: JSON.stringify({ id: 'courant', valeurs: neuf, maj_par: u.email || '' })
+      });
+      etat.valeurs = neuf; etat.brouillon = {};
+      I.reglages.oublier();
+      I.reglages.vives = neuf;
+      await charger();
+      rendre();
+      dire('Réglages enregistrés. Les nouvelles commandes en tiennent compte tout de suite ; les autres écrans, dès leur prochaine ouverture.', true);
+      setTimeout(function () { dire(''); }, 4000);
+    } catch (err) {
+      b.disabled = false; majPied();
+      dire('Refusé par la base : ' + err.message);
+    }
+  }
+
+  async function charger() {
+    var r = await window.MelodiaRest.appel('/rest/v1/reglages?id=eq.courant&select=valeurs,version,maj_le');
+    var l = r && r[0];
+    etat.valeurs = (l && l.valeurs) || {};
+    etat.version = (l && l.version) || 0;
+    etat.majLe = (l && l.maj_le) || null;
+  }
+
+  I.vues.reglages = async function (hote) {
+    etat.hote = hote;
+    if (!O.baseUtilisable(hote, 'Les réglages')) return;
+    O.attente(hote, 'des réglages');
+    try { await charger(); rendre(); }
+    catch (e) { O.panne(hote, e); }
+  };
+
+  /* ─── Lecture par le reste de la console ───
+     Un réglage qui ne pilote rien est un mensonge poli. Les autres
+     écrans lisent donc la même ligne, par ce point d'entrée : un
+     chargement au plus par page, un repli sur les valeurs d'origine
+     tant que la base n'a rien dit, et jamais d'erreur remontée — un
+     récapitulatif financier ne doit pas échouer parce qu'une ligne
+     de réglages manque. */
+  var cache = null;
+
+  function charge() {
+    if (cache) return cache;
+    cache = (window.MelodiaRest && window.MelodiaRest.actif && window.MelodiaRest.session()
+      ? window.MelodiaRest.appel('/rest/v1/reglages?id=eq.courant&select=valeurs')
+          .then(function (r) { return (r && r[0] && r[0].valeurs) || {}; }, function () { return {}; })
+      : Promise.resolve({}));
+    return cache;
+  }
+
+  I.reglages = {
+    defauts: DEFAUTS,
+    defs: DEFS,
+    /* Les valeurs déjà connues, sans attendre : ce qui n'a pas encore
+       été chargé revient à sa valeur d'origine plutôt qu'à rien. */
+    valeur: function (cle) {
+      var v = I.reglages.vives[cle];
+      return v !== undefined ? v : DEFAUTS[cle];
+    },
+    vives: {},
+    charger: function () {
+      return charge().then(function (v) {
+        I.reglages.vives = v;
+        return I.reglages;
+      });
+    },
+    /* Après un enregistrement, le cache doit tomber. */
+    oublier: function () { cache = null; I.reglages.vives = {}; }
+  };
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   VUE — LE POSTE DE PILOTAGE
+
+   L'accueil de la console listait des totaux : chiffre d'affaires,
+   hommages livrés, partenaires. Des chiffres justes, mais qui ne
+   disent pas quoi faire. Cet écran montre d'abord ce qui appelle une
+   action maintenant, et chaque ligne mène à l'endroit où l'on agit.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var I = window.MelodiaIntranet, O = I._outils;
+  var esc = O.esc;
+
+  var etat = { hote: null, cmds: [], demandes: [], cand: [], msg: [], reglages: {} };
+
+  function reg(cle) {
+    var v = etat.reglages[cle];
+    return v !== undefined ? v : (I.reglages ? I.reglages.defauts[cle] : undefined);
+  }
+
+  function heures(ms) { return ms / 3600000; }
+
+  /* ─── Ce qui presse ───
+     Une alerte n'a de valeur que si elle est rare et qu'elle mène
+     quelque part. Chacune porte donc sa raison, son ancienneté et le
+     bouton qui l'éteint. */
+  function alertes() {
+    var out = [];
+    var maintenant = Date.now();
+    var marge = Number(reg('alerteRetard')) || 0;
+
+    etat.cmds.forEach(function (c) {
+      if (c.status === 'livree') return;
+      if (c.echeance && heures(maintenant - new Date(c.echeance)) > marge) {
+        out.push({ gravite: 2, vue: 'commandes',
+          titre: 'Hommage en retard — ' + (c.defunt || c.ref),
+          dit: 'L\'échéance annoncée à la famille est dépassée depuis ' +
+               Math.round(heures(maintenant - new Date(c.echeance))) + ' h.' });
+      }
+      if (c.status === 'recue') {
+        var du = new Date(c.created_at).getTime() +
+                 (c.urgence ? Number(reg('rappelUrgence')) : Number(reg('rappelHeures'))) * 3600000;
+        if (maintenant > du) {
+          out.push({ gravite: 2, vue: 'agenda',
+            titre: 'Famille pas encore rappelée — ' + (c.defunt || c.ref),
+            dit: 'Le délai de composition ne commence qu\'après cet appel.' });
+        }
+      }
+      if (!c.paid && c.paypal_id !== 'paypalme') {
+        out.push({ gravite: 0, vue: 'commandes',
+          titre: 'Paiement en attente — ' + (c.defunt || c.ref),
+          dit: (c.price || 0) + ' € non réglés.' });
+      }
+      if (c.paypal_id === 'paypalme' && !c.paid) {
+        out.push({ gravite: 1, vue: 'commandes',
+          titre: 'Règlement à pointer — ' + (c.defunt || c.ref),
+          dit: 'Parti sur un lien PayPal.me : à vérifier dans votre compte, PayPal ne nous dit rien.' });
+      }
+    });
+
+    var seuilD = Number(reg('alerteDemande')) || 12;
+    etat.demandes.forEach(function (d) {
+      if (d.statut === 'traitee' || d.statut === 'refusee') return;
+      if (heures(maintenant - new Date(d.created_at)) > seuilD) {
+        out.push({ gravite: 1, vue: 'demandes',
+          titre: 'Demande sans réponse — ' + (d.nom || d.email),
+          dit: 'Reçue il y a ' + Math.round(heures(maintenant - new Date(d.created_at))) + ' h.' });
+      }
+    });
+
+    var seuilC = (Number(reg('alerteCandidature')) || 7) * 24;
+    etat.cand.forEach(function (c) {
+      if (c.statut !== 'nouveau') return;
+      if (heures(maintenant - new Date(c.created_at)) > seuilC) {
+        out.push({ gravite: 0, vue: 'candidatures',
+          titre: 'Candidature non lue — ' + (c.nom || c.email),
+          dit: 'Déposée il y a ' + Math.round(heures(maintenant - new Date(c.created_at)) / 24) + ' jours.' });
+      }
+    });
+
+    var nonLus = etat.msg.length;
+    if (nonLus) {
+      out.push({ gravite: 1, vue: 'messagerie',
+        titre: nonLus + ' message' + (nonLus > 1 ? 's' : '') + ' non lu' + (nonLus > 1 ? 's' : ''),
+        dit: 'De vos collaborateurs.' });
+    }
+
+    return out.sort(function (a, b) { return b.gravite - a.gravite; });
+  }
+
+  function chiffres() {
+    var auj = O.debutJour(new Date()).getTime();
+    var enCours = etat.cmds.filter(function (c) { return c.status !== 'livree'; });
+    var duJour = etat.cmds.filter(function (c) { return new Date(c.created_at) >= auj; });
+    var capacite = Number(reg('capaciteJour')) || 6;
+    var encaisse = etat.cmds.filter(function (c) { return c.paid; })
+      .reduce(function (s, c) { return s + (c.price || 0); }, 0);
+    var attendu = etat.cmds.filter(function (c) { return !c.paid; })
+      .reduce(function (s, c) { return s + (c.price || 0); }, 0);
+    return [
+      { l: 'En production', v: enCours.length, p: enCours.length > capacite ? 'red' : 'or',
+        f: enCours.length > capacite ? 'Au-dessus de votre capacité' : 'Commandes non livrées' },
+      { l: 'Reçues aujourd\'hui', v: duJour.length, p: 'cyan', f: 'Sur ' + capacite + ' par jour au plus' },
+      { l: 'Encaissé', v: encaisse + ' €', p: 'green', f: 'Paiements confirmés' },
+      { l: 'En attente', v: attendu + ' €', p: attendu ? 'amber' : 'silver-dim', f: 'Non réglé' }
+    ];
+  }
+
+  function rendre() {
+    var al = alertes();
+    var ch = chiffres();
+
+    var h = '<div class="pil-kpis">' + ch.map(function (k) {
+      return '<div class="pil-kpi"><div class="pil-kpi-l">' + esc(k.l) + '</div>' +
+        '<div class="pil-kpi-v" style="color:var(--' + k.p + ');">' + esc(k.v) + '</div>' +
+        '<div class="pil-kpi-f">' + esc(k.f) + '</div></div>';
+    }).join('') + '</div>';
+
+    h += '<div class="panel"><div class="panel-head"><div>' +
+      '<div class="panel-title">Ce qui <em>appelle une action</em></div>' +
+      '<div class="panel-sub">' + (al.length ? al.length + ' point(s) à traiter' : 'Rien en retard') + '</div>' +
+      '</div><button class="btn btn-outline btn-sm" id="pil-recharger">Actualiser</button></div>';
+
+    h += al.length
+      ? '<div class="pil-alertes">' + al.map(function (a) {
+          var c = ['silver-dim', 'amber', 'red'][a.gravite];
+          return '<button type="button" class="pil-alerte" data-aller="' + esc(a.vue) + '">' +
+            '<span class="pil-puce" style="background:var(--' + c + ');"></span>' +
+            '<span class="pil-txt"><b>' + esc(a.titre) + '</b><em>' + esc(a.dit) + '</em></span>' +
+            '<span class="pil-fleche">→</span></button>';
+        }).join('') + '</div>'
+      : '<div class="pil-calme">' +
+        '<p>Rien ne traîne : aucune commande en retard, aucune famille sans réponse.</p>' +
+        '<p class="pil-aide">Cet écran ne montre que ce qui a dépassé les seuils fixés dans les réglages. ' +
+        'Il reste vide tant que tout suit son cours.</p></div>';
+
+    h += '</div>';
+    etat.hote.innerHTML = h;
+
+    etat.hote.querySelectorAll('[data-aller]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (typeof window.go === 'function') window.go(b.dataset.aller);
+      });
+    });
+    var r = etat.hote.querySelector('#pil-recharger');
+    if (r) r.addEventListener('click', function () { I.vues.pilotage(etat.hote); });
+  }
+
+  I.vues.pilotage = async function (hote) {
+    etat.hote = hote;
+    if (!O.baseUtilisable(hote, 'Le poste de pilotage')) return;
+    O.attente(hote, 'du tableau de bord');
+    var sansBruit = function (p) { return p.then(function (r) { return r; }, function () { return []; }); };
+    try {
+      var r = await Promise.all([
+        sansBruit(window.MelodiaDB.all()),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/demandes?select=*&order=created_at.desc')),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/candidatures?select=*&order=created_at.desc')),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/messages?select=id&lu=is.false&destinataire=eq.' +
+          encodeURIComponent(O.moi().email || ''))),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/reglages?id=eq.courant&select=valeurs'))
+      ]);
+      etat.cmds = r[0] || []; etat.demandes = r[1] || []; etat.cand = r[2] || []; etat.msg = r[3] || [];
+      etat.reglages = (r[4] && r[4][0] && r[4][0].valeurs) || {};
+      rendre();
+      majBadge(alertes().length);
+    } catch (e) { O.panne(hote, e); }
+  };
+
+  function majBadge(n) {
+    var b = document.getElementById('badge-pil');
+    if (!b) return;
+    b.textContent = n;
+    b.style.display = n ? '' : 'none';
+    b.style.color = n ? 'var(--amber)' : '';
+    b.style.borderColor = n ? 'rgba(251,191,36,.35)' : '';
+  }
+
+  /* Le compteur de la barre latérale se remplit à l'ouverture de la
+     console, sans qu'on ait à passer par l'écran : c'est justement
+     ce qu'on veut savoir avant de cliquer. */
+  I.majBadgePilotage = async function () {
+    if (!O.enLigne() || !window.MelodiaRest.session()) return;
+    var sansBruit = function (p) { return p.then(function (r) { return r; }, function () { return []; }); };
+    try {
+      var r = await Promise.all([
+        sansBruit(window.MelodiaDB.all()),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/demandes?select=*&order=created_at.desc')),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/candidatures?select=*&order=created_at.desc')),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/messages?select=id&lu=is.false&destinataire=eq.' +
+          encodeURIComponent(O.moi().email || ''))),
+        sansBruit(window.MelodiaRest.appel('/rest/v1/reglages?id=eq.courant&select=valeurs'))
+      ]);
+      etat.cmds = r[0] || []; etat.demandes = r[1] || []; etat.cand = r[2] || []; etat.msg = r[3] || [];
+      etat.reglages = (r[4] && r[4][0] && r[4][0].valeurs) || {};
+      majBadge(alertes().length);
+    } catch (e) {}
+  };
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   VUE — LES DEMANDES DES FAMILLES
+
+   Ce qu'une famille écrit depuis son espace : une correction, une
+   question, une urgence qu'elle n'avait pas signalée. Répondre ici
+   inscrit la réponse dans son espace — elle n'a pas à guetter sa
+   boîte de courriels.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var I = window.MelodiaIntranet, O = I._outils;
+  var esc = O.esc;
+
+  var TYPES = {
+    revision: { l: 'Correction demandée', c: 'amber' },
+    question: { l: 'Question', c: 'cyan' },
+    urgence: { l: 'Urgence', c: 'red' },
+    annulation: { l: 'Annulation', c: 'red' },
+    autre: { l: 'Autre', c: 'silver-dim' }
+  };
+  var ETATS = {
+    ouverte: { l: 'Ouverte', c: 'or' }, vue: { l: 'Lue', c: 'silver-dim' },
+    traitee: { l: 'Traitée', c: 'green' }, refusee: { l: 'Sans suite', c: 'dust' }
+  };
+
+  var etat = { hote: null, liste: [], filtre: 'ouvertes', ouvert: null };
+
+  function fiche(d) {
+    var t = TYPES[d.type] || TYPES.autre, e = ETATS[d.statut] || ETATS.ouverte;
+    var ouvert = etat.ouvert === d.id;
+    return '<div class="own-row" data-colonne>' +
+      '<div style="display:flex;gap:1rem;align-items:flex-start;">' +
+        '<div class="own-item" style="flex:1;min-width:0;">' +
+          '<div class="own-name">' + esc(d.nom || d.email) +
+            ' <span class="pill" style="border-color:var(--' + t.c + ');color:var(--' + t.c + ');">' + esc(t.l) + '</span></div>' +
+          '<div class="own-detail">' + esc(O.quand(d.created_at)) + ' ' + O.heure(d.created_at) +
+            (d.ref ? ' · <span style="color:var(--or);">' + esc(d.ref) + '</span>' : '') +
+            ' · <a href="mailto:' + esc(d.email) + '" style="color:var(--or);">' + esc(d.email) + '</a></div>' +
+          '<div class="own-detail" style="color:var(--bone);">' + esc(d.message) + '</div>' +
+        '</div>' +
+        '<div class="own-acts" style="gap:.4rem;flex-wrap:wrap;">' +
+          '<span class="pill" style="border-color:var(--' + e.c + ');color:var(--' + e.c + ');">' + esc(e.l) + '</span>' +
+          '<button class="btn btn-ghost btn-sm" data-dem="' + esc(d.id) + '">' + (ouvert ? 'Replier' : 'Répondre') + '</button>' +
+        '</div>' +
+      '</div>' +
+      (ouvert ? repondre(d) : (d.reponse ? '<div class="own-detail" style="margin-top:.7rem;color:var(--green);">Répondu : ' + esc(d.reponse) + '</div>' : '')) +
+    '</div>';
+  }
+
+  function repondre(d) {
+    return '<div style="margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line-soft);">' +
+      '<div class="field"><label class="field-label">Votre réponse — elle s\'affichera dans son espace</label>' +
+        '<textarea class="field-area" id="dm-rep" rows="4" placeholder="Ce que vous faites, et sous quel délai.">' + esc(d.reponse || '') + '</textarea></div>' +
+      '<div class="field-row">' +
+        '<div class="field"><label class="field-label">État</label>' +
+          '<select class="field-select" id="dm-statut">' +
+          Object.keys(ETATS).map(function (s) {
+            return '<option value="' + s + '"' + (d.statut === s ? ' selected' : '') + '>' + esc(ETATS[s].l) + '</option>';
+          }).join('') + '</select></div>' +
+      '</div>' +
+      '<div class="form-msg" id="dm-etat"></div>' +
+      '<button class="btn btn-gold btn-sm" data-envoyer="' + esc(d.id) + '">Enregistrer la réponse</button>' +
+    '</div>';
+  }
+
+  function retenues() {
+    if (etat.filtre === 'toutes') return etat.liste;
+    if (etat.filtre === 'ouvertes') return etat.liste.filter(function (d) { return d.statut === 'ouverte' || d.statut === 'vue'; });
+    return etat.liste.filter(function (d) { return d.statut === etat.filtre; });
+  }
+
+  function rendre() {
+    var l = retenues();
+    var ouvertes = etat.liste.filter(function (d) { return d.statut === 'ouverte'; }).length;
+    var h = '<div class="panel"><div class="panel-head"><div>' +
+      '<div class="panel-title">Les <em>demandes</em></div>' +
+      '<div class="panel-sub">' + etat.liste.length + ' reçue(s)' +
+        (ouvertes ? ' · <span style="color:var(--or);">' + ouvertes + ' sans réponse</span>' : '') + '</div></div>' +
+      '<button class="btn btn-outline btn-sm" id="dm-recharger">Recharger</button></div>' +
+      '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:1.2rem 0;">' +
+      [['ouvertes', 'À traiter'], ['traitee', 'Traitées'], ['refusee', 'Sans suite'], ['toutes', 'Toutes']]
+        .map(function (f) {
+          return '<button class="btn btn-' + (etat.filtre === f[0] ? 'gold' : 'outline') +
+            ' btn-sm" data-fdem="' + f[0] + '">' + esc(f[1]) + '</button>';
+        }).join('') + '</div>';
+
+    h += l.length ? '<div class="own-list">' + l.map(fiche).join('') + '</div>'
+      : '<p style="color:var(--ash);line-height:1.8;">' +
+        (etat.liste.length ? 'Rien dans cette colonne.'
+          : 'Aucune demande. Les familles écrivent depuis leur espace, et ce qu\'elles disent arrive ici.') + '</p>';
+    h += '</div>';
+    etat.hote.innerHTML = h;
+    brancher();
+  }
+
+  function brancher() {
+    var hote = etat.hote;
+    hote.querySelectorAll('[data-fdem]').forEach(function (b) {
+      b.addEventListener('click', function () { etat.filtre = b.dataset.fdem; rendre(); });
+    });
+    var r = hote.querySelector('#dm-recharger');
+    if (r) r.addEventListener('click', function () { I.vues.demandes(hote); });
+
+    hote.querySelectorAll('[data-dem]').forEach(function (b) {
+      b.addEventListener('click', async function () {
+        var id = b.dataset.dem, ouvre = etat.ouvert !== id;
+        etat.ouvert = ouvre ? id : null;
+        var d = etat.liste.filter(function (x) { return x.id === id; })[0];
+        /* Ouvrir vaut lecture : sinon la pastille ne descend jamais. */
+        if (ouvre && d && d.statut === 'ouverte') {
+          try { await majer(id, { statut: 'vue' }); d.statut = 'vue'; } catch (e) {}
+        }
+        rendre();
+      });
+    });
+
+    hote.querySelectorAll('[data-envoyer]').forEach(function (b) {
+      b.addEventListener('click', async function () {
+        var id = b.dataset.envoyer;
+        var rep = hote.querySelector('#dm-rep').value.trim();
+        var st = hote.querySelector('#dm-statut').value;
+        var m = hote.querySelector('#dm-etat');
+        if (!rep && st === 'traitee') {
+          m.className = 'form-msg err'; m.style.display = 'block';
+          m.textContent = 'Marquer « traitée » sans un mot laisse la famille sans réponse dans son espace.';
+          return;
+        }
+        b.disabled = true; b.textContent = 'Enregistrement…';
+        try {
+          await majer(id, { reponse: rep, statut: st, repondu_le: new Date().toISOString() });
+          var d = etat.liste.filter(function (x) { return x.id === id; })[0];
+          if (d) { d.reponse = rep; d.statut = st; }
+          etat.ouvert = null;
+          rendre();
+        } catch (e) {
+          b.disabled = false; b.textContent = 'Enregistrer la réponse';
+          m.className = 'form-msg err'; m.style.display = 'block';
+          m.textContent = 'Refusé : ' + e.message;
+        }
+      });
+    });
+  }
+
+  async function majer(id, champs) {
+    await window.MelodiaRest.appel('/rest/v1/demandes?id=eq.' + encodeURIComponent(id), {
+      method: 'PATCH', body: JSON.stringify(champs)
+    });
+  }
+
+  I.vues.demandes = async function (hote) {
+    etat.hote = hote;
+    if (!O.baseUtilisable(hote, 'Les demandes')) return;
+    O.attente(hote, 'des demandes');
+    try {
+      etat.liste = (await window.MelodiaRest.appel('/rest/v1/demandes?select=*&order=created_at.desc')) || [];
+      rendre();
+      majBadgeDemandes();
+    } catch (e) { O.panne(hote, e); }
+  };
+
+  async function majBadgeDemandes() {
+    var b = document.getElementById('badge-dem');
+    if (!b || !O.enLigne() || !window.MelodiaRest.session()) return;
+    try {
+      var r = await window.MelodiaRest.appel('/rest/v1/demandes?select=id&statut=eq.ouverte');
+      var n = (r || []).length;
+      b.textContent = n; b.style.display = n ? '' : 'none';
+    } catch (e) {}
+  }
+  I.majBadgeDemandes = majBadgeDemandes;
 })();

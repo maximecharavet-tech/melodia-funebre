@@ -87,6 +87,14 @@
         e.textContent = comprise(o) ? 'Comprise' : '+ ' + o.prix + ' €';
         e.classList.toggle('opt-comprise', comprise(o));
       }
+      /* La mise en évidence de l'option retenue reposait sur « :has() »
+         en CSS, que ne connaissent ni Safari d'avant 2022 ni les
+         navigateurs Chromium anciens encore courants sur Huawei et sur
+         les Android d'entrée de gamme. Une famille y cochait un
+         supplément à 80 € sans le moindre retour visuel. La classe est
+         posée ici, donc sur tous les appareils. */
+      var etiquette = o.case.closest ? o.case.closest('.opt') : null;
+      if (etiquette) etiquette.classList.toggle('opt-choisie', o.case.checked);
     });
     set('rc-total', euro(priceOf()));
   }
