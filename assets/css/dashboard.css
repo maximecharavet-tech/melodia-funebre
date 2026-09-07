@@ -676,3 +676,49 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .reg-actions .btn { flex: 1 1 auto; }
   .reg-actions #reg-tout-defaut { flex-basis: 100%; margin-left: 0 !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CRÉATION D'UN ACCÈS COLLABORATEUR
+
+   Le mot de passe est le seul rempart devant les commandes de
+   familles en deuil. Il mérite donc plus qu'un champ nu : un bouton
+   qui en propose un solide, et une jauge qui dit ce que vaut celui
+   qu'on vient de taper.
+   ═══════════════════════════════════════════════════════════════ */
+.eq-pw-ligne { display: flex; gap: 0.5rem; align-items: stretch; min-width: 0; }
+.eq-pw-ligne .field-input { flex: 1; min-width: 0; }
+.eq-pw-ligne .btn { flex: none; white-space: nowrap; }
+
+.eq-force {
+  position: relative; height: 3px; margin-top: 0.5rem;
+  background: var(--line-soft); border-radius: 2px; overflow: visible;
+}
+.eq-force > span {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: var(--red);
+  transition: width 0.35s var(--ease), background 0.35s var(--ease);
+}
+.eq-force::after {
+  content: attr(data-mot);
+  position: absolute; right: 0; top: 7px;
+  font-family: var(--ff-m); font-size: 0.55rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+
+/* Les identifiants affichés une seule fois après la création : ils
+   doivent se sélectionner et se recopier sans effort. */
+.eq-code {
+  display: inline-block; font-family: var(--ff-m); font-size: 0.85rem;
+  background: var(--ink-2); border: 1px solid var(--line);
+  padding: 0.15rem 0.5rem; border-radius: 3px; color: var(--or-bright);
+  user-select: all; overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .eq-pw-ligne { flex-wrap: wrap; }
+  .eq-pw-ligne .btn { width: 100%; min-height: 44px; }
+  .eq-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .eq-code { font-size: 0.92rem; }
+  /* Trois actions par ligne débordent sur un téléphone */
+  .tbl .own-mini { min-height: 38px; margin-bottom: 3px; }
+}

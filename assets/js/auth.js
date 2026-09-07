@@ -546,48 +546,97 @@
         .filter(function (u) { return u.role === 'commercial'; });
     },
 
+    /* ─── Le relais serveur ───
+       Créer un compte pour quelqu'un d'autre demande la clé de service
+       de la base, qui ouvre tout sans passer par la moindre règle de
+       sécurité. Elle ne peut donc pas vivre dans cette page : elle est
+       posée sur le serveur, et le navigateur ne fait que demander.
+       Le jeton de session accompagne la demande — c'est le serveur qui
+       vérifie qu'il appartient bien au fondateur. */
+    async _serveur(charge) {
+      var s = LS.get('melodia_session', null);
+      if (!s || !s.access_token) {
+        throw new Error('Vous êtes en session locale : la base ne vous reconnaît pas. Reconnectez-vous avec votre compte pour créer un accès.');
+      }
+      var r = await fetch('/api/collaborateur', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + s.access_token },
+        body: JSON.stringify(charge)
+      });
+      var j = null;
+      try { j = await r.json(); } catch (e) { j = null; }
+      if (!r.ok) {
+        var e2 = new Error((j && (j.error + (j.hint ? ' — ' + j.hint : ''))) || ('Le serveur a répondu ' + r.status + '.'));
+        e2.code = j && j.code;
+        throw e2;
+      }
+      return j;
+    },
+
+    /* Créer un collaborateur, c'est trois choses indissociables : un
+       compte qui ouvre une session, un rôle qui donne les droits, une
+       fiche pour la console. Cette fonction n'écrivait que la fiche —
+       et annonçait quand même « compte créé ». Le collaborateur
+       recevait des identifiants qui n'ouvraient rien. */
     async creer(data) {
       var email = (data.email || '').trim().toLowerCase();
       if (!data.nom || !email || !data.pw) throw new Error('Nom, email et mot de passe sont requis.');
-      if (data.pw.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.');
       if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email)) throw new Error('Adresse email invalide.');
+      if (data.pw.length < 8) throw new Error('Le mot de passe doit contenir au moins huit caractères : ce compte ouvre les commandes de familles en deuil.');
+
+      if (HAS_SB) {
+        var rep = await this._serveur({
+          action: 'creer', nom: data.nom, email: email, pw: data.pw,
+          secteur: data.secteur || '', tel: data.tel || '', role: data.role || 'commercial'
+        });
+        return {
+          nom: data.nom, name: data.nom, email: email, role: rep.role || 'commercial',
+          secteur: data.secteur || '', actif: true,
+          _message: rep.message, _cree: rep.cree
+        };
+      }
 
       var fiche = {
         id: uid(), nom: data.nom, name: data.nom, email: email,
         role: 'commercial', secteur: data.secteur || '',
         tel: data.tel || '', actif: true, created_at: new Date().toISOString()
       };
-
-      if (HAS_SB) {
-        var rows = await sb('/rest/v1/collaborateurs', {
-          method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(fiche)
-        });
-        return (rows && rows[0]) || fiche;
-      }
       var users = LS.get('melodia_users', {});
       if (users[email]) throw new Error('Un compte existe déjà avec cette adresse.');
       users[email] = Object.assign({}, fiche, { pw: hash(data.pw) });
       LS.set('melodia_users', users);
+      fiche._message = 'Compte créé dans ce navigateur uniquement.';
+      fiche._cree = true;
       return fiche;
     },
 
+    /* Remplacer le mot de passe d'un collaborateur qui a perdu le sien. */
+    async motDePasse(email, pw) {
+      if (HAS_SB) return await this._serveur({ action: 'motdepasse', email: email, pw: pw });
+      var users = LS.get('melodia_users', {});
+      if (!users[email]) throw new Error('Compte inconnu.');
+      users[email].pw = hash(pw); LS.set('melodia_users', users);
+      return { ok: true, message: 'Mot de passe remplacé.' };
+    },
+
+    /* Suspendre fermait la fiche mais laissait le compte ouvrir une
+       session : la porte restait entrebâillée. Le serveur ferme aussi
+       la connexion, sans rien effacer. */
     async basculer(email, actif) {
       var users = LS.get('melodia_users', {});
       if (users[email]) { users[email].actif = !!actif; LS.set('melodia_users', users); }
-      if (HAS_SB) {
-        try { await sb('/rest/v1/collaborateurs?email=eq.' + encodeURIComponent(email), { method: 'PATCH', body: JSON.stringify({ actif: !!actif }) }); } catch (e) {}
-      }
-      return true;
+      if (HAS_SB) return await this._serveur({ action: 'etat', email: email, actif: !!actif });
+      return { ok: true, message: actif ? 'Accès rétabli.' : 'Accès suspendu.' };
     },
 
+    /* Supprimer laissait le compte de connexion en place : la fiche
+       disparaissait de la console, la personne continuait d'entrer. */
     async supprimer(email) {
       var users = LS.get('melodia_users', {});
       delete users[email];
       LS.set('melodia_users', users);
-      if (HAS_SB) {
-        try { await sb('/rest/v1/collaborateurs?email=eq.' + encodeURIComponent(email), { method: 'DELETE' }); } catch (e) {}
-      }
-      return true;
+      if (HAS_SB) return await this._serveur({ action: 'supprimer', email: email });
+      return { ok: true, message: 'Compte supprimé.' };
     }
   };
 
