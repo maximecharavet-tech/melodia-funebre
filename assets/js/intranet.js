@@ -226,10 +226,41 @@
       esc(quoi) + ' a besoin de la base de données, qui n\'est pas configurée sur cette installation.</div>';
   }
 
+  /* ─── Session locale, base anonyme ───
+     Le raccourci maître ouvre la console sans ouvrir de session
+     Supabase. L'écran affiche alors le fondateur, la base répond en
+     visiteur anonyme, et tout arrive vide — ou en erreur brute. Plutôt
+     que de laisser deviner, on le dit, avec le geste à faire. */
+  function sansSession(hote, quoi) {
+    hote.innerHTML =
+      '<div class="form-msg err" style="display:block;">' +
+        '<b>Vous êtes connecté en session locale.</b><br>' +
+        esc(quoi) + ' lit la base de données, et la base ne vous reconnaît pas : ' +
+        'elle vous voit comme un visiteur, donc elle ne renvoie rien.<br><br>' +
+        'Reconnectez-vous avec votre compte (adresse et mot de passe), et non par le raccourci.' +
+      '</div>' +
+      '<div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1rem;">' +
+        '<button class="btn btn-gold btn-sm" id="intra-reconnecter">Se reconnecter</button>' +
+      '</div>';
+    var b = hote.querySelector('#intra-reconnecter');
+    if (b) b.addEventListener('click', function () {
+      try { window.MelodiaAuth.logout(); } catch (e) {}
+      location.href = '/compte';
+    });
+  }
+
+  /* Le garde-fou commun aux vues qui parlent à la base. */
+  function baseUtilisable(hote, quoi) {
+    if (!enLigne()) { horsLigne(hote, quoi); return false; }
+    if (window.MelodiaRest && !window.MelodiaRest.session()) { sansSession(hote, quoi); return false; }
+    return true;
+  }
+
   window.MelodiaIntranet = {
     Agenda: Agenda, Messages: Messages, Publications: Publications,
     equipe: equipe, TYPES: TYPES, RESEAUX: RESEAUX, ETATS_PUB: ETATS_PUB,
     _outils: { esc: esc, uid: uid, moi: moi, estMaitre: estMaitre, enLigne: enLigne,
+               baseUtilisable: baseUtilisable, sansSession: sansSession,
                $: $, iso: iso, jourCle: jourCle, debutJour: debutJour, ajouteJours: ajouteJours,
                dateLongue: dateLongue, heure: heure, quand: quand, pourChamp: pourChamp,
                attente: attente, panne: panne, horsLigne: horsLigne },
@@ -523,7 +554,7 @@
 
   I.vues.agenda = async function (hote) {
     etat.hote = hote;
-    if (!O.enLigne()) return O.horsLigne(hote, 'L\'agenda');
+    if (!O.baseUtilisable(hote, 'L\'agenda')) return;
     O.attente(hote, 'de l\'agenda');
     try {
       var depuis = O.ajouteJours(O.debutJour(new Date()), -60);
@@ -734,7 +765,7 @@
 
   I.vues.messagerie = async function (hote) {
     etat.hote = hote;
-    if (!O.enLigne()) return O.horsLigne(hote, 'La messagerie');
+    if (!O.baseUtilisable(hote, 'La messagerie')) return;
     O.attente(hote, 'des messages');
     try {
       var r = await Promise.all([I.Messages.tous(), I.equipe()]);
@@ -1022,7 +1053,7 @@
 
   I.vues.publications = async function (hote) {
     etat.hote = hote;
-    if (!O.enLigne()) return O.horsLigne(hote, 'Le planificateur');
+    if (!O.baseUtilisable(hote, 'Le planificateur')) return;
     O.attente(hote, 'du plan de publication');
     try {
       etat.pubs = await I.Publications.liste();
@@ -1416,7 +1447,7 @@
 
   I.vues.candidatures = async function (hote) {
     etat.hote = hote;
-    if (!O.enLigne()) return O.horsLigne(hote, 'Les candidatures');
+    if (!O.baseUtilisable(hote, 'Les candidatures')) return;
     O.attente(hote, 'des candidatures');
     try {
       etat.liste = (await window.MelodiaRest.appel(

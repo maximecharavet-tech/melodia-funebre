@@ -63,13 +63,13 @@
 </div>
 
 <script src="assets/js/config.js?v=e792fc99"></script>
-<script src="assets/js/auth.js?v=069e267f"></script>
+<script src="assets/js/auth.js?v=82cc7547"></script>
 <script src="assets/js/courrier.js?v=f9ff5aca"></script>
 <script src="assets/js/main.js?v=5ed21030"></script>
 <script src="assets/js/livraison.js?v=8816d59c"></script>
 <script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
 <script src="assets/js/proprietaire.js?v=7ca0ec75"></script>
-<script src="assets/js/intranet.js?v=c37ce23c"></script>
+<script src="assets/js/intranet.js?v=a0b10734"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
@@ -117,7 +117,20 @@ async function boot() {
       'Le mode propriétaire reste utilisable ; la publication attendra le retour du réseau.</div>');
   }
   document.getElementById('badge-cmd').textContent = ORDERS.length;
-  document.getElementById('mode-badge').textContent = (window.MelodiaDB.mode === 'supabase' ? 'Base Supabase · ' : 'Base locale · ') + 'mode débutant';
+  /* L'en-tête annonçait « Base Supabase » du seul fait que l'adresse
+     de la base est configurée — même quand la console tourne sur une
+     session locale que la base ne reconnaît pas. Il dit maintenant ce
+     qui est vrai du point de vue des données. */
+  var badge = document.getElementById('mode-badge');
+  var avecSession = window.MelodiaRest && window.MelodiaRest.session();
+  if (window.MelodiaDB.mode === 'supabase' && !avecSession) {
+    badge.textContent = 'Session locale · la base ne vous reconnaît pas';
+    badge.style.color = 'var(--amber)';
+    badge.style.borderColor = 'rgba(251,191,36,.35)';
+    badge.title = 'Reconnectez-vous avec votre compte pour retrouver vos données.';
+  } else {
+    badge.textContent = (window.MelodiaDB.mode === 'supabase' ? 'Base Supabase · ' : 'Base locale · ') + 'mode débutant';
+  }
   go('accueil');
   /* Le compteur de messages doit vivre dès l'ouverture de la console :
      sans cela, on ne sait qu'on a du courrier qu'en cliquant dessus. */

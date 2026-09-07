@@ -341,7 +341,21 @@
      messagerie, publications) parle aux mêmes tables, avec la même
      session et les mêmes en-têtes. Le recopier ailleurs, c'était se
      condamner à corriger l'authentification à deux endroits. */
-  window.MelodiaRest = { appel: sb, actif: HAS_SB };
+  window.MelodiaRest = {
+    appel: sb, actif: HAS_SB,
+    /* Y a-t-il une vraie session de base derrière l'écran ?
+       Le raccourci maître local ouvre la console sans ouvrir de session
+       Supabase : l'écran se croit fondateur, la base voit un visiteur
+       anonyme, et tout revient vide. Sans ce contrôle, la panne est
+       muette — ou, avant le correctif de droits, illisible
+       (« permission denied for function est_maison »). */
+    session: function () {
+      try {
+        var s = JSON.parse(localStorage.getItem('melodia_session') || 'null');
+        return !!(s && s.access_token);
+      } catch (e) { return false; }
+    }
+  };
 
   window.MelodiaContenu = {
     disponible: function () { return HAS_SB; },
