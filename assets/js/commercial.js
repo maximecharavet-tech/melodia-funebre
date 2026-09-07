@@ -208,6 +208,14 @@
         aFaire.slice(0, 6).map(ligneCourte).join('') +
       '</div>' : '') +
 
+      /* Les deux graphiques répondent aux seules questions qu'on se
+         pose devant cet écran : est-ce que je travaille régulièrement,
+         et où est-ce que ça bloque. */
+      (window.MelodiaGraphes ? '<div class="gr-duo">' +
+        window.MelodiaGraphes.activite(PROSPECTS) +
+        window.MelodiaGraphes.entonnoir(PROSPECTS) +
+      '</div>' : '') +
+
       '<div class="panel" style="margin-top:1.4rem;">' +
         '<div class="panel-title">Le <em>pipeline</em></div>' +
         '<div class="panel-sub" style="margin-bottom:1.2rem;">Où en sont vos fiches</div>' +
@@ -271,6 +279,7 @@
   }
 
   function brancherAccueil() {
+    if (window.MelodiaGraphes) window.MelodiaGraphes.brancher();
     Array.prototype.forEach.call(document.querySelectorAll('[data-aller]'), function (b) {
       b.addEventListener('click', function () { filtreStatut = b.dataset.aller; go('prospects'); });
     });

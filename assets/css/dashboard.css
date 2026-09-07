@@ -925,3 +925,152 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .mod-actions .btn { flex: 1 1 100%; min-height: 44px; justify-content: center; }
   .mod-seq-l > b { font-size: 0.74rem; min-width: 66px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LES GRAPHIQUES DU TABLEAU DE BORD
+
+   Deux dessins, deux questions : est-ce que je travaille
+   régulièrement, et où est-ce que ça bloque. Les couleurs des séries
+   restent sur les marques ; le texte garde les tons du texte, sans
+   quoi une étiquette dorée sur fond sombre devient illisible pour un
+   œil qui distingue mal les jaunes.
+   ═══════════════════════════════════════════════════════════════ */
+.gr-duo {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.2rem; margin-top: 1.4rem; align-items: start;
+}
+.gr-panel { margin: 0; min-width: 0; }
+
+.gr-legende {
+  display: flex; gap: 1.1rem; flex-wrap: wrap;
+  font-family: var(--ff-m); font-size: 0.58rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash);
+}
+.gr-legende span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.gr-legende i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.gr-legende b { color: var(--paper); font-weight: 500; }
+
+.gr-toile { position: relative; margin-top: 1.4rem; color: var(--ash); }
+.gr-toile svg { width: 100%; height: 168px; display: block; overflow: visible; }
+.gr-ech {
+  font-family: var(--ff-m); font-size: 2.6px; fill: var(--dust);
+  /* Le texte d'un SVG étiré horizontalement se déformerait : on le
+     laisse à l'échelle du dessin plutôt que de l'étirer. */
+}
+.gr-cible { cursor: crosshair; }
+.gr-cible:hover { fill: rgba(255, 255, 255, 0.035); }
+
+/* La bulle se plaçait au-dessus de la toile et recouvrait la légende
+   — donc précisément les deux chiffres qu'on venait y chercher. Elle
+   reste maintenant dans le cadre du dessin, en haut. */
+.gr-bulle {
+  position: absolute; top: 2px; transform: translateX(-50%);
+  padding: 0.45rem 0.7rem; white-space: nowrap; pointer-events: none;
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.04em;
+  color: var(--paper); background: var(--surface-3);
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); z-index: 3;
+}
+
+.gr-axe {
+  display: flex; justify-content: space-between; margin-top: 0.5rem;
+  font-family: var(--ff-m); font-size: 0.54rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
+}
+.gr-vide { color: var(--ash); font-size: 0.9rem; line-height: 1.8; margin-top: 1rem; max-width: 52ch; }
+
+/* Les mêmes nombres en toutes lettres, pour qui ne lit pas le
+   dessin — lecteur d'écran, impression, ou simple préférence. */
+.gr-table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; }
+.gr-table caption {
+  text-align: left; font-family: var(--ff-m); font-size: 0.52rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--or-patina);
+  padding-bottom: 0.5rem;
+}
+.gr-table th, .gr-table td {
+  text-align: left; padding: 0.4rem 0.5rem; font-size: 0.82rem;
+  border-bottom: 1px solid var(--line-soft); color: var(--ash);
+}
+.gr-table th {
+  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--dust); font-weight: 400;
+}
+.gr-table td + td, .gr-table th + th { text-align: right; font-variant-numeric: tabular-nums; }
+.gr-table tr:last-child td { border-bottom: 0; }
+
+/* ─── L'entonnoir ─── */
+.ent-resume { text-align: right; }
+.ent-resume b {
+  display: block; font-family: var(--ff-d); font-size: 1.9rem;
+  font-weight: 300; color: var(--or); line-height: 1;
+}
+.ent-resume span {
+  font-family: var(--ff-m); font-size: 0.52rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+}
+
+.ent-corps { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.2rem; }
+.ent-l {
+  min-width: 0;
+  animation: ent-venir 0.5s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+@keyframes ent-venir {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+.ent-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.ent-nom { font-size: 0.9rem; color: var(--paper); min-width: 0; overflow-wrap: anywhere; }
+.ent-n {
+  font-family: var(--ff-d); font-size: 1.3rem; color: var(--paper);
+  line-height: 1; flex: none; font-variant-numeric: tabular-nums;
+}
+.ent-piste {
+  height: 7px; margin: 0.4rem 0 0.35rem;
+  background: var(--ink-2); border-radius: 4px; overflow: hidden;
+}
+.ent-piste > span {
+  display: block; height: 100%; border-radius: 4px;
+  transform-origin: left center;
+  animation: ent-pousse 0.7s var(--ease) backwards;
+  animation-delay: calc(var(--i) * 70ms + 120ms);
+}
+@keyframes ent-pousse { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.ent-pied {
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font-size: 0.79rem; color: var(--dust); line-height: 1.5;
+}
+.ent-dit { min-width: 0; }
+.ent-conv {
+  font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.08em;
+  color: var(--ash); flex: none; white-space: nowrap;
+}
+/* Une étape qui perd plus de six fiches sur dix est le vrai sujet de
+   la semaine : elle se signale, sans crier. */
+.ent-conv.faible { color: var(--amber); }
+
+.ent-refus {
+  margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line-soft);
+  font-size: 0.82rem; color: var(--ash); line-height: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ent-l, .ent-piste > span { animation: none; }
+}
+
+@media (max-width: 1080px) {
+  .gr-duo { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .gr-toile svg { height: 128px; }
+  .gr-legende { font-size: 0.72rem; letter-spacing: 0.05em; }
+  .gr-axe { font-size: 0.7rem; letter-spacing: 0.06em; }
+  .gr-bulle { font-size: 0.75rem; }
+  .gr-table th { font-size: 0.7rem; letter-spacing: 0.08em; }
+  .gr-table td { font-size: 0.88rem; }
+  .gr-table caption { font-size: 0.7rem; letter-spacing: 0.12em; }
+  .ent-conv { font-size: 0.74rem; letter-spacing: 0.03em; white-space: normal; }
+  .ent-pied { font-size: 0.86rem; }
+  .gr-vide { font-size: 0.95rem; }
+}
