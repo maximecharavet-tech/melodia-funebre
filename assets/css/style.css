@@ -3824,54 +3824,165 @@ body.a-ecoute { padding-bottom: 5rem; }
 /* ═══════════════════════════════════════════════════════════════
    PARTAGER LA PAGE
 
-   Discret : c'est une invitation, pas un appel à l'action. Le bloc
-   se pose sur une ligne à côté de son explication sur grand écran,
-   et passe en colonne dès que la place manque. Les cibles font
-   44 pixels partout — c'est ce qu'un pouce vise sans se tromper.
+   La première version était un pavé : un paragraphe posé à gauche,
+   six boutons rectangulaires à droite, et — sur téléphone — un trou
+   de soixante-treize pixels au milieu. Le trou venait d'un
+   « flex: 1 1 22rem » écrit pour une disposition en ligne : passé en
+   colonne, cette base de 22rem devient une hauteur imposée, et trois
+   lignes de texte se retrouvaient étalées sur 352 pixels.
+
+   Ici, des pastilles rondes comme on en voit sur les réseaux, chacune
+   prenant la couleur de sa plateforme au survol et au toucher — le
+   seul endroit du site où une couleur étrangère est admise, parce que
+   c'est elle qui rend le geste immédiatement reconnaissable. Au repos
+   elles restent dorées, pour ne pas transformer un site de deuil en
+   guirlande.
    ═══════════════════════════════════════════════════════════════ */
 .partage-sec { padding-top: 0; }
 .partage {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1.6rem 2rem; flex-wrap: wrap; min-width: 0;
-  padding: 1.4rem clamp(1.1rem, 3vw, 1.8rem);
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.2rem 2.4rem; flex-wrap: wrap; min-width: 0;
+  padding: 1.5rem clamp(1.1rem, 3vw, 2rem);
   border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
-  background: var(--surface);
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(201,168,76,.05), transparent 62%),
+    var(--surface);
 }
-.partage-mot { min-width: 0; flex: 1 1 22rem; }
-.partage-mot .eyebrow { margin-bottom: 0.5rem; }
-.partage-mot p {
-  margin: 0; color: var(--ash); font-size: 0.92rem;
-  line-height: 1.7; max-width: 46ch;
-}
-.partage-liens { display: flex; gap: 0.5rem; flex-wrap: wrap; min-width: 0; }
 
-.partage-b {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  min-height: 44px; padding: 0 0.9rem;
-  font-family: var(--ff-m); font-size: 0.62rem;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--ash); background: var(--ink-2);
-  border: 1px solid var(--line-soft); border-radius: var(--radius);
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
-  white-space: nowrap;
+.partage-tete {
+  display: flex; align-items: center; gap: 0.9rem;
+  min-width: 0; flex: 0 1 auto;
 }
-.partage-b svg { width: 16px; height: 16px; flex: none; }
-.partage-b:hover { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
-.partage-b.copie { color: var(--green); border-color: rgba(74, 222, 128, 0.45); }
-
-/* Le partage natif est le chemin le plus court là où il existe : il
-   passe donc devant, en or, et les autres restent en retrait. */
-.partage-natif { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
-.partage-natif:hover { color: var(--or-bright); }
-
-@media (max-width: 860px) {
-  .partage { flex-direction: column; align-items: stretch; }
-  .partage-liens { gap: 0.45rem; }
-  .partage-b { flex: 1 1 auto; justify-content: center; font-size: 0.7rem; letter-spacing: 0.06em; }
+/* Un simple trait doré : l'ornement dit « fin de page » sans ajouter
+   un titre de plus à une page qui en a déjà beaucoup. */
+.partage-orn {
+  flex: none; width: 28px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--or));
 }
-@media (max-width: 460px) {
-  .partage-b { flex: 1 1 calc(50% - 0.25rem); }
-  .partage-mot p { font-size: 0.95rem; }
+.partage-tete p {
+  margin: 0; color: var(--ash); font-size: 0.9rem;
+  line-height: 1.65; max-width: 40ch;
+}
+.partage-tete b { color: var(--bone); font-weight: 400; }
+
+.partage-liens {
+  display: flex; gap: 0.55rem; flex-wrap: wrap;
+  justify-content: center; min-width: 0;
+}
+
+/* La pastille : ronde, dorée au repos, colorée au contact. Le nom
+   n'apparaît qu'au survol sur grand écran — au doigt il n'y a pas de
+   survol, donc il reste visible sous la pastille. */
+.partage-r {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; flex: none;
+  border-radius: 50%; color: var(--or-patina);
+  background: var(--ink-2); border: 1px solid var(--line-soft);
+  transition: color var(--t-fast), border-color var(--t-fast),
+              background var(--t-fast), transform var(--t-fast) var(--ease);
+}
+.partage-r svg { width: 19px; height: 19px; }
+.partage-r i {
+  position: absolute; top: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--ff-m); font-style: normal; font-size: 0.54rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
+  white-space: nowrap; opacity: 0; transition: opacity var(--t-fast);
+  pointer-events: none;
+}
+.partage-r:hover { transform: translateY(-3px); }
+.partage-r:hover i, .partage-r:focus-visible i { opacity: 1; }
+
+/* Les couleurs officielles, et seulement au contact. */
+.r-wa:hover { color: #fff; background: #25D366; border-color: #25D366; }
+.r-fb:hover { color: #fff; background: #1877F2; border-color: #1877F2; }
+.r-li:hover { color: #fff; background: #0A66C2; border-color: #0A66C2; }
+.r-ml:hover, .r-cp:hover { color: var(--or-bright); border-color: var(--line-strong); background: var(--or-soft); }
+.r-cp.copie { color: var(--green); border-color: rgba(74,222,128,.5); background: rgba(74,222,128,.08); }
+.r-cp.copie i { opacity: 1; color: var(--green); }
+
+/* Le partage natif est le chemin le plus court là où il existe :
+   pastille pleine, et un peu plus grande. */
+.partage-natif {
+  width: 52px; height: 52px;
+  color: #120e04; background: var(--or-grad); border-color: transparent;
+  box-shadow: 0 6px 18px -8px rgba(201,168,76,.6);
+}
+.partage-natif:hover { color: #120e04; }
+.partage-natif svg { width: 21px; height: 21px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .partage-r:hover { transform: none; }
+}
+
+/* Sur téléphone : le texte au-dessus, les pastilles en dessous, et le
+   nom sous chacune puisqu'il n'y a pas de survol au doigt. */
+@media (max-width: 760px) {
+  .partage {
+    flex-direction: column; align-items: center; text-align: center;
+    gap: 1.9rem;
+  }
+  .partage-tete { flex-direction: column; gap: 0.7rem; }
+  .partage-orn { width: 40px; }
+  .partage-tete p { font-size: 0.95rem; max-width: 34ch; }
+  /* Au doigt il n'y a pas de survol : le nom doit rester visible. Mais
+     en position absolue il dépassait sa pastille de 48 px et les cinq
+     noms se rejoignaient en une seule ligne illisible. Chaque pastille
+     devient donc une colonne — rond au-dessus, nom dessous — et les
+     largeurs s'espacent d'elles-mêmes. */
+  /* Une grille de cinq colonnes : cinq pastilles sur une seule ligne,
+     jamais une orpheline en dessous. Le partage natif, lui, prend
+     toute la largeur au-dessus — c'est le chemin le plus court. */
+  .partage-liens {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 1rem 0.3rem; align-items: start; width: 100%;
+  }
+  .partage-r {
+    position: relative;
+    flex-direction: column; gap: 0.5rem;
+    width: auto; height: auto; min-width: 0;
+    border: 0; background: none; border-radius: 0;
+  }
+  /* Le rond est dessiné par le pseudo-élément. Il était placé derrière
+     la carte entière — « z-index: -1 » sort de l'empilement local — et
+     donc invisible. Il reste au-dessus du fond, sous l'icône. */
+  .partage-r::before {
+    content: ''; position: absolute; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--ink-2); border: 1px solid var(--line-soft);
+    transition: background var(--t-fast), border-color var(--t-fast);
+  }
+  .partage-r svg, .partage-r i { position: relative; }
+  .partage-r svg { width: 19px; height: 19px; margin: 13.5px 0; }
+  .partage-r i {
+    position: static; transform: none; opacity: 1;
+    font-size: 0.62rem; letter-spacing: 0.06em; white-space: normal;
+    max-width: 8ch; line-height: 1.3;
+  }
+  /* La couleur au contact se pose sur le rond, pas sur la colonne */
+  .r-wa:active::before { background: #25D366; border-color: #25D366; }
+  .r-fb:active::before { background: #1877F2; border-color: #1877F2; }
+  .r-li:active::before { background: #0A66C2; border-color: #0A66C2; }
+  /* Le partage natif en pilule pleine largeur : c'est lui qu'on veut
+     voir d'abord sur un téléphone, puisqu'il ouvre l'application déjà
+     utilisée — messages, WhatsApp, ce qu'on veut. */
+  .partage-natif[hidden] { display: none; }
+  .partage-natif {
+    grid-column: 1 / -1;
+    flex-direction: row; gap: 0.6rem;
+    width: 100%; min-height: 48px; border-radius: var(--radius);
+    color: #120e04; background: var(--or-grad);
+    margin-bottom: 0.4rem;
+  }
+  .partage-natif::before { content: none; }
+  .partage-natif svg { width: 18px; height: 18px; margin: 0; }
+  .partage-natif i {
+    position: static; color: #120e04; font-size: 0.66rem;
+    letter-spacing: 0.16em; max-width: none;
+  }
+}
 }
 
 /* ═══════════════════════════════════════════════════════════════
