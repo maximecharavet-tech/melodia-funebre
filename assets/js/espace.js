@@ -414,9 +414,18 @@
         ? ((await REST.appel('/rest/v1/demandes?select=*&order=created_at.desc')) || [])
         : [];
     } catch (e) {
+      /* Une session expirée ne se répare pas en patientant : dire
+         « réessayez dans un instant » envoyait les familles attendre
+         devant une porte qui ne se rouvrirait jamais seule. */
+      var morte = /session a expiré|JWT|expired/i.test(e.message || '');
       hote.innerHTML = '<div class="form-msg err" style="display:block;">' +
-        'Vos données n\'ont pas pu être chargées : ' + esc(e.message) + '.<br>' +
-        'Réessayez dans un instant, ou écrivez-nous à contact@melodia-funebre.fr.</div>';
+        (morte
+          ? 'Votre session a expiré — c\'est la sécurité qui referme l\'accès après un temps d\'inactivité.<br>' +
+            'Reconnectez-vous, vous retrouverez tout en l\'état.'
+          : 'Vos données n\'ont pas pu être chargées : ' + esc(e.message) + '.<br>' +
+            'Réessayez dans un instant, ou écrivez-nous à contact@melodia-funebre.fr.') +
+        '</div>' +
+        (morte ? '<a class="btn btn-gold" href="/compte" style="margin-top:1rem;">Me reconnecter</a>' : '');
       return;
     }
     rendre();

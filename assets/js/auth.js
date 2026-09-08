@@ -25,17 +25,112 @@
   function uid() { return 'MEL-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
   function hash(s) { return btoa(unescape(encodeURIComponent(s))); }
 
-  async function sb(path, opts) {
+  /* ═══ LA SESSION ═══
+
+     Un jeton d'accès Supabase ne vit qu'une heure. Le jeton de
+     rafraîchissement qui l'accompagne, lui, permet d'en obtenir un
+     neuf sans redemander le mot de passe — mais encore faut-il s'en
+     servir. Il ne l'était pas : passée une heure, chaque appel
+     revenait en « JWT expired », et l'écran affichait « réessayez
+     dans un instant », ce qui ne pouvait jamais marcher.
+     ═══ */
+
+  var MSG_SESSION = 'Votre session a expiré. Reconnectez-vous pour continuer.';
+
+  function effacerSession() {
+    LS.del('melodia_session'); LS.del('melodia_role');
+  }
+
+  /* Toute écriture de session passe par ici : c'est le seul endroit
+     où l'heure d'expiration est calculée, et le seul qui garantisse
+     qu'un renouvellement ne perde ni l'usager ni le jeton de retour
+     quand la réponse ne les répète pas. */
+  function poserSession(d) {
+    var ancien = LS.get('melodia_session', null) || {};
+    var s = {};
+    Object.keys(d || {}).forEach(function (k) { s[k] = d[k]; });
+    if (!s.refresh_token && ancien.refresh_token) s.refresh_token = ancien.refresh_token;
+    if (!s.user && ancien.user) s.user = ancien.user;
+    var vie = Number(s.expires_in || 0);
+    if (!s.expires_at && vie) s.expires_at = Math.floor(Date.now() / 1000) + vie;
+    LS.set('melodia_session', s);
+    return s;
+  }
+
+  /* Un seul renouvellement à la fois. Une console lance dix appels en
+     parallèle ; s'ils demandaient chacun leur renouvellement, Supabase
+     ferait tourner le jeton de retour dix fois et neuf appels se
+     verraient refuser un jeton déjà remplacé — la session tombait pour
+     de bon alors qu'elle était parfaitement valide. */
+  var enRenouvellement = null;
+
+  function renouveler() {
+    if (enRenouvellement) return enRenouvellement;
+    enRenouvellement = (async function () {
+      var s = LS.get('melodia_session', null);
+      if (!s || !s.refresh_token) { effacerSession(); throw new Error('SESSION_PERDUE'); }
+      var r;
+      try {
+        r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', {
+          method: 'POST',
+          headers: { apikey: SBK, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: s.refresh_token })
+        });
+      } catch (e) {
+        /* Hors ligne ou coupure : la session n'est pas morte, elle est
+           injoignable. La déconnecter ici jetterait dehors quiconque
+           passe sous un tunnel. */
+        throw new Error('RESEAU');
+      }
+      var d = null;
+      try { d = await r.json(); } catch (e) {}
+      if (!r.ok || !d || !d.access_token) { effacerSession(); throw new Error('SESSION_PERDUE'); }
+      return poserSession(d);
+    })();
+    return enRenouvellement.finally(function () { enRenouvellement = null; });
+  }
+
+  /* Les points d'entrée qui n'ont pas de session à renouveler : s'y
+     essayer ferait boucler la connexion sur elle-même. */
+  var SANS_SESSION = /^\/auth\/v1\/(token|signup|recover|authorize|verify)/;
+
+  async function sb(path, opts, rejoue) {
     opts = opts || {};
+    var avecSession = !SANS_SESSION.test(path);
     var s = LS.get('melodia_session', null);
+
+    /* Renouvellement anticipé : un jeton qui expire dans moins de deux
+       minutes échouera pendant l'aller-retour. Autant le remplacer
+       avant de partir que découvrir l'échec à l'arrivée. */
+    if (avecSession && !rejoue && s && s.access_token && s.refresh_token &&
+        s.expires_at && (s.expires_at - Math.floor(Date.now() / 1000)) < 120) {
+      try { s = await renouveler(); }
+      catch (e) {
+        if (e.message === 'SESSION_PERDUE') throw new Error(MSG_SESSION);
+        /* RESEAU : on tente quand même, le jeton n'est pas encore mort */
+        s = LS.get('melodia_session', null);
+      }
+    }
+
     var h = { apikey: SBK, 'Content-Type': 'application/json' };
     Object.keys(opts.headers || {}).forEach(function (k) { h[k] = opts.headers[k]; });
     h.Authorization = 'Bearer ' + ((s && s.access_token) || SBK);
     var r = await fetch(SB + path, { method: opts.method || 'GET', headers: h, body: opts.body });
     var t = await r.text(); var d = null;
     try { d = t ? JSON.parse(t) : null; } catch (e) { d = t; }
-    if (!r.ok) throw new Error((d && (d.msg || d.message || d.error_description || d.error)) || ('Erreur ' + r.status));
-    return d;
+    if (r.ok) return d;
+
+    var msg = (d && (d.msg || d.message || d.error_description || d.error)) || ('Erreur ' + r.status);
+
+    /* Une seule reprise par appel : sans ce garde-fou, un jeton refusé
+       pour une autre raison ferait tourner la page indéfiniment. */
+    if (avecSession && !rejoue && (r.status === 401 || r.status === 403) &&
+        /jwt|token|expired/i.test(msg) && s && s.refresh_token) {
+      try { await renouveler(); }
+      catch (e) { throw new Error(e.message === 'RESEAU' ? msg : MSG_SESSION); }
+      return sb(path, opts, true);
+    }
+    throw new Error(msg);
   }
 
   /* ═══ AUTH ═══ */
@@ -87,7 +182,7 @@
         method: 'POST', body: JSON.stringify({ refresh_token: jetonDeRetour })
       });
       if (!d || !d.access_token) throw new Error('Session expirée.');
-      LS.set('melodia_session', d);
+      poserSession(d);
       await this.relireRole();
       return this.current();
     },
@@ -113,9 +208,12 @@
         LS.set('melodia_role', role);
         return role;
       } catch (e) {
-        var m = (LS.get('melodia_session', {}).user || {}).user_metadata || {};
-        var d = m.agence ? 'partner' : 'client';
-        LS.set('melodia_role', d); return d;
+        /* Ne pas réussir à LIRE le rôle n'est pas la preuve qu'il n'y
+           en a pas. L'ancien repli écrivait « client » : un jeton
+           périmé suffisait donc à rétrograder le fondateur et à
+           l'expédier dans l'espace des familles — exactement ce qu'on
+           voyait. On garde ce qu'on savait, et on n'invente rien. */
+        return LS.get('melodia_role', null);
       }
     },
 
@@ -136,7 +234,7 @@
       var email = id.toLowerCase();
       if (HAS_SB) {
         var d = await sb('/auth/v1/token?grant_type=password', { method: 'POST', body: JSON.stringify({ email: email, password: password }) });
-        LS.set('melodia_session', d);
+        poserSession(d);
         await this.relireRole();
         return this.current();
       }
@@ -161,7 +259,7 @@
       if (email === MASTER_ID) throw new Error('Cet identifiant est réservé.');
       if (HAS_SB) {
         var d = await sb('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: email, password: data.password, data: { name: data.name, role: (data.agence ? 'partner' : 'client'), agence: data.agence || '', ville: data.ville || '', tel: data.tel || '' } }) });
-        if (d.access_token) LS.set('melodia_session', d);
+        if (d.access_token) poserSession(d);
         return this.current() || { email: email, name: data.name, role: 'partner', pending: true };
       }
       var users = LS.get('melodia_users', {});
@@ -221,7 +319,7 @@
       });
       if (!r.ok) throw new Error('Session Google refusée.');
       var utilisateur = await r.json();
-      LS.set('melodia_session', {
+      poserSession({
         access_token: jeton,
         refresh_token: h.get('refresh_token') || '',
         expires_in: Number(h.get('expires_in') || 3600),
