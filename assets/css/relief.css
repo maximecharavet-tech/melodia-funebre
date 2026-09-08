@@ -1,0 +1,192 @@
+/* ═══════════════════════════════════════════════════════════════
+   relief.css — La profondeur, pour les quatre espaces
+
+   POURQUOI UNE FEUILLE À PART
+
+   Ces règles habillent aussi l'espace des familles, qui ne charge pas
+   la feuille des consoles — et qui n'a rien à faire des mille trois
+   cents lignes qu'elle contient. Une famille ouvre cette page le jour
+   d'un enterrement, souvent d'un téléphone : elle n'a pas à télécharger
+   le pilotage d'une entreprise pour voir sa commande.
+
+   Elle se charge après `dashboard.css` : plusieurs règles y reprennent
+   des transformations de survol posées plus tôt, et l'ordre est ce qui
+   leur donne le dernier mot.
+   ═══════════════════════════════════════════════════════════════ */
+/* La perspective est portée par le conteneur, pas par la carte : les
+   tuiles d'une rangée penchent alors vers un point de fuite commun,
+   ce qui se lit comme une table. Une perspective par carte donnerait
+   quatre petites scènes sans rapport entre elles. */
+.rel-scene { perspective: 1250px; perspective-origin: 50% 38%; }
+
+/* Deux éléments portent leur perspective eux-mêmes plutôt que de la
+   recevoir de leur conteneur : dans l'espace des familles, la fenêtre
+   « Nous écrire » est une couche `position: fixed` rendue dans le même
+   conteneur qu'eux, et une perspective au-dessus la recalerait sur ce
+   conteneur au lieu de l'écran. Les cartes y sont empilées à la
+   verticale : le point de fuite commun n'y apportait rien. */
+[data-relief="seule"], [data-relief="menu-seul"] {
+  transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+
+[data-relief] {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.55s var(--ease), border-color 0.35s, box-shadow 0.55s var(--ease);
+}
+[data-relief].rel-tenu {
+  /* Sous la main, la carte suit sans retard ; c'est au relâchement que
+     le retour doit être lent. */
+  transition: transform 0.09s linear, border-color 0.35s, box-shadow 0.55s var(--ease);
+  border-color: var(--line-strong);
+  box-shadow: 0 22px 45px -18px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(201, 168, 76, 0.08);
+}
+
+/* Le reflet d'or suit la pointe du curseur. Il est très pâle : sur un
+   fond aussi sombre, au-delà de douze pour cent il vire au jaune. */
+[data-relief]::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  /* Sans cette ligne, le reflet garde des angles droits et dépasse des
+     cartes à coins arrondis — quatre petites cornes claires. */
+  border-radius: inherit;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%),
+              rgba(227, 201, 119, 0.11), rgba(227, 201, 119, 0.03) 42%, transparent 72%);
+  opacity: 0; transition: opacity 0.4s var(--ease);
+}
+[data-relief].rel-tenu::after { opacity: 1; }
+
+/* ─── L'épaisseur ───
+   Trois hauteurs, pas une seule : le chiffre devant, le libellé
+   derrière, la mention en dernier. C'est cet étagement qui donne
+   l'illusion, et il ne coûte qu'une transformation par élément. */
+.kpi[data-relief] .kpi-value,
+.kpi[data-relief] .kpi-label,
+.kpi[data-relief] .kpi-foot {
+  transition: transform 0.55s var(--ease), color 0.35s;
+}
+.kpi[data-relief].rel-tenu .kpi-value { transform: translateZ(26px); }
+.kpi[data-relief].rel-tenu .kpi-label { transform: translateZ(13px); color: var(--bone); }
+.kpi[data-relief].rel-tenu .kpi-foot  { transform: translateZ(8px); }
+
+.pl-seg[data-relief] { transition: transform 0.45s var(--ease), border-color 0.35s, box-shadow 0.45s; }
+.pl-seg[data-relief].rel-tenu .pl-n { transform: translateZ(18px); }
+.pl-seg[data-relief] .pl-n { transition: transform 0.45s var(--ease); }
+/* La règle d'origine remontait le segment de deux pixels au survol ;
+   elle écraserait la rotation. Le relief la remplace. */
+.pl-seg[data-relief]:hover { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+
+.mod-carte[data-relief].rel-tenu .mod-titre { transform: translateZ(16px); }
+.mod-carte[data-relief] .mod-titre { transition: transform 0.45s var(--ease); }
+.mod-carte[data-relief]:hover { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+
+/* ─── Le menu ───
+   Quatre degrés seulement, et un pivot sur l'arête gauche : l'entrée
+   s'ouvre vers le lecteur comme un onglet de classeur, sans jamais
+   sortir de la colonne. */
+.side { perspective: 900px; perspective-origin: 0% 50%; }
+.side-item[data-relief] {
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease), color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+}
+.side-item[data-relief].rel-tenu { transform: translateZ(16px) rotateY(var(--ry, 0deg)); }
+.side-item[data-relief].active { transform: translateZ(9px); }
+.side-item[data-relief]::after, .esp-onglet[data-relief]::after { display: none; }
+.esp-onglet[data-relief] {
+  transform-origin: center bottom;
+  transition: transform 0.4s var(--ease), color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+}
+.esp-onglet[data-relief].rel-tenu { transform: perspective(1200px) translateZ(12px) rotateX(var(--rx, 0deg)); }
+.esp-onglet[data-relief].actif { transform: perspective(1200px) translateZ(7px); }
+
+/* La carte d'une commande : c'est le nom du défunt qu'on soulève, rien
+   d'autre. Un espace de deuil n'est pas un tableau de bord de vente. */
+.esp-carte[data-relief] .esp-nom { transition: transform 0.55s var(--ease); }
+.esp-carte[data-relief].rel-tenu .esp-nom { transform: translateZ(18px); }
+
+/* ─── Le volet du chiffre ───
+   Le pivot est sur l'arête haute : c'est ce point-là, et lui seul, qui
+   fait un tableau d'horaires de gare plutôt qu'une carte retournée. */
+.kpi-value.rel-bascule {
+  transform-origin: 50% 0%;
+  animation: relVolet 0.62s var(--ease-out);
+  backface-visibility: hidden;
+}
+@keyframes relVolet {
+  0%   { transform: rotateX(-84deg); opacity: 0.2; }
+  58%  { transform: rotateX(9deg);   opacity: 1; }
+  80%  { transform: rotateX(-3deg); }
+  100% { transform: rotateX(0);      opacity: 1; }
+}
+
+/* ─── La pose ───
+   Les cartes se posent à plat en cascade, comme on abat une main.
+   Ne joue qu'au changement de vue : le module s'en assure. */
+.rel-pose {
+  animation: relPose 0.7s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 65ms);
+}
+@keyframes relPose {
+  from { opacity: 0; transform: perspective(1000px) rotateX(15deg) translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+.panel.rel-pose { animation-duration: 0.8s; }
+
+/* ─── La fenêtre de rédaction ───
+   Elle bascule vers l'avant depuis le fond de la scène plutôt que de
+   glisser : c'est le même vocabulaire que les cartes. */
+.compo { perspective: 1400px; }
+.compo-boite { animation: compoEntre 0.34s var(--ease-out); }
+@keyframes compoEntre {
+  from { opacity: 0; transform: rotateX(9deg) translateY(26px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─── Le dépliage d'une fiche ───
+   Le formulaire s'ouvre sur sa charnière haute : le geste dit d'où il
+   sort, là où un simple fondu laissait croire à un remplacement. */
+.own-item.open { perspective: 1100px; }
+.own-form { transform-origin: 50% 0%; }
+@keyframes ownOuvre {
+  from { opacity: 0; transform: rotateX(-14deg) translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─── Ce que le système demande ───
+   « Moins d'animation » n'est pas une préférence esthétique : pour
+   certains, ces mouvements donnent la nausée. Tout s'arrête, et rien
+   ne reste coincé hors de sa place. */
+@media (prefers-reduced-motion: reduce) {
+  .rel-pose, .kpi-value.rel-bascule, .compo-boite, .own-form { animation: none; }
+  /* Ces sélecteurs répètent la spécificité des règles de survol plus
+     haut : sans cela, `.pl-seg[data-relief]:hover` l'emporterait ici
+     par son poids, et le garde-fou ne garderait rien. */
+  [data-relief], [data-relief].rel-tenu,
+  .pl-seg[data-relief]:hover, .mod-carte[data-relief]:hover { transform: none; transition: border-color 0.2s; }
+  [data-relief]::after { display: none; }
+  .kpi[data-relief].rel-tenu .kpi-value,
+  .kpi[data-relief].rel-tenu .kpi-label,
+  .kpi[data-relief].rel-tenu .kpi-foot,
+  .pl-seg[data-relief].rel-tenu .pl-n,
+  .mod-carte[data-relief].rel-tenu .mod-titre,
+  .esp-carte[data-relief].rel-tenu .esp-nom { transform: none; }
+}
+
+/* Au doigt, aucune inclinaison : il n'y a pas de curseur à suivre, et
+   la perspective coûterait des images par seconde là où un téléphone
+   d'entrée de gamme n'en a déjà pas assez. La pose, elle, reste : elle
+   ne se déclenche qu'une fois par vue. */
+@media (pointer: coarse) {
+  .rel-scene, .side, .compo, .own-item.open { perspective: none; }
+  [data-relief], .pl-seg[data-relief]:hover, .mod-carte[data-relief]:hover,
+  .side-item[data-relief].rel-tenu { transform: none; transform-style: flat; }
+  [data-relief]::after { display: none; }
+  .kpi[data-relief] .kpi-value,
+  .kpi[data-relief] .kpi-label,
+  .kpi[data-relief] .kpi-foot,
+  .esp-carte[data-relief] .esp-nom { transform: none; }
+  /* Le retour tactile passe alors par l'enfoncement, pas par le relief. */
+  .kpi[data-relief]:active,
+  .pl-seg[data-relief]:active,
+  .mod-carte[data-relief]:active { transform: scale(0.975); transition: transform 0.1s; }
+}
