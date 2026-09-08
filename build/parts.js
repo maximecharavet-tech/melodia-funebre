@@ -348,39 +348,39 @@ const jsonldProcessus = {
    ═══════════════════════════════════════════════════════════════ */
 function partage(titre, texte) {
   const t = esc(titre || 'Melodia Funèbre');
-  const d = esc(texte || 'Une chanson originale composée pour votre défunt, à partir de ce que vous racontez de lui.');
+  const d = esc(texte || "Une chanson originale composée pour votre défunt, à partir de ce que vous racontez de lui.");
   return `
   <section class="section-sm partage-sec">
     <div class="wrap">
       <div class="partage" data-partage data-titre="${t}" data-texte="${d}">
-        <div class="partage-mot">
-          <span class="eyebrow">Faire connaître</span>
-          <p>Quelqu'un autour de vous en aurait besoin ? Ce service est si récent que personne ne pense à le chercher.</p>
+        <div class="partage-tete">
+          <span class="partage-orn" aria-hidden="true"></span>
+          <p>Ce service est si récent que personne ne pense à le chercher.<br><b>Faites-le connaître à qui en aurait besoin.</b></p>
         </div>
         <div class="partage-liens">
-          <button type="button" class="partage-b partage-natif" data-natif hidden>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
-            Partager
+          <button type="button" class="partage-r partage-natif" data-natif hidden aria-label="Partager">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+            <i>Partager</i>
           </button>
-          <a class="partage-b" data-reseau="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp">
+          <a class="partage-r r-wa" data-reseau="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.1-.3 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.6 4c1.9.8 2.3.7 2.7.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .1-1.2z"/></svg>
-            WhatsApp
+            <i>WhatsApp</i>
           </a>
-          <a class="partage-b" data-reseau="facebook" href="#" target="_blank" rel="noopener" aria-label="Partager sur Facebook">
+          <a class="partage-r r-fb" data-reseau="facebook" href="#" target="_blank" rel="noopener" aria-label="Partager sur Facebook">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
-            Facebook
+            <i>Facebook</i>
           </a>
-          <a class="partage-b" data-reseau="linkedin" href="#" target="_blank" rel="noopener" aria-label="Partager sur LinkedIn">
+          <a class="partage-r r-li" data-reseau="linkedin" href="#" target="_blank" rel="noopener" aria-label="Partager sur LinkedIn">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1a4.2 4.2 0 0 1 3.8-2c4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>
-            LinkedIn
+            <i>LinkedIn</i>
           </a>
-          <a class="partage-b" data-reseau="mail" href="#" aria-label="Partager par courriel">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
-            Courriel
+          <a class="partage-r r-ml" data-reseau="mail" href="#" aria-label="Partager par courriel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+            <i>Courriel</i>
           </a>
-          <button type="button" class="partage-b" data-copier-lien aria-label="Copier le lien">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-            Copier le lien
+          <button type="button" class="partage-r r-cp" data-copier-lien aria-label="Copier le lien">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            <i>Copier</i>
           </button>
         </div>
       </div>

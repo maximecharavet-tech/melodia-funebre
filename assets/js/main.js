@@ -530,14 +530,15 @@
 
   var copier = bloc.querySelector('[data-copier-lien]');
   if (copier) copier.addEventListener('click', function () {
+    var etiq = copier.querySelector('i');
     var dire = function (t, ok) {
-      var avant = copier.getAttribute('data-avant') || copier.textContent.trim();
+      var avant = copier.getAttribute('data-avant') || (etiq ? etiq.textContent : '');
       copier.setAttribute('data-avant', avant);
       copier.classList.toggle('copie', !!ok);
-      copier.lastChild.textContent = ' ' + t;
+      if (etiq) etiq.textContent = t;
       setTimeout(function () {
         copier.classList.remove('copie');
-        copier.lastChild.textContent = ' ' + avant;
+        if (etiq) etiq.textContent = avant;
       }, 1800);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
