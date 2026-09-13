@@ -97,6 +97,36 @@ try {
   }
 } catch (e) { console.error('  vignettes de partage : ' + e.message); ok = false; }
 
+/* Aucun chemin d'actif relatif, nulle part.
+   Trois pages ne vivent pas à la racine : « /m/<jeton> » pour la page
+   mémorielle, « /ecouter/<titre> » pour chaque œuvre. « assets/css/
+   style.css » y désigne « /m/assets/css/style.css ». La page arrive
+   alors en texte brut, sans une ligne de style — c'est exactement ce
+   qui est arrivé, et cela n'a été vu qu'en production, sur la page
+   qu'ouvre un QR code devant une tombe.
+
+   Le contrôle vaut pour toutes les pages : une page aujourd'hui à la
+   racine peut être réécrite demain, et le défaut ne se voit jamais
+   avant d'être en ligne. */
+{
+  const aVerifier = new Set(files.filter((f) => f.endsWith('.html')));
+  for (const f of fs.readdirSync('.')) if (/\.html$/.test(f)) aVerifier.add(f);
+  const fautives = [];
+  for (const f of aVerifier) {
+    if (!fs.existsSync(f)) continue;
+    const html = fs.readFileSync(f, 'utf8');
+    const n = (html.match(/\s(?:href|src|srcset|data-src)="(?:assets|audio)\//g) || []).length;
+    if (n) fautives.push(`${f} (${n})`);
+  }
+  if (fautives.length) {
+    console.error('  CHEMINS RELATIFS vers les actifs — ils casseront sous /m/ ou /ecouter/ :');
+    fautives.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log(`  ok   ${aVerifier.size} pages, aucun chemin d'actif relatif`);
+  }
+}
+
 /* Aucune page ne doit partir avec un lien mort vers une page du site. */
 const pages = files.filter(f => f.endsWith('.html'));
 /* Toutes les pages du dépôt, pas seulement celles de la liste : les

@@ -20,7 +20,10 @@
 (function () {
   'use strict';
 
-  var FICHIER = 'assets/data/content.json';
+  /* Chemin absolu : la page d'écoute est servie à « /ecouter/<titre> »
+     et la page mémorielle à « /m/<jeton> ». Un chemin relatif y
+     cherchait « /ecouter/assets/data/content.json », qui n'existe pas. */
+  var FICHIER = '/assets/data/content.json';
   var CLE_BROUILLON = 'melodia_content_draft';
   var CLE_APERCU = 'melodia_content_preview';
 

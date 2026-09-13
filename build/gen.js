@@ -366,7 +366,7 @@ function page(p) {
   const base = ['assets/js/config.js', 'assets/js/content.js', 'assets/js/main.js', 'assets/js/application.js',
                 'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'];
   const scripts = base.concat((p.scripts || []).filter((s) => base.indexOf(s) === -1));
-  return comblerHommages(empreinterImages(`<!DOCTYPE html>
+  return absolu(comblerHommages(empreinterImages(`<!DOCTYPE html>
 <html lang="fr">
 <head>
 ${head(p)}
@@ -386,7 +386,22 @@ ${p.inline || ''}
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
-</html>`));
+</html>`)));
+}
+
+/* ─── Les chemins d'actifs, en absolu ───
+   Les pages vivaient toutes à la racine : « assets/css/style.css »
+   s'y résolvait correctement. Les pages d'écoute sont servies à
+   « /ecouter/<titre> », d'un niveau plus bas — le même chemin y
+   désignait « /ecouter/assets/css/style.css », qui n'existe pas. La
+   page arrivait donc en texte brut, sans une ligne de style.
+
+   Un chemin absolu se résout pareil depuis n'importe quelle
+   profondeur : c'est la correction, et elle vaut pour toutes les
+   pages. Seules les références du dépôt sont touchées — les adresses
+   complètes, déjà absolues, ne contiennent pas la forme visée. */
+function absolu(html) {
+  return html.replace(/(\s(?:href|src|srcset|data-src)=")(assets\/|audio\/|sw\.js)/g, '$1/$2');
 }
 
 module.exports = { page, ICON, SITE, MAIL, SOCIAL, head, nav, footer, versionne, empreinterImages };
