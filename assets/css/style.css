@@ -4112,3 +4112,93 @@ body.a-ecoute { padding-bottom: 5rem; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA BASCULE PROFESSIONNELLE
+   Le site parle maintenant à deux publics. Chacun doit trouver sa
+   porte au premier regard, sans que l'autre soit repoussé.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Les trois jalons sous les boutons ───
+   Ils disent en trois mots ce que le service comporte. Des points
+   médians les séparent, comme une inscription gravée. */
+.hero-jalons {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.55rem 1.1rem; margin-top: 1.7rem;
+  font-family: var(--ff-m); font-size: 0.58rem;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--or-patina);
+}
+.hero-jalons span { position: relative; }
+.hero-jalons span + span::before {
+  content: '·'; position: absolute; left: -0.72rem; color: var(--or-deep);
+}
+
+/* La sortie des familles : présente, lisible, mais clairement en
+   second rang. Elle ne doit pas concurrencer le bouton doré. */
+.hero-note-famille { margin-top: 1.1rem; font-size: 0.86rem; }
+.hero-note-famille a {
+  color: var(--bone); text-underline-offset: 4px;
+  text-decoration-color: var(--or-deep);
+}
+.hero-note-famille a:hover { color: var(--or-bright); }
+
+/* ─── Le bouton du bandeau ─── */
+.nav-cta-pro { white-space: nowrap; }
+.nav-compte {
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ash);
+}
+.nav-compte:hover { color: var(--or-patina); }
+
+/* ─── Les réseaux, au pied ─── */
+.footer-social {
+  list-style: none; margin: 1.1rem 0 0; padding: 0;
+  display: flex; gap: 0.5rem;
+}
+.footer-social a {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--line-soft); color: var(--ash);
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.footer-social svg { width: 17px; height: 17px; display: block; }
+/* Le libellé reste pour les lecteurs d'écran : une icône seule ne dit
+   rien à qui ne la voit pas. */
+.footer-social span {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.footer-social a:hover { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+
+/* ─── La porte des professionnels, flottante ───
+   Discrète et unique. Elle se replie en pastille sur téléphone pour
+   ne pas manger l'écran, et se range au-dessus de la barre d'actions
+   quand celle-ci est présente. */
+.pro-flottant {
+  position: fixed; right: 1.1rem; bottom: 1.1rem; z-index: 90;
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  padding: 0.7rem 1.05rem; min-height: 46px;
+  background: rgba(11, 11, 17, 0.88);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  color: var(--or); text-decoration: none;
+  font-family: var(--ff-m); font-size: 0.56rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.85);
+  transition: color var(--t-fast), border-color var(--t-fast), transform var(--t-fast) var(--ease);
+}
+.pro-flottant:hover { color: var(--or-bright); transform: translateY(-2px); }
+.pro-flottant-ico { font-size: 0.8rem; line-height: 1; }
+
+@media (max-width: 860px) {
+  /* La barre d'actions occupe déjà le bas : le bouton monte au-dessus
+     d'elle plutôt que de se poser dessus. */
+  .pro-flottant { bottom: calc(4.6rem + env(safe-area-inset-bottom, 0px)); right: 0.9rem; padding: 0.65rem 0.9rem; }
+  .pro-flottant-mot { font-size: 0.52rem; letter-spacing: 0.14em; }
+}
+@media (max-width: 420px) {
+  .pro-flottant-mot { display: none; }
+  .pro-flottant { padding: 0; width: 46px; height: 46px; justify-content: center; }
+  .pro-flottant-ico { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { .pro-flottant:hover { transform: none; } }

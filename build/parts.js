@@ -1,5 +1,5 @@
 /* Blocs réutilisables entre pages */
-const { ICON, SITE } = require('./gen.js');
+const { ICON, SITE, SOCIAL } = require('./gen.js');
 const { OFFERS, TESTIS, FAQ, STYLES, TRACKS } = require('./data.js');
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -203,6 +203,11 @@ const jsonldOrg = {
   image: SITE + '/assets/img/logo-melodia.jpg',
   logo: { '@type': 'ImageObject', url: SITE + '/assets/img/logo-melodia.jpg' },
   founder: { '@type': 'Person', name: 'Maxime Charavet' },
+  /* « sameAs » relie la fiche de la maison à ses comptes publics :
+     c'est ce qui permet à Google de comprendre que la page Facebook et
+     le compte Instagram appartiennent bien à cette organisation, et
+     non à une homonyme. */
+  sameAs: [SOCIAL.facebook, SOCIAL.instagram],
   foundingDate: '2026',
   areaServed: { '@type': 'Country', name: 'France' },
   knowsLanguage: ['fr', 'co', 'br', 'he', 'it', 'pt'],

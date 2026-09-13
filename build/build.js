@@ -127,7 +127,7 @@ const PLAN = [
   ['demos.html', '0.9', 'weekly'],
   ['processus.html', '0.9', 'monthly'],
   ['rites.html', '0.9', 'monthly'],
-  ['agences.html', '0.9', 'monthly'],
+  ['professionnels.html', '1.0', 'monthly'],
   ['musique-obseques.html', '0.9', 'monthly'],
   ['musique-sacem-obseques.html', '0.8', 'monthly'],
   ['musique-cremation.html', '0.8', 'monthly'],

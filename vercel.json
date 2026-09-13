@@ -12,6 +12,16 @@
   },
   "redirects": [
     {
+      "source": "/agences",
+      "destination": "/professionnels",
+      "permanent": true
+    },
+    {
+      "source": "/partenaires",
+      "destination": "/professionnels",
+      "permanent": false
+    },
+    {
       "source": "/admin",
       "destination": "/compte",
       "permanent": true

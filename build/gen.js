@@ -48,19 +48,31 @@ const SITE = 'https://melodia-funebre.fr';
    sont lues par les moteurs et publiées en clair. */
 const MAIL = 'contact@melodia-funebre.fr';
 
+/* Les comptes publics de la maison. Ici et nulle part ailleurs : ils
+   servent au pied de page, aux données structurées « sameAs » qui
+   disent à Google que ces comptes sont bien les nôtres, et aux
+   partages. Trois copies auraient fini par diverger. */
+const SOCIAL = {
+  facebook: 'https://www.facebook.com/share/1GUX4Ht8M8/',
+  instagram: 'https://www.instagram.com/melodia_funebre'
+};
+
 /* Adresses sans extension : « cleanUrls » est actif sur Vercel, qui
    redirige /offres.html vers /offres en 308. Chaque lien interne en
    .html coûtait donc un aller-retour au visiteur comme au robot
    d'indexation, et diluait le lien sur une redirection au lieu de le
    porter sur la page. */
+/* La barre se lit comme deux portes, pas comme un sommaire : une
+   famille et un dirigeant de pompes funèbres n'arrivent pas pour la
+   même chose, et chacun doit voir la sienne au premier regard. Les
+   pages secondaires — rites, contact, recrutement — descendent au
+   pied, où on les cherche quand on en a besoin. */
 const NAVITEMS = [
-  ['/processus', 'Processus'],
-  ['/demos', 'Écouter'],
-  ['/rites', 'Rites'],
-  ['/offres', 'Offres'],
-  ['/agences', 'Agences'],
-  ['/contact', 'Contact'],
-  ['/rejoindre', 'Nous rejoindre']
+  ['/processus', 'Comment ça marche'],
+  ['/demos', 'Nos hommages'],
+  ['/offres', 'Pour les familles'],
+  ['/professionnels', 'Pour les professionnels'],
+  ['/#faq', 'FAQ']
 ];
 
 const ICON = {
@@ -141,7 +153,8 @@ function nav(surBandeau) {
     </a>
     <div class="nav-links">
 ${links}
-      <a href="/compte" class="nav-cta">Mon compte</a>
+      <a href="/professionnels#partenariat" class="nav-cta nav-cta-pro">Devenir partenaire</a>
+      <a href="/compte" class="nav-compte">Mon compte</a>
     </div>
     <button class="nav-burger" aria-label="Ouvrir le menu" aria-controls="menu-mobile">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -150,10 +163,12 @@ ${links}
 </nav>
 <div class="nav-mobile" id="menu-mobile">
 ${mlinks}
+  <a href="/rites">Les rites</a>
+  <a href="/contact">Nous écrire</a>
   <a href="/compte">Mon compte</a>
   <div class="nav-mobile-cta">
-    <a href="/offres" class="btn btn-gold">Commander un hommage</a>
-    <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
+    <a href="/professionnels#partenariat" class="btn btn-gold">Devenir partenaire</a>
+    <a href="/offres" class="btn btn-outline">Commander un hommage</a>
   </div>
 </div>`;
 }
@@ -193,8 +208,9 @@ function footer() {
       <div>
         <h4>Professionnels</h4>
         <ul class="footer-links">
-          <li><a href="/agences">Espace agences</a></li>
-          <li><a href="/agences#calculateur">Simuler mes revenus</a></li>
+          <li><a href="/professionnels">Pour les pompes funèbres</a></li>
+          <li><a href="/professionnels#partenariat">Devenir partenaire</a></li>
+          <li><a href="/professionnels#calculateur">Simuler mes revenus</a></li>
           <li><a href="/rejoindre">Nous rejoindre</a></li>
           <li><a href="/compte">Connexion partenaire</a></li>
         </ul>
@@ -205,6 +221,17 @@ function footer() {
           <li><a href="mailto:${MAIL}">${MAIL}</a></li>
           <li><button type="button" class="lien-rappel" data-rappel>Être rappelé</button></li>
           <li><a href="/contact">Nous écrire</a></li>
+        </ul>
+        <!-- Deux réseaux, pas six : une maison qui affiche des icônes
+             vers des comptes vides paraît plus petite que si elle n'en
+             affichait aucune. -->
+        <ul class="footer-social" aria-label="Nos réseaux">
+          <li><a href="${SOCIAL.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Melodia Funèbre sur Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8.5V7c0-.7.3-1 1-1h1.5V3.2A16 16 0 0 0 14.6 3C12.3 3 11 4.4 11 6.7v1.8H8.5V12H11v9h3v-9h2.3l.4-3.5H14z"/></svg>
+            <span>Facebook</span></a></li>
+          <li><a href="${SOCIAL.instagram}" target="_blank" rel="noopener noreferrer" aria-label="Melodia Funèbre sur Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+            <span>Instagram</span></a></li>
         </ul>
       </div>
     </div>
@@ -241,6 +268,19 @@ function stickyCta() {
   <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
   <a href="/offres" class="btn btn-gold">Commander</a>
 </div>`;
+}
+
+/* ─── La porte des professionnels ───
+   Un dirigeant de pompes funèbres qui tombe sur une page écrite pour
+   les familles doit pouvoir bifurquer sans remonter chercher le menu.
+   Discret et unique : deux boutons flottants concurrents se neutralisent
+   l'un l'autre. Il ne s'affiche pas sur la page qui lui est destinée. */
+function boutonPro(fichier) {
+  if (/^(professionnels|compte|espace|404)\./.test(fichier || '')) return '';
+  return `<a href="/professionnels" class="pro-flottant" data-pro-flottant>
+  <span class="pro-flottant-ico" aria-hidden="true">◈</span>
+  <span class="pro-flottant-mot">Professionnels</span>
+</a>`;
 }
 
 
@@ -326,7 +366,8 @@ ${p.body}
 </main>
 <div class="orn-portee-hote orn-portee-pied" data-orn-portee="${(p.file || 'page').replace(/\.html$/, '')}"></div>
 ${footer()}
-${p.sticky === false ? '' : stickyCta() + '\n'}${scripts.map(s => `<script src="${versionne(s)}"></script>`).join('\n')}
+${p.sticky === false ? '' : stickyCta() + '\n'}${boutonPro(p.file || '')}
+${scripts.map(s => `<script src="${versionne(s)}"></script>`).join('\n')}
 ${p.inline || ''}
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->
@@ -336,4 +377,4 @@ ${p.inline || ''}
 </html>`));
 }
 
-module.exports = { page, ICON, SITE, MAIL, head, nav, footer, versionne, empreinterImages };
+module.exports = { page, ICON, SITE, MAIL, SOCIAL, head, nav, footer, versionne, empreinterImages };

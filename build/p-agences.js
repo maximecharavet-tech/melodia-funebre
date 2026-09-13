@@ -11,20 +11,27 @@ const FAQ_B2B = [
 ];
 
 module.exports = {
-  file: 'agences.html',
-  title: 'Pompes funèbres : devenir partenaire | Melodia Funèbre',
-  desc: "Proposez à vos familles un hommage musical sur mesure. 60 % de marge, aucun investissement, première composition offerte. Simulateur en ligne.",
-  jsonld: [P.jsonldFil('Espace agences', '/agences')],
+  /* Cette page s'appelait « /agences ». Elle devient « /professionnels »
+     : c'est le mot que tape un dirigeant, et celui que portent les
+     campagnes. L'ancienne adresse est redirigée en 301 dans
+     « vercel.json » — sans quoi les liens déjà posés et ce que Google
+     a indexé partiraient à la poubelle. */
+  file: 'professionnels.html',
+  title: "Hommage musical pour pompes funèbres : devenir partenaire | Melodia Funèbre",
+  desc: "Solution d'hommage musical pour les pompes funèbres : page hommage, QR code, 60 % de marge, aucun investissement. Demandez une démonstration.",
+  jsonld: [P.jsonldFil('Pour les professionnels', '/professionnels')],
   body: `
   <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
     <div class="orn-rosace-hote" data-orn-rosace="agences" data-orn-traits="3"></div>
     <div class="wrap">
-      <div class="eyebrow reveal in">Espace professionnels</div>
-      <h1 class="h-hero reveal in reveal-d1">Votre agence,<br><em>différenciée.</em></h1>
-      <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Proposez à vos familles un service qu'aucune agence voisine n'offre : une œuvre musicale composée pour leur défunt, livrée en vingt-quatre heures. Vous présentez, nous composons, vous conservez 60 %.</p>
+      <div class="eyebrow reveal in">Melodia Funèbre pour les professionnels du funéraire</div>
+      <!-- Ce titre est écrit pour Google autant que pour le lecteur :
+           c'est la requête qu'un dirigeant tape, mot pour mot. -->
+      <h1 class="h-hero reveal in reveal-d1">Solution d'hommage musical<br><em>pour les pompes funèbres.</em></h1>
+      <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Proposez à vos familles un service qu'aucune agence voisine n'offre : une œuvre musicale composée pour leur défunt, livrée en vingt-quatre heures, avec sa page hommage et son QR code. Vous présentez, nous composons, vous conservez 60 %.</p>
       <div class="hero-actions reveal in reveal-d3" style="margin-top:2.4rem;">
-        <a href="#calculateur" class="btn btn-gold btn-lg">${ICON.euro} Simuler mes revenus</a>
-        <a href="/compte" class="btn btn-outline btn-lg">Créer mon compte partenaire</a>
+        <a href="#partenariat" class="btn btn-gold btn-lg">Organiser une démonstration</a>
+        <a href="#calculateur" class="btn btn-outline btn-lg">${ICON.euro} Simuler mes revenus</a>
       </div>
     </div>
   </section>
