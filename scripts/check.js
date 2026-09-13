@@ -165,6 +165,40 @@ try {
   }
 }
 
+/* Chaque empreinte doit correspondre au fichier qu'elle désigne.
+   Les feuilles de style et les scripts sont servis « immutable » pour un
+   an : l'empreinte dans leur adresse est la seule chose qui dit à un
+   navigateur qu'il faut les recharger. Elle a déjà été figée une fois —
+   le jour où les chemins sont devenus absolus, l'expression qui la
+   réécrivait dans les cinq consoles ne correspondait plus, et personne
+   ne l'a vu : une page marquée d'une empreinte périmée s'affiche très
+   bien chez qui ne l'avait jamais ouverte. */
+{
+  const crypto = require('crypto');
+  const periculum = [];
+  const aVerifier = new Set(files.filter((f) => f.endsWith('.html')));
+  for (const f of fs.readdirSync('.')) if (/\.html$/.test(f)) aVerifier.add(f);
+  let n = 0;
+  for (const f of aVerifier) {
+    if (!fs.existsSync(f)) continue;
+    const html = fs.readFileSync(f, 'utf8');
+    for (const m of html.matchAll(/\/(assets\/(?:css|js|img)\/[a-z0-9./-]+)\?v=([a-f0-9]+)/gi)) {
+      const [, actif, marque] = m;
+      if (!fs.existsSync(actif)) continue;
+      const vrai = crypto.createHash('sha1').update(fs.readFileSync(actif)).digest('hex').slice(0, 8);
+      n++;
+      if (vrai !== marque) periculum.push(`${f} → ${actif} porte ?v=${marque}, le fichier vaut ${vrai}`);
+    }
+  }
+  if (periculum.length) {
+    console.error('  EMPREINTES PÉRIMÉES — ces actifs resteront en cache un an :');
+    [...new Set(periculum)].forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log(`  ok   ${n} empreintes d'actifs à jour`);
+  }
+}
+
 /* Aucune page ne doit partir avec un lien mort vers une page du site. */
 const pages = files.filter(f => f.endsWith('.html'));
 /* Toutes les pages du dépôt, pas seulement celles de la liste : les

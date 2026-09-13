@@ -294,22 +294,26 @@
        l'écoute. Sa matière vit dans style.css — cette page la charge
        déjà, il n'y a rien à recopier.
 
-       L'étiquette porte le portrait quand la famille en a confié un,
-       et l'initiale du nom sinon. Elle ne tourne pas : un visage à
-       l'envers ne se regarde pas. */
+       L'étiquette ne porte que l'initiale du nom. Le portrait y a été
+       essayé puis retiré : un visage collé au centre d'un disque qui
+       tourne n'est pas un hommage, c'est une pochette de disque. Il a
+       sa place plus bas, immobile, à hauteur de regard. */
     var initiale = String(m.nom || '♪').trim().charAt(0).toUpperCase();
-    h += '<div class="hom-disque disque-cadre' + (m.portrait_url ? ' hom-disque-portrait' : '') + '">' +
+    h += '<div class="hom-disque disque-cadre">' +
            '<div class="disque" id="hom-vinyle" aria-hidden="true"></div>' +
            '<div class="disque-bord" aria-hidden="true"></div>' +
-           '<div class="etiquette">' +
-             (m.portrait_url
-               ? '<img src="' + esc(m.portrait_url) + '" alt="Portrait de ' + esc(m.nom) + '" loading="eager">'
-               : '<b aria-hidden="true">' + esc(initiale) + '</b>') +
-           '</div>' +
+           '<div class="etiquette"><b aria-hidden="true">' + esc(initiale) + '</b></div>' +
          '</div>';
     h += '<p class="hom-sur">En mémoire de</p>';
     h += '<h1 class="hom-nom">' + esc(m.nom || 'Un être cher') + '</h1>';
     if (d) h += '<p class="hom-dates">' + esc(d) + '</p>';
+    /* Le portrait confié par la famille ne disparaît pas pour autant :
+       il se pose ici, rond et immobile, après le nom et les dates —
+       on lit qui c'était, puis on le regarde. */
+    if (m.portrait_url) {
+      h += '<div class="hom-portrait"><img src="' + esc(m.portrait_url) +
+           '" alt="Portrait de ' + esc(m.nom) + '" loading="eager"></div>';
+    }
     h += '</header>';
 
     if (m.message) {

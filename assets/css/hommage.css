@@ -54,18 +54,29 @@
   width: clamp(150px, 44vw, 200px);
   margin: 0 auto 1.6rem;
 }
-/* Quand la famille a confié un portrait, il devient le centre de la
-   page : dans une étiquette de catalogue il tombait à 65 pixels, un
-   visage qu'on ne reconnaît plus. Le disque grandit alors, et son
-   étiquette avec lui — l'or reste l'écrin, le visage reste lisible. */
-.hom-disque-portrait { width: clamp(184px, 56vw, 248px); }
-.hom-disque-portrait .etiquette { width: 48%; }
-
 /* Le disque est immobile tant que rien ne joue : une rotation
    permanente devant une sépulture serait déplacée. */
 @media (prefers-reduced-motion: reduce) {
   .hom-disque .disque { transform: none !important; }
 }
+
+/* ─── Le portrait, après le nom ───
+   Il a d'abord été essayé au centre du disque ; un visage collé sur un
+   objet qui tourne n'est pas un hommage. Il se pose donc ici, immobile,
+   une fois le nom et les dates lus : on sait qui c'était, puis on le
+   regarde. Plus petit que le disque, parce qu'il vient en second — mais
+   assez grand pour qu'un visage se reconnaisse. */
+.hom-portrait {
+  width: clamp(104px, 32vw, 136px); height: clamp(104px, 32vw, 136px);
+  margin: 1.5rem auto 0;
+  border-radius: 50%; overflow: hidden;
+  border: 1px solid var(--line-strong);
+  /* Le filet d'or est l'unique ornement du portrait : un cadre plus
+     appuyé ferait médaille militaire. */
+  box-shadow: 0 0 0 6px rgba(201,168,76,0.05), 0 16px 40px -18px rgba(0,0,0,0.9);
+  background: var(--ink-3);
+}
+.hom-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .hom-sur {
   font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.32em;
