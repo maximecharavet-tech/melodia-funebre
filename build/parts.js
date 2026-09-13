@@ -1,4 +1,6 @@
 /* Blocs réutilisables entre pages */
+const fs = require('fs');
+const path = require('path');
 const { ICON, SITE, SOCIAL } = require('./gen.js');
 const { OFFERS, TESTIS, FAQ, STYLES, TRACKS } = require('./data.js');
 
@@ -180,6 +182,82 @@ function vitrineBarre() {
         </button>
       </div>
       <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical" hidden></div>`;
+}
+
+/* ═══ LA CHAÎNE DU SOUVENIR ═══
+   Le QR code était une option de 79 € citée en passant. C'est
+   pourtant la seule chose que fait Melodia que personne d'autre ne
+   fait : la musique continue après la cérémonie.
+
+   La section le montre plutôt que de le dire — plaque, code, page,
+   musique — et le QR qui y figure est un vrai QR, encodé à la
+   fabrication et pointant vers la page de démonstration. Un visiteur
+   sort son téléphone, le scanne, et se trouve devant le produit fini.
+   C'est une démonstration qu'aucune capture d'écran ne remplace. */
+const MAILLONS = [
+  ['La plaque', 'Gravée par votre marbrier, ou simplement posée. Le code tient dans quatre centimètres.',
+   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h4"/></svg>'],
+  ['Le QR code', 'Scanné avec l’appareil photo du téléphone. Aucune application à installer.',
+   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M20 20h1M14 20h3"/></svg>'],
+  ['La page de souvenir', 'Son nom, ses dates, les mots de la famille et jusqu’à cinq photos.',
+   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 13h6M7 16h9"/></svg>'],
+  ['Sa musique', 'L’œuvre se lance. Celle qui a été écrite pour lui, et pour personne d’autre.',
+   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>']
+];
+
+function chaineQR(options) {
+  options = options || {};
+  /* Le QR est encodé ici, à la génération : la page n'a aucun script à
+     charger pour l'afficher, et il reste lisible si le JavaScript ne
+     s'exécute pas. */
+  let qr = '';
+  try {
+    const faux = {};
+    new Function('window', fs.readFileSync(path.join(__dirname, '..', 'assets/js/qr.js'), 'utf8'))(faux);
+    qr = faux.MelodiaQR.svg(SITE + '/m/demo', {
+      niveau: 'H', marge: 2, fond: '#ffffff', encre: '#0b0b11',
+      titre: 'QR code de démonstration Melodia Funèbre'
+    });
+  } catch (e) {
+    /* Un catch muet avait déjà caché une erreur : « fs » n'était pas
+       importé, le QR sortait vide, et rien ne le disait. */
+    console.error('  ATTENTION le QR de démonstration n’a pas pu être encodé — ' + e.message);
+    qr = '';
+  }
+
+  return `  <section class="section${options.clair ? ' section-light' : ''} chaine" id="qr-memorial">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:3rem;">
+        <div class="eyebrow">Le code mémoriel</div>
+        <h2 class="h-xl">L’hommage ne s’arrête pas<br><em>à la cérémonie.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:62ch;">Un QR code permet à la famille de
+        retrouver la musique, les souvenirs et la page hommage — des années plus tard.</p>
+      </div>
+
+      <ol class="chaine-fil">
+        ${MAILLONS.map(([t, d, ico], i) => `<li class="chaine-maillon reveal" style="--d:${i * 0.08}s">
+          <span class="chaine-ico" aria-hidden="true">${ico}</span>
+          <span class="chaine-n">${String(i + 1).padStart(2, '0')}</span>
+          <h3 class="chaine-t">${t}</h3>
+          <p class="chaine-d">${d}</p>
+        </li>`).join('\n        ')}
+      </ol>
+
+      ${qr ? `<div class="chaine-preuve reveal">
+        <div class="chaine-qr">${qr}</div>
+        <div class="chaine-dit">
+          <div class="eyebrow">Essayez maintenant</div>
+          <h3 class="h-lg">Scannez ce code avec votre téléphone.</h3>
+          <p>Vous arriverez sur une vraie page de souvenir, telle qu’une famille la publie.
+          Aucune application, aucun compte : l’appareil photo suffit.</p>
+          <div class="chaine-actions">
+            <a href="/m/demo" class="btn btn-outline">Ou ouvrez-la ici</a>
+            <a href="/qr-code-memorial" class="btn btn-ghost">Comment ça se grave</a>
+          </div>
+        </div>
+      </div>` : ''}
+    </div>
+  </section>`;
 }
 
 /* Bandeau urgence — le chemin le plus rentable du site */
@@ -417,4 +495,4 @@ function jsonldFil(titre, chemin) {
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: fil };
 }
 
-module.exports = { partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldProcessus, jsonldFil };
+module.exports = { partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldProcessus, jsonldFil };

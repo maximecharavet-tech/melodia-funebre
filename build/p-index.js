@@ -179,6 +179,9 @@ ${P.urgency()}
     </div>
   </section>
 
+
+${P.chaineQR()}
+
   <!-- ═══ COMPARATIF ═══ -->
   <section class="section section-light">
     <div class="wrap">
