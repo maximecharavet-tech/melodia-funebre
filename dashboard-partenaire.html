@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="assets/css/style.css?v=cc9ef4fd">
 <link rel="stylesheet" href="assets/css/dashboard.css?v=45721b4b">
 <link rel="stylesheet" href="assets/css/relief.css?v=68839a50">
+<link rel="stylesheet" href="assets/css/mobile.css?v=9f45e378">
 </head>
 <body>
 <div class="dash">
@@ -21,12 +22,12 @@
       <span><span class="n">Melodia</span><span class="s">Espace partenaire</span></span>
     </a>
     <div class="side-label">Pilotage</div>
-    <button class="side-item active" data-v="accueil"><span class="ico">◈</span>Tableau de bord</button>
-    <button class="side-item" data-v="commandes"><span class="ico">♪</span>Mes commandes<span class="side-badge" id="badge-cmd">0</span></button>
-    <button class="side-item" data-v="nouvelle"><span class="ico">✚</span>Nouvelle commande</button>
+    <button class="side-item active" data-v="accueil" data-mob="Accueil"><span class="ico">◈</span>Tableau de bord</button>
+    <button class="side-item" data-v="commandes" data-mob="Commandes"><span class="ico">♪</span>Mes commandes<span class="side-badge" id="badge-cmd">0</span></button>
+    <button class="side-item" data-v="nouvelle" data-mob="Nouvelle"><span class="ico">✚</span>Nouvelle commande</button>
     <div class="side-label">Ressources</div>
     <button class="side-item" data-v="ressources"><span class="ico">◇</span>Kit de vente</button>
-    <button class="side-item" data-v="catalogue"><span class="ico">♫</span>Faire écouter</button>
+    <button class="side-item" data-v="catalogue" data-mob="Écouter"><span class="ico">♫</span>Faire écouter</button>
     <button class="side-item" data-v="messagerie"><span class="ico">✉</span>Écrire à la maison<span class="side-badge" id="badge-msg" style="display:none;">0</span></button>
     <button class="side-item" data-v="compte"><span class="ico">◎</span>Mon compte</button>
     <div class="side-foot">
@@ -66,6 +67,7 @@
 <script src="assets/js/motdepasse.js?v=865738d9"></script>
 <script src="assets/js/partenaire-graphes.js?v=2c123e13"></script>
 <script src="assets/js/relief.js?v=99c4c9ba"></script>
+<script src="assets/js/mobile.js?v=43030276"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
