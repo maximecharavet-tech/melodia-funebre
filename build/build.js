@@ -128,8 +128,14 @@ for (const f of CONSOLES) {
      devant une tombe arrivait donc sans une ligne de style et sans
      JavaScript — jamais vu, parce qu'on l'ouvrait toujours par son nom
      de fichier. */
+  /* Le « /? » n'est pas décoratif. Depuis que les chemins sont rendus
+     absolus, ces pages portent « /assets/css/… » : sans lui, plus rien
+     ne correspondait et l'empreinte restait figée sur celle du jour où
+     la ligne avait été écrite. Les actifs sont servis « immutable » —
+     une empreinte figée, c'est un navigateur qui garde un an la
+     feuille de style d'avant. */
   const apres = empreinterImages(avant.replace(
-    /(src|href)="(assets\/(?:js|css)\/[a-z0-9.-]+\.(?:js|css))(\?v=[a-f0-9]+)?"/g,
+    /(src|href)="\/?(assets\/(?:js|css)\/[a-z0-9.-]+\.(?:js|css))(\?v=[a-f0-9]+)?"/g,
     (_, attr, actif) => attr + '="/' + versionne(actif) + '"'))
     .replace(/(\s(?:src|href|data-src)=")(assets\/|audio\/)/g, '$1/$2');
   if (apres !== avant) { fs.writeFileSync(chemin, apres); marquees++; }

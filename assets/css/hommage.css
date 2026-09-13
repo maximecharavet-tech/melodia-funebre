@@ -45,9 +45,30 @@
 
 .hom-tete { text-align: center; }
 
+/* ─── Le disque, à la place du médaillon ───
+   La matière de l'or, le liseré et l'étiquette viennent de style.css,
+   que cette page charge déjà : on ne redéfinit ici que sa taille et sa
+   place, pour qu'il tienne dans la colonne d'une page mémorielle sans
+   écraser le nom qui suit. */
+.hom-disque {
+  width: clamp(150px, 44vw, 200px);
+  margin: 0 auto 1.6rem;
+}
+/* Le disque est immobile tant que rien ne joue : une rotation
+   permanente devant une sépulture serait déplacée. */
+@media (prefers-reduced-motion: reduce) {
+  .hom-disque .disque { transform: none !important; }
+}
+
+/* ─── Le portrait, après le nom ───
+   Il a d'abord été essayé au centre du disque ; un visage collé sur un
+   objet qui tourne n'est pas un hommage. Il se pose donc ici, immobile,
+   une fois le nom et les dates lus : on sait qui c'était, puis on le
+   regarde. Plus petit que le disque, parce qu'il vient en second — mais
+   assez grand pour qu'un visage se reconnaisse. */
 .hom-portrait {
-  width: clamp(112px, 34vw, 148px); height: clamp(112px, 34vw, 148px);
-  margin: 0 auto 1.3rem;
+  width: clamp(104px, 32vw, 136px); height: clamp(104px, 32vw, 136px);
+  margin: 1.5rem auto 0;
   border-radius: 50%; overflow: hidden;
   border: 1px solid var(--line-strong);
   /* Le filet d'or est l'unique ornement du portrait : un cadre plus
@@ -56,8 +77,6 @@
   background: var(--ink-3);
 }
 .hom-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hom-portrait-vide { display: grid; place-items: center; color: var(--or-deep); }
-.hom-portrait-vide svg { width: 46%; height: 46%; }
 
 .hom-sur {
   font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.32em;
