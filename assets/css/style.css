@@ -1745,6 +1745,28 @@ body.intro-open { overflow: hidden; }
 }
 .section-light .note { color: var(--ivory-dim); }
 
+/* Mention sous le catalogue. Elle emprunte au .note sa discrétion mais
+   pas sa casse : deux phrases en capitales à 8 px ne se lisent pas, et
+   une mention qu'on ne lit pas ne protège personne. Bas de casse, une
+   mesure courte, et assez d'air au-dessus pour ne pas se coller à la
+   dernière fiche. */
+.catalogue-mention {
+  font-family: var(--ff-b);
+  font-size: 0.82rem;
+  line-height: 1.75;
+  /* --dust ne donne que 2,97 : 1 sur le fond du catalogue : sous le
+     seuil AA, donc une mention qu'on ne lit pas. --ash mesure 5,79 : 1
+     tout en restant clairement en retrait de --bone. */
+  color: var(--ash);
+  max-width: 62ch;
+  margin: 2.6rem auto 0;
+  text-wrap: pretty;
+}
+.section-light .catalogue-mention { color: var(--ivory-dim); }
+@media (max-width: 860px) {
+  .catalogue-mention { font-size: 0.86rem; margin-top: 2rem; }
+}
+
 /* Sur téléphone, un argument de réassurance à 8 px ne se lit pas :
    on relève le plancher et on desserre l'interlettrage. */
 /* Les corps de texte de ce palier ont été repris d'un seul tenant par

@@ -129,20 +129,29 @@ ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</bl
     lyrics: t.lyrics, brief: t.brief, photo: t.photo || '', mention: t.mention || ''
   }));
 
-  /* Mention des portraits — posée par le gabarit, donc impossible à
-     oublier sur l'une des pages où le catalogue apparaît, et absente
-     tant qu'aucune fiche ne porte de portrait.
+  /* Mention du catalogue — posée par le gabarit, donc impossible à
+     oublier sur l'une des pages où le catalogue apparaît.
 
-     Elle dit ce qui est : ces visages sont des illustrations. Un site
-     de composition funéraire qui présente ses réalisations engage la
-     confiance de familles endeuillées ; laisser croire qu'on regarde
-     la photographie d'un défunt réel, sans que ce soit le cas, serait
-     une tromperie sur ce que la maison a effectivement fait. La ligne
-     coûte peu et met le catalogue à l'abri. */
+     Deux choses y sont dites, et toutes deux disent ce qui est.
+
+     La discrétion d'abord : les œuvres sont réelles, mais les prénoms
+     et les récits qui les accompagnent ont été modifiés. C'est un
+     choix de la maison — on ne publie pas l'histoire d'une famille en
+     deuil. Ne pas l'écrire laisserait croire à un conseiller funéraire
+     qu'il lit de vrais dossiers ; l'écrire en fait au contraire un
+     argument, puisque la discrétion est la première chose qu'on
+     attend du métier.
+
+     Les portraits ensuite, et seulement si une fiche en porte : ces
+     visages sont des illustrations. Laisser croire qu'on regarde la
+     photographie d'un défunt réel serait une tromperie sur ce que la
+     maison a effectivement fait.
+
+     Les deux lignes coûtent peu et mettent le catalogue à l'abri. */
   const avecPortrait = liste.some(t => t.photo);
-  const mention = avecPortrait
-    ? `\n      <p class="note center catalogue-mention">Portraits d'illustration — une famille nous confie des mots, pas toujours un visage.</p>`
-    : '';
+  const mention = `\n      <p class="catalogue-mention center">Chaque œuvre a bien été composée pour une personne. Les prénoms et les récits qui les accompagnent ont été modifiés : nous ne publions jamais l'histoire d'une famille.${
+    avecPortrait ? " Les portraits sont des illustrations — une famille nous confie des mots, pas toujours un visage." : ''
+  }</p>`;
 
   return `      <div class="catalogue" data-catalogue>
 ${fiches}
