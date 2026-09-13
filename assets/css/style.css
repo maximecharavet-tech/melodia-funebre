@@ -4235,7 +4235,16 @@ body.a-ecoute { padding-bottom: 5rem; }
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(1.6rem, 4vw, 3.4rem); align-items: start;
 }
-@media (max-width: 900px) { .part-duo { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 900px) {
+  .part-duo { grid-template-columns: minmax(0, 1fr); }
+  /* En colonne, les conditions passaient avant le formulaire : un
+     dirigeant qui vient d'appuyer sur « Organiser une démonstration »
+     atterrissait mille trois cents pixels au-dessus du champ à
+     remplir, et devait redescendre tout un écran et demi. Il a déjà
+     décidé — on lui donne d'abord le formulaire, les conditions
+     restent juste en dessous pour qui veut les relire. */
+  .part-duo > .part-form { order: -1; }
+}
 
 .part-titre {
   font-family: var(--ff-d); font-weight: 300; font-size: 1.45rem;

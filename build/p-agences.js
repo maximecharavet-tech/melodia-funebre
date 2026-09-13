@@ -317,20 +317,26 @@ ${P.faq(FAQ_B2B)}
       </div>
 
       <div class="part-duo">
-        <!-- Les conditions chiffrées ne sont pas affichées ici : elles
-             se discutent selon le volume et le secteur, et un tarif
-             gravé sur une page publique se retourne contre celui qui
-             l'a écrit dès la première négociation. -->
+        <!-- Ce bloc disait « vous conservez la majeure partie » et
+             « grille de prix conseillés », par prudence de négociation.
+             Or la page annonce « 60 % » huit fois plus haut, avec les
+             montants nets, et /offres publie les trois tarifs. Le flou
+             ne protégeait donc rien : il arrivait seulement à l'endroit
+             où le dirigeant s'engage, et une imprécision à cet endroit
+             se lit « les vraies conditions seront moins bonnes ». On
+             répète ici, mot pour mot, ce que le reste du site promet.
+             Seule la disponibilité du secteur reste « sur demande » :
+             celle-là varie pour de vrai. -->
         <div class="part-conditions reveal">
           <h3 class="part-titre">Ce qui est convenu</h3>
           <ul class="part-liste">
-            <li><b>Marge agence</b><span>Vous conservez la majeure partie du montant réglé par la famille.</span></li>
-            <li><b>Tarif conseillé</b><span>Nous vous transmettons une grille de prix conseillés, que vous restez libre d'ajuster.</span></li>
-            <li><b>Options</b><span>Version longue, instruments rares, langue étrangère, plaque à QR code.</span></li>
-            <li><b>Règlement</b><span>Mensuel, sur facture récapitulative. Rien à avancer.</span></li>
-            <li><b>Exclusivité</b><span>Un nombre limité d'agences par bassin de population.</span></li>
+            <li><b>Marge agence</b><span>60 % du montant réglé par la famille, sur chaque hommage. C'est le même taux pour les trois offres et pour les options.</span></li>
+            <li><b>Ce que cela fait</b><span>89 € nets sur l'offre Essentiel à 149 €, 179 € sur Prestige à 299 €, 299 € sur Mémorial à 499 €.</span></li>
+            <li><b>Options</b><span>Version longue, instruments rares, langue étrangère, plaque à QR code à 79 € — même taux.</span></li>
+            <li><b>Règlement</b><span>Mensuel, sur facture récapitulative. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée.</span></li>
+            <li><b>Exclusivité</b><span>Un nombre limité d'agences par bassin de population. La disponibilité de votre secteur se vérifie en un appel.</span></li>
           </ul>
-          <p class="part-note">Conditions professionnelles détaillées sur demande — elles dépendent de votre volume et de votre secteur.</p>
+          <p class="part-note">Ces conditions sont les mêmes pour tout le monde : il n'y a pas de grille cachée, et rien ne dépend du volume que vous ferez.</p>
           <div class="part-supports">
             <span class="eyebrow">Ce que nous fournissons</span>
             <ul>

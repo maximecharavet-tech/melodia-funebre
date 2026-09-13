@@ -56,8 +56,17 @@ export default async function handler(req, res) {
   const d = req.body || {};
   const type = TITRES[d.type] ? d.type : 'contact';
 
-  // Garde-fous : on ne relaie ni un formulaire vide, ni un roman
-  const nom = String(d.nom || '').slice(0, 120).trim();
+  /* La demande d'une pompe funèbre porte d'autres noms de champs que
+     celle d'une famille : « contact » pour la personne, « societe »
+     pour la maison. Cette fonction lisait « nom » et rien d'autre —
+     le courriel de la demande la plus précieuse du site arrivait donc
+     sans le nom de l'entreprise, sans celui du dirigeant, sans la
+     ville et sans ce qu'il demandait. Il ne restait qu'un téléphone
+     et un message. */
+  const nom = String(d.nom || d.contact || '').slice(0, 120).trim();
+  const societe = String(d.societe || '').slice(0, 160).trim();
+  const ville = String(d.ville || '').slice(0, 120).trim();
+  const objet = String(d.objet || '').slice(0, 160).trim();
   const email = String(d.email || '').slice(0, 160).trim();
   const tel = String(d.tel || '').slice(0, 40).trim();
   if (!nom && !email && !tel) {
@@ -65,8 +74,14 @@ export default async function handler(req, res) {
   }
 
   const urgent = !!d.urgent;
+  /* L'objet doit suffire à décider si on rappelle tout de suite :
+     « DEMANDE DE PARTENARIAT — Pompes Funèbres Roblot · Villeurbanne »
+     se lit d'un coup d'œil sur un téléphone. */
+  const enTete = societe || nom;
   const sujet = (urgent ? '[URGENT] ' : '') + TITRES[type] +
-    (nom ? ' — ' + nom : '') + (d.defunt ? ' · ' + d.defunt : '');
+    (enTete ? ' — ' + enTete : '') +
+    (ville ? ' · ' + ville : '') +
+    (d.defunt ? ' · ' + d.defunt : '');
 
   const corps =
     '<div style="font-family:system-ui,-apple-system,sans-serif;max-width:560px;">' +
@@ -77,7 +92,10 @@ export default async function handler(req, res) {
       '</div>' +
       '<div style="border:1px solid #e7e2d6;border-top:0;border-radius:0 0 6px 6px;padding:20px 22px;background:#fff;">' +
         '<table style="border-collapse:collapse;font-size:14px;width:100%;">' +
-          ligne('Nom', nom) +
+          ligne('Entreprise', societe) +
+          ligne(societe ? 'Contact' : 'Nom', nom) +
+          ligne('Ville', ville) +
+          ligne('Demande', objet) +
           ligne('Téléphone', tel) +
           ligne('Email', email) +
           ligne('Meilleur moment', d.moment) +
@@ -88,7 +106,7 @@ export default async function handler(req, res) {
           ligne('Page', d.page) +
         '</table>' +
         (tel ? '<p style="margin-top:18px;"><a href="tel:' + echapper(tel.replace(/[^+0-9]/g, '')) +
-          '" style="background:#c9a84c;color:#120e04;text-decoration:none;padding:10px 18px;border-radius:4px;font-weight:600;">Rappeler ' + echapper(nom || '') + '</a></p>' : '') +
+          '" style="background:#c9a84c;color:#120e04;text-decoration:none;padding:10px 18px;border-radius:4px;font-weight:600;">Rappeler ' + echapper(nom || societe || '') + '</a></p>' : '') +
       '</div>' +
     '</div>';
 
@@ -102,5 +120,42 @@ export default async function handler(req, res) {
   });
 
   if (!r.ok) return res.status(r.status).json({ error: r.error, code: r.code, motif: r.motif });
+
+  /* Un dirigeant qui dépose sa demande à vingt-deux heures n'a, jusque
+     là, rien reçu : seulement une phrase à l'écran, disparue dès qu'il
+     ferme l'onglet. Le doute — « est-ce parti ? » — se règle par un
+     accusé de réception court. Il n'est envoyé qu'aux professionnels :
+     une famille en deuil qui demande un rappel n'a pas besoin d'un
+     courriel de plus dans sa boîte.
+
+     Son échec ne fait pas échouer la demande : l'essentiel, l'alerte à
+     la maison, est déjà parti. */
+  if (type === 'partenariat' && email) {
+    const bonjour = nom ? 'Bonjour ' + echapper(nom) + ',' : 'Bonjour,';
+    const accuse =
+      '<div style="font-family:system-ui,-apple-system,sans-serif;max-width:520px;color:#17150f;">' +
+        '<div style="background:#040407;color:#c9a84c;padding:18px 22px;border-radius:6px 6px 0 0;">' +
+          '<div style="font-size:11px;letter-spacing:.24em;text-transform:uppercase;">Melodia Funèbre</div>' +
+          '<div style="font-size:19px;color:#f2efe8;margin-top:6px;">Votre demande est bien arrivée</div>' +
+        '</div>' +
+        '<div style="border:1px solid #e7e2d6;border-top:0;border-radius:0 0 6px 6px;padding:20px 22px;background:#fff;line-height:1.7;font-size:14px;">' +
+          '<p style="margin:0 0 14px;">' + bonjour + '</p>' +
+          '<p style="margin:0 0 14px;">Nous avons bien reçu votre demande' +
+            (societe ? ' pour <b>' + echapper(societe) + '</b>' : '') +
+            '. Je vous rappelle sous un jour ouvré, au ' + echapper(tel || 'numéro indiqué') + ', ' +
+            'ou par courriel si vous préférez — dites-le-moi en répondant à ce message.</p>' +
+          '<p style="margin:0 0 14px;">D&rsquo;ici là, vous pouvez écouter des hommages déjà composés : ' +
+            '<a href="https://melodia-funebre.fr/demos" style="color:#8a6f26;">melodia-funebre.fr/demos</a>. ' +
+            'C&rsquo;est ce que vous ferez écouter à une famille, et c&rsquo;est ce qui décide.</p>' +
+          '<p style="margin:0;color:#55503f;">Maxime Charavet<br>' +
+            '<span style="font-size:12px;">Fondateur — Melodia Funèbre</span></p>' +
+        '</div>' +
+      '</div>';
+    try {
+      await envoyer({ from: exp, to: [email], subject: 'Votre demande de partenariat — Melodia Funèbre',
+                      html: accuse, reply_to: dest[0] });
+    } catch (e) { /* l'alerte à la maison est partie : c'est elle qui compte */ }
+  }
+
   return res.status(200).json({ ok: true, id: r.id });
 }
