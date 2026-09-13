@@ -21,20 +21,26 @@ const { fontes, image, SOMBRE } = require('./pdf-style.js');
 const esc = s => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/* ─── Les six raisons, telles qu'elles sont sur /professionnels ─── */
-const RAISONS = [
-  ['60 %', 'Une marge que peu de prestations vous laissent',
-   'Sur chaque hommage, vous conservez 60 % du montant payé par la famille. Sur une offre Prestige à 299 €, ce sont 179,40 € nets pour votre agence, pour trois minutes de saisie.'],
-  ['0 €', 'Aucun investissement, jamais',
-   'Pas de stock, pas d’abonnement, pas de matériel, pas de minimum. Vous ne devez rien tant qu’une famille n’a rien commandé. Le risque est entièrement de notre côté.'],
-  ['24 h', 'Livré avant la cérémonie',
-   'Vingt-quatre heures après l’entretien. Six heures en urgence. Vous pouvez le promettre à une famille qui enterre après-demain sans rien risquer.'],
-  ['—', 'Zéro droit SACEM',
-   'Chaque œuvre est originale et cédée avec ses droits d’usage. Aucune déclaration, aucune redevance de diffusion, aucune démarche administrative pour votre agence.'],
-  ['1', 'La première composition est offerte',
-   'Nous composons gratuitement un hommage pour votre prochaine famille. Vous le faites écouter. Si cela touche, on continue. Sinon, vous n’avez rien perdu.'],
-  ['☎', 'Vous parlez au fondateur',
-   'Pas de plateforme, pas de service client. Un numéro, une personne, une réponse sous deux heures ouvrées, et les urgences traitées en priorité.']
+/* ─── Les sept piliers, les mêmes que sur /professionnels ───
+   L'argumentaire ouvrait sur la marge. C'était l'ordre inverse du
+   bon : un dirigeant n'achète pas 60 % de commission, il achète ce
+   qu'il va pouvoir offrir. La rémunération vient donc en dernier,
+   quand il a déjà vu ce que la famille vivra. */
+const PILIERS = [
+  ['Différenciation',
+   'Trois agences se partagent la même ville et le même catalogue de cercueils. Celle qui fait entendre une chanson écrite pour le défunt devient celle qu’on recommande à la sortie. Nous limitons volontairement le nombre de partenaires par bassin de population, pour que l’avantage reste un avantage.'],
+  ['Une expérience émotionnelle',
+   'Aux obsèques, la musique n’a presque jamais connu le défunt. Un Ave Maria pour une grand-mère qui ne chantait qu’en cuisine. Ici, la salle entend son prénom, son métier, ses manies. C’est le seul moment de la cérémonie que les familles n’avaient pas pu rendre personnel.'],
+  ['Aucun travail de production',
+   'Vous présentez, nous produisons. Entretien, écriture, composition, mixage, relecture humaine, livraison : tout est de notre côté. Rien à installer, aucune compétence musicale requise, et aucune démarche SACEM — chaque œuvre est originale et cédée avec ses droits d’usage.'],
+  ['Une solution digitale',
+   'Un espace partenaire, pas un classeur. Vous saisissez le brief en trois minutes, vous suivez l’avancement, vous faites écouter le catalogue en rendez-vous et vous retrouvez votre récapitulatif de fin de mois. Cela s’ouvre dans le navigateur, y compris sur le téléphone du conseiller.'],
+  ['Le QR code',
+   'L’hommage ne s’arrête pas au jour de la cérémonie. Un code à faire graver sur la plaque ouvre une page où l’œuvre se joue, avec les mots de la famille et ses photos. Un petit-enfant qui passera au cimetière dans quinze ans entendra la chanson de son grand-père.'],
+  ['L’accompagnement de la famille',
+   'Cinq questions, cinq minutes : nous menons l’entretien, ou vous le menez vous-même. La famille garde ensuite son espace, où elle écoute, télécharge, ajoute ses photos et publie sa page quand elle le décide. Si l’œuvre ne touche pas, elle est reprise à nos frais.'],
+  ['Un vrai partenariat',
+   'Vous conservez 60 % du montant payé par la famille, soit 179 € nets sur une offre Prestige. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée. La première composition est offerte, et vous parlez au fondateur — pas à une plateforme.']
 ];
 
 /* ─── Les six étapes du partenariat ─── */
@@ -72,10 +78,11 @@ function couverture() {
       <div style="margin-top:auto;">
         <div class="surtitre">Dossier partenaire · Pompes funèbres</div>
         <hr class="filet" style="width:34mm;margin:4mm 0 6mm;">
-        <h1>Devenez<br><em>partenaire.</em></h1>
-        <p class="grand" style="margin-top:7mm;max-width:120mm;">
-          Offrez aux familles une œuvre musicale composée pour leur défunt,
-          livrée en vingt-quatre heures, avec sa page hommage et son QR code.
+        <h1>Une nouvelle<br>expérience d’hommage<br><em>pour les familles que<br>vous accompagnez.</em></h1>
+        <p class="grand" style="margin-top:7mm;max-width:126mm;">
+          Une œuvre musicale composée pour leur défunt, à partir de ce qu’elles
+          racontent de lui. Livrée en vingt-quatre heures, diffusée en cérémonie,
+          prolongée par une page de souvenir et son QR code.
           Vous présentez, nous composons, vous conservez 60 %.
         </p>
         <p style="margin-top:7mm;font-family:'Cormorant Garamond',Georgia,serif;font-size:16pt;
@@ -155,22 +162,22 @@ function ouverture() {
 function gains() {
   return `<section class="page">
     <div class="dedans">
-      <div class="surtitre">Ce que vous y gagnez</div>
-      <hr class="filet" style="width:28mm;margin:4mm 0 7mm;">
-      <h2>Six raisons, et pas une<br>qui vous demande <em>d’avancer un euro.</em></h2>
+      <div class="surtitre">Sept raisons, une seule question</div>
+      <hr class="filet" style="width:28mm;margin:4mm 0 6mm;">
+      <h2>Pourquoi votre agence devrait<br>proposer <em>Melodia Funèbre</em> ?</h2>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:9mm;">
-        ${RAISONS.map(([c, t, d]) => `
-        <div class="carte" style="display:flex;gap:5mm;align-items:flex-start;">
-          <div class="chiffre" style="min-width:17mm;">${esc(c)}</div>
-          <div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4.5mm;margin-top:8mm;">
+        ${PILIERS.map(([t, d], i) => `
+        <div class="carte"${i === PILIERS.length - 1 ? ' style="grid-column:1 / -1;"' : ''}>
+          <div style="display:flex;gap:4mm;align-items:baseline;">
+            <span style="font-family:'Jetbrains Mono',monospace;font-size:7pt;letter-spacing:.18em;color:#c9a84c;">${String(i + 1).padStart(2, '0')}</span>
             <h3 style="font-size:12.5pt;line-height:1.25;">${esc(t)}</h3>
-            <p style="margin-top:2.5mm;font-size:8.8pt;">${esc(d)}</p>
           </div>
+          <p style="margin-top:2.5mm;font-size:8.4pt;line-height:1.68;">${esc(d)}</p>
         </div>`).join('')}
       </div>
 
-      <p class="disc" style="margin-top:8mm;">
+      <p class="disc" style="margin-top:auto;padding-top:6mm;">
         Nous ne présentons pas cela comme une opportunité commerciale à saisir.
         C’est un service de plus à rendre à des familles en deuil, qui se trouve
         être aussi une source de marge.

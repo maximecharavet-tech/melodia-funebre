@@ -4734,3 +4734,17 @@ body.a-ecoute { padding-bottom: 5rem; }
 .pup-partage a svg { width: 15px; height: 15px; flex: none; }
 .pup-partage a:hover { color: var(--or); border-color: var(--line-strong); }
 @media (prefers-reduced-motion: reduce) { .pup-partage a { transition: none; } }
+
+/* La promesse faite aux professionnels : ce que vit la famille, avant
+   ce que gagne l'agence. Elle se lit d'un trait, au-dessus du reste. */
+.lead-fort {
+  font-family: var(--ff-d);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 3.6vw, 2.3rem);
+  line-height: 1.22;
+  color: var(--ivory);
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.lead-fort em { font-style: italic; color: var(--or); }
+@media (max-width: 640px) { .lead-fort { max-width: none; } }
