@@ -117,9 +117,58 @@
     });
   }
 
+  /* ─── Le disque tourne ───
+     Même comportement que sur la platine du catalogue : une masse qui
+     prend sa vitesse et la perd, jamais une animation qu'on coupe net.
+     La lueur monte vite et retombe lentement, comme une lumière.
+
+     On ne réanime la boucle qu'à la lecture, et on l'arrête dès que
+     tout est immobile : devant une tombe, sur un téléphone dont la
+     batterie compte, une boucle qui tourne pour rien n'est pas un
+     détail. */
+  function brancherDisque() {
+    var disque = document.getElementById('hom-vinyle');
+    var cadre = disque && disque.parentNode;
+    if (!disque || !audio) return;
+
+    var reduit = false;
+    try { reduit = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+    var lueur = 0, angle = 0, vitesse = 0, image = null;
+
+    function pas() {
+      var joue = !audio.paused && !audio.ended;
+      var cibleLueur = joue ? 0.42 + Math.sin(Date.now() / 430) * 0.2 : 0;
+      lueur += (cibleLueur - lueur) * (cibleLueur > lueur ? 0.3 : 0.06);
+      cadre.style.setProperty('--lueur', lueur.toFixed(3));
+
+      var cibleVitesse = joue && !reduit ? 0.42 : 0;
+      vitesse += (cibleVitesse - vitesse) * (joue ? 0.022 : 0.014);
+      if (vitesse > 0.0015) {
+        angle = (angle + vitesse) % 360;
+        disque.style.transform = 'rotate(' + angle.toFixed(2) + 'deg)';
+      }
+
+      if (joue || lueur > 0.002 || vitesse > 0.0015) image = requestAnimationFrame(pas);
+      else image = null;
+    }
+    function reveiller() { if (!image) image = requestAnimationFrame(pas); }
+
+    audio.addEventListener('play', reveiller);
+    audio.addEventListener('pause', reveiller);
+    audio.addEventListener('ended', reveiller);
+    /* Un onglet mis de côté ne doit pas continuer à faire tourner le
+       disque en arrière-plan pour personne. */
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { if (image) { cancelAnimationFrame(image); image = null; } }
+      else if (!audio.paused) reveiller();
+    });
+  }
+
   function brancherLecteur() {
     audio = document.getElementById('hom-audio');
     if (!audio) return;
+    brancherDisque();
 
     var barre = document.getElementById('hom-barre');
     var avance = document.getElementById('hom-avance');
@@ -240,12 +289,24 @@
     h += '<article class="hom-carte">';
 
     h += '<header class="hom-tete">';
-    if (m.portrait_url) {
-      h += '<div class="hom-portrait"><img src="' + esc(m.portrait_url) + '" alt="Portrait de ' + esc(m.nom) + '" loading="eager"></div>';
-    } else {
-      h += '<div class="hom-portrait hom-portrait-vide" aria-hidden="true">' +
-           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M12 3c-3 2-5 5-5 8a5 5 0 0 0 10 0c0-3-2-6-5-8z"/></svg></div>';
-    }
+    /* Le disque d'or de la platine, plutôt qu'un médaillon fixe : c'est
+       le même objet que sur le reste du site, et il tourne pendant
+       l'écoute. Sa matière vit dans style.css — cette page la charge
+       déjà, il n'y a rien à recopier.
+
+       L'étiquette porte le portrait quand la famille en a confié un,
+       et l'initiale du nom sinon. Elle ne tourne pas : un visage à
+       l'envers ne se regarde pas. */
+    var initiale = String(m.nom || '♪').trim().charAt(0).toUpperCase();
+    h += '<div class="hom-disque disque-cadre' + (m.portrait_url ? ' hom-disque-portrait' : '') + '">' +
+           '<div class="disque" id="hom-vinyle" aria-hidden="true"></div>' +
+           '<div class="disque-bord" aria-hidden="true"></div>' +
+           '<div class="etiquette">' +
+             (m.portrait_url
+               ? '<img src="' + esc(m.portrait_url) + '" alt="Portrait de ' + esc(m.nom) + '" loading="eager">'
+               : '<b aria-hidden="true">' + esc(initiale) + '</b>') +
+           '</div>' +
+         '</div>';
     h += '<p class="hom-sur">En mémoire de</p>';
     h += '<h1 class="hom-nom">' + esc(m.nom || 'Un être cher') + '</h1>';
     if (d) h += '<p class="hom-dates">' + esc(d) + '</p>';
