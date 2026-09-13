@@ -750,11 +750,12 @@
       if (HAS_SB) {
         var rep = await this._serveur({
           action: 'creer', nom: data.nom, email: email, pw: data.pw,
-          secteur: data.secteur || '', tel: data.tel || '', role: data.role || 'commercial'
+          secteur: data.secteur || '', tel: data.tel || '',
+          role: data.role || 'commercial', agence: data.agence || ''
         });
         return {
           nom: data.nom, name: data.nom, email: email, role: rep.role || 'commercial',
-          secteur: data.secteur || '', actif: true,
+          secteur: data.secteur || '', agence: data.agence || '', actif: true,
           _message: rep.message, _cree: rep.cree
         };
       }
@@ -794,6 +795,16 @@
 
     /* Supprimer laissait le compte de connexion en place : la fiche
        disparaissait de la console, la personne continuait d'entrer. */
+    /* Rattacher un compte existant à une agence. Le champ n'existait
+       pas quand les premiers comptes ont été créés : sans cette
+       méthode, il faudrait les recréer pour leur donner une agence. */
+    async rattacher(email, agence) {
+      email = (email || '').trim().toLowerCase();
+      if (!email) throw new Error('Adresse manquante.');
+      if (HAS_SB) return await this._serveur({ action: 'agence', email: email, agence: (agence || '').trim() });
+      throw new Error('Le rattachement à une agence demande la base.');
+    },
+
     async supprimer(email) {
       var users = LS.get('melodia_users', {});
       delete users[email];
