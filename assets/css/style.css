@@ -4569,3 +4569,168 @@ body.a-ecoute { padding-bottom: 5rem; }
   font-size: 0.84rem; line-height: 1.6; color: var(--ash);
   text-align: center; max-width: 34rem;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA PAGE D'UNE ŒUVRE, ET SON PARTAGE
+
+   C'est l'adresse qu'on poste sur un réseau : elle doit s'ouvrir sur
+   le titre, le nom de celui pour qui l'œuvre a été écrite, et un
+   lecteur déjà prêt. Tout le reste vient après le premier écran.
+   ═══════════════════════════════════════════════════════════════ */
+
+.ec-fil {
+  font-family: var(--ff-m); font-size: var(--fs-xs);
+  letter-spacing: 0.12em; color: var(--dust);
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
+  margin-bottom: 2.4rem;
+}
+.ec-fil a { color: var(--ash); }
+.ec-fil a:hover { color: var(--or); }
+
+.ec-tete { text-align: center; }
+.ec-sceau {
+  width: 96px; height: 96px; margin: 0 auto 1.6rem;
+  border-radius: 50%; border: 1px solid var(--line-strong);
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 32% 28%, rgba(201, 168, 76, 0.16), transparent 68%);
+  font-family: var(--ff-d); font-size: 2.2rem; color: var(--or);
+  position: relative; overflow: hidden;
+}
+.ec-sceau-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+.ec-sceau-photo span { position: relative; display: none; }
+
+.ec-style {
+  font-family: var(--ff-m); font-size: var(--fs-eyebrow);
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--or);
+}
+.ec-titre {
+  font-family: var(--ff-d); font-weight: 300;
+  font-size: clamp(2rem, 5.2vw, 3.4rem); line-height: 1.08;
+  color: var(--ivory); margin: 0.8rem 0 0; text-wrap: balance;
+}
+.ec-titre em { font-style: italic; }
+.ec-qui { color: var(--bone); font-size: var(--fs-lead); margin-top: 0.9rem; }
+
+.ec-ecoute { margin-top: 2.6rem; }
+.ec-ecoute audio { width: 100%; min-height: 44px; }
+.ec-note {
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--dust); margin-top: 0.9rem; text-align: center;
+}
+
+.ec-h2 {
+  font-family: var(--ff-d); font-weight: 300; font-size: 1.6rem;
+  color: var(--ivory); margin: 0 0 1rem;
+}
+.ec-recit, .ec-vers, .ec-appel, .ec-voisines { margin-top: 3.2rem; }
+.ec-recit p, .ec-appel p { color: var(--bone); line-height: 1.9; max-width: 64ch; }
+
+.ec-mots { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.4rem; }
+.ec-mots .mono {
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--dust); margin-right: 0.4rem;
+}
+.ec-mot {
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--or);
+  border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.42rem 0.85rem;
+}
+
+.ec-vers blockquote {
+  font-family: var(--ff-d); font-style: italic; font-size: 1.35rem;
+  line-height: 1.75; color: var(--ivory);
+  border-left: 2px solid var(--or); padding-left: 1.4rem; margin: 0; max-width: 56ch;
+}
+
+.ec-actions { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.8rem; }
+
+.ec-voisines ul {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 0.9rem;
+}
+.ec-voisines a {
+  display: flex; flex-direction: column; gap: 0.35rem;
+  min-height: 108px; padding: 1.1rem;
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  background: var(--ink-2);
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.ec-voisines a:hover { border-color: var(--line-strong); background: var(--ink-3); }
+.ec-v-style {
+  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--dust);
+}
+.ec-v-titre { font-family: var(--ff-d); font-size: 1.15rem; color: var(--ivory); line-height: 1.25; }
+.ec-v-qui { font-size: 0.8rem; color: var(--ash); }
+
+/* ─── Le bloc de partage ─── */
+.ec-partage { margin-top: 2.6rem; }
+
+.pa-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.8rem; margin-bottom: 1rem; }
+.pa-libelle {
+  font-family: var(--ff-m); font-size: var(--fs-eyebrow);
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--or);
+}
+.pa-dit { font-size: 0.84rem; color: var(--ash); }
+
+.pa-boutons { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.pa-bouton {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 48px; padding: 0 1rem;
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  background: var(--ink-2); color: var(--bone);
+  font-family: var(--ff-m); font-size: 0.62rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.pa-bouton svg { width: 17px; height: 17px; flex: none; }
+.pa-bouton:hover { color: var(--or); border-color: var(--line-strong); background: var(--ink-3); }
+.pa-natif { border-color: var(--line-strong); color: var(--or); }
+
+.pa-insta { font-size: 0.8rem; line-height: 1.8; color: var(--ash); margin-top: 1rem; max-width: 60ch; }
+.pa-texte-lien {
+  color: var(--or); text-decoration: underline; text-underline-offset: 3px;
+  font: inherit; padding: 0;
+}
+.pa-echo {
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--green); min-height: 1.2em; margin-top: 0.7rem;
+}
+
+/* ─── Le bouton de partage sur une fiche du catalogue ─── */
+.oeuvre-liens { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.oeuvre-liens .oeuvre-plus { flex: 1 1 auto; }
+.oeuvre-partager {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  min-height: 48px; padding: 0 0.85rem;
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  color: var(--ash);
+  font-family: var(--ff-m); font-size: 0.56rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.oeuvre-partager svg { width: 15px; height: 15px; flex: none; }
+.oeuvre-partager:hover { color: var(--or); border-color: var(--line-strong); }
+
+@media (max-width: 640px) {
+  .pa-bouton span { font-size: 0.58rem; }
+  .ec-vers blockquote { font-size: 1.15rem; padding-left: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pa-bouton, .oeuvre-partager, .ec-voisines a { transition: none; }
+}
+
+/* Le partage depuis la platine : discret, mais toujours à portée. */
+.pup-partage { margin-top: 1.4rem; }
+.pup-partage a {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  min-height: 48px; padding: 0 1rem;
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  color: var(--ash);
+  font-family: var(--ff-m); font-size: 0.58rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.pup-partage a svg { width: 15px; height: 15px; flex: none; }
+.pup-partage a:hover { color: var(--or); border-color: var(--line-strong); }
+@media (prefers-reduced-motion: reduce) { .pup-partage a { transition: none; } }

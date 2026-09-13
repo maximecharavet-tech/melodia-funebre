@@ -75,6 +75,33 @@ for (const module of ['./p-legal.js', './p-guides.js']) {
     console.log('  ' + p.file.padEnd(22) + html.length + ' octets');
   }
 }
+
+/* Les pages d'écoute, une par hommage. Elles sont nombreuses et se
+   ressemblent : on les compte plutôt que de les lister ligne à ligne,
+   sans quoi la sortie de la génération devient illisible. */
+const ecoutes = require('./p-ecouter.js');
+let octetsEcoute = 0;
+for (const p of ecoutes) {
+  const html = page(p);
+  fs.writeFileSync(path.join(RACINE, p.file), html);
+  octetsEcoute += html.length;
+}
+total += octetsEcoute;
+
+/* Une œuvre renommée change d'adresse, et l'ancienne page reste sur le
+   disque : elle continue d'être servie, hors du plan du site, avec un
+   contenu qui ne bougera plus. C'est arrivé dès le premier renommage.
+   On efface donc ce qui n'a pas été régénéré — et uniquement cela. */
+const attendues = new Set(ecoutes.map((p) => p.file));
+let effacees = 0;
+for (const f of fs.readdirSync(RACINE)) {
+  if (!/^ecouter-.+\.html$/.test(f) || attendues.has(f)) continue;
+  fs.unlinkSync(path.join(RACINE, f));
+  effacees++;
+  console.log('  retirée               ' + f);
+}
+console.log('  ' + ('ecouter-*.html (' + ecoutes.length + ')').padEnd(22) + octetsEcoute + ' octets' +
+            (effacees ? '  · ' + effacees + ' orpheline' + (effacees > 1 ? 's' : '') + ' retirée' + (effacees > 1 ? 's' : '') : ''));
 console.log('  ' + String(total).padStart(28) + ' octets au total');
 
 /* ─── Empreintes sur les consoles ───
@@ -184,6 +211,13 @@ const PLAN = [
   ['mentions-legales.html', '0.3', 'yearly'],
   ['confidentialite.html', '0.3', 'yearly']
 ];
+
+/* Les pages d'écoute entrent au plan : ce sont elles qu'on partage et
+   qu'un moteur doit pouvoir proposer quand quelqu'un cherche « chanson
+   pour un pêcheur » ou « hommage en polyphonie corse ». Elles sont
+   ajoutées ici, après coup, pour que la liste écrite à la main reste
+   lisible. */
+for (const p of ecoutes) PLAN.push([p.file, '0.7', 'monthly', p.url]);
 /* La page de connexion et l'espace des familles sont hors du plan :
    ils portent « noindex », et lister dans son plan une page qu'on
    demande de ne pas indexer est une contradiction que les moteurs
@@ -206,7 +240,7 @@ let dates = {};
 try { dates = JSON.parse(fs.readFileSync(REGISTRE, 'utf8')); } catch (e) { dates = {}; }
 const aujourdhui = new Date().toISOString().slice(0, 10);
 
-const entrees = PLAN.map(([f, prio, freq]) => {
+const entrees = PLAN.map(([f, prio, freq, adresse]) => {
   const chemin = path.join(RACINE, f);
   let quand = aujourdhui;
   if (fs.existsSync(chemin)) {
@@ -216,7 +250,12 @@ const entrees = PLAN.map(([f, prio, freq]) => {
     quand = (connu && connu.empreinte === empreinte) ? connu.date : aujourdhui;
     dates[f] = { empreinte: empreinte, date: quand };
   }
-  const url = SITE_URL + '/' + (f === 'index.html' ? '' : f.replace('.html', ''));
+  /* L'adresse annoncée doit être celle de la balise canonique de la
+     page. Les pages d'écoute sont servies à « /ecouter/<titre> » par
+     une réécriture : annoncer « /ecouter-<titre> » dans le plan aurait
+     donné un plan qui contredit chaque page qu'il liste. */
+  const url = adresse ? SITE_URL + adresse
+                      : SITE_URL + '/' + (f === 'index.html' ? '' : f.replace('.html', ''));
   return `  <url><loc>${url}</loc><lastmod>${quand}</lastmod>` +
          `<changefreq>${freq}</changefreq><priority>${prio}</priority></url>`;
 }).join('\n');

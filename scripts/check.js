@@ -78,14 +78,49 @@ for (const [f, mini] of [['documents/melodia-brochure-partenaire.pdf', 400],
   }
 }
 
+/* Chaque œuvre a sa vignette d'aperçu. Sans elle, un lien partagé
+   s'affiche sans image dans le fil — c'est-à-dire qu'il ne s'affiche
+   pas. Le défaut est invisible sur le site : il ne se voit qu'une fois
+   le lien posté, trop tard. */
+try {
+  const cat = JSON.parse(fs.readFileSync('assets/data/content.json', 'utf8')).demos || [];
+  const { adresses } = require('../build/adresses.js');
+  const visibles = cat.filter((d) => d.visible !== false);
+  const slugs = adresses(visibles);
+  const manquantes = slugs.filter((s) => !fs.existsSync('assets/img/partage/' + s + '.jpg'));
+  if (manquantes.length) {
+    console.error(`  MANQUE ${manquantes.length} vignette(s) de partage — relancez « npm run partage »`);
+    manquantes.slice(0, 5).forEach((s) => console.error('         assets/img/partage/' + s + '.jpg'));
+    ok = false;
+  } else {
+    console.log(`  ok   ${slugs.length} vignettes de partage`);
+  }
+} catch (e) { console.error('  vignettes de partage : ' + e.message); ok = false; }
+
 /* Aucune page ne doit partir avec un lien mort vers une page du site. */
 const pages = files.filter(f => f.endsWith('.html'));
+/* Toutes les pages du dépôt, pas seulement celles de la liste : les
+   dix-huit pages d'écoute sont générées et ne sont pas énumérées. */
+for (const f of fs.readdirSync('.')) if (/^ecouter-.+\.html$/.test(f)) pages.push(f);
 const internes = new Set(pages);
 for (const p of pages) {
   const html = fs.readFileSync(p, 'utf8');
   const liens = [...html.matchAll(/href="([^"#?:]+\.html)/g)].map(m => m[1]);
   for (const l of new Set(liens)) {
     if (!internes.has(l) && !fs.existsSync(l)) { console.error('  LIEN MORT', p, '->', l); ok = false; }
+  }
+
+  /* Les liens « /ecouter/<titre> » n'ont pas d'extension : le contrôle
+     ci-dessus ne les voyait pas, et une adresse fautive serait partie
+     sans bruit — c'est exactement ce qui est arrivé au premier
+     renommage. La réécriture de vercel.json les sert depuis le fichier
+     « ecouter-<titre>.html », qu'on vérifie donc ici. */
+  const ecoutes = [...html.matchAll(/href="\/ecouter\/([a-z0-9-]+)"/g)].map(m => m[1]);
+  for (const e of new Set(ecoutes)) {
+    if (!fs.existsSync('ecouter-' + e + '.html')) {
+      console.error(`  LIEN MORT ${p} -> /ecouter/${e} (ecouter-${e}.html est absent)`);
+      ok = false;
+    }
   }
 }
 

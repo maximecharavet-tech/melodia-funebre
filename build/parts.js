@@ -87,6 +87,9 @@ ${STYLES.map(s => `    <span class="marquee-item">${s}</span>`).join('\n')}
    remonte quand le propriétaire ajoute une musique depuis sa console. */
 function oeuvres() {
   const liste = TRACKS;
+  /* L'adresse de chaque œuvre est calculée au même endroit que celle
+     des pages d'écoute : voir build/adresses.js. */
+  const slugs = require('./adresses.js').adresses(liste);
   const barres = Array.from({ length: 20 },
     (_, b) => `<span style="animation-delay:${(b * 0.07).toFixed(2)}s"></span>`).join('');
 
@@ -107,7 +110,12 @@ function oeuvres() {
 ${t.mention ? `            <div class="oeuvre-mention">${esc(t.mention)}</div>\n` : ''}
             <h3 class="oeuvre-titre"><em>${esc(t.title)}</em></h3>
             <div class="oeuvre-qui">Pour ${esc(t.who)}</div>
-            <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-${i}"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="oeuvre-liens">
+              <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-${i}"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              <!-- La page de l'œuvre : c'est elle qu'on partage. Un lien
+                   vers le catalogue entier ne dit pas ce qu'on va entendre. -->
+              <a class="oeuvre-partager" href="/ecouter/${esc(slugs[i])}" aria-label="Page de « ${esc(t.title)} », à partager"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.4 13.4l7.2 4.2M15.6 6.4l-7.2 4.2"/></svg><span>Partager</span></a>
+            </div>
             <div class="oeuvre-detail" id="oe-detail-${i}">
               <p class="oeuvre-recit">${esc(t.story)}</p>
 ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</blockquote>\n` : ''}              <div class="oeuvre-brief">
@@ -126,7 +134,8 @@ ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</bl
   const donnees = liste.map(t => ({
     id: t.id, title: t.title, who: t.who, lieu: t.lieu,
     style: t.style, audio: t.file, story: t.story,
-    lyrics: t.lyrics, brief: t.brief, photo: t.photo || '', mention: t.mention || ''
+    lyrics: t.lyrics, brief: t.brief, photo: t.photo || '', mention: t.mention || '',
+    page: '/ecouter/' + slugs[liste.indexOf(t)]
   }));
 
   /* Mention du catalogue — posée par le gabarit, donc impossible à
