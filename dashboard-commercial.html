@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="assets/css/style.css?v=cc9ef4fd">
 <link rel="stylesheet" href="assets/css/dashboard.css?v=45721b4b">
 <link rel="stylesheet" href="assets/css/relief.css?v=68839a50">
+<link rel="stylesheet" href="assets/css/mobile.css?v=9f45e378">
 </head>
 <body>
 <div class="dash">
@@ -21,13 +22,13 @@
       <span><span class="n">Melodia</span><span class="s">Console commerciale</span></span>
     </a>
     <div class="side-label">Prospection</div>
-    <button class="side-item active" data-v="accueil"><span class="ico">◈</span>Tableau de bord</button>
-    <button class="side-item" data-v="relances"><span class="ico">⏱</span>À faire<span class="side-badge" id="badge-rel" style="display:none;">0</span></button>
+    <button class="side-item active" data-v="accueil" data-mob="Accueil"><span class="ico">◈</span>Tableau de bord</button>
+    <button class="side-item" data-v="relances" data-mob="À faire"><span class="ico">⏱</span>À faire<span class="side-badge" id="badge-rel" style="display:none;">0</span></button>
     <button class="side-item" data-v="recherche"><span class="ico">◎</span>Rechercher</button>
-    <button class="side-item" data-v="prospects"><span class="ico">♪</span>Mes prospects<span class="side-badge" id="badge-pro">0</span></button>
+    <button class="side-item" data-v="prospects" data-mob="Prospects"><span class="ico">♪</span>Mes prospects<span class="side-badge" id="badge-pro">0</span></button>
     <div class="side-label">Ma boîte à outils</div>
     <button class="side-item" data-v="playbook"><span class="ico">◈</span>Script et objections</button>
-    <button class="side-item" data-v="modeles"><span class="ico">✎</span>Modèles de courriel</button>
+    <button class="side-item" data-v="modeles" data-mob="Modèles"><span class="ico">✎</span>Modèles de courriel</button>
     <button class="side-item" data-v="boite"><span class="ico">✉</span>Ma boîte mail</button>
     <button class="side-item" data-v="compte"><span class="ico">◎</span>Mon compte</button>
     <button class="side-item" data-v="plan"><span class="ico">◇</span>Plan de prospection</button>
@@ -74,5 +75,6 @@
 <script src="assets/js/commercial-graphes.js?v=69b04c77"></script>
 <script src="assets/js/commercial.js?v=1037b4b4"></script>
 <script src="assets/js/relief.js?v=99c4c9ba"></script>
+<script src="assets/js/mobile.js?v=43030276"></script>
 </body>
 </html>
