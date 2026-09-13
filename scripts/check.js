@@ -12,6 +12,8 @@ const files = [
   'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js',
   'assets/js/auth.js', 'assets/js/config.js', 'assets/js/candidature.js', 'assets/js/espace.js',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-complet.jpg', 'assets/img/logo-melodia-anime.mp4',
+  'assets/img/plaque-qr-700.webp', 'assets/img/plaque-qr-700.jpg',
+  'assets/img/plaque-qr-1100.webp', 'assets/img/plaque-qr-1100.jpg',
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'assets/img/maxime.png', 'assets/img/hyper-engine.png', 'assets/img/equipe.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',

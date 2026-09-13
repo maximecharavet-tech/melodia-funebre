@@ -580,6 +580,24 @@ const guide5 = guide({
   corps: `
   <section class="section-sm" style="padding-top:2.6rem;">
     <div class="wrap">
+      <!-- La plaque réelle, photographiée sur une sépulture. Le visuel
+           d'origine était une affiche entière — logo, titre et mentions
+           incrustés — qui aurait fait doublon avec l'en-tête de la page
+           et dont le texte n'aurait été ni lisible à cette largeur, ni
+           sélectionnable. Seule la partie photographique est reprise.
+           Le téléphone qui y figurait a été écarté : son écran montrait
+           une maquette de site qui n'existe pas. -->
+      <figure class="guide-photo reveal">
+        <picture>
+          <source type="image/webp" srcset="assets/img/plaque-qr-700.webp 700w, assets/img/plaque-qr-1100.webp 1100w" sizes="(max-width: 760px) 92vw, 640px">
+          <img src="assets/img/plaque-qr-700.jpg"
+               srcset="assets/img/plaque-qr-700.jpg 700w, assets/img/plaque-qr-1100.jpg 1100w"
+               sizes="(max-width: 760px) 92vw, 640px"
+               width="700" height="971" loading="lazy" decoding="async"
+               alt="Plaque de granit noir gravée d'un QR code, posée sur une sépulture entre une bougie et des lys blancs.">
+        </picture>
+        <figcaption>Une plaque posée près de la sépulture. Le code mène à la page de l'hommage.</figcaption>
+      </figure>
       <div class="prose reveal">
         <h2>Ce que c'est, concrètement</h2>
         <p>Un carré noir et blanc, de quatre à huit centimètres, gravé ou collé sur une plaque posée près de la sépulture. Un téléphone le lit sans application : l'appareil photo suffit depuis 2018 sur iPhone comme sur Android. Une page s'ouvre, et elle contient ce que la famille a choisi d'y mettre.</p>

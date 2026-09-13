@@ -4525,3 +4525,25 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (prefers-reduced-motion: reduce) {
   .app-bandeau, .app-marche { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA PHOTOGRAPHIE D'UN GUIDE
+   Une image dans un texte, pas une affiche : elle est bornée en
+   largeur pour rester dans la colonne de lecture, et sa légende dit
+   ce qu'on regarde plutôt que de répéter le titre.
+   ═══════════════════════════════════════════════════════════════ */
+.guide-photo {
+  margin: 0 auto 2.4rem; max-width: 40rem;
+  display: grid; gap: 0.8rem; justify-items: center;
+}
+.guide-photo img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  /* Le granit noir de la photographie se fond dans le fond du site :
+     un filet et une ombre portée la détachent sans l'encadrer. */
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+}
+.guide-photo figcaption {
+  font-size: 0.84rem; line-height: 1.6; color: var(--ash);
+  text-align: center; max-width: 34rem;
+}
