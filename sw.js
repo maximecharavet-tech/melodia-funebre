@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = '7a1ac67c52';
+const VERSION = '3e5894aedd';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -60,7 +60,7 @@ const PRECHARGE = [
   "/qr-code-memorial",
   "/musique-obseques",
   "/404",
-  "/assets/css/style.css?v=5a970fc3",
+  "/assets/css/style.css?v=f3352015",
   "/assets/img/intro-logo.jpg?v=1a9516a8",
   "/assets/img/intro-melodia.mp4?v=488159e4",
   "/assets/img/logo-melodia.jpg?v=c9f03ed0",
