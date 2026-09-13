@@ -218,13 +218,13 @@
     },
     {
       "id": "demo-19",
-      "title": "Ta lumière reste",
+      "title": "La lumière que tu laissais",
       "audio": "audio/ta-lumiere-reste.mp3",
       "style": "R&B",
-      "who": "",
-      "story": "",
-      "brief": "",
-      "lyrics": "",
+      "who": "Mathieu, soignant",
+      "story": "Il a passé sa vie dans les couloirs de nuit, là où les autres ont peur. Une main posée doucement, un sourire au milieu de l'inquiétude, et cette façon étrange de rendre le monde moins lourd. Il savait écouter les silences, entendre les douleurs que personne ne disait. Quand la porte de l'hôpital se refermait derrière lui, il lui restait la musique : le R&B, les basses, les voix qui montent dans la nuit. Piano, saxophone ténor, Rhodes et chœur soul.",
+      "brief": "dévoué · à l'écoute · discret",
+      "lyrics": "Mathieu, tu étais la lumière\nAu milieu de la nuit.\nLa main qui rassure,\nLa voix qui dit : « Je suis là. »",
       "lieu": "",
       "visible": true
     }

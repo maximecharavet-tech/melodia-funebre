@@ -45,6 +45,23 @@ for (const f of files) {
   else { console.error('  MANQUE', f); ok = false; }
 }
 
+/* Deux hommages portant le même titre : les cartes du catalogue
+   deviennent indiscernables, et le balisage ItemList annonce deux fois
+   le même nom. C'est arrivé une fois, en ajoutant un morceau dont le
+   fichier portait déjà le titre d'un autre — d'où ce garde-fou. */
+try {
+  const cat = JSON.parse(fs.readFileSync('assets/data/content.json', 'utf8')).demos || [];
+  const vus = new Map();
+  for (const d of cat) {
+    const cle = (d.title || '').trim().toLowerCase();
+    if (!cle) continue;
+    if (vus.has(cle)) {
+      console.error(`  DOUBLON titre « ${d.title} » : ${vus.get(cle)} et ${d.id}`);
+      ok = false;
+    } else vus.set(cle, d.id);
+  }
+} catch (e) { /* l'illisibilité est déjà signalée plus haut */ }
+
 /* Aucune page ne doit partir avec un lien mort vers une page du site. */
 const pages = files.filter(f => f.endsWith('.html'));
 const internes = new Set(pages);
