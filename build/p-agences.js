@@ -146,6 +146,145 @@ ${P.faq(FAQ_B2B)}
     </div>
   </section>
 
+  <!-- ═══ POURQUOI PROPOSER ═══
+       Six cartes, pas douze : au-delà, on ne lit plus, on survole. -->
+  <section class="section">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.8rem;">
+        <div class="eyebrow">L'intérêt pour votre agence</div>
+        <h2 class="h-xl">Pourquoi proposer<br><em>Melodia Funèbre ?</em></h2>
+      </div>
+      <div class="pq-grille">
+        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">♪</span>
+          <h3>Une expérience mémorable</h3>
+          <p>Transformez un hommage en souvenir musical durable. La famille repart avec une œuvre, pas avec un souvenir qui s'efface.</p></article>
+        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">◈</span>
+          <h3>Un service différenciant</h3>
+          <p>Proposez aux familles une expérience que les autres agences funéraires ne proposent pas. C'est souvent ce qui décide du choix d'une maison.</p></article>
+        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">✧</span>
+          <h3>Simple pour vos équipes</h3>
+          <p>Vous ne gérez aucune production musicale. Un brief de cinq minutes, ou un simple contact transmis, et nous nous occupons du reste.</p></article>
+        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">✎</span>
+          <h3>Une solution personnalisée</h3>
+          <p>Chaque hommage est créé autour de l'histoire du défunt : son métier, ses gestes, ses habitudes, ce que sa famille raconte de lui.</p></article>
+        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">◷</span>
+          <h3>Un souvenir qui reste</h3>
+          <p>La famille conserve la musique et retrouve l'hommage dans le temps. Un anniversaire, une Toussaint : l'œuvre est toujours là.</p></article>
+        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">▦</span>
+          <h3>Une expérience digitale</h3>
+          <p>Page hommage, écoute en ligne et QR code à graver sur une plaque. Le numérique au service du recueillement, pas l'inverse.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LE PARCOURS DE LA FAMILLE ═══ -->
+  <section class="section section-light">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:3rem;">
+        <div class="eyebrow">Ce que vit la famille</div>
+        <h2 class="h-xl">Quatre étapes,<br><em>et rien à porter.</em></h2>
+      </div>
+      <ol class="parcours">
+        <li class="parcours-e reveal" style="--i:0">
+          <span class="parcours-n">01</span>
+          <h3>La famille raconte son histoire</h3>
+          <p>Un entretien de cinq minutes, au téléphone ou dans vos bureaux. Son prénom, trois traits de caractère, son métier, une habitude. Rien de plus.</p>
+        </li>
+        <li class="parcours-e reveal" style="--i:1">
+          <span class="parcours-n">02</span>
+          <h3>Melodia Funèbre crée l'hommage</h3>
+          <p>Paroles écrites pour elle seule, musique composée dans le style choisi. Livré en vingt-quatre heures, révisé jusqu'à ce que la famille s'y reconnaisse.</p>
+        </li>
+        <li class="parcours-e reveal" style="--i:2">
+          <span class="parcours-n">03</span>
+          <h3>Elle reçoit sa mélodie et sa page hommage</h3>
+          <p>Le fichier à garder, et une page en ligne avec le portrait, les dates, les paroles et le lecteur. À partager avec ceux qui n'ont pas pu venir.</p>
+        </li>
+        <li class="parcours-e reveal" style="--i:3">
+          <span class="parcours-n">04</span>
+          <h3>Le QR code permet de retrouver l'hommage</h3>
+          <p>Gravé sur une plaque que votre agence réalise. On le scanne sur le lieu de repos, et la musique se met à jouer, là, devant elle.</p>
+        </li>
+      </ol>
+      <div class="center reveal" style="margin-top:2.6rem;">
+        <a href="/exemple" class="btn btn-outline btn-lg">Voir la page que reçoit la famille</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LES SUPPORTS DU CODE ═══ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Le code</div>
+        <h2 class="h-xl">Un QR code pour<br>retrouver <em>son histoire.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:42rem;">Nous fournissons le fichier de gravure, en vectoriel et au format de la plaque. Votre agence choisit le support et le réalise.</p>
+      </div>
+      <div class="supports">
+        <div class="support reveal"><b>Plaque commémorative</b><span>Granit, laiton ou inox, posée près de la sépulture.</span></div>
+        <div class="support reveal"><b>Carte souvenir</b><span>Remise aux proches le jour de la cérémonie.</span></div>
+        <div class="support reveal"><b>Livret de cérémonie</b><span>En dernière page, près du mot de la famille.</span></div>
+        <div class="support reveal"><b>Urne</b><span>Discrètement gravé sous la base ou au dos.</span></div>
+        <div class="support reveal"><b>Faire-part</b><span>Pour ceux qui n'ont pas pu se déplacer.</span></div>
+        <div class="support reveal"><b>Votre propre support</b><span>Nous fournissons le fichier, vous décidez de la forme.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ L'ARGUMENT DU DIRIGEANT ═══
+       Le ton compte plus que le fond ici : le contexte est celui du
+       deuil, et une page qui parle de « nouveau relais de croissance »
+       ferait fermer l'onglet à un homme de métier. -->
+  <section class="section section-light">
+    <div class="wrap-tight">
+      <div class="reveal">
+        <div class="eyebrow">Pour le dirigeant</div>
+        <h2 class="h-xl">Une nouvelle source de valeur<br>pour <em>votre agence.</em></h2>
+        <p class="lead" style="margin:1.8rem 0 2rem;">Nous n'allons pas vous promettre des chiffres. Ce que nous pouvons dire tient en cinq points, et chacun se vérifie dès les premières familles.</p>
+        <ul class="valeur">
+          <li><b>Différencier votre accompagnement</b> — là où toutes les maisons proposent les mêmes prestations, vous proposez quelque chose qui n'existe pas ailleurs.</li>
+          <li><b>Enrichir votre offre</b> — sans stock, sans formation, sans matériel, et sans rien avancer.</li>
+          <li><b>Proposer un service émotionnel supplémentaire</b> — une famille qui repart avec une œuvre s'en souvient longtemps, et le dit.</li>
+          <li><b>Créer une expérience moderne</b> — page en ligne et QR code, pour des familles qui vivent déjà comme ça.</li>
+          <li><b>Renforcer votre image de marque</b> — c'est souvent le détail qu'on raconte autour de soi après des obsèques.</li>
+        </ul>
+        <p class="valeur-note">Nous ne présentons pas cela comme une opportunité commerciale à saisir. C'est un service de plus à rendre à des familles en deuil, qui se trouve être aussi une source de marge.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LA CONFIANCE ═══
+       Aucune donnée réelle n'existe encore : le lancement commercial
+       n'a pas eu lieu. Inventer un avis, un chiffre ou un logo de
+       partenaire serait la pire chose à faire sur un marché où tout le
+       monde se connaît. Les emplacements sont posés et marqués, prêts
+       à recevoir du vrai.
+
+       À REMPLACER — chercher « PLACEHOLDER » dans ce fichier. -->
+  <section class="section">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Ce que nous pouvons prouver aujourd'hui</div>
+        <h2 class="h-xl">Nous préférons<br>ne rien <em>inventer.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:44rem;">Melodia Funèbre ouvre son réseau de partenaires. Nous n'afficherons ni avis fabriqués, ni logos d'agences qui n'ont rien signé, ni chiffres qui n'existent pas. Ce que vous pouvez vérifier, en revanche :</p>
+      </div>
+      <div class="preuves">
+        <div class="preuve reveal"><b>Écoutez le catalogue</b><span>Des hommages réellement composés, écoutables en entier, sans inscription.</span><a href="/demos">Écouter →</a></div>
+        <div class="preuve reveal"><b>Voyez la page famille</b><span>La démonstration complète, telle qu'une famille la reçoit.</span><a href="/exemple">Voir un hommage →</a></div>
+        <div class="preuve reveal"><b>Parlez au fondateur</b><span>Pas à un commercial. Maxime Charavet répond lui-même.</span><a href="#partenariat">Demander un rappel →</a></div>
+      </div>
+      <!-- PLACEHOLDER — avis d'agences partenaires.
+           Décommenter et remplir dès qu'une agence a accepté d'être
+           citée, par écrit. Structure prête : .temoignages > .temoignage
+           avec <blockquote>, <cite> et le nom de l'agence.
+      <div class="temoignages"></div>
+      -->
+      <!-- PLACEHOLDER — chiffres clés (agences partenaires, hommages
+           livrés, familles accompagnées). Ne rien afficher tant que les
+           nombres ne sont pas réels et vérifiables. -->
+    </div>
+  </section>
+
   <!-- ═══ LES CONDITIONS, ET LA DEMANDE ═══
        Cette section porte l'ancre « #partenariat » : c'est là que
        mènent tous les boutons « Devenir partenaire » du site. -->

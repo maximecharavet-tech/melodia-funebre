@@ -4,6 +4,7 @@ const fs = require('fs');
 const files = [
   'index.html', 'processus.html', 'demos.html', 'rites.html', 'offres.html', 'professionnels.html',
   'contact.html', 'rejoindre.html', 'compte.html', 'espace.html', 'dashboard-partenaire.html', 'dashboard-master.html', 'dashboard-commercial.html',
+  'chanson-hommage.html', 'qr-code-memorial.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
   'assets/css/style.css', 'assets/css/dashboard.css',
   'assets/js/main.js', 'assets/js/catalogue.js', 'assets/js/order.js', 'assets/js/atelier-music.js',

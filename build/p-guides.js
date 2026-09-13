@@ -478,4 +478,163 @@ const guide3 = guide({
   proposition: "Le moment de la disparition demande un morceau qui tienne debout — et c'est rarement ce qu'on trouve dans un répertoire existant. Nous composons des œuvres écrites pour cet instant précis, à partir de ce que vous nous racontez de lui."
 });
 
-module.exports = [guide1, guide2, guide3];
+/* ═══════════════════════════════════════════════════════════════
+   GUIDE 4 — Chanson d'hommage
+
+   POURQUOI UNE SEULE PAGE POUR CINQ REQUÊTES
+
+   « chanson hommage », « chanson pour défunt », « hommage musical »,
+   « musique hommage », « chanson funéraire » : cinq façons de dire la
+   même chose. Cinq pages auraient répondu cinq fois à la même
+   question, et Google ne classe pas des pages qui se recopient — il
+   en garde une et ignore les autres, souvent pas celle qu'on aurait
+   choisie. Les quatre autres adresses redirigent donc ici.
+   ═══════════════════════════════════════════════════════════════ */
+const guide4 = guide({
+  file: 'chanson-hommage.html',
+  fil: 'Guide',
+  title: "Chanson d'hommage pour un défunt | Melodia Funèbre",
+  desc: "Choisir une chanson existante ou en faire composer une : ce qui change, ce que ça coûte, les délais, et comment décrire quelqu'un à qui doit l'écrire.",
+  h1: "Chanson d'hommage :<br><em>en choisir une, ou la faire écrire.</em>",
+  h1texte: "Chanson d'hommage : en choisir une, ou la faire écrire",
+  chapeau: "Une chanson d'hommage, c'est le morceau qu'on garde après la cérémonie. Deux chemins existent : prendre une œuvre qui existe déjà, ou en faire écrire une pour lui seul. Voici ce qui les sépare vraiment — le temps, le prix, le droit, et ce que chacun donne à entendre.",
+  corps: `
+  <section class="section-sm" style="padding-top:2.6rem;">
+    <div class="wrap">
+      <div class="prose reveal">
+        <h2>Les deux chemins</h2>
+        <p>Choisir une chanson existante est le réflexe naturel, et souvent le bon : si un morceau était <em>le sien</em>, rien ne le remplacera. Une famille qui hésite doit d'abord chercher de ce côté — dans ce qu'il écoutait en conduisant, ce qu'il chantait faux, ce qui passait à son mariage.</p>
+        <p>Faire écrire une chanson répond à un autre besoin. Non pas « quel morceau lui ressemble », mais « comment raconter cette vie-là ». Un morceau existant parle de quelqu'un d'autre ; une chanson composée parle de lui, avec son métier, ses habitudes, son prénom.</p>
+        <p><strong>Ce n'est pas l'un contre l'autre.</strong> Beaucoup de familles passent un morceau qu'il aimait à l'entrée, et l'œuvre composée au recueillement.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Ce qui les sépare</div>
+        <h2 class="h-xl">Quatre différences<br>qui <em>pèsent.</em></h2>
+      </div>
+      <div class="grid-2">
+        <div class="card reveal"><h3>Le temps</h3>
+          <p>Un morceau existant est disponible tout de suite. Une composition demande vingt-quatre heures chez nous, plusieurs semaines chez un compositeur classique. À trois jours d'une cérémonie, ce délai décide souvent seul.</p></div>
+        <div class="card reveal"><h3>Le droit</h3>
+          <p>Passer une œuvre protégée lors d'obsèques relève d'un régime particulier, que votre opérateur funéraire connaît. Une œuvre composée pour vous n'appartient qu'à vous : aucune déclaration, aucun risque de coupure.</p></div>
+        <div class="card reveal"><h3>Ce qu'on entend</h3>
+          <p>Un morceau connu porte les souvenirs de chacun, et pas forcément les vôtres. Une chanson écrite pour lui nomme ce que l'assemblée sait déjà — et c'est cette reconnaissance qui fait pleurer, pas la mélodie.</p></div>
+        <div class="card reveal"><h3>Ce qu'il en reste</h3>
+          <p>Après la cérémonie, un morceau existant redevient un morceau comme un autre. Une œuvre composée reste attachée à lui seul. C'est ce qu'on réécoute à la Toussaint, et ce qu'on transmet.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="prose reveal">
+        <h2>Décrire quelqu'un à qui doit l'écrire</h2>
+        <p>C'est la partie qui inquiète le plus, et c'est la plus simple. On ne demande pas un récit de vie. Quatre choses suffisent, et elles viennent en cinq minutes :</p>
+        <ul>
+          <li><strong>Son prénom</strong>, et celui par lequel on l'appelait vraiment. « Mémé Jeanne » vaut mieux que « Jeanne Marie Thérèse ».</li>
+          <li><strong>Trois traits de caractère</strong>, même contradictoires. Têtue et généreuse, c'est déjà un personnage.</li>
+          <li><strong>Son métier ou sa passion</strong> — ce qui occupait ses journées et ses mains.</li>
+          <li><strong>Une habitude</strong>, la plus petite possible. Le café à cinq heures, la radio dans l'atelier, les mots croisés du dimanche. C'est ce détail-là que l'assemblée reconnaît.</li>
+        </ul>
+        <p>Ce qu'il ne faut pas chercher : les dates, les décorations, le résumé d'une carrière. Une chanson qui récite un état civil ne touche personne.</p>
+      </div>
+    </div>
+  </section>`,
+  questions: [
+    { q: "Qu'est-ce qu'une chanson d'hommage ?",
+      texte: "C'est un morceau destiné à honorer une personne disparue, joué lors de la cérémonie et conservé par la famille ensuite. Il peut s'agir d'une œuvre existante qui lui tenait à cœur, ou d'une chanson écrite spécialement pour elle, à partir de son histoire." },
+    { q: "Combien coûte une chanson composée pour un défunt ?",
+      texte: "Chez nous, à partir de 149 €, selon la durée et les options. Une composition confiée à un auteur-compositeur indépendant se situe généralement entre 800 et 3 000 €, pour un délai de plusieurs semaines." },
+    { q: "Combien de temps faut-il pour faire écrire une chanson d'hommage ?",
+      texte: "Vingt-quatre heures chez Melodia Funèbre, à partir de l'entretien de cinq minutes. Comptez plusieurs semaines chez un compositeur classique — un délai rarement compatible avec l'organisation d'obsèques." },
+    { q: "Peut-on faire écrire une chanson après les obsèques ?",
+      texte: "Oui, et beaucoup de familles le font. Un anniversaire, une Toussaint, la dispersion des cendres, ou simplement le moment où l'on se sent prêt. Rien n'oblige à décider dans la semaine du décès." },
+    { q: "Qui est propriétaire de la chanson ?",
+      texte: "La famille. L'œuvre est composée pour elle, ne sera jamais vendue ni réutilisée pour quelqu'un d'autre, et elle peut la diffuser, la copier et la transmettre librement." }
+  ],
+  proposition: "Si aucun morceau existant ne dit ce qu'il faudrait dire, c'est le signe qu'il faut l'écrire. Nous composons une œuvre originale par personne, à partir d'un entretien de cinq minutes, livrée en vingt-quatre heures."
+});
+
+
+/* ═══════════════════════════════════════════════════════════════
+   GUIDE 5 — Le QR code sur une tombe
+
+   Une vraie question neuve, et personne n'y répond sérieusement en
+   français : ce qu'on peut graver, ce que ça devient dans vingt ans,
+   et ce qu'une famille doit vérifier avant de sceller un code sur du
+   granit. C'est aussi notre produit — la proposition arrive donc à la
+   fin, une fois, comme dans les autres guides.
+   ═══════════════════════════════════════════════════════════════ */
+const guide5 = guide({
+  file: 'qr-code-memorial.html',
+  fil: 'Guide',
+  title: "QR code sur une tombe : la page souvenir | Melodia Funèbre",
+  desc: "Ce qu'un QR code gravé sur une sépulture permet, ce qu'il faut vérifier avant de le sceller, et les questions de durée, de vie privée et d'autorisation.",
+  h1: "Un QR code<br><em>sur une sépulture.</em>",
+  h1texte: "Un QR code sur une sépulture",
+  chapeau: "Des plaques gravées d'un code apparaissent dans les cimetières français. On le scanne avec un téléphone, et une page s'ouvre : un portrait, des dates, parfois une musique. L'idée est simple ; ce qu'il faut vérifier avant de la sceller sur du granit l'est moins.",
+  corps: `
+  <section class="section-sm" style="padding-top:2.6rem;">
+    <div class="wrap">
+      <div class="prose reveal">
+        <h2>Ce que c'est, concrètement</h2>
+        <p>Un carré noir et blanc, de quatre à huit centimètres, gravé ou collé sur une plaque posée près de la sépulture. Un téléphone le lit sans application : l'appareil photo suffit depuis 2018 sur iPhone comme sur Android. Une page s'ouvre, et elle contient ce que la famille a choisi d'y mettre.</p>
+        <p>Ce n'est pas un gadget technique. C'est une réponse à une chose très ancienne : une pierre tombale porte un nom et deux dates, et ne dit rien de la personne. Le code rend l'espace qui manque.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Avant de graver</div>
+        <h2 class="h-xl">Cinq choses<br>à <em>vérifier.</em></h2>
+      </div>
+      <div class="grid-2">
+        <div class="card reveal"><h3>L'autorisation</h3>
+          <p>Une plaque scellée sur une sépulture relève du règlement du cimetière et de l'accord du concessionnaire. Demandez à votre opérateur funéraire : la démarche est simple, mais elle existe.</p></div>
+        <div class="card reveal"><h3>La durée</h3>
+          <p>Le granit tient un siècle, une adresse internet beaucoup moins. Demandez ce qu'il advient de la page si le prestataire disparaît, et qui paie chaque année. Une page qui s'éteint laisse un carré muet sur une tombe.</p></div>
+        <div class="card reveal"><h3>La vie privée</h3>
+          <p>Un code gravé est public : n'importe quel passant peut le scanner. Vérifiez que la page ne montre que ce que vous avez choisi, qu'elle n'est pas référencée sur les moteurs de recherche, et que vous pouvez la retirer d'un geste.</p></div>
+        <div class="card reveal"><h3>La lisibilité dans le temps</h3>
+          <p>Pluie, lichens, doigts : un code s'abîme. Demandez un niveau de correction élevé — un bon code reste lisible avec trente pour cent de sa surface masquée. Et une marge blanche autour, sans quoi beaucoup de téléphones échouent.</p></div>
+        <div class="card reveal"><h3>Qui peut modifier</h3>
+          <p>La famille doit pouvoir changer la page, y ajouter une photo, ou la retirer — sans passer par personne. Un accès qui dépend d'un prestataire injoignable ne vaut rien.</p></div>
+        <div class="card reveal"><h3>Le support</h3>
+          <p>Plaque de granit, carte souvenir, livret de cérémonie, urne, faire-part : le code n'a pas à être sur la pierre. Beaucoup de familles préfèrent un support qu'on garde chez soi.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="prose reveal">
+        <h2>Ce qu'on met sur la page</h2>
+        <p>Moins que ce qu'on imagine. Les pages qui marchent sont courtes : un portrait, les deux dates, une phrase, et ce qu'on vient écouter. Quelqu'un debout devant une tombe, par temps froid, ne lit pas une biographie.</p>
+        <p>La musique change tout, en revanche. Un texte se lit en silence ; un morceau se partage. C'est la différence entre consulter une page et vivre un moment.</p>
+        <p><a href="/exemple">Voir à quoi ressemble une page hommage</a> — exemple complet, sans inscription.</p>
+      </div>
+    </div>
+  </section>`,
+  questions: [
+    { q: "Peut-on mettre un QR code sur une tombe en France ?",
+      texte: "Oui. Il s'agit d'une plaque ou d'une gravure apposée sur la sépulture, soumise au règlement du cimetière et à l'accord du concessionnaire, comme tout ornement funéraire. Votre opérateur funéraire connaît la démarche pour votre commune." },
+    { q: "Que se passe-t-il si l'entreprise qui héberge la page disparaît ?",
+      texte: "Le code devient illisible : il pointe vers une adresse qui ne répond plus. C'est la question la plus importante à poser avant de graver, et la réponse doit être écrite. Demandez aussi à récupérer les fichiers (musique, photos) pour les conserver vous-même." },
+    { q: "N'importe qui peut-il scanner le code et voir la page ?",
+      texte: "Oui, matériellement : un code gravé est visible de tous. C'est pourquoi la page ne doit contenir que ce que la famille a choisi de rendre public, ne doit pas être indexée par les moteurs de recherche, et doit pouvoir être retirée à tout moment." },
+    { q: "Un QR code reste-t-il lisible après des années dehors ?",
+      texte: "Avec un niveau de correction élevé, un code tolère qu'environ trente pour cent de sa surface soit sali ou abîmé sans cesser de fonctionner. Une marge claire autour du carré est également nécessaire : sans elle, beaucoup de lecteurs échouent." },
+    { q: "Faut-il une application pour lire le code ?",
+      texte: "Non. L'appareil photo des iPhone et des téléphones Android récents lit les QR codes nativement, sans rien installer." }
+  ],
+  proposition: "Nous fournissons la page hommage et le fichier de gravure ; votre agence funéraire réalise la plaque. La page n'est jamais référencée sur les moteurs de recherche, et la famille peut la retirer elle-même, à tout instant."
+});
+
+
+module.exports = [guide1, guide2, guide3, guide4, guide5];

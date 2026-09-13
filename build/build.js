@@ -131,6 +131,8 @@ const PLAN = [
   ['musique-obseques.html', '0.9', 'monthly'],
   ['musique-sacem-obseques.html', '0.8', 'monthly'],
   ['musique-cremation.html', '0.8', 'monthly'],
+  ['chanson-hommage.html', '0.9', 'monthly'],
+  ['qr-code-memorial.html', '0.9', 'monthly'],
   ['rejoindre.html', '0.8', 'monthly'],
   ['contact.html', '0.7', 'yearly'],
   ['cgv.html', '0.4', 'yearly'],

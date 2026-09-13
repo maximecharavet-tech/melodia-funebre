@@ -1,22 +1,22 @@
 {
   "index.html": {
-    "empreinte": "1f70a4d09cb69e411bdeb594fa1f7518cc6af37b",
+    "empreinte": "5079c2ec9eba42d1ba143b243a49145dd6e7555a",
     "date": "2026-09-13"
   },
   "offres.html": {
-    "empreinte": "edae038eb3a4d9cfcade64cb58b8382b7d030299",
+    "empreinte": "b280a771ae73b0b7e6e7ea257acff6d08bd73bf7",
     "date": "2026-09-13"
   },
   "demos.html": {
-    "empreinte": "c65c458e449451d622af70a6ad824933e2aa06f4",
+    "empreinte": "cf3b980a525d07b092dce8dd31f975ddf52a5216",
     "date": "2026-09-13"
   },
   "processus.html": {
-    "empreinte": "4e3208da0311fba709d15f7a1b86bf8cef8b1998",
+    "empreinte": "ba66fe0038ecca99f662adb5a6f14a8da123806d",
     "date": "2026-09-13"
   },
   "rites.html": {
-    "empreinte": "25e3f2720a6cccad5231f34e71927a4b752b2458",
+    "empreinte": "bffe68397848537b617afa4024e60a6e6217817c",
     "date": "2026-09-13"
   },
   "agences.html": {
@@ -24,39 +24,47 @@
     "date": "2026-09-08"
   },
   "rejoindre.html": {
-    "empreinte": "4f716fb7fa6cecdc5e795bf4d2d4a2231f62d839",
+    "empreinte": "e9056b0bd68e3d54be2ecc4e705a1cccef406f28",
     "date": "2026-09-13"
   },
   "contact.html": {
-    "empreinte": "ace1af017eed6fc279f77d476e8c67801f9e5b0f",
+    "empreinte": "a5f94dd14b10257ce99fde5e2747f8ee44350e3a",
     "date": "2026-09-13"
   },
   "cgv.html": {
-    "empreinte": "44d0186a4d3a835e49fb19a3a5947cbc7aa565a5",
+    "empreinte": "a1bdba22a835bdde393c704eae770e939e1d8397",
     "date": "2026-09-13"
   },
   "mentions-legales.html": {
-    "empreinte": "a607ea1674441636c1e59f1663a306a47f329b52",
+    "empreinte": "879d460a6f14c07d51479ea8ab2ca367f09fecb1",
     "date": "2026-09-13"
   },
   "confidentialite.html": {
-    "empreinte": "94130c242106a2116efd5d6bced563f1e55d9744",
+    "empreinte": "cdab769ca0b0c3bdd4c0efab4cbe059d69431ed6",
     "date": "2026-09-13"
   },
   "musique-obseques.html": {
-    "empreinte": "a88eb8aaf69c399f22c69f4a9701c13753fc5bf8",
+    "empreinte": "054e8be1fa387dc91701efc5138a6add0b031477",
     "date": "2026-09-13"
   },
   "musique-sacem-obseques.html": {
-    "empreinte": "ec3fce84b2f3fa91444a263463e58b24ba971ab7",
+    "empreinte": "8a513c1fbe20d6d847ce6be66b39cc59c6154527",
     "date": "2026-09-13"
   },
   "musique-cremation.html": {
-    "empreinte": "e679f8a56922b60cd0b06a45bbeef32faa6574d6",
+    "empreinte": "2a95942cb5c6fce916be588e898076a3d17904f1",
     "date": "2026-09-13"
   },
   "professionnels.html": {
-    "empreinte": "eb9928780410cc8b45290288cf57fc3aba30cdd6",
+    "empreinte": "7a4420e6345401e605047f196d412fa4c46a1b67",
+    "date": "2026-09-13"
+  },
+  "chanson-hommage.html": {
+    "empreinte": "08266444a03788224b17493029ce2576f27c7b24",
+    "date": "2026-09-13"
+  },
+  "qr-code-memorial.html": {
+    "empreinte": "7dda0241f8356630af1d246a3825caa632032e6b",
     "date": "2026-09-13"
   }
 }

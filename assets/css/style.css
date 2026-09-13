@@ -4297,3 +4297,117 @@ body.a-ecoute { padding-bottom: 5rem; }
   .part-choix { display: grid; grid-template-columns: minmax(0, 1fr); }
   .part-choix span { border-radius: var(--radius); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LES SECTIONS DE LA PAGE PROFESSIONNELS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Pourquoi proposer ───
+   Trois colonnes sur grand écran, deux sur tablette, une au doigt.
+   Pas de carte flottante ni d'ombre portée : six objets qui lévitent
+   font vitrine de logiciel, pas maison française. */
+.pq-grille {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px; background: var(--line-soft);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+@media (max-width: 980px) { .pq-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px)  { .pq-grille { grid-template-columns: minmax(0, 1fr); } }
+
+.pq {
+  background: var(--ink); padding: clamp(1.4rem, 3vw, 2rem);
+  transition: background var(--t-mid) var(--ease);
+}
+.pq:hover { background: var(--ink-3); }
+.pq-ico {
+  display: grid; place-items: center;
+  width: 38px; height: 38px; margin-bottom: 1rem;
+  border: 1px solid var(--line); border-radius: 50%;
+  color: var(--or); font-size: 0.95rem;
+}
+.pq h3 {
+  font-family: var(--ff-d); font-weight: 400; font-size: 1.22rem;
+  color: var(--paper); margin: 0 0 0.6rem; line-height: 1.3;
+}
+.pq p { margin: 0; font-size: 0.93rem; line-height: 1.7; color: var(--ash); }
+
+/* ─── Le parcours ───
+   Un fil vertical qui relie les quatre étapes. Sur téléphone il reste
+   vertical : replier une frise en colonne casse justement ce qu'elle
+   raconte, l'ordre. */
+.parcours { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 2.2rem; }
+.parcours::before {
+  content: ''; position: absolute; left: 21px; top: 14px; bottom: 14px;
+  width: 1px; background: linear-gradient(to bottom, var(--line-strong), var(--line-soft));
+}
+@media (max-width: 640px) { .parcours::before { left: 17px; } }
+
+.parcours-e { position: relative; padding-left: 4rem; }
+@media (max-width: 640px) { .parcours-e { padding-left: 3.2rem; } }
+.parcours-n {
+  position: absolute; left: 0; top: -2px;
+  width: 43px; height: 43px; display: grid; place-items: center;
+  border: 1px solid var(--line); border-radius: 50%;
+  background: var(--ink);
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.06em; color: var(--or);
+}
+@media (max-width: 640px) { .parcours-n { width: 35px; height: 35px; font-size: 0.55rem; } }
+.parcours-e h3 {
+  font-family: var(--ff-d); font-weight: 400; font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+  color: var(--paper); margin: 0 0 0.5rem; line-height: 1.25;
+}
+.parcours-e p { margin: 0; font-size: 0.96rem; line-height: 1.75; color: var(--ash); max-width: 40rem; }
+
+/* Les étapes se posent l'une après l'autre, une seule fois. Le décalage
+   est de soixante-dix millisecondes : au-delà, on attend. */
+.parcours-e.reveal.in { animation: parcoursPose 0.6s var(--ease-out) backwards; animation-delay: calc(var(--i) * 70ms); }
+@keyframes parcoursPose { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .parcours-e.reveal.in { animation: none; } }
+
+/* ─── Les supports du code ─── */
+.supports { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
+@media (max-width: 900px) { .supports { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .supports { grid-template-columns: minmax(0, 1fr); } }
+.support {
+  padding: 1.1rem 1.2rem; border: 1px solid var(--line-soft);
+  border-radius: var(--radius); background: rgba(255,255,255,0.012);
+  display: grid; gap: 0.35rem;
+}
+.support b {
+  font-family: var(--ff-d); font-size: 1.1rem; font-weight: 400; color: var(--paper);
+}
+.support span { font-size: 0.88rem; line-height: 1.6; color: var(--ash); }
+
+/* ─── L'argument du dirigeant ─── */
+.valeur { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.valeur li {
+  padding-left: 1.1rem; border-left: 1px solid var(--line);
+  font-size: 0.98rem; line-height: 1.75; color: var(--ash);
+}
+.valeur b { color: var(--paper); font-weight: 400; }
+.valeur-note {
+  margin: 1.8rem 0 0; padding: 1rem 1.2rem;
+  background: var(--or-soft); border-left: 2px solid var(--or-patina);
+  font-size: 0.92rem; line-height: 1.7; color: var(--bone);
+}
+
+/* ─── Ce que nous pouvons prouver ─── */
+.preuves { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 860px) { .preuves { grid-template-columns: minmax(0, 1fr); } }
+.preuve {
+  padding: 1.4rem 1.5rem; border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg); background: rgba(255,255,255,0.014);
+  display: grid; gap: 0.5rem; align-content: start;
+}
+.preuve b { font-family: var(--ff-d); font-size: 1.18rem; font-weight: 400; color: var(--paper); }
+.preuve span { font-size: 0.9rem; line-height: 1.65; color: var(--ash); }
+.preuve a {
+  /* Mesuré à 43 px : sur un « inline-flex », le minimum se fait
+     grignoter par l'arrondi du modèle de boîte. Quarante-huit, comme
+     les pastilles du formulaire — c'est la vraie cible d'un pouce. */
+  margin-top: 0.4rem; min-height: 48px; display: inline-flex; align-items: center;
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--or);
+}
+.preuve a:hover { color: var(--or-bright); }
