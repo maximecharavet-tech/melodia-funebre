@@ -97,6 +97,24 @@ try {
   }
 } catch (e) { console.error('  vignettes de partage : ' + e.message); ok = false; }
 
+/* Le service worker doit précharger de quoi afficher une page.
+   Sa liste est moissonnée dans index.html : le jour où les chemins
+   sont passés en absolu, la moisson n'a plus rien trouvé et le site
+   hors ligne se serait ouvert sans style. Une liste vide ne se voit
+   nulle part — sauf ici. */
+try {
+  const sw = fs.readFileSync('sw.js', 'utf8');
+  const m = sw.match(/const PRECHARGE = \[([\s\S]*?)\];/);
+  const liste = m ? JSON.parse('[' + m[1] + ']') : [];
+  const actifs = liste.filter((u) => /^\/assets\//.test(u));
+  if (actifs.length < 5) {
+    console.error(`  sw.js ne précharge que ${actifs.length} actif(s) — la moisson dans index.html a échoué`);
+    ok = false;
+  } else {
+    console.log(`  ok   sw.js précharge ${liste.length} adresses, dont ${actifs.length} actifs`);
+  }
+} catch (e) { console.error('  sw.js illisible — ' + e.message); ok = false; }
+
 /* Aucun chemin d'actif relatif, nulle part.
    Trois pages ne vivent pas à la racine : « /m/<jeton> » pour la page
    mémorielle, « /ecouter/<titre> » pour chaque œuvre. « assets/css/

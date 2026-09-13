@@ -170,9 +170,18 @@ console.log('  consoles marquées      ' + marquees + ' / ' + CONSOLES.length);
   /* On lit dans l'accueil déjà construit les adresses à empreinte
      qu'il charge : les recopier à la main, c'est les laisser dériver. */
   const accueil = fs.readFileSync(path.join(RACINE, 'index.html'), 'utf8');
+  /* La barre oblique du début est devenue obligatoire le jour où les
+     chemins sont passés en absolu : sans elle, cette moisson ne
+     trouvait plus rien et le service worker partait avec zéro actif —
+     un site hors ligne s'ouvrant sans style, c'est-à-dire la panne
+     qu'on venait de corriger, déplacée. */
   const actifs = [...new Set(
-    [...accueil.matchAll(/(?:src|href)="(assets\/(?:css|js|img)\/[^"]+)"/g)].map((m) => '/' + m[1])
+    [...accueil.matchAll(/(?:src|href)="(\/assets\/(?:css|js|img)\/[^"]+)"/g)].map((m) => m[1])
   )].filter((u) => !/config\.js/.test(u));
+
+  if (!actifs.length) {
+    console.error('  ATTENTION le service worker ne précharge aucun actif — la moisson dans index.html n’a rien trouvé');
+  }
 
   const liste = [
     '/', ...pagesCoquille.map((f) => '/' + f.replace(/\.html$/, '')),
