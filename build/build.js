@@ -121,9 +121,17 @@ for (const f of CONSOLES) {
   const chemin = path.join(RACINE, f);
   if (!fs.existsSync(chemin)) continue;
   const avant = fs.readFileSync(chemin, 'utf8');
+  /* Les chemins deviennent absolus, comme pour les pages générées.
+     Ce n'est pas cosmétique : « hommage.html » est servi à
+     « /m/<jeton> » par une réécriture, et « assets/css/style.css » y
+     désignait « /m/assets/css/style.css ». La page qu'ouvre un QR code
+     devant une tombe arrivait donc sans une ligne de style et sans
+     JavaScript — jamais vu, parce qu'on l'ouvrait toujours par son nom
+     de fichier. */
   const apres = empreinterImages(avant.replace(
     /(src|href)="(assets\/(?:js|css)\/[a-z0-9.-]+\.(?:js|css))(\?v=[a-f0-9]+)?"/g,
-    (_, attr, actif) => attr + '="' + versionne(actif) + '"'));
+    (_, attr, actif) => attr + '="/' + versionne(actif) + '"'))
+    .replace(/(\s(?:src|href|data-src)=")(assets\/|audio\/)/g, '$1/$2');
   if (apres !== avant) { fs.writeFileSync(chemin, apres); marquees++; }
 }
 

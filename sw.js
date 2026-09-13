@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = 'c9ea8a28be';
+const VERSION = '2456a99278';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -60,19 +60,6 @@ const PRECHARGE = [
   "/qr-code-memorial",
   "/musique-obseques",
   "/404",
-  "/assets/css/style.css?v=442ff5c8",
-  "/assets/img/intro-logo.jpg?v=1a9516a8",
-  "/assets/img/intro-melodia.mp4?v=488159e4",
-  "/assets/img/logo-melodia.jpg?v=c9f03ed0",
-  "/assets/img/maxime.png?v=25ba945d",
-  "/assets/img/hyper-engine.png?v=a1960bfe",
-  "/assets/js/content.js?v=c3932222",
-  "/assets/js/main.js?v=72d6b7b0",
-  "/assets/js/application.js?v=921dfcdc",
-  "/assets/js/rappel.js?v=1840ff2c",
-  "/assets/js/courrier.js?v=7feee7d2",
-  "/assets/js/ornements.js?v=b123bb2c",
-  "/assets/js/catalogue.js?v=925e03ee",
   "/site.webmanifest",
   "/assets/img/icons/icon-192.png",
   "/assets/img/icons/icon-512.png"
