@@ -116,6 +116,10 @@
   var scene = document.createElement('div');
   scene.className = 'scene-platine';
 
+  var PARTAGE_ICONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">' +
+    '<circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/>' +
+    '<path d="M8.4 13.4l7.2 4.2M15.6 6.4l-7.2 4.2"/></svg>';
+
   var platine = document.createElement('div');
   platine.className = 'platine';
   platine.innerHTML =
@@ -143,6 +147,13 @@
       '<p class="pup-recit" data-recit></p>' +
       '<blockquote class="pup-vers" data-vers></blockquote>' +
       '<div class="pup-brief" data-brief hidden><span>Les mots de la famille</span><em></em></div>' +
+      /* Partager l'œuvre écoutée, pas le catalogue. Les fiches posées
+         par le gabarit portaient déjà ce lien, mais la platine les
+         remplace : sans cette ligne, le bouton n'existait que pour un
+         visiteur sans JavaScript — c'est-à-dire pour personne. */
+      '<div class="pup-partage" data-partage-lien hidden>' +
+        '<a href="#" data-page>' + PARTAGE_ICONE + '<span>Partager cet hommage</span></a>' +
+      '</div>' +
     '</div>';
   scene.appendChild(platine);
   var cadreDisque = platine.querySelector('[data-cadre]');
@@ -304,6 +315,22 @@
     var b = platine.querySelector('[data-brief]');
     b.hidden = !o.brief;
     if (o.brief) b.querySelector('em').innerHTML = jetons(o.brief);
+
+    /* L'adresse vient du contenu publié, calculée à la génération :
+       l'écran ne la recompose pas, il la lit. Une œuvre sans page —
+       cas d'un contenu plus ancien que ce gabarit — masque le lien
+       plutôt que de proposer un lien mort. */
+    var part = platine.querySelector('[data-partage-lien]');
+    if (part) {
+      var lien = part.querySelector('[data-page]');
+      if (o.page) {
+        lien.setAttribute('href', o.page);
+        lien.setAttribute('aria-label', 'Page de « ' + (o.title || 'cet hommage') + ' », à partager');
+        part.hidden = false;
+      } else {
+        part.hidden = true;
+      }
+    }
 
     platine.querySelector('[data-tc]').textContent = '0:00';
     platine.querySelector('[data-td]').textContent = '—:—';

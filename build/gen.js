@@ -93,27 +93,38 @@ const ICON = {
 };
 
 function head(p) {
-  const url = SITE + '/' + (p.file === 'index.html' ? '' : p.file.replace('.html', ''));
+  /* L'adresse peut être réécrite : « ecouter-x.html » est servi à
+     « /ecouter/x », et c'est cette adresse-là qui doit être canonique
+     et partagée. Sans cela, un lien posté sur Facebook renverrait vers
+     le nom de fichier. */
+  const url = p.url ? SITE + p.url
+                    : SITE + '/' + (p.file === 'index.html' ? '' : p.file.replace('.html', ''));
+  /* L'aperçu social : une image par page quand elle en a une. Une
+     vignette générique sous un lien vers une chanson précise est
+     exactement ce qui fait qu'on ne clique pas. */
+  const image = SITE + (p.image || '/assets/img/og-melodia.jpg');
+  const imageAlt = p.imageAlt || 'Melodia Funèbre — Chaque vie mérite une chanson';
   return `<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#040407">
 <title>${p.title}</title>
 <meta name="description" content="${p.desc}">
 <link rel="canonical" href="${url}">
-${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta property="og:type" content="website">
+${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta property="og:type" content="${p.ogType || 'website'}">
 <meta property="og:site_name" content="Melodia Funèbre">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:title" content="${p.title}">
 <meta property="og:description" content="${p.desc}">
 <meta property="og:url" content="${url}">
-<meta property="og:image" content="${SITE}/assets/img/og-melodia.jpg">
+<meta property="og:image" content="${image}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Melodia Funèbre — Chaque vie mérite une chanson">
+<meta property="og:image:alt" content="${imageAlt}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${p.title}">
 <meta name="twitter:description" content="${p.desc}">
-<meta name="twitter:image" content="${SITE}/assets/img/og-melodia.jpg">
+<meta name="twitter:image" content="${image}">
+${p.metas || ''}
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/icons/icon-192.png">
 <link rel="apple-touch-icon" href="/assets/img/icons/icon-180.png">

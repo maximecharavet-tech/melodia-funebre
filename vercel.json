@@ -261,6 +261,10 @@
     {
       "source": "/m/:jeton",
       "destination": "/hommage?j=:jeton"
+    },
+    {
+      "source": "/ecouter/:titre",
+      "destination": "/ecouter-:titre"
     }
   ]
 }
