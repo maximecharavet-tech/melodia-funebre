@@ -13,6 +13,7 @@
     "deploy": "npx vercel --prod",
     "dev:full": "npx vercel dev",
     "pages": "node build/build.js",
-    "pdf": "node build/pdf.js"
+    "pdf": "node build/pdf.js",
+    "pdf:relire": "node scripts/relire-pdf.js"
   }
 }
