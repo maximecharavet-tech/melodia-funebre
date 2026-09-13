@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css?v=f3352015">
-<link rel="stylesheet" href="assets/css/dashboard.css?v=18cd764b">
+<link rel="stylesheet" href="assets/css/dashboard.css?v=27188ac8">
 <link rel="stylesheet" href="assets/css/relief.css?v=68839a50">
 <link rel="stylesheet" href="assets/css/mobile.css?v=9f45e378">
 <link rel="stylesheet" href="assets/css/souvenir.css?v=cc7e58c3">
@@ -272,7 +272,38 @@ async function submitOrder() {
 }
 
 function vRessources() {
-  return '<div class="grid-2">' +
+  /* Le dossier commercial, en tête du kit : c'est ce qu'un dirigeant
+     ouvre en premier et ce qu'il fait suivre à son associé. Les quatre
+     visuels sont fournis à part, en pleine définition, pour la vitrine
+     et les réseaux. */
+  return '<div class="panel" style="grid-column:1/-1;">' +
+      '<div class="panel-head"><div>' +
+        '<div class="panel-title">Le dossier <em>commercial</em></div>' +
+        '<div class="panel-sub">À lire, à imprimer, à faire suivre</div>' +
+      '</div></div>' +
+      '<div class="doc-lot">' +
+        '<a class="doc-carte doc-phare" href="/documents/melodia-brochure-partenaire.pdf" download>' +
+          '<span class="doc-genre">PDF · 13 pages</span>' +
+          '<span class="doc-nom">Brochure partenaire</span>' +
+          '<span class="doc-dit">Le dossier complet : la marge, le calcul sur une année, ' +
+            'le déroulé, la page hommage et son QR code, et votre affiche de vitrine.</span>' +
+          '<span class="doc-act">Télécharger</span>' +
+        '</a>' +
+        ['affiche-partenaire|Affiche de vitrine|À imprimer et poser là où vous recevez les familles.',
+         'certaines-melodies|Visuel « Certaines mélodies »|Pour vos réseaux sociaux et vos annonces.',
+         'adieux-en-musique|Visuel « Des adieux en musique »|Sobre, adapté à un faire-part ou un encart presse.',
+         'souvenirs-ukulele|Visuel « Des mélodies qui restent »|Plus chaleureux, pour une publication de fin de journée.'
+        ].map(function (l) {
+          var t = l.split('|');
+          return '<a class="doc-carte" href="/assets/img/campagne/' + t[0] + '.jpg" download>' +
+            '<span class="doc-genre">Image haute définition</span>' +
+            '<span class="doc-nom">' + t[1] + '</span>' +
+            '<span class="doc-dit">' + t[2] + '</span>' +
+            '<span class="doc-act">Télécharger</span></a>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="grid-2">' +
     '<div class="panel"><div class="panel-title">Les trois <em>offres</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Tarifs publics et marges</div>' +
     '<table class="tbl"><thead><tr><th>Offre</th><th>Prix famille</th><th>Votre marge</th></tr></thead><tbody>' +
     '<tr><td>Essentiel</td><td>149 €</td><td style="color:var(--or);">89 €</td></tr>' +

@@ -1282,3 +1282,47 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .mem-candidates-du { border-style: solid; border-color: var(--line-strong); background: var(--or-soft); }
 .mem-candidates-du .field-label { color: var(--or); }
 .mem-du { border-color: var(--line-strong) !important; }
+
+/* ═══ Les documents à télécharger ═══
+   Trois consoles les affichent : la maison, le collaborateur et
+   l'agence. Une carte par fichier, la première mise en avant — c'est
+   celle qu'on cherche, et elle doit se voir sans être lue. */
+.doc-lot {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: .8rem;
+  margin-top: 1.2rem;
+}
+.doc-carte {
+  display: flex; flex-direction: column; gap: .35rem;
+  min-height: 132px;
+  padding: 1.1rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: var(--ink-2);
+  transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
+}
+.doc-carte:hover { border-color: var(--line-strong); background: var(--ink-3); transform: translateY(-2px); }
+.doc-phare { border-left: 2px solid var(--or); background: var(--or-soft, rgba(201,168,76,.05)); }
+
+.doc-genre {
+  font-family: var(--ff-m); font-size: .55rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--dust);
+}
+.doc-nom { font-family: var(--ff-d); font-size: 1.12rem; color: var(--ivory); line-height: 1.2; }
+.doc-dit { font-size: .78rem; line-height: 1.6; color: var(--ash); }
+.doc-act {
+  margin-top: auto; padding-top: .6rem;
+  font-family: var(--ff-m); font-size: .58rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--or);
+}
+.doc-act::after { content: ' ↓'; }
+
+@media (max-width: 640px) {
+  .doc-lot { grid-template-columns: minmax(0, 1fr); }
+  .doc-carte { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .doc-carte { transition: none; }
+  .doc-carte:hover { transform: none; }
+}

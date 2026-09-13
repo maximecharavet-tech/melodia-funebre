@@ -1245,7 +1245,34 @@
      Vue : script d'appel et objections
      ═══════════════════════════════════════════════════════════ */
   function vPlaybook() {
-    return '<div class="panel" style="margin-bottom:1.4rem;">' +
+    /* Le manuel imprimable en tête : tout ce qui suit à l'écran s'y
+       retrouve, dans le même ordre. Il est fabriqué à partir de ce
+       fichier-ci (voir build/pdf-manuel.js), donc il ne peut pas
+       raconter autre chose que la console. */
+    return '<div class="panel doc-panneau" style="margin-bottom:1.4rem;">' +
+        '<div class="panel-title">Le <em>manuel</em> de vente</div>' +
+        '<div class="panel-sub">Tout ce qui suit, sur papier</div>' +
+        '<p class="panel-note">Dix-huit pages : les chiffres à connaître, le plan de prospection, ' +
+          'le script d\'appel, les douze objections, les lieux de culte et les modèles de courriel. ' +
+          'À imprimer et à garder près du téléphone.</p>' +
+        '<div class="doc-lot">' +
+          '<a class="doc-carte doc-phare" href="/documents/melodia-manuel-de-vente.pdf" download>' +
+            '<span class="doc-genre">PDF · 18 pages · interne</span>' +
+            '<span class="doc-nom">Manuel de vente</span>' +
+            '<span class="doc-dit">Il contient les tarifs, les marges et les méthodes : ' +
+              'il ne se remet pas à une agence.</span>' +
+            '<span class="doc-act">Télécharger</span>' +
+          '</a>' +
+          '<a class="doc-carte" href="/documents/melodia-brochure-partenaire.pdf" download>' +
+            '<span class="doc-genre">PDF · 13 pages</span>' +
+            '<span class="doc-nom">Brochure partenaire</span>' +
+            '<span class="doc-dit">Celle que voit l\'agence. À joindre après un premier appel.</span>' +
+            '<span class="doc-act">Télécharger</span>' +
+          '</a>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="panel" style="margin-bottom:1.4rem;">' +
         '<div class="panel-title">Les cinq <em>questions</em> du brief</div>' +
         '<div class="panel-sub">À savoir réciter</div>' +
         '<p class="panel-note">C\'est tout ce que l\'agence a besoin de demander à la famille. Trois minutes, et vous avez de quoi composer.</p>' +

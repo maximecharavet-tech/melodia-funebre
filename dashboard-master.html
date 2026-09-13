@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css?v=f3352015">
-<link rel="stylesheet" href="assets/css/dashboard.css?v=18cd764b">
+<link rel="stylesheet" href="assets/css/dashboard.css?v=27188ac8">
 <link rel="stylesheet" href="assets/css/relief.css?v=68839a50">
 <link rel="stylesheet" href="assets/css/mobile.css?v=9f45e378">
 <link rel="stylesheet" href="assets/css/souvenir.css?v=cc7e58c3">
@@ -586,7 +586,25 @@ function vFinances() {
 
 function vProspection() {
   var funnel = [['Agences ciblées',100],['Contactées',64],['Rendez-vous',23],['Démonstration',11],['Signées',6]];
-  return '<div class="panel"><div class="panel-head"><div><div class="panel-title">Entonnoir de <em>conversion</em></div><div class="panel-sub">Objectif 100 agences</div></div></div>' +
+  return '<div class="panel doc-panneau" style="margin-bottom:1.4rem;">' +
+      '<div class="panel-head"><div><div class="panel-title">Les <em>documents</em></div>' +
+      '<div class="panel-sub">Fabriqués par « npm run pdf », depuis le contenu du site</div></div></div>' +
+      '<div class="doc-lot">' +
+        '<a class="doc-carte doc-phare" href="/documents/melodia-brochure-partenaire.pdf" download>' +
+          '<span class="doc-genre">PDF · 13 pages</span>' +
+          '<span class="doc-nom">Brochure partenaire</span>' +
+          '<span class="doc-dit">Ce que reçoit une agence : la marge, le calcul annuel, le déroulé, ' +
+            'la page hommage, et son affiche de vitrine.</span>' +
+          '<span class="doc-act">Télécharger</span></a>' +
+        '<a class="doc-carte" href="/documents/melodia-manuel-de-vente.pdf" download>' +
+          '<span class="doc-genre">PDF · 18 pages · interne</span>' +
+          '<span class="doc-nom">Manuel de vente</span>' +
+          '<span class="doc-dit">Ce que lit un collaborateur : script, objections, prospection, modèles. ' +
+            'Ne se remet jamais à une agence.</span>' +
+          '<span class="doc-act">Télécharger</span></a>' +
+      '</div>' +
+    '</div>' +
+    '<div class="panel"><div class="panel-head"><div><div class="panel-title">Entonnoir de <em>conversion</em></div><div class="panel-sub">Objectif 100 agences</div></div></div>' +
     funnel.map(function(f){
       return '<div style="margin-bottom:1.1rem;"><div style="display:flex; justify-content:space-between; font-family:var(--ff-m); font-size:0.58rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--bone); margin-bottom:0.5rem;"><span>' + f[0] + '</span><span style="color:var(--or);">' + f[1] + '</span></div>' +
       '<div style="height:3px; background:var(--ink-3);"><div style="height:100%; width:' + f[1] + '%; background:var(--or);"></div></div></div>';
