@@ -38,7 +38,7 @@
   var MSG_SESSION = 'Votre session a expiré. Reconnectez-vous pour continuer.';
 
   function effacerSession() {
-    LS.del('melodia_session'); LS.del('melodia_role');
+    LS.del('melodia_session'); LS.del('melodia_role'); LS.del('melodia_agence');
   }
 
   /* Toute écriture de session passe par ici : c'est le seul endroit
@@ -163,7 +163,10 @@
              que de l'écran : l'accès aux données reste tenu par les
              règles de la base, qui filtrent sur l'adresse. */
           role: role || (meta.agence ? 'partner' : 'client'),
-          agence: meta.agence || ''
+          /* Celle de la base fait foi ; celle des métadonnées ne sert
+             plus qu'à afficher un nom tant que le rattachement n'a pas
+             été fait par la maison. */
+          agence: LS.get('melodia_agence', '') || meta.agence || ''
         };
       }
       return LS.get('melodia_user', null);
@@ -201,11 +204,18 @@
       try {
         var s = LS.get('melodia_session', null);
         if (!s || !s.user) return null;
-        var r = await sb('/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(s.user.email));
+        var r = await sb('/rest/v1/roles?select=role,agence&email=eq.' + encodeURIComponent(s.user.email));
         var meta = (s.user.user_metadata || {});
         var repli = meta.agence ? 'partner' : 'client';
         var role = (r && r[0] && r[0].role) || repli;
         LS.set('melodia_role', role);
+        /* L'agence vient de « roles », que seule la maison écrit — pas
+           des métadonnées du compte, que le navigateur choisit. Les
+           règles de la base tranchent sur la même source : si le
+           filtre d'écran lisait les métadonnées, une agence rattachée
+           correctement verrait une liste vide, et l'écart serait
+           incompréhensible. */
+        LS.set('melodia_agence', (r && r[0] && r[0].agence) || '');
         return role;
       } catch (e) {
         /* Ne pas réussir à LIRE le rôle n'est pas la preuve qu'il n'y
@@ -416,7 +426,7 @@
 
     /* Le rôle en cache part avec la session : sans cela, le compte
        suivant ouvert sur le même navigateur hériterait du précédent. */
-    logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); LS.del('melodia_role'); },
+    logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); LS.del('melodia_role'); LS.del('melodia_agence'); },
 
     /** Redirige vers le bon tableau de bord, ou vers compte.html si non connecté */
     guard: function () {

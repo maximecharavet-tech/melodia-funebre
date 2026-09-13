@@ -34,6 +34,14 @@
   var enLigne = function () { return !!(REST && REST.actif); };
   var BASE = 'https://melodia-funebre.fr';
 
+  /* Le prix public du service. Il vit aussi dans « build/data.js »,
+     qui fabrique la case à cocher du tunnel de commande — et deux
+     endroits, c'est un endroit de trop : « scripts/check.js » compare
+     les deux à chaque construction et refuse de passer s'ils
+     divergent. Un tarif changé d'un seul côté ne peut donc pas
+     atteindre la production. */
+  var PRIX_QR = 79;
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -50,7 +58,7 @@
     return (await REST.appel(q)) || [];
   }
 
-  async function creer(commande, proprietaire) {
+  async function creer(commande, proprietaire, origine, montant) {
     var pistes = [];
     if (commande.audio_url) pistes.push({ titre: commande.audio_title || 'Hommage', url: commande.audio_url });
     var corps = {
@@ -59,6 +67,8 @@
       agence: commande.agence || '',
       nom: commande.defunt || '',
       pistes: pistes,
+      origine: origine || 'maison',
+      montant: montant == null ? 0 : montant,
       actif: false          /* jamais publiée sans un geste explicite */
     };
     var r = await REST.appel('/rest/v1/memoriaux', {
@@ -308,9 +318,14 @@
 
     var fiches, commandes;
     try {
-      fiches = await lister(options.email);
-      var q = '/rest/v1/orders?select=ref,defunt,audio_url,audio_title,user_email,agence,status&order=created_at.desc&limit=200';
+      var qm = '/rest/v1/memoriaux?select=*&order=created_at.desc';
+      if (options.email) qm += '&proprietaire=eq.' + encodeURIComponent(options.email);
+      else if (options.agence) qm += '&agence=eq.' + encodeURIComponent(options.agence);
+      fiches = (await REST.appel(qm)) || [];
+
+      var q = '/rest/v1/orders?select=ref,defunt,audio_url,audio_title,user_email,agence,status,options,price&order=created_at.desc&limit=200';
       if (options.email) q += '&user_email=eq.' + encodeURIComponent(options.email);
+      else if (options.agence) q += '&agence=eq.' + encodeURIComponent(options.agence);
       commandes = (await REST.appel(q)) || [];
     } catch (e) {
       hote.innerHTML = '<div class="panel"><div class="form-msg err" style="display:block;">' + esc(e.message) + '</div></div>';
@@ -324,6 +339,18 @@
        à une page vide, le jour de l'enterrement. */
     var candidates = commandes.filter(function (o) { return o.audio_url && !avecFiche[o.ref]; });
 
+    /* Une commande dont la famille a coché la plaque est payée : elle
+       n'est pas une occasion de vente, c'est un dû. Les deux listes se
+       ressemblent à l'écran ; les confondre ferait oublier de produire
+       ce qui a déjà été encaissé. */
+    var aPayeLaPlaque = function (o) {
+      var l = o.options;
+      if (typeof l === 'string') { try { l = JSON.parse(l); } catch (e) { l = []; } }
+      return (l || []).some(function (x) { return /plaque|qr/i.test(String(x && x.titre ? x.titre : x)); });
+    };
+    var dues = candidates.filter(aPayeLaPlaque);
+    var aProposer = candidates.filter(function (o) { return !aPayeLaPlaque(o); });
+
     var h = '<div class="panel">' +
       '<div class="panel-head"><div>' +
         '<div class="panel-title">Les <em>plaques</em> à QR code</div>' +
@@ -334,13 +361,26 @@
       'il ouvre une page où la famille écoute l’hommage. La page naît hors ligne : ' +
       'rien n’est visible tant que personne ne l’a publiée.</p>';
 
-    if (candidates.length) {
-      h += '<div class="mem-candidates"><div class="field-label">Hommages livrés, sans plaque</div><ul>' +
-        candidates.slice(0, 12).map(function (o) {
-          return '<li><span class="mem-c-nom">' + esc(o.defunt || o.ref) + '</span>' +
-            '<span class="mem-c-ref">' + esc(o.ref) + '</span>' +
-            '<button type="button" class="btn btn-outline btn-sm" data-creer="' + esc(o.ref) + '">Créer la page</button></li>';
-        }).join('') + '</ul></div>';
+    var rangee = function (o, urgent) {
+      return '<li' + (urgent ? ' class="mem-du"' : '') + '>' +
+        '<span class="mem-c-nom">' + esc(o.defunt || o.ref) + '</span>' +
+        '<span class="mem-c-ref">' + esc(o.ref) + '</span>' +
+        '<button type="button" class="btn ' + (urgent ? 'btn-gold' : 'btn-outline') + ' btn-sm" data-creer="' + esc(o.ref) + '">' +
+          (urgent ? 'Produire la plaque' : (options.role === 'partner' ? 'Commander — ' + PRIX_QR + ' €' : 'Créer la page')) +
+        '</button></li>';
+    };
+
+    if (dues.length) {
+      h += '<div class="mem-candidates mem-candidates-du">' +
+        '<div class="field-label">Payées par la famille, à produire</div><ul>' +
+        dues.slice(0, 12).map(function (o) { return rangee(o, true); }).join('') + '</ul></div>';
+    }
+    if (aProposer.length) {
+      h += '<div class="mem-candidates"><div class="field-label">' +
+        (options.role === 'partner'
+          ? 'Hommages livrés — ajouter le service à ' + PRIX_QR + ' €'
+          : 'Hommages livrés, sans plaque') +
+        '</div><ul>' + aProposer.slice(0, 12).map(function (o) { return rangee(o, false); }).join('') + '</ul></div>';
     }
 
     h += fiches.length
@@ -370,7 +410,12 @@
       if (c) {
         c.disabled = true; c.textContent = 'Création…';
         var o = commandes.filter(function (x) { return x.ref === c.dataset.creer; })[0];
-        try { await creer(o, options.email || o.user_email); recharger(); }
+        /* Payée par la famille : le montant est déjà dans la commande,
+           on ne le refacture pas. Commandée par l'agence : c'est elle
+           qui sera facturée, et la trace part d'ici. */
+        var paye = aPayeLaPlaque(o);
+        var origine = paye ? 'famille' : (options.role === 'partner' ? 'partenaire' : 'maison');
+        try { await creer(o, o.user_email, origine, paye ? 0 : (options.role === 'partner' ? PRIX_QR : 0)); recharger(); }
         catch (e) { c.disabled = false; c.textContent = 'Créer la page'; alert(e.message); }
         return;
       }
@@ -391,6 +436,7 @@
   }
 
   window.MelodiaMemorial = {
+    PRIX_QR: PRIX_QR,
     panneau: panneau,
     lister: lister, creer: creer, enregistrer: enregistrer, supprimer: supprimer,
     vueFiche: vueFiche, brancher: brancher,

@@ -1275,3 +1275,10 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .mem-etat.en-ligne { color: var(--bone); border-left-color: var(--green); }
 .mem-vide { font-size: 0.88rem; color: var(--ash); line-height: 1.6; margin: 0.5rem 0 0; }
 .field-aide { font-size: 0.76rem; color: var(--dust); line-height: 1.55; margin: 0.35rem 0 0; }
+
+/* Ce qui est payé ne se confond pas avec ce qui est à vendre : la
+   bordure d'or et le bouton plein disent « on vous doit cette
+   plaque », pas « vous pourriez la proposer ». */
+.mem-candidates-du { border-style: solid; border-color: var(--line-strong); background: var(--or-soft); }
+.mem-candidates-du .field-label { color: var(--or); }
+.mem-du { border-color: var(--line-strong) !important; }
