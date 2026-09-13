@@ -497,7 +497,7 @@
     hote.innerHTML =
       '<div class="panel">' +
         '<div class="panel-title">Créer un <em>collaborateur</em></div>' +
-        '<div class="panel-sub" style="margin-bottom:1.4rem;">Il accède à la console commerciale et travaille son propre portefeuille. Vous voyez tout.</div>' +
+        '<div class="panel-sub" style="margin-bottom:1.4rem;"><span id="eq-sous">Il accède à la console commerciale et travaille son propre portefeuille. Vous voyez tout.</span></div>' +
         '<div class="field-row">' +
           '<div class="field"><label class="field-label">Nom *</label><input class="field-input" id="eq-nom" placeholder="Julie Lambert"></div>' +
           '<div class="field"><label class="field-label">Email *</label><input class="field-input" id="eq-email" type="email" placeholder="julie@melodia-funebre.fr"></div>' +
@@ -511,6 +511,17 @@
             '<div class="eq-force" id="eq-force"><span></span></div>' +
           '</div>' +
           '<div class="field"><label class="field-label">Secteur</label><input class="field-input" id="eq-secteur" placeholder="Rhône-Alpes"></div>' +
+        '</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label class="field-label" for="eq-role">Rôle *</label>' +
+            '<select class="field-select" id="eq-role">' +
+              '<option value="commercial">Collaborateur — console commerciale</option>' +
+              '<option value="partner">Partenaire — agence funéraire</option>' +
+            '</select></div>' +
+          '<div class="field" id="eq-agence-champ" hidden><label class="field-label" for="eq-agence">Agence *</label>' +
+            '<input class="field-input" id="eq-agence" placeholder="PF Duval — Lyon 3e">' +
+            '<p class="field-aide">C\'est ce nom qui décide des commandes visibles par ce partenaire. ' +
+            'Il doit être écrit exactement comme sur ses commandes.</p></div>' +
         '</div>' +
         '<button class="btn btn-gold" style="width:100%;" id="eq-creer">Créer le compte et ouvrir l\'accès</button>' +
         '<div class="form-msg" id="eq-msg"></div>' +
@@ -532,11 +543,25 @@
               '<td><div style="color:var(--paper);">' + esc(c.nom || c.name) +
                 (suspendu ? ' <span class="pill" style="border-color:var(--amber);color:var(--amber);">Suspendu</span>' : '') + '</div>' +
               '<div style="color:var(--dust);font-size:.8rem;">' + esc(c.email) + '</div></td>' +
-              '<td style="color:var(--ash);">' + esc(c.secteur || '—') + '</td>' +
+              '<td style="color:var(--ash);">' + esc(c.secteur || '—') +
+                /* Un partenaire sans agence a un compte qui ouvre une
+                   console vide : les règles de la base filtrent sur ce
+                   champ. Le signaler ici est le seul endroit où le
+                   fondateur peut s'en apercevoir avant que le
+                   partenaire appelle. */
+                (c.role === 'partner'
+                  ? (c.agence
+                      ? '<div style="color:var(--or-patina);font-size:.78rem;margin-top:3px;">' + esc(c.agence) + '</div>'
+                      : '<div style="color:var(--amber);font-size:.78rem;margin-top:3px;">Sans agence — sa console reste vide</div>')
+                  : '') +
+              '</td>' +
               '<td>' + st.total + '</td>' +
               '<td>' + st.contactes + '</td>' +
               '<td style="color:' + (st.partenaires ? 'var(--green)' : 'var(--ash)') + ';">' + st.partenaires + '</td>' +
               '<td style="text-align:right;white-space:nowrap;">' +
+                (c.role === 'partner'
+                  ? '<button class="own-mini' + (c.agence ? '' : ' on') + '" data-agence-eq="' + esc(c.email) + '" data-agence="' + esc(c.agence || '') + '" title="Rattacher ce partenaire à son agence">Agence</button> '
+                  : '') +
                 '<button class="own-mini" data-mdp-eq="' + esc(c.email) + '" title="Remplacer son mot de passe">Mot de passe</button> ' +
                 '<button class="own-mini" data-etat-eq="' + esc(c.email) + '" data-actif="' + (suspendu ? '1' : '0') + '" title="' + (suspendu ? 'Rétablir l\'accès' : 'Suspendre l\'accès sans rien effacer') + '">' + (suspendu ? 'Rétablir' : 'Suspendre') + '</button> ' +
                 '<button class="own-mini danger" data-suppr-eq="' + esc(c.email) + '" title="Supprimer le compte et son accès">✕</button>' +
@@ -561,6 +586,25 @@
 
     $('eq-creer').addEventListener('click', creerCollaborateur);
 
+    /* Le champ d'agence ne se montre que pour un partenaire : le
+       présenter à un collaborateur ferait croire qu'on lui en demande
+       une, et le laisser toujours caché priverait les partenaires du
+       seul champ qui fasse marcher leur console. */
+    var selRole = $('eq-role');
+    if (selRole) {
+      var majRole = function () {
+        var p = selRole.value === 'partner';
+        var champ = $('eq-agence-champ');
+        if (champ) champ.hidden = !p;
+        var sous = $('eq-sous');
+        if (sous) sous.textContent = p
+          ? 'Il accède à la console partenaire et ne voit que les commandes de son agence.'
+          : 'Il accède à la console commerciale et travaille son propre portefeuille. Vous voyez tout.';
+      };
+      selRole.addEventListener('change', majRole);
+      majRole();
+    }
+
     /* Un mot de passe proposé par la machine vaut mieux qu'un mot de
        passe inventé à la volée : c'est le seul rempart devant les
        commandes de familles en deuil. */
@@ -573,6 +617,22 @@
     });
     var champPw = $('eq-pw');
     if (champPw) champPw.addEventListener('input', jauge);
+
+    Array.prototype.forEach.call(hote.querySelectorAll('[data-agence-eq]'), function (b) {
+      b.addEventListener('click', async function () {
+        var actuelle = b.dataset.agence || '';
+        var saisie = prompt(
+          'Agence de ' + b.dataset.agenceEq + '\n\n' +
+          'Ce nom décide des commandes que ce partenaire voit. Il doit être\n' +
+          'écrit exactement comme sur ses commandes.', actuelle);
+        if (saisie === null) return;
+        b.disabled = true;
+        try {
+          await window.MelodiaTeam.rattacher(b.dataset.agenceEq, saisie);
+          rendreEquipe(hote);
+        } catch (e) { b.disabled = false; alert(e.message); }
+      });
+    });
 
     Array.prototype.forEach.call(hote.querySelectorAll('[data-mdp-eq]'), function (b) {
       b.addEventListener('click', async function () {
@@ -653,7 +713,8 @@
     try {
       var pw = v('eq-pw');
       var c = await window.MelodiaTeam.creer({
-        nom: v('eq-nom'), email: v('eq-email'), pw: pw, secteur: v('eq-secteur')
+        nom: v('eq-nom'), email: v('eq-email'), pw: pw, secteur: v('eq-secteur'),
+        role: v('eq-role') || 'commercial', agence: v('eq-agence')
       });
       /* Le mot de passe n'est plus jamais lisible après cet instant :
          il est haché côté base. On le remet donc sous les yeux du
@@ -670,7 +731,7 @@
           '<span style="color:var(--ash);">Ce mot de passe ne sera plus affiché : la base ne le conserve que sous forme chiffrée. ' +
           'Notez-le maintenant, ou utilisez « Mot de passe » dans la liste pour en poser un autre.</span>';
       }
-      ['eq-nom', 'eq-email', 'eq-pw', 'eq-secteur'].forEach(function (id) { $(id).value = ''; });
+      ['eq-nom', 'eq-email', 'eq-pw', 'eq-secteur', 'eq-agence'].forEach(function (id) { var e = $(id); if (e) e.value = ''; });
       var liste = $('own-corps');
       /* On redessine la liste sans effacer le bloc d'identifiants
          qu'on vient d'afficher : il est encore utile. */

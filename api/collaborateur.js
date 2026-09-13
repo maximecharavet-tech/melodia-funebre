@@ -164,6 +164,7 @@ export default async function handler(req, res) {
     if (action === 'creer') return await creer(res, d, email);
     if (action === 'motdepasse') return await motDePasse(res, d, email);
     if (action === 'etat') return await etat(res, d, email);
+    if (action === 'agence') return await rattacher(res, d, email);
     if (action === 'supprimer') return await supprimer(res, email);
     return json(res, 400, { code: 'ACTION', error: 'Action inconnue : ' + action });
   } catch (e) {
@@ -179,8 +180,19 @@ async function creer(res, d, email) {
   const nom = String(d.nom || '').trim();
   const pw = String(d.pw || '');
   const role = ROLES.includes(d.role) ? d.role : 'commercial';
+  const agence = String(d.agence || '').trim();
 
   if (!nom) return json(res, 400, { code: 'NOM', error: 'Le nom est requis.' });
+  /* Un partenaire sans agence est un compte qui ouvre une console vide :
+     les règles de la base filtrent les commandes sur ce champ, et sans
+     lui elles ne rendent rien. Mieux vaut refuser la création que
+     livrer un accès qui ne montre rien sans dire pourquoi. */
+  if (role === 'partner' && !agence) {
+    return json(res, 400, {
+      code: 'AGENCE',
+      error: "L'agence est requise pour un partenaire : c'est elle qui détermine les commandes qu'il verra. Sans elle, sa console reste vide."
+    });
+  }
   if (pw.length < 8) {
     return json(res, 400, {
       code: 'MOTDEPASSE',
@@ -214,7 +226,7 @@ async function creer(res, d, email) {
     await admin('/rest/v1/roles?on_conflict=email', {
       method: 'POST',
       headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
-      body: JSON.stringify({ email, role })
+      body: JSON.stringify({ email, role, agence })
     });
   } catch (e) {
     /* Un compte qui ouvre sans droits est pire que pas de compte du
@@ -227,7 +239,7 @@ async function creer(res, d, email) {
 
   /* 3. La fiche, pour la console : secteur, téléphone, activité. */
   const fiche = {
-    nom, name: nom, email, role,
+    nom, name: nom, email, role, agence,
     secteur: String(d.secteur || ''), tel: String(d.tel || ''), actif: true
   };
   await admin('/rest/v1/collaborateurs?on_conflict=email', {
@@ -245,6 +257,39 @@ async function creer(res, d, email) {
       ? 'Compte créé et droits posés. ' + nom + ' peut se connecter immédiatement.'
       : 'Ce compte existait déjà : son mot de passe et ses droits viennent d\'être mis à jour.'
   });
+}
+
+/* ─── Rattacher un compte à une agence ───────────────────────────
+   Les comptes créés avant l'existence de ce champ n'ont pas d'agence,
+   et leur console reste vide tant que personne ne la leur donne. Cette
+   action existe pour eux, et pour le jour où une agence change de nom
+   ou rachète sa voisine. */
+async function rattacher(res, d, email) {
+  const agence = String(d.agence || '').trim();
+
+  const lignes = await admin('/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(email));
+  const role = lignes && lignes[0] && lignes[0].role;
+  if (!role) return json(res, 404, { code: 'INTROUVABLE', error: 'Ce compte n\'a pas de droits posés.' });
+  if (role === 'partner' && !agence) {
+    return json(res, 400, {
+      code: 'AGENCE',
+      error: "Retirer son agence à un partenaire vide sa console. Donnez-lui une agence, ou changez son rôle."
+    });
+  }
+
+  await admin('/rest/v1/roles?email=eq.' + encodeURIComponent(email), {
+    method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ agence })
+  });
+  /* La fiche suit, pour que la liste de l'équipe montre la même chose
+     que ce qui fait autorité. */
+  try {
+    await admin('/rest/v1/collaborateurs?email=eq.' + encodeURIComponent(email), {
+      method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ agence })
+    });
+  } catch (_) {}
+
+  return json(res, 200, { ok: true, email, agence,
+    message: agence ? 'Rattaché à ' + agence + '.' : 'Rattachement retiré.' });
 }
 
 /* ─── Changer un mot de passe ───────────────────────────────────── */

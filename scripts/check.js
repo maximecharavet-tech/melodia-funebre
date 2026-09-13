@@ -63,5 +63,31 @@ try {
   }
 } catch (e) { console.error('  site.webmanifest illisible :', e.message); ok = false; }
 
-console.log(ok ? '\nSite complet, liens internes valides.' : '\nDes fichiers manquent.');
+/* ─── Le prix du service QR, à deux endroits ───
+   « build/data.js » fabrique la case à cocher du tunnel de commande ;
+   « assets/js/memorial.js » affiche le même tarif aux partenaires. Un
+   prix changé d'un seul côté ferait payer 79 € à une famille pendant
+   qu'une agence en facturerait 99 — et personne ne s'en apercevrait
+   avant la première réclamation. On compare, et on refuse de passer. */
+try {
+  const donnees = fs.readFileSync('build/data.js', 'utf8');
+  const module_ = fs.readFileSync('assets/js/memorial.js', 'utf8');
+  const a = donnees.match(/id:\s*'plaque',\s*prix:\s*(\d+)/);
+  const b = module_.match(/var PRIX_QR = (\d+)/);
+  if (!a || !b) {
+    console.error('  PRIX QR introuvable', a ? 'dans memorial.js' : 'dans data.js');
+    ok = false;
+  } else if (a[1] !== b[1]) {
+    console.error('  ÉCART DE PRIX  service QR : ' + a[1] + ' € dans data.js, ' + b[1] + ' € dans memorial.js');
+    ok = false;
+  } else {
+    console.log('  ok   service QR à ' + a[1] + ' €, identique des deux côtés');
+  }
+} catch (e) { console.error('  vérification du prix QR impossible :', e.message); ok = false; }
+
+/* Le message de fin doit dire ce qui ne va pas. « Des fichiers
+   manquent » sur un écart de tarif envoie chercher au mauvais
+   endroit. */
+console.log(ok ? '\nSite complet, liens internes valides.'
+                : '\nLa vérification a échoué — voir les lignes ci-dessus.');
 process.exit(ok ? 0 : 1);

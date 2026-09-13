@@ -38,7 +38,7 @@
   var MSG_SESSION = 'Votre session a expiré. Reconnectez-vous pour continuer.';
 
   function effacerSession() {
-    LS.del('melodia_session'); LS.del('melodia_role');
+    LS.del('melodia_session'); LS.del('melodia_role'); LS.del('melodia_agence');
   }
 
   /* Toute écriture de session passe par ici : c'est le seul endroit
@@ -163,7 +163,10 @@
              que de l'écran : l'accès aux données reste tenu par les
              règles de la base, qui filtrent sur l'adresse. */
           role: role || (meta.agence ? 'partner' : 'client'),
-          agence: meta.agence || ''
+          /* Celle de la base fait foi ; celle des métadonnées ne sert
+             plus qu'à afficher un nom tant que le rattachement n'a pas
+             été fait par la maison. */
+          agence: LS.get('melodia_agence', '') || meta.agence || ''
         };
       }
       return LS.get('melodia_user', null);
@@ -201,11 +204,18 @@
       try {
         var s = LS.get('melodia_session', null);
         if (!s || !s.user) return null;
-        var r = await sb('/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(s.user.email));
+        var r = await sb('/rest/v1/roles?select=role,agence&email=eq.' + encodeURIComponent(s.user.email));
         var meta = (s.user.user_metadata || {});
         var repli = meta.agence ? 'partner' : 'client';
         var role = (r && r[0] && r[0].role) || repli;
         LS.set('melodia_role', role);
+        /* L'agence vient de « roles », que seule la maison écrit — pas
+           des métadonnées du compte, que le navigateur choisit. Les
+           règles de la base tranchent sur la même source : si le
+           filtre d'écran lisait les métadonnées, une agence rattachée
+           correctement verrait une liste vide, et l'écart serait
+           incompréhensible. */
+        LS.set('melodia_agence', (r && r[0] && r[0].agence) || '');
         return role;
       } catch (e) {
         /* Ne pas réussir à LIRE le rôle n'est pas la preuve qu'il n'y
@@ -416,7 +426,7 @@
 
     /* Le rôle en cache part avec la session : sans cela, le compte
        suivant ouvert sur le même navigateur hériterait du précédent. */
-    logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); LS.del('melodia_role'); },
+    logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); LS.del('melodia_role'); LS.del('melodia_agence'); },
 
     /** Redirige vers le bon tableau de bord, ou vers compte.html si non connecté */
     guard: function () {
@@ -740,11 +750,12 @@
       if (HAS_SB) {
         var rep = await this._serveur({
           action: 'creer', nom: data.nom, email: email, pw: data.pw,
-          secteur: data.secteur || '', tel: data.tel || '', role: data.role || 'commercial'
+          secteur: data.secteur || '', tel: data.tel || '',
+          role: data.role || 'commercial', agence: data.agence || ''
         });
         return {
           nom: data.nom, name: data.nom, email: email, role: rep.role || 'commercial',
-          secteur: data.secteur || '', actif: true,
+          secteur: data.secteur || '', agence: data.agence || '', actif: true,
           _message: rep.message, _cree: rep.cree
         };
       }
@@ -784,6 +795,16 @@
 
     /* Supprimer laissait le compte de connexion en place : la fiche
        disparaissait de la console, la personne continuait d'entrer. */
+    /* Rattacher un compte existant à une agence. Le champ n'existait
+       pas quand les premiers comptes ont été créés : sans cette
+       méthode, il faudrait les recréer pour leur donner une agence. */
+    async rattacher(email, agence) {
+      email = (email || '').trim().toLowerCase();
+      if (!email) throw new Error('Adresse manquante.');
+      if (HAS_SB) return await this._serveur({ action: 'agence', email: email, agence: (agence || '').trim() });
+      throw new Error('Le rattachement à une agence demande la base.');
+    },
+
     async supprimer(email) {
       var users = LS.get('melodia_users', {});
       delete users[email];
