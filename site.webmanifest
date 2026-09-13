@@ -19,6 +19,6 @@
   "shortcuts": [
     { "name": "Commander un hommage", "url": "/offres", "icons": [{ "src": "/assets/img/icons/icon-96.png?v=870222fe", "sizes": "96x96" }] },
     { "name": "Écouter les démonstrations", "url": "/demos", "icons": [{ "src": "/assets/img/icons/icon-96.png?v=870222fe", "sizes": "96x96" }] },
-    { "name": "Espace agences", "url": "/agences", "icons": [{ "src": "/assets/img/icons/icon-96.png?v=870222fe", "sizes": "96x96" }] }
+    { "name": "Pour les professionnels", "url": "/professionnels", "icons": [{ "src": "/assets/img/icons/icon-96.png?v=870222fe", "sizes": "96x96" }] }
   ]
 }
