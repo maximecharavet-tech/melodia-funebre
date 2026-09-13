@@ -221,6 +221,7 @@ function footer() {
           <li><a href="mailto:${MAIL}">${MAIL}</a></li>
           <li><button type="button" class="lien-rappel" data-rappel>Être rappelé</button></li>
           <li><a href="/contact">Nous écrire</a></li>
+          <li><a href="/application">L'application</a></li>
         </ul>
         <!-- Deux réseaux, pas six : une maison qui affiche des icônes
              vers des comptes vides paraît plus petite que si elle n'en
@@ -351,7 +352,7 @@ function page(p) {
   /* config.js en premier : content.js doit savoir où lire le contenu
      publié avant de chercher à le lire. Il ne contient que l'adresse du
      projet et la clé publique, celle qui est faite pour être lue. */
-  const base = ['assets/js/config.js', 'assets/js/content.js', 'assets/js/main.js',
+  const base = ['assets/js/config.js', 'assets/js/content.js', 'assets/js/main.js', 'assets/js/application.js',
                 'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'];
   const scripts = base.concat((p.scripts || []).filter((s) => base.indexOf(s) === -1));
   return comblerHommages(empreinterImages(`<!DOCTYPE html>

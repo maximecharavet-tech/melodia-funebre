@@ -57,7 +57,7 @@ if (fs.existsSync(fichierContenu)) {
 
 /* ─── Génération ─── */
 const { page } = require('./gen.js');
-const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-agences', 'p-rejoindre', 'p-contact', 'p-compte', 'p-404'];
+const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-agences', 'p-rejoindre', 'p-contact', 'p-application', 'p-compte', 'p-404'];
 
 let total = 0;
 for (const m of pages) {
@@ -114,6 +114,50 @@ if (fs.existsSync(MANIF)) {
 }
 console.log('  consoles marquées      ' + marquees + ' / ' + CONSOLES.length);
 
+/* ─── Le travailleur de service ───
+   Sa version est l'empreinte de ce qu'il met en cache : à chaque
+   déploiement qui change une page ou une ressource, le nom des caches
+   change, et les anciens sont effacés à l'activation. Sans cela, une
+   correction urgente resterait invisible pour qui a déjà installé
+   l'application. */
+{
+  const modele = fs.readFileSync(path.join(__dirname, 'sw-modele.js'), 'utf8');
+
+  /* La coquille : les pages publiques et ce qu'il faut pour les
+     afficher. Ni les consoles, ni l'espace des familles, ni les pages
+     mémoriales — elles montrent des données qui changent. */
+  const pagesCoquille = [
+    'index.html', 'professionnels.html', 'offres.html', 'processus.html',
+    'demos.html', 'rites.html', 'contact.html', 'chanson-hommage.html',
+    'qr-code-memorial.html', 'musique-obseques.html', '404.html'
+  ].filter((f) => fs.existsSync(path.join(RACINE, f)));
+
+  /* On lit dans l'accueil déjà construit les adresses à empreinte
+     qu'il charge : les recopier à la main, c'est les laisser dériver. */
+  const accueil = fs.readFileSync(path.join(RACINE, 'index.html'), 'utf8');
+  const actifs = [...new Set(
+    [...accueil.matchAll(/(?:src|href)="(assets\/(?:css|js|img)\/[^"]+)"/g)].map((m) => '/' + m[1])
+  )].filter((u) => !/config\.js/.test(u));
+
+  const liste = [
+    '/', ...pagesCoquille.map((f) => '/' + f.replace(/\.html$/, '')),
+    ...actifs, '/site.webmanifest',
+    '/assets/img/icons/icon-192.png', '/assets/img/icons/icon-512.png'
+  ];
+
+  const empreinte = crypto.createHash('sha1')
+    .update(liste.join('|'))
+    .update(fs.readFileSync(path.join(RACINE, 'index.html')))
+    .update(modele)
+    .digest('hex').slice(0, 10);
+
+  const sortie = modele
+    .replace('__VERSION__', empreinte)
+    .replace('__PRECHARGE__', JSON.stringify(liste, null, 2));
+  fs.writeFileSync(path.join(RACINE, 'sw.js'), sortie);
+  console.log('  sw.js                 version ' + empreinte + ', ' + liste.length + ' adresses préchargées');
+}
+
 /* ─── Plan du site ───
    Écrit à la génération plutôt que tenu à la main : un plan qui date
    d'une refonte précédente envoie les robots sur des pages disparues
@@ -135,6 +179,7 @@ const PLAN = [
   ['qr-code-memorial.html', '0.9', 'monthly'],
   ['rejoindre.html', '0.8', 'monthly'],
   ['contact.html', '0.7', 'yearly'],
+  ['application.html', '0.6', 'monthly'],
   ['cgv.html', '0.4', 'yearly'],
   ['mentions-legales.html', '0.3', 'yearly'],
   ['confidentialite.html', '0.3', 'yearly']

@@ -4411,3 +4411,117 @@ body.a-ecoute { padding-bottom: 5rem; }
   text-transform: uppercase; color: var(--or);
 }
 .preuve a:hover { color: var(--or-bright); }
+
+/* ═══════════════════════════════════════════════════════════════
+   L'APPLICATION
+   Bandeau d'installation, marche à suivre, avis de mise à jour.
+   Trois surfaces qui ne doivent jamais se marcher dessus : elles se
+   rangent toutes en bas, et une seule paraît à la fois.
+   ═══════════════════════════════════════════════════════════════ */
+
+.app-bandeau {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 200; width: min(30rem, calc(100vw - 1.6rem));
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.85rem 0.95rem;
+  background: rgba(11, 11, 17, 0.96);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border: 1px solid var(--line-strong); border-radius: 14px;
+  box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.9);
+  animation: appMonte 0.42s var(--ease-out);
+}
+@keyframes appMonte { from { opacity: 0; transform: translate(-50%, 18px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.app-bandeau-ico { border-radius: 10px; flex: none; }
+.app-bandeau-mots { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.app-bandeau-mots b { font-size: 0.9rem; color: var(--paper); font-weight: 400; }
+.app-bandeau-mots span { font-size: 0.78rem; color: var(--ash); line-height: 1.4; }
+.app-bandeau-oui { flex: none; white-space: nowrap; }
+.app-bandeau-non {
+  flex: none; width: 34px; height: 34px; display: grid; place-items: center;
+  background: none; border: 0; color: var(--dust); font-size: 0.85rem; cursor: pointer;
+}
+.app-bandeau-non:hover { color: var(--bone); }
+
+/* Sous 420 px, le bandeau se met sur deux lignes : quatre éléments
+   côte à côte y comprimeraient le bouton jusqu'à l'illisible. */
+@media (max-width: 420px) {
+  .app-bandeau { flex-wrap: wrap; }
+  .app-bandeau-mots { flex: 1 1 calc(100% - 5.2rem); }
+  .app-bandeau-oui { flex: 1 1 100%; order: 3; min-height: 46px; }
+}
+
+/* ─── La marche à suivre ─── */
+.app-marche {
+  position: fixed; inset: 0; z-index: 210;
+  display: grid; place-items: center; padding: 1.2rem;
+  background: rgba(4, 4, 7, 0.86);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  animation: appParait 0.22s ease;
+}
+@keyframes appParait { from { opacity: 0; } to { opacity: 1; } }
+.app-marche-boite {
+  position: relative; width: min(26rem, 100%); max-height: 86vh; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg); padding: 1.8rem 1.5rem 1.5rem;
+}
+.app-marche-fermer {
+  position: absolute; top: 0.7rem; right: 0.7rem;
+  width: 44px; height: 44px; display: grid; place-items: center;
+  background: none; border: 0; color: var(--ash); font-size: 0.9rem; cursor: pointer;
+}
+.app-marche-sur {
+  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.5rem;
+}
+.app-marche-titre {
+  font-family: var(--ff-d); font-weight: 300; font-size: 1.6rem;
+  color: var(--paper); margin: 0 0 1.4rem; line-height: 1.15;
+}
+.app-marche-titre em { font-style: italic; color: var(--or); }
+.app-marche-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.1rem; }
+.app-marche-liste li { display: flex; gap: 0.9rem; align-items: flex-start; }
+.app-marche-liste li > span:last-child {
+  font-size: 0.95rem; line-height: 1.6; color: var(--bone); padding-top: 0.35rem;
+}
+.app-marche-liste b { color: var(--paper); font-weight: 400; }
+.app-marche-n {
+  flex: none; width: 30px; height: 30px; display: grid; place-items: center;
+  border: 1px solid var(--line); border-radius: 50%;
+  font-family: var(--ff-m); font-size: 0.62rem; color: var(--or);
+}
+/* Le glyphe du bouton de partage, ou celui du menu : les gens
+   cherchent un dessin, pas un mot. */
+.app-ico {
+  display: inline-grid; place-items: center;
+  width: 30px; height: 30px; margin-top: 0.35rem;
+  border: 1px solid var(--line-soft); border-radius: 6px;
+  color: var(--or); font-size: 0.95rem;
+}
+.app-marche-note {
+  margin: 1.5rem 0 0; padding-top: 1.1rem; border-top: 1px solid var(--line-soft);
+  font-size: 0.82rem; line-height: 1.65; color: var(--ash);
+}
+
+/* ─── L'avis de mise à jour ───
+   Il ne s'impose pas en pleine lecture : il attend, en bas, et
+   n'interrompt rien. */
+.app-maj {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 205; width: min(26rem, calc(100vw - 1.6rem));
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.7rem 0.8rem;
+  background: rgba(11, 11, 17, 0.96);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: 1px solid var(--line); border-radius: 12px;
+}
+.app-maj span { flex: 1; min-width: 0; font-size: 0.82rem; color: var(--bone); line-height: 1.4; }
+.app-maj-plus-tard {
+  flex: none; width: 32px; height: 32px; display: grid; place-items: center;
+  background: none; border: 0; color: var(--dust); cursor: pointer; font-size: 0.8rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-bandeau, .app-marche { animation: none; }
+}
