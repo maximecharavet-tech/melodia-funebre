@@ -60,7 +60,7 @@ const FAQ = [
     a: "Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain." }
 ];
 
-const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae', 'Rock', 'Ballade rock', 'Funk'];
+const STYLES = ['Chanson française', 'Folk acoustique', 'Piano classique', 'Jazz doux', 'Bossa nova', 'Gospel', 'Variété douce', 'Musique du monde', 'Polyphonie corse', 'Celtique', 'Klezmer', 'Bélé antillais', 'Reggae', 'Rock', 'Ballade rock', 'Funk', 'R&B'];
 
 /* La vitrine des réalisations. Miroir de assets/data/content.json, qui fait
    foi : build.js reprend le contenu publié par-dessus ces valeurs. Le

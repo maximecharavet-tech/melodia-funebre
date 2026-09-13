@@ -215,6 +215,18 @@
       "brief": "joyeux · bruyant · généreux",
       "lieu": "Marseille",
       "lyrics": "Ne pleurez pas, mettez la musique plus fort\nJ'ai encore un pas de danse à vous apprendre"
+    },
+    {
+      "id": "demo-19",
+      "title": "Ta lumière reste",
+      "audio": "audio/ta-lumiere-reste.mp3",
+      "style": "R&B",
+      "who": "",
+      "story": "",
+      "brief": "",
+      "lyrics": "",
+      "lieu": "",
+      "visible": true
     }
   ],
   "offers": [
