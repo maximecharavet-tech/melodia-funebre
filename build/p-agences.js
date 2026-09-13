@@ -220,6 +220,17 @@ ${P.faq(FAQ_B2B)}
         <h2 class="h-xl">Un QR code pour<br>retrouver <em>son histoire.</em></h2>
         <p class="lead" style="margin:1.6rem auto 0;max-width:42rem;">Nous fournissons le fichier de gravure, en vectoriel et au format de la plaque. Votre agence choisit le support et le réalise.</p>
       </div>
+      <figure class="guide-photo reveal" style="margin-bottom:2.4rem;">
+        <picture>
+          <source type="image/webp" srcset="assets/img/plaque-qr-700.webp 700w, assets/img/plaque-qr-1100.webp 1100w" sizes="(max-width: 760px) 92vw, 560px">
+          <img src="assets/img/plaque-qr-700.jpg"
+               srcset="assets/img/plaque-qr-700.jpg 700w, assets/img/plaque-qr-1100.jpg 1100w"
+               sizes="(max-width: 760px) 92vw, 560px"
+               width="700" height="971" loading="lazy" decoding="async"
+               alt="Plaque de granit noir gravée d'un QR code, posée sur une sépulture entre une bougie et des lys blancs.">
+        </picture>
+        <figcaption>Le fichier de gravure est fourni en vectoriel, aux dimensions de la plaque.</figcaption>
+      </figure>
       <div class="supports">
         <div class="support reveal"><b>Plaque commémorative</b><span>Granit, laiton ou inox, posée près de la sépulture.</span></div>
         <div class="support reveal"><b>Carte souvenir</b><span>Remise aux proches le jour de la cérémonie.</span></div>
