@@ -113,6 +113,9 @@ module.exports = {
     </div>
   </section>
 
+${P.chaineQR({ clair: false })}
+
+
   <!-- ═══ COMMENT ÇA MARCHE ═══ -->
   <section class="section">
     <div class="wrap-tight">

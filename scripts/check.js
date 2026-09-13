@@ -97,6 +97,26 @@ try {
   }
 } catch (e) { console.error('  vignettes de partage : ' + e.message); ok = false; }
 
+/* Le QR de démonstration doit être là, et être un vrai QR.
+   Il est encodé à la génération ; la première fois, « fs » n'était pas
+   importé dans parts.js, le bloc sortait vide et un catch muet ne
+   disait rien. Une page qui invite à scanner un code absent est pire
+   que pas de section du tout. */
+{
+  const porteuses = ['index.html', 'professionnels.html', 'qr-code-memorial.html'].filter((f) => fs.existsSync(f));
+  const sans = porteuses.filter((f) => {
+    const h = fs.readFileSync(f, 'utf8');
+    const m = h.match(/<div class="chaine-qr">([\s\S]*?)<\/div>/);
+    return !m || !/<path[^>]+d="M/.test(m[1]);
+  });
+  if (sans.length) {
+    console.error('  QR de démonstration absent ou vide : ' + sans.join(', '));
+    ok = false;
+  } else if (porteuses.length) {
+    console.log(`  ok   QR de démonstration présent sur ${porteuses.length} pages`);
+  }
+}
+
 /* Le service worker doit précharger de quoi afficher une page.
    Sa liste est moissonnée dans index.html : le jour où les chemins
    sont passés en absolu, la moisson n'a plus rien trouvé et le site

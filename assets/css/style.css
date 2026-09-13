@@ -4748,3 +4748,107 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 .lead-fort em { font-style: italic; color: var(--or); }
 @media (max-width: 640px) { .lead-fort { max-width: none; } }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA CHAÎNE DU SOUVENIR — plaque, code, page, musique
+
+   C'est la seule chose que fait Melodia que personne d'autre ne fait,
+   et elle était réduite à une ligne de tarif. Elle se montre ici
+   plutôt qu'elle ne se raconte : quatre maillons reliés, et un QR
+   qu'on peut vraiment scanner depuis l'écran.
+   ═══════════════════════════════════════════════════════════════ */
+
+.chaine-fil {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.chaine-maillon {
+  position: relative;
+  padding: 1.8rem 1.4rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: var(--ink-2);
+  transition-delay: var(--d, 0s);
+}
+
+/* La flèche qui relie deux maillons. Elle vit sur le maillon de
+   gauche et sort dans l'intervalle : pas d'élément vide à compter
+   pour un lecteur d'écran, et rien à repositionner quand la grille
+   change de colonnes. */
+.chaine-maillon::after {
+  content: '';
+  position: absolute; top: 50%; right: -1rem;
+  width: 1rem; height: 1px;
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.5), rgba(201, 168, 76, 0.15));
+}
+.chaine-maillon:last-child::after { display: none; }
+
+.chaine-ico {
+  display: grid; place-items: center;
+  width: 46px; height: 46px;
+  border: 1px solid var(--line-strong); border-radius: 50%;
+  color: var(--or);
+  background: radial-gradient(circle at 32% 28%, rgba(201, 168, 76, 0.12), transparent 70%);
+}
+.chaine-ico svg { width: 21px; height: 21px; }
+
+.chaine-n {
+  display: block; margin-top: 1.1rem;
+  font-family: var(--ff-m); font-size: 0.56rem;
+  letter-spacing: 0.22em; color: var(--dust);
+}
+.chaine-t {
+  font-family: var(--ff-d); font-weight: 300; font-size: 1.3rem;
+  color: var(--ivory); margin: 0.35rem 0 0.6rem; line-height: 1.2;
+}
+.chaine-d { font-size: 0.86rem; line-height: 1.7; color: var(--ash); margin: 0; }
+
+/* La preuve : le code, et ce qu'il faut en faire. */
+.chaine-preuve {
+  display: grid; grid-template-columns: 200px minmax(0, 1fr);
+  gap: 2.2rem; align-items: center;
+  margin-top: 2.6rem; padding: 2rem;
+  border: 1px solid var(--line-soft); border-left: 2px solid var(--or);
+  border-radius: var(--radius);
+  background: var(--ink-2);
+}
+.chaine-qr {
+  background: #fff; padding: 12px; border-radius: var(--radius);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+}
+.chaine-qr svg { display: block; width: 100%; height: auto; }
+.chaine-dit h3 { margin: 0.7rem 0 0.8rem; color: var(--ivory); }
+.chaine-dit p { color: var(--bone); line-height: 1.85; max-width: 56ch; margin: 0; }
+.chaine-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.4rem; }
+
+/* Sur une section claire, les mêmes blocs sur fond d'ivoire. */
+.section-light .chaine-maillon { background: var(--ivory-2); border-color: var(--ivory-line); }
+.section-light .chaine-t { color: var(--ivory-ink); }
+.section-light .chaine-d { color: var(--ivory-soft); }
+.section-light .chaine-n { color: var(--ivory-dim); }
+.section-light .chaine-preuve { background: var(--ivory-2); border-color: var(--ivory-line); border-left-color: var(--or); }
+.section-light .chaine-dit h3 { color: var(--ivory-ink); }
+.section-light .chaine-dit p { color: var(--ivory-soft); }
+
+@media (max-width: 980px) {
+  .chaine-fil { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* En deux colonnes, la flèche du deuxième maillon pointerait dans le
+     vide : seuls les maillons impairs la gardent. */
+  .chaine-maillon:nth-child(even)::after { display: none; }
+}
+@media (max-width: 640px) {
+  .chaine-fil { grid-template-columns: minmax(0, 1fr); }
+  /* En colonne, la liaison passe au-dessous et devient verticale. */
+  .chaine-maillon::after {
+    top: auto; bottom: -1rem; right: auto; left: 2.1rem;
+    width: 1px; height: 1rem;
+    background: linear-gradient(180deg, rgba(201, 168, 76, 0.5), rgba(201, 168, 76, 0.15));
+  }
+  .chaine-maillon:nth-child(even)::after { display: block; }
+  .chaine-maillon:last-child::after { display: none; }
+  .chaine-preuve { grid-template-columns: minmax(0, 1fr); padding: 1.4rem; }
+  .chaine-qr { max-width: 220px; margin-inline: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .chaine-maillon { transition-delay: 0s; } }

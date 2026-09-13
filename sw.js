@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = 'd396e2fee3';
+const VERSION = '598b3378c9';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -62,7 +62,7 @@ const PRECHARGE = [
   "/404",
   "/assets/img/icons/icon-192.png?v=7fe48436",
   "/assets/img/icons/icon-180.png?v=77f4ddbf",
-  "/assets/css/style.css?v=fed33b26",
+  "/assets/css/style.css?v=e25b70a1",
   "/assets/img/intro-logo.jpg?v=1a9516a8",
   "/assets/img/intro-melodia.mp4?v=488159e4",
   "/assets/img/logo-melodia.jpg?v=c9f03ed0",

@@ -578,6 +578,8 @@ const guide5 = guide({
   h1texte: "Un QR code sur une sépulture",
   chapeau: "Des plaques gravées d'un code apparaissent dans les cimetières français. On le scanne avec un téléphone, et une page s'ouvre : un portrait, des dates, parfois une musique. L'idée est simple ; ce qu'il faut vérifier avant de la sceller sur du granit l'est moins.",
   corps: `
+${P.chaineQR()}
+
   <section class="section-sm" style="padding-top:2.6rem;">
     <div class="wrap">
       <!-- La plaque réelle, photographiée sur une sépulture. Le visuel
