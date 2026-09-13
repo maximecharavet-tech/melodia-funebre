@@ -29,7 +29,12 @@ module.exports = {
       <!-- Ce titre est écrit pour Google autant que pour le lecteur :
            c'est la requête qu'un dirigeant tape, mot pour mot. -->
       <h1 class="h-hero reveal in reveal-d1">Solution d'hommage musical<br><em>pour les pompes funèbres.</em></h1>
-      <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Proposez à vos familles un service qu'aucune agence voisine n'offre : une œuvre musicale composée pour leur défunt, livrée en vingt-quatre heures, avec sa page hommage et son QR code. Vous présentez, nous composons, vous conservez 60 %.</p>
+      <!-- La promesse tient en une phrase, et c'est celle-là : ce que
+           vit la famille, pas ce que gagne l'agence. La marge vient
+           après — elle ne fait signer personne qui n'a pas d'abord
+           compris ce qu'il va offrir. -->
+      <p class="lead-fort reveal in reveal-d2" style="margin-top:1.8rem;">Une nouvelle expérience d'hommage<br><em>pour les familles que vous accompagnez.</em></p>
+      <p class="lead reveal in reveal-d2" style="margin-top:1.4rem;">Une œuvre musicale composée pour leur défunt, à partir de ce qu'elles racontent de lui. Livrée en vingt-quatre heures, diffusée en cérémonie, prolongée par une page de souvenir et son QR code. Vous présentez, nous composons, vous conservez 60 %.</p>
       <div class="hero-actions reveal in reveal-d3" style="margin-top:2.4rem;">
         <a href="#partenariat" class="btn btn-gold btn-lg">Organiser une démonstration</a>
         <a href="/exemple" class="btn btn-outline btn-lg">Voir un hommage</a>
@@ -89,21 +94,22 @@ module.exports = {
     </div>
   </section>
 
-  <!-- ═══ BÉNÉFICES ═══ -->
+  <!-- ═══ POURQUOI PROPOSER MELODIA ═══ -->
   <section class="section section-light">
     <div class="wrap">
       <div class="center reveal" style="margin-bottom:3rem;">
-        <div class="eyebrow">Pourquoi Melodia</div>
-        <h2 class="h-xl">Ce que vous y <em>gagnez.</em></h2>
+        <div class="eyebrow">Sept raisons, une seule question</div>
+        <h2 class="h-xl">Pourquoi votre agence devrait<br>proposer <em>Melodia Funèbre</em> ?</h2>
       </div>
       <div class="grid-3">
-        <div class="card card-lift reveal"><div class="card-icon">${ICON.euro}</div><h3 class="h-lg">Soixante pour cent de marge</h3><p>Sur chaque hommage, vous conservez 60 % du montant. Sur une offre Prestige, cela représente 179 € nets — sans stock, sans risque, sans effort technique.</p></div>
-        <div class="card card-lift reveal"><div class="card-icon">${ICON.clock}</div><h3 class="h-lg">Aucun effort opérationnel</h3><p>Vous présentez, la famille décide. Entretien, écriture, composition, livraison : tout est pris en charge. Vous n'avez rien à produire ni à installer.</p></div>
-        <div class="card card-lift reveal"><div class="card-icon">${ICON.users}</div><h3 class="h-lg">Une différenciation réelle</h3><p>Quand trois agences se partagent la même ville, celle qui propose un hommage inoubliable devient celle qu'on recommande à la sortie de la cérémonie.</p></div>
-        <div class="card card-lift reveal"><div class="card-icon">${ICON.shield}</div><h3 class="h-lg">Zéro droit SACEM</h3><p>Chaque œuvre est originale et cédée avec ses droits d'usage. Pas de déclaration, pas de redevance de diffusion, aucune démarche administrative pour vous.</p></div>
-        <div class="card card-lift reveal"><div class="card-icon">${ICON.gift}</div><h3 class="h-lg">Première composition offerte</h3><p>Nous composons gratuitement un hommage pour votre prochaine famille. Vous le présentez. Si cela touche, on continue — sinon, vous n'avez rien perdu.</p></div>
-        <div class="card card-lift reveal"><div class="card-icon">${ICON.phone}</div><h3 class="h-lg">Un interlocuteur unique</h3><p>Vous parlez au fondateur. Réponse sous deux heures ouvrées, urgences prioritaires, aucune plateforme impersonnelle entre vous et nous.</p></div>
-      </div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.users}</div><h3 class="h-lg">Différenciation</h3><p>Trois agences se partagent la même ville et le même catalogue de cercueils. Celle qui fait entendre une chanson écrite pour le défunt devient celle qu'on recommande à la sortie. Nous limitons volontairement le nombre de partenaires par bassin de population, pour que l'avantage reste un avantage.</p></div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.heart}</div><h3 class="h-lg">Une expérience émotionnelle</h3><p>Aux obsèques, la musique n'a presque jamais connu le défunt. Un Ave Maria pour une grand-mère qui ne chantait qu'en cuisine. Ici, la salle entend son prénom, son métier, ses manies. C'est le seul moment de la cérémonie que les familles n'avaient pas pu rendre personnel.</p></div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.clock}</div><h3 class="h-lg">Aucun travail de production</h3><p>Vous présentez, nous produisons. Entretien, écriture, composition, mixage, relecture humaine, livraison : tout est de notre côté. Rien à installer, aucune compétence musicale requise, et aucune démarche SACEM — chaque œuvre est originale et cédée avec ses droits d'usage.</p></div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.ecran}</div><h3 class="h-lg">Une solution digitale</h3><p>Un espace partenaire, pas un classeur. Vous saisissez le brief en trois minutes, vous suivez l'avancement, vous faites écouter le catalogue en rendez-vous et vous retrouvez votre récapitulatif de fin de mois. Rien à installer : cela s'ouvre dans le navigateur, y compris sur le téléphone du conseiller.</p></div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.qr}</div><h3 class="h-lg">Le QR code</h3><p>L'hommage ne s'arrête pas au jour de la cérémonie. Un code à faire graver sur la plaque ou le monument ouvre une page où l'œuvre se joue, avec les mots de la famille et ses photos. Un petit-enfant qui passera au cimetière dans quinze ans entendra la chanson de son grand-père.</p></div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.phone}</div><h3 class="h-lg">L'accompagnement de la famille</h3><p>Cinq questions, cinq minutes : nous menons l'entretien, ou vous le menez vous-même. La famille garde ensuite son espace, où elle écoute, télécharge, ajoute ses photos et publie sa page quand elle le décide. Si l'œuvre ne touche pas, elle est reprise à nos frais.</p></div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.euro}</div><h3 class="h-lg">Un vrai partenariat</h3><p>Vous conservez 60 % du montant payé par la famille, soit 179 € nets sur une offre Prestige. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée. La première composition est offerte, et vous parlez au fondateur — pas à une plateforme.</p></div>
+      </div>      </div>
     </div>
   </section>
 
