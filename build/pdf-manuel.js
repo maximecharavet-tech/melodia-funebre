@@ -61,6 +61,10 @@ const FLUX = `
   p { orphans: 3; widows: 3; }
 
   .bloc { break-inside: avoid; margin-bottom: 5mm; }
+  /* Une citation de fin de section, seule sur sa feuille, gaspille une
+     page et perd son effet : elle conclut ce qui précède, elle reste
+     donc avec lui. */
+  .conclut { break-before: avoid; }
   .rang { display: grid; grid-template-columns: 1fr auto; gap: 4mm; align-items: baseline;
           padding: 2.6mm 0; border-bottom: 1px solid #e8e2d2; break-inside: avoid; }
   .rang b { font-weight: 400; font-size: 9.2pt; color: #3a362c; }
@@ -304,7 +308,7 @@ function modeles(V) {
       }).join('')}
     </div>
 
-    <div class="bloc carte ligne-or" style="margin-top:8mm;border:0;">
+    <div class="bloc carte ligne-or conclut" style="margin-top:8mm;border:0;">
       <p class="dire">Un courriel de prospection se lit en six secondes.
       S’il faut faire défiler, il ne sera pas lu.</p>
       <p style="margin-top:3mm;font-size:8.8pt;">Objet court, trois lignes, un seul lien,
@@ -372,4 +376,16 @@ ${derniere()}
 </body></html>`;
 }
 
-module.exports = { html, fichier: 'melodia-manuel-de-vente.pdf' };
+/* Les titres que la relecture surveille : voir scripts/relire-pdf.js.
+   Ils sont exportés d'ici pour n'être écrits qu'une fois. */
+const TITRES = [
+  'Les chiffres à savoir par cœur.', 'Les trois offres', 'Les options, que l’on oublie de proposer',
+  'À qui l’on parle, et dans quel ordre.', 'La séquence, agence par agence', 'Le rythme',
+  'Les signaux d’achat', 'Ce qu’on ne fait jamais', 'Le script, minute par minute.',
+  'Les cinq questions du brief', 'Les douze objections et ce qu’on répond.',
+  'Les objections d’un célébrant.', 'Ce qui se dit, et ce qui ne se dit pas.',
+  'Six modèles, à personnaliser en trois mots.', 'Ce métier n’est pas un métier de volume.',
+  'Et le marbrier ?', 'La famille garde la main', 'Une phrase suffit, en rendez-vous'
+];
+
+module.exports = { html, fichier: 'melodia-manuel-de-vente.pdf', TITRES };

@@ -378,7 +378,7 @@ function affiche() {
         </p>
       </div>
 
-      <div class="pied"><span>Melodia Funèbre</span><span>11</span></div>
+      <div class="pied"><span>Melodia Funèbre</span><span>12</span></div>
     </div>
   </section>`;
 }

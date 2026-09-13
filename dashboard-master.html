@@ -73,6 +73,7 @@
 <script src="assets/js/auth.js?v=761e0943"></script>
 <script src="assets/js/courrier.js?v=7feee7d2"></script>
 <script src="assets/js/main.js?v=72d6b7b0"></script>
+<script src="assets/js/commercial-contenu.js?v=3593a3cb"></script>
 <script src="assets/js/livraison.js?v=8816d59c"></script>
 <script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
 <script src="assets/js/proprietaire.js?v=04452e6f"></script>
@@ -585,46 +586,98 @@ function vFinances() {
 }
 
 function vProspection() {
-  var funnel = [['Agences ciblées',100],['Contactées',64],['Rendez-vous',23],['Démonstration',11],['Signées',6]];
-  return '<div class="panel doc-panneau" style="margin-bottom:1.4rem;">' +
-      '<div class="panel-head"><div><div class="panel-title">Les <em>documents</em></div>' +
-      '<div class="panel-sub">Fabriqués par « npm run pdf », depuis le contenu du site</div></div></div>' +
-      '<div class="doc-lot">' +
-        '<a class="doc-carte doc-phare" href="/documents/melodia-brochure-partenaire.pdf" download>' +
-          '<span class="doc-genre">PDF · 13 pages</span>' +
-          '<span class="doc-nom">Brochure partenaire</span>' +
-          '<span class="doc-dit">Ce que reçoit une agence : la marge, le calcul annuel, le déroulé, ' +
-            'la page hommage, et son affiche de vitrine.</span>' +
-          '<span class="doc-act">Télécharger</span></a>' +
-        '<a class="doc-carte" href="/documents/melodia-manuel-de-vente.pdf" download>' +
-          '<span class="doc-genre">PDF · 18 pages · interne</span>' +
-          '<span class="doc-nom">Manuel de vente</span>' +
-          '<span class="doc-dit">Ce que lit un collaborateur : script, objections, prospection, modèles. ' +
-            'Ne se remet jamais à une agence.</span>' +
-          '<span class="doc-act">Télécharger</span></a>' +
-      '</div>' +
+  /* Cet écran affichait trois choses inventées, restes d'une maquette :
+     un entonnoir aux chiffres décoratifs (100 → 64 → 23 → 11 → 6), une
+     cadence de « huit touches sur 21 jours » qui contredisait le plan
+     réel de la console commerciale, et un argument d'ouverture citant
+     une famille qui n'a jamais écrit. Les trois sont remplacés par ce
+     qui existe vraiment : la table des prospects, PLAN.sequence, et le
+     premier paragraphe du modèle « Premier contact ». */
+  var V = window.MELODIA_VENTE || {};
+  var seq = (V.PLAN && V.PLAN.sequence) || [];
+
+  setTimeout(remplirEntonnoir, 0);
+
+  return '<div class="panel" id="pro-entonnoir">' +
+      '<div class="panel-head"><div><div class="panel-title">Entonnoir de <em>conversion</em></div>' +
+      '<div class="panel-sub">Lecture des fiches de prospection</div></div></div>' +
+      '<p class="panel-note">Chargement…</p>' +
     '</div>' +
-    '<div class="panel"><div class="panel-head"><div><div class="panel-title">Entonnoir de <em>conversion</em></div><div class="panel-sub">Objectif 100 agences</div></div></div>' +
-    funnel.map(function(f){
-      return '<div style="margin-bottom:1.1rem;"><div style="display:flex; justify-content:space-between; font-family:var(--ff-m); font-size:0.58rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--bone); margin-bottom:0.5rem;"><span>' + f[0] + '</span><span style="color:var(--or);">' + f[1] + '</span></div>' +
-      '<div style="height:3px; background:var(--ink-3);"><div style="height:100%; width:' + f[1] + '%; background:var(--or);"></div></div></div>';
-    }).join('') + '</div>' +
     '<div class="grid-2">' +
-    '<div class="panel"><div class="panel-title">Cadence de <em>contact</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Huit touches sur 21 jours</div>' +
-    '<table class="tbl"><tbody>' +
-    '<tr><td style="color:var(--or);">J+0</td><td>Premier email</td></tr>' +
-    '<tr><td style="color:var(--or);">J+3</td><td>Visite du profil LinkedIn</td></tr>' +
-    '<tr><td style="color:var(--or);">J+5</td><td>Relance courte</td></tr>' +
-    '<tr><td style="color:var(--or);">J+7</td><td>Demande de connexion</td></tr>' +
-    '<tr><td style="color:var(--or);">J+10</td><td>Offre de démonstration gratuite</td></tr>' +
-    '<tr><td style="color:var(--or);">J+14</td><td>Appel téléphonique</td></tr>' +
-    '<tr><td style="color:var(--or);">J+18</td><td>Message LinkedIn</td></tr>' +
-    '<tr><td style="color:var(--or);">J+21</td><td>Email de clôture</td></tr>' +
-    '</tbody></table></div>' +
-    '<div class="panel"><div class="panel-title">Argument <em>d\'ouverture</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Premier contact</div>' +
-    '<p style="font-family:var(--ff-d); font-style:italic; font-size:1.1rem; line-height:1.75; color:var(--bone);">« Une famille de votre ville écrivait récemment que la musique de la cérémonie n\'avait rien à voir avec son père. Nous composons une œuvre originale pour chaque défunt, en 24 heures, sans droit SACEM — avec 60 % de marge pour votre agence. Souhaitez-vous écouter ? »</p>' +
-    '<div style="margin-top:1.6rem; font-family:var(--ff-m); font-size:0.56rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--or-patina);">Taux de réponse visé : 10 à 15 %</div></div>' +
+    '<div class="panel"><div class="panel-title">La <em>séquence</em></div>' +
+      '<div class="panel-sub" style="margin-bottom:1.4rem;">' +
+        (seq.length ? seq.length + ' contacts, du premier courriel à la réactivation' : 'Plan de contact') + '</div>' +
+      (seq.length
+        ? '<table class="tbl"><tbody>' + seq.map(function (e) {
+            return '<tr><td style="color:var(--or);white-space:nowrap;">' + esc(e.jour) + '</td>' +
+              '<td><b style="color:var(--paper);">' + esc(e.action) + '</b><br>' +
+              '<span style="color:var(--ash);font-size:.84rem;">' + esc(e.detail) + '</span></td></tr>';
+          }).join('') + '</tbody></table>' +
+          '<p class="panel-note" style="margin-top:1rem;">C\'est la séquence que suivent vos collaborateurs : ' +
+          'elle est écrite une seule fois, dans leur console, et relue ici.</p>'
+        : '<p class="panel-note">Le contenu commercial ne s\'est pas chargé.</p>') +
+    '</div>' +
+    '<div class="panel"><div class="panel-title">L\'<em>ouverture</em></div>' +
+      '<div class="panel-sub" style="margin-bottom:1.4rem;">Premier paragraphe du modèle « Premier contact »</div>' +
+      '<p style="font-family:var(--ff-d); font-style:italic; font-size:1.1rem; line-height:1.75; color:var(--bone);">' +
+        '« Aux obsèques, la musique n\'a presque jamais connu le défunt. Un Ave Maria pour une ' +
+        'grand-mère qui ne chantait qu\'en cuisine. Une valse pour un homme qui sifflait dans ses ' +
+        'champs. C\'est le seul moment de la cérémonie que les familles n\'ont pas pu rendre personnel. »</p>' +
+      '<p class="panel-note" style="margin-top:1.4rem;">Le courriel complet, avec l\'objet et la marge ' +
+      'chiffrée, est dans la console du collaborateur — et dans le manuel de vente.</p>' +
+    '</div>' +
     '</div>';
+}
+
+/* L'entonnoir, lu dans la table des prospects. Chaque étage contient
+   le suivant : une fiche « partenaire » a forcément été contactée. Un
+   étage qui ne serait pas un sur-ensemble du suivant donnerait un
+   entonnoir qui remonte, ce qui ne veut rien dire. */
+var ENTONNOIR = [
+  ['Fiches au portefeuille', null],
+  ['Contactées',   ['contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'refus']],
+  ['Intéressées',  ['interesse', 'demo_offerte', 'partenaire']],
+  ['Démo offerte', ['demo_offerte', 'partenaire']],
+  ['Partenaires',  ['partenaire']]
+];
+
+async function remplirEntonnoir() {
+  var hote = document.getElementById('pro-entonnoir');
+  if (!hote) return;
+  var fiches = [];
+  try { fiches = (await window.MelodiaProspects.all()) || []; }
+  catch (e) {
+    hote.querySelector('.panel-note').textContent = 'Les fiches n\'ont pas pu être lues : ' + e.message;
+    return;
+  }
+
+  var tete = '<div class="panel-head"><div><div class="panel-title">Entonnoir de <em>conversion</em></div>' +
+    '<div class="panel-sub">' + fiches.length + ' fiche' + (fiches.length > 1 ? 's' : '') + ' de prospection</div></div></div>';
+
+  if (!fiches.length) {
+    /* Zéro fiche n'est pas « zéro pour cent » : c'est un entonnoir qui
+       n'a pas encore commencé, et il vaut mieux le dire que dessiner
+       cinq barres vides. */
+    hote.innerHTML = tete +
+      '<p class="panel-note">Aucune fiche de prospection pour l\'instant. ' +
+      'L\'entonnoir se remplit tout seul dès que vos collaborateurs saisissent leurs premières agences.</p>';
+    return;
+  }
+
+  var base = fiches.length;
+  hote.innerHTML = tete + ENTONNOIR.map(function (e) {
+    var n = e[1] ? fiches.filter(function (p) { return e[1].indexOf(p.statut) >= 0; }).length : base;
+    var part = base ? Math.round(n / base * 100) : 0;
+    return '<div style="margin-bottom:1.1rem;">' +
+      '<div style="display:flex; justify-content:space-between; font-family:var(--ff-m); font-size:0.58rem; ' +
+        'letter-spacing:0.16em; text-transform:uppercase; color:var(--bone); margin-bottom:0.5rem;">' +
+        '<span>' + e[0] + '</span>' +
+        '<span style="color:var(--or);">' + n + (e[1] ? ' · ' + part + ' %' : '') + '</span></div>' +
+      '<div style="height:3px; background:var(--ink-3);">' +
+        '<div style="height:100%; width:' + part + '%; background:var(--or);"></div></div></div>';
+  }).join('') +
+  '<p class="panel-note" style="margin-top:1.2rem;">Chiffres lus dans vos fiches, à l\'instant. ' +
+  'Une fiche sans suite reste comptée comme contactée : elle l\'a été.</p>';
 }
 
 /* Le mode propriétaire vit dans son propre module : la console est trop
