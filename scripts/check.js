@@ -62,6 +62,22 @@ try {
   }
 } catch (e) { /* l'illisibilité est déjà signalée plus haut */ }
 
+/* Les deux documents imprimés sont servis en statique et référencés
+   par les consoles. Un lien qui télécharge une page 404 se voit à
+   l'ouverture du fichier, jamais avant — d'où ce contrôle, qui vérifie
+   aussi que le PDF n'est pas un fichier vide de zéro octet. */
+for (const [f, mini] of [['documents/melodia-brochure-partenaire.pdf', 400],
+                         ['documents/melodia-manuel-de-vente.pdf', 200]]) {
+  if (!fs.existsSync(f)) {
+    console.error(`  MANQUE ${f} — relancez « npm run pdf »`);
+    ok = false;
+  } else {
+    const ko = Math.round(fs.statSync(f).size / 1024);
+    if (ko < mini) { console.error(`  SUSPECT ${f} ne pèse que ${ko} Ko`); ok = false; }
+    else console.log(`  ok   ${f} (${ko} Ko)`);
+  }
+}
+
 /* Aucune page ne doit partir avec un lien mort vers une page du site. */
 const pages = files.filter(f => f.endsWith('.html'));
 const internes = new Set(pages);
