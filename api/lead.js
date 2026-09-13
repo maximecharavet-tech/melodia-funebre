@@ -19,7 +19,10 @@ const TITRES = {
   rappel: 'Demande de rappel',
   commande: 'Nouvelle commande',
   contact: 'Message depuis le site',
-  prospect: 'Réponse de prospection'
+  prospect: 'Réponse de prospection',
+  /* La demande d'une pompe funèbre : c'est le courriel qu'il ne faut
+     pas manquer, d'où son titre explicite en objet. */
+  partenariat: 'DEMANDE DE PARTENARIAT'
 };
 
 function ligne(cle, valeur) {

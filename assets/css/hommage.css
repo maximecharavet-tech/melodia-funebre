@@ -211,3 +211,102 @@
   .hom-barre span { transition: none; }
   .hom-jouer:active { transform: none; }
 }
+
+/* ─── Le bandeau de démonstration ───
+   Il ne se referme pas. Une page qui ressemble à celle d'un défunt
+   doit dire qu'elle n'en est pas une, en permanence. */
+.hom-demo {
+  margin-bottom: 1.4rem; padding: 1rem 1.1rem;
+  border: 1px solid var(--line-strong); border-radius: 3px;
+  background: var(--or-soft);
+}
+.hom-demo-pastille {
+  display: inline-block; margin-bottom: 0.55rem;
+  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--or);
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+}
+.hom-demo p { margin: 0; font-size: 0.88rem; line-height: 1.6; color: var(--bone); }
+.hom-demo-cta {
+  display: inline-block; margin-top: 0.75rem;
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--or-bright);
+  text-underline-offset: 4px;
+}
+
+/* ─── La forme d'onde ───
+   Les barres sont calculées depuis le fichier réel. Celles déjà
+   passées prennent l'or ; c'est un dégradé arrêté net sur la position,
+   pas soixante-quatre éléments repeints à chaque image. */
+.hom-onde {
+  display: flex; align-items: center; justify-content: center;
+  gap: 2px; height: 52px; margin-bottom: 1.1rem;
+  --avance: 0%;
+}
+.hom-onde:empty { display: none; }
+.hom-onde span {
+  flex: 1 1 0; min-width: 0; max-width: 5px;
+  border-radius: 1px;
+  background: linear-gradient(to right, var(--or) 0 var(--avance), var(--line) var(--avance) 100%);
+  background-attachment: fixed;
+  transition: height 0.4s var(--ease);
+}
+@media (prefers-reduced-motion: reduce) { .hom-onde span { transition: none; } }
+
+/* ─── Paroles et code, repliés ───
+   Sur un téléphone, quatre strophes repoussent le partage hors de
+   l'écran, et personne ne défile jusqu'en bas devant une tombe. */
+.hom-paroles, .hom-qr {
+  margin-top: 1.6rem; padding-top: 1.3rem;
+  border-top: 1px solid var(--line-soft);
+}
+.hom-paroles > summary, .hom-qr > summary {
+  cursor: pointer; list-style: none; min-height: 48px;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--or-patina);
+  -webkit-tap-highlight-color: transparent;
+}
+.hom-paroles > summary::-webkit-details-marker,
+.hom-qr > summary::-webkit-details-marker { display: none; }
+.hom-paroles > summary::after, .hom-qr > summary::after {
+  content: '▾'; font-size: 0.8rem; transition: transform 0.25s var(--ease);
+}
+.hom-paroles[open] > summary::after, .hom-qr[open] > summary::after { transform: rotate(180deg); }
+.hom-paroles-corps { padding-top: 0.9rem; text-align: center; }
+.hom-paroles-corps p {
+  font-family: var(--ff-d); font-size: 1.08rem; line-height: 1.85;
+  color: var(--silver); margin: 0 0 1.1rem;
+}
+.hom-paroles-corps p:last-child { margin-bottom: 0; }
+
+.hom-qr-corps { padding-top: 1rem; text-align: center; }
+/* Fond blanc, toujours : un code clair sur fond sombre est refusé par
+   une bonne part des lecteurs de téléphone. */
+.hom-qr-image {
+  width: min(190px, 60%); margin: 0 auto;
+  background: #fff; padding: 10px; border-radius: 3px;
+}
+.hom-qr-image svg { display: block; width: 100%; height: auto; }
+.hom-qr-note { margin: 0.8rem 0 0; font-size: 0.8rem; color: var(--ash); line-height: 1.55; }
+
+/* ─── La galerie ───
+   Deux colonnes, carrées, sans fioriture. Les visages se regardent,
+   ils ne se mettent pas en scène. */
+.hom-galerie {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem; margin-top: 1.6rem; padding-top: 1.3rem;
+  border-top: 1px solid var(--line-soft);
+}
+.hom-galerie figure { margin: 0; }
+.hom-galerie img {
+  width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+  border: 1px solid var(--line-soft); border-radius: 3px;
+  background: var(--ink-3);
+}
+.hom-galerie figcaption {
+  margin-top: 0.4rem; font-size: 0.76rem; color: var(--ash);
+  line-height: 1.45; text-align: center;
+}
+@media (min-width: 520px) { .hom-galerie { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

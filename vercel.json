@@ -12,6 +12,71 @@
   },
   "redirects": [
     {
+      "source": "/chanson-pour-defunt",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/hommage-musical",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/musique-hommage",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/chanson-funeraire",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/chanson-deces",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/musique-personnalisee-obseques",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/pompes-funebres",
+      "destination": "/professionnels",
+      "permanent": true
+    },
+    {
+      "source": "/partenaires-pompes-funebres",
+      "destination": "/professionnels",
+      "permanent": true
+    },
+    {
+      "source": "/hommage-musical-pompes-funebres",
+      "destination": "/professionnels",
+      "permanent": true
+    },
+    {
+      "source": "/exemple",
+      "destination": "/m/demo",
+      "permanent": false
+    },
+    {
+      "source": "/voir-un-hommage",
+      "destination": "/m/demo",
+      "permanent": false
+    },
+    {
+      "source": "/agences",
+      "destination": "/professionnels",
+      "permanent": true
+    },
+    {
+      "source": "/partenaires",
+      "destination": "/professionnels",
+      "permanent": false
+    },
+    {
       "source": "/admin",
       "destination": "/compte",
       "permanent": true

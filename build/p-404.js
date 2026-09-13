@@ -24,7 +24,7 @@ module.exports = {
           <a href="/offres" class="acte" style="text-align:center; padding:1.3rem .8rem;"><h3 style="font-size:1.05rem; margin:0;">Offres</h3></a>
           <a href="/demos" class="acte" style="text-align:center; padding:1.3rem .8rem;"><h3 style="font-size:1.05rem; margin:0;">Écouter</h3></a>
           <a href="/processus" class="acte" style="text-align:center; padding:1.3rem .8rem;"><h3 style="font-size:1.05rem; margin:0;">Processus</h3></a>
-          <a href="/agences" class="acte" style="text-align:center; padding:1.3rem .8rem;"><h3 style="font-size:1.05rem; margin:0;">Agences</h3></a>
+          <a href="/professionnels" class="acte" style="text-align:center; padding:1.3rem .8rem;"><h3 style="font-size:1.05rem; margin:0;">Professionnels</h3></a>
         </div>
       </div>
     </div>

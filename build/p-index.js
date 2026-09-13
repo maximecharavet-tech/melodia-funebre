@@ -29,16 +29,25 @@ module.exports = {
          l'animer trait par trait. -->
     <div class="hero-embleme" data-orn-embleme data-orn-priorite
          data-orn-alt="Melodia Funèbre" aria-hidden="true"></div>
+    <!-- Le premier écran s'adresse d'abord aux pompes funèbres : ce
+         sont elles qui rencontrent les familles, et une agence
+         partenaire vaut des dizaines de commandes. Mais la porte des
+         familles reste ouverte, en second bouton — la moitié du trafic
+         de recherche arrive en cherchant « chanson hommage », et la
+         refermer coûterait plus qu'elle ne rapporterait. -->
     <div class="hero-caption">
-      <div class="badge reveal in" style="margin-bottom:1.6rem;">Un service qui n'existait pas · Livré en 24 heures</div>
-      <h1 class="h-hero reveal in reveal-d1">Chaque vie mérite<br><em>une chanson.</em></h1>
-      <p class="lead reveal in reveal-d2">Première maison française à le faire : pour chaque personne qui s'en va, nous composons une œuvre originale — sa vie, ses gestes, sa mémoire. Elle n'existe pas avant votre appel, elle ne sera jamais vendue à quelqu'un d'autre, et elle est à vous pour toujours.</p>
+      <div class="badge reveal in" style="margin-bottom:1.6rem;">Solution dédiée aux pompes funèbres</div>
+      <h1 class="h-hero reveal in reveal-d1">Offrez une nouvelle dimension<br><em>à l'hommage funéraire.</em></h1>
+      <p class="lead reveal in reveal-d2">Melodia Funèbre crée des hommages musicaux personnalisés à partir de l'histoire, des souvenirs et de la personnalité du défunt. Une expérience émotionnelle que les familles peuvent conserver et partager.</p>
       <div class="hero-actions reveal in reveal-d3">
-        <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
-        <a href="/demos" class="btn btn-outline btn-lg">${ICON.note} Écouter {{HOMMAGES}} hommages</a>
+        <a href="/professionnels#partenariat" class="btn btn-gold btn-lg">Devenir partenaire</a>
+        <a href="/exemple" class="btn btn-outline btn-lg">${ICON.note} Découvrir l'expérience</a>
       </div>
-      <p class="reveal in reveal-d4 note" style="margin-top:1.8rem;">
-        Dès 149 € · Sans engagement · Révision jusqu'à satisfaction
+      <p class="reveal in reveal-d4 hero-jalons">
+        <span>Personnalisation</span><span>Page hommage</span><span>QR&nbsp;Code</span>
+      </p>
+      <p class="reveal in reveal-d4 note hero-note-famille">
+        Vous êtes une famille ? <a href="/offres">Commander un hommage</a> · dès 149 €, livré en 24 h
       </p>
     </div>
     <div class="hero-scroll" aria-hidden="true">Découvrir</div>
@@ -253,8 +262,8 @@ ${P.testimonials()}
           <h2 class="h-xl">Un service que vos confrères<br>ne proposent <em>pas encore.</em></h2>
           <p class="lead" style="margin-top:1.6rem;">Soixante pour cent de marge sur chaque hommage, aucun investissement, aucune charge technique. Vous présentez, la famille décide, nous composons. Votre espace partenaire suit chaque commande en temps réel.</p>
           <div class="hero-actions" style="margin-top:2rem;">
-            <a href="/agences" class="btn btn-gold">Espace agences</a>
-            <a href="/agences#calculateur" class="btn btn-outline">${ICON.euro} Simuler mes revenus</a>
+            <a href="/professionnels" class="btn btn-gold">Pour les professionnels</a>
+            <a href="/professionnels#calculateur" class="btn btn-outline">${ICON.euro} Simuler mes revenus</a>
           </div>
         </div>
         <div class="reveal reveal-d1">

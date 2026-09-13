@@ -4112,3 +4112,302 @@ body.a-ecoute { padding-bottom: 5rem; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA BASCULE PROFESSIONNELLE
+   Le site parle maintenant à deux publics. Chacun doit trouver sa
+   porte au premier regard, sans que l'autre soit repoussé.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Les trois jalons sous les boutons ───
+   Ils disent en trois mots ce que le service comporte. Des points
+   médians les séparent, comme une inscription gravée. */
+.hero-jalons {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.55rem 1.1rem; margin-top: 1.7rem;
+  font-family: var(--ff-m); font-size: 0.58rem;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--or-patina);
+}
+.hero-jalons span { position: relative; }
+.hero-jalons span + span::before {
+  content: '·'; position: absolute; left: -0.72rem; color: var(--or-deep);
+}
+
+/* La sortie des familles : présente, lisible, mais clairement en
+   second rang. Elle ne doit pas concurrencer le bouton doré. */
+.hero-note-famille { margin-top: 1.1rem; font-size: 0.86rem; }
+.hero-note-famille a {
+  color: var(--bone); text-underline-offset: 4px;
+  text-decoration-color: var(--or-deep);
+}
+.hero-note-famille a:hover { color: var(--or-bright); }
+
+/* ─── Le bouton du bandeau ─── */
+.nav-cta-pro { white-space: nowrap; }
+.nav-compte {
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ash);
+}
+.nav-compte:hover { color: var(--or-patina); }
+
+/* ─── Les réseaux, au pied ─── */
+.footer-social {
+  list-style: none; margin: 1.1rem 0 0; padding: 0;
+  display: flex; gap: 0.5rem;
+}
+.footer-social a {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--line-soft); color: var(--ash);
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.footer-social svg { width: 17px; height: 17px; display: block; }
+/* Le libellé reste pour les lecteurs d'écran : une icône seule ne dit
+   rien à qui ne la voit pas. */
+.footer-social span {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.footer-social a:hover { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
+
+/* ─── La porte des professionnels, flottante ───
+   Discrète et unique. Elle se replie en pastille sur téléphone pour
+   ne pas manger l'écran, et se range au-dessus de la barre d'actions
+   quand celle-ci est présente. */
+.pro-flottant {
+  position: fixed; right: 1.1rem; bottom: 1.1rem; z-index: 90;
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  padding: 0.7rem 1.05rem; min-height: 46px;
+  background: rgba(11, 11, 17, 0.88);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  color: var(--or); text-decoration: none;
+  font-family: var(--ff-m); font-size: 0.56rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.85);
+  transition: color var(--t-fast), border-color var(--t-fast), transform var(--t-fast) var(--ease);
+}
+.pro-flottant:hover { color: var(--or-bright); transform: translateY(-2px); }
+.pro-flottant-ico { font-size: 0.8rem; line-height: 1; }
+
+@media (max-width: 860px) {
+  /* La barre d'actions occupe déjà le bas : le bouton monte au-dessus
+     d'elle plutôt que de se poser dessus. */
+  .pro-flottant { bottom: calc(4.6rem + env(safe-area-inset-bottom, 0px)); right: 0.9rem; padding: 0.65rem 0.9rem; }
+  .pro-flottant-mot { font-size: 0.52rem; letter-spacing: 0.14em; }
+}
+@media (max-width: 420px) {
+  .pro-flottant-mot { display: none; }
+  .pro-flottant { padding: 0; width: 46px; height: 46px; justify-content: center; }
+  .pro-flottant-ico { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { .pro-flottant:hover { transform: none; } }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA SECTION PARTENARIAT
+   Les conditions à gauche, la demande à droite. Un dirigeant lit
+   d'abord ce qu'il gagne, puis remplit — jamais l'inverse.
+   ═══════════════════════════════════════════════════════════════ */
+
+.part-duo {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.6rem, 4vw, 3.4rem); align-items: start;
+}
+@media (max-width: 900px) { .part-duo { grid-template-columns: minmax(0, 1fr); } }
+
+.part-titre {
+  font-family: var(--ff-d); font-weight: 300; font-size: 1.45rem;
+  color: var(--paper); margin: 0 0 1.4rem; letter-spacing: 0.02em;
+}
+
+.part-conditions {
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.016);
+  padding: clamp(1.4rem, 3vw, 2.1rem);
+}
+.part-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.part-liste li { display: grid; gap: 0.25rem; padding-left: 1rem; border-left: 1px solid var(--line); }
+.part-liste b {
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--or); font-weight: 500;
+}
+.part-liste span { font-size: 0.92rem; line-height: 1.65; color: var(--bone); }
+
+/* Ce qui remplace un tarif affiché. Dit posément, pas comme une
+   dérobade : la raison est donnée juste au-dessus. */
+.part-note {
+  margin: 1.5rem 0 0; padding: 0.9rem 1rem;
+  background: var(--or-soft); border-left: 2px solid var(--or-patina);
+  font-size: 0.88rem; line-height: 1.6; color: var(--bone);
+}
+
+.part-supports { margin-top: 1.6rem; padding-top: 1.3rem; border-top: 1px solid var(--line-soft); }
+.part-supports ul { list-style: none; margin: 0.8rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+.part-supports li {
+  position: relative; padding-left: 1.3rem;
+  font-size: 0.9rem; line-height: 1.6; color: var(--bone);
+}
+.part-supports li::before {
+  content: '✦'; position: absolute; left: 0; top: 0.05rem;
+  color: var(--or-deep); font-size: 0.7rem;
+}
+
+/* ─── Le formulaire ─── */
+.part-form {
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(201,168,76,0.045), rgba(255,255,255,0.012));
+  padding: clamp(1.4rem, 3vw, 2.1rem);
+}
+
+/* Trois choix en pastilles plutôt qu'une liste déroulante : sur
+   téléphone, un menu déroulant demande deux gestes et cache les
+   options ; là, tout se voit et se touche d'un coup. */
+.part-choix { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.5rem; }
+.part-choix label { position: relative; }
+.part-choix input {
+  position: absolute; opacity: 0; width: 100%; height: 100%;
+  margin: 0; cursor: pointer;
+}
+.part-choix span {
+  /* Mesuré à 43 px avec « min-height: 44px » : la hauteur venait du
+     contenu, pas du minimum. Quarante-huit, qui est de toute façon la
+     vraie cible d'un pouce, et une hauteur ferme plutôt qu'un
+     plancher. */
+  display: block; min-height: 48px;
+  padding: 0.7rem 1rem; border: 1px solid var(--line-soft);
+  border-radius: 999px; background: var(--ink-2);
+  font-family: var(--ff-m); font-size: 0.58rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+  display: flex; align-items: center;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.part-choix input:checked + span { color: var(--or); border-color: var(--or); background: var(--or-soft); }
+.part-choix input:focus-visible + span { outline: 2px solid var(--or-patina); outline-offset: 2px; }
+.part-choix label:hover span { color: var(--paper); }
+
+/* Le contour rouge se lit plus vite qu'une phrase qui nomme le champ. */
+.champ-faux { border-color: var(--red) !important; }
+
+.part-rgpd {
+  margin: 1rem 0 0; font-size: 0.76rem; line-height: 1.6; color: var(--dust);
+}
+.part-rgpd a { color: var(--ash); text-underline-offset: 3px; }
+
+@media (max-width: 640px) {
+  .part-choix { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .part-choix span { border-radius: var(--radius); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LES SECTIONS DE LA PAGE PROFESSIONNELS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Pourquoi proposer ───
+   Trois colonnes sur grand écran, deux sur tablette, une au doigt.
+   Pas de carte flottante ni d'ombre portée : six objets qui lévitent
+   font vitrine de logiciel, pas maison française. */
+.pq-grille {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px; background: var(--line-soft);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+@media (max-width: 980px) { .pq-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px)  { .pq-grille { grid-template-columns: minmax(0, 1fr); } }
+
+.pq {
+  background: var(--ink); padding: clamp(1.4rem, 3vw, 2rem);
+  transition: background var(--t-mid) var(--ease);
+}
+.pq:hover { background: var(--ink-3); }
+.pq-ico {
+  display: grid; place-items: center;
+  width: 38px; height: 38px; margin-bottom: 1rem;
+  border: 1px solid var(--line); border-radius: 50%;
+  color: var(--or); font-size: 0.95rem;
+}
+.pq h3 {
+  font-family: var(--ff-d); font-weight: 400; font-size: 1.22rem;
+  color: var(--paper); margin: 0 0 0.6rem; line-height: 1.3;
+}
+.pq p { margin: 0; font-size: 0.93rem; line-height: 1.7; color: var(--ash); }
+
+/* ─── Le parcours ───
+   Un fil vertical qui relie les quatre étapes. Sur téléphone il reste
+   vertical : replier une frise en colonne casse justement ce qu'elle
+   raconte, l'ordre. */
+.parcours { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 2.2rem; }
+.parcours::before {
+  content: ''; position: absolute; left: 21px; top: 14px; bottom: 14px;
+  width: 1px; background: linear-gradient(to bottom, var(--line-strong), var(--line-soft));
+}
+@media (max-width: 640px) { .parcours::before { left: 17px; } }
+
+.parcours-e { position: relative; padding-left: 4rem; }
+@media (max-width: 640px) { .parcours-e { padding-left: 3.2rem; } }
+.parcours-n {
+  position: absolute; left: 0; top: -2px;
+  width: 43px; height: 43px; display: grid; place-items: center;
+  border: 1px solid var(--line); border-radius: 50%;
+  background: var(--ink);
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.06em; color: var(--or);
+}
+@media (max-width: 640px) { .parcours-n { width: 35px; height: 35px; font-size: 0.55rem; } }
+.parcours-e h3 {
+  font-family: var(--ff-d); font-weight: 400; font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+  color: var(--paper); margin: 0 0 0.5rem; line-height: 1.25;
+}
+.parcours-e p { margin: 0; font-size: 0.96rem; line-height: 1.75; color: var(--ash); max-width: 40rem; }
+
+/* Les étapes se posent l'une après l'autre, une seule fois. Le décalage
+   est de soixante-dix millisecondes : au-delà, on attend. */
+.parcours-e.reveal.in { animation: parcoursPose 0.6s var(--ease-out) backwards; animation-delay: calc(var(--i) * 70ms); }
+@keyframes parcoursPose { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .parcours-e.reveal.in { animation: none; } }
+
+/* ─── Les supports du code ─── */
+.supports { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
+@media (max-width: 900px) { .supports { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .supports { grid-template-columns: minmax(0, 1fr); } }
+.support {
+  padding: 1.1rem 1.2rem; border: 1px solid var(--line-soft);
+  border-radius: var(--radius); background: rgba(255,255,255,0.012);
+  display: grid; gap: 0.35rem;
+}
+.support b {
+  font-family: var(--ff-d); font-size: 1.1rem; font-weight: 400; color: var(--paper);
+}
+.support span { font-size: 0.88rem; line-height: 1.6; color: var(--ash); }
+
+/* ─── L'argument du dirigeant ─── */
+.valeur { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.valeur li {
+  padding-left: 1.1rem; border-left: 1px solid var(--line);
+  font-size: 0.98rem; line-height: 1.75; color: var(--ash);
+}
+.valeur b { color: var(--paper); font-weight: 400; }
+.valeur-note {
+  margin: 1.8rem 0 0; padding: 1rem 1.2rem;
+  background: var(--or-soft); border-left: 2px solid var(--or-patina);
+  font-size: 0.92rem; line-height: 1.7; color: var(--bone);
+}
+
+/* ─── Ce que nous pouvons prouver ─── */
+.preuves { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 860px) { .preuves { grid-template-columns: minmax(0, 1fr); } }
+.preuve {
+  padding: 1.4rem 1.5rem; border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg); background: rgba(255,255,255,0.014);
+  display: grid; gap: 0.5rem; align-content: start;
+}
+.preuve b { font-family: var(--ff-d); font-size: 1.18rem; font-weight: 400; color: var(--paper); }
+.preuve span { font-size: 0.9rem; line-height: 1.65; color: var(--ash); }
+.preuve a {
+  /* Mesuré à 43 px : sur un « inline-flex », le minimum se fait
+     grignoter par l'arrondi du modèle de boîte. Quarante-huit, comme
+     les pastilles du formulaire — c'est la vraie cible d'un pouce. */
+  margin-top: 0.4rem; min-height: 48px; display: inline-flex; align-items: center;
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--or);
+}
+.preuve a:hover { color: var(--or-bright); }

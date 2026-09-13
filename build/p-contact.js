@@ -40,7 +40,7 @@ ${P.urgency()}
           <div class="card-icon">${ICON.users}</div>
           <h3 class="h-lg">Vous êtes une agence</h3>
           <p>Pompes funèbres : découvrez les conditions du partenariat et simulez vos revenus.</p>
-          <a href="/agences" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Espace agences</a>
+          <a href="/professionnels" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Pour les professionnels</a>
           <div class="mono" style="margin-top:1rem;text-align:center;">60 % de marge · 0 € d'investissement</div>
         </div>
       </div>
