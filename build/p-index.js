@@ -41,7 +41,7 @@ module.exports = {
       <p class="lead reveal in reveal-d2">Melodia Funèbre crée des hommages musicaux personnalisés à partir de l'histoire, des souvenirs et de la personnalité du défunt. Une expérience émotionnelle que les familles peuvent conserver et partager.</p>
       <div class="hero-actions reveal in reveal-d3">
         <a href="/professionnels#partenariat" class="btn btn-gold btn-lg">Devenir partenaire</a>
-        <a href="/demos" class="btn btn-outline btn-lg">${ICON.note} Découvrir l'expérience</a>
+        <a href="/exemple" class="btn btn-outline btn-lg">${ICON.note} Découvrir l'expérience</a>
       </div>
       <p class="reveal in reveal-d4 hero-jalons">
         <span>Personnalisation</span><span>Page hommage</span><span>QR&nbsp;Code</span>

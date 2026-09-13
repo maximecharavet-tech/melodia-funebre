@@ -23,6 +23,24 @@
 (function () {
   'use strict';
 
+  /* ─── L'exemple ───
+     « /m/demo » ouvre cette fiche sans toucher à la base : un dirigeant
+     de pompes funèbres doit pouvoir comprendre le produit en trente
+     secondes, depuis une salle d'attente, sans formulaire et sans
+     dépendre du réseau. La personne est fictive et la page le dit —
+     inventer un vrai défunt pour une démonstration serait indigne. */
+  var DEMO = {
+    _demo: true,
+    nom: 'Odette Vasseur',
+    ne_le: '1938-04-12', parti_le: '2026-08-01',
+    message: 'Elle chantait en cuisine, le dimanche, en épluchant les pommes.\nOn la reconnaissait à sa voix bien avant d\'entrer.',
+    portrait_url: '',
+    pistes: [{ titre: 'Toujours avec nous', url: '/audio/odette.mp3' }],
+    paroles: 'Dans la cuisine du dimanche\nUne voix montait des casseroles\nElle ne savait pas qu\'on l\'écoutait\nElle chantait pour les pommes\n\nOdette, tu as nourri trois générations\nDe soupes et de chansons\nEt si le silence est venu\nTa voix, elle, n\'est pas perdue',
+    photos: [],
+    agence: ''
+  };
+
   var CFG = window.MELODIA_CONFIG || {};
   var SB = (CFG.SUPABASE_URL || '').replace(/\/+$/, '');
   var CLE = CFG.SUPABASE_ANON_KEY || '';
@@ -88,6 +106,9 @@
     if (!pistes[i]) return;
     courante = i;
     audio.src = pistes[i].url;
+    var onde = document.getElementById('hom-onde');
+    if (onde) { onde.innerHTML = ''; delete onde.dataset.prete; }
+    setTimeout(dessinerOnde, 60);
     var t = document.getElementById('hom-piste-titre');
     if (t) t.textContent = pistes[i].titre || 'Hommage';
     [].forEach.call(document.querySelectorAll('.hom-piste'), function (e, k) {
@@ -108,6 +129,7 @@
     audio.addEventListener('timeupdate', function () {
       var p = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
       avance.style.width = p + '%';
+      majOnde(p);
       barre.setAttribute('aria-valuenow', Math.round(p));
       ecoule.textContent = mmss(audio.currentTime);
     });
@@ -150,6 +172,52 @@
 
     choisir(0);
     majBouton();
+    dessinerOnde();
+  }
+
+  /* ─── La forme d'onde ───
+     Elle est calculée à partir du fichier réel, pas dessinée au
+     hasard : une onde inventée qui prétend montrer la musique serait
+     un mensonge visuel. Le calcul est différé et silencieux — sur un
+     réseau de cimetière, mieux vaut une barre sobre qu'une attente.
+     Si le décodage échoue ou traîne, la barre reste, et c'est très
+     bien ainsi. */
+  function dessinerOnde() {
+    var toile = document.getElementById('hom-onde');
+    if (!toile || !window.AudioContext || !pistes[courante]) return;
+    var url = pistes[courante].url;
+
+    fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('audio');
+      return r.arrayBuffer();
+    }).then(function (buf) {
+      var ctx = new AudioContext();
+      return ctx.decodeAudioData(buf).finally(function () { try { ctx.close(); } catch (e) {} });
+    }).then(function (audioBuf) {
+      var data = audioBuf.getChannelData(0);
+      var barres = 64, pas = Math.floor(data.length / barres), pics = [];
+      for (var i = 0; i < barres; i++) {
+        var max = 0;
+        for (var k = i * pas; k < (i + 1) * pas; k += 64) {
+          var v = Math.abs(data[k] || 0);
+          if (v > max) max = v;
+        }
+        pics.push(max);
+      }
+      var plafond = Math.max.apply(null, pics) || 1;
+      toile.innerHTML = pics.map(function (p) {
+        /* Un plancher de huit pour cent : une barre nulle laisse un
+           trou dans le dessin, et un silence n'est pas une absence. */
+        return '<span style="height:' + Math.max(8, Math.round(p / plafond * 100)) + '%"></span>';
+      }).join('');
+      toile.dataset.prete = '1';
+    }).catch(function () { /* la barre sobre suffit */ });
+  }
+
+  function majOnde(p) {
+    var toile = document.getElementById('hom-onde');
+    if (!toile || !toile.dataset.prete) return;
+    toile.style.setProperty('--avance', p + '%');
   }
 
   /* ─── Le rendu ─── */
@@ -157,7 +225,19 @@
     pistes = (m.pistes || []).filter(function (p) { return p && p.url; });
     var d = dates(m);
 
-    var h = '<article class="hom-carte">';
+    var h = '';
+    /* Le bandeau est en haut et ne se referme pas : une page de
+       démonstration qui ressemble à une vraie page de défunt doit le
+       dire en permanence, pas dans une note de bas de page. */
+    if (m._demo) {
+      h += '<div class="hom-demo" role="note">' +
+        '<span class="hom-demo-pastille">Exemple</span>' +
+        '<p>Cette page est une démonstration. Odette Vasseur est une personne fictive, ' +
+        'et cet hommage a été composé pour montrer ce que reçoit une famille.</p>' +
+        '<a href="/professionnels#partenariat" class="hom-demo-cta">Proposer ce service à vos familles →</a>' +
+      '</div>';
+    }
+    h += '<article class="hom-carte">';
 
     h += '<header class="hom-tete">';
     if (m.portrait_url) {
@@ -179,6 +259,7 @@
       h += '<section class="hom-lecteur" aria-label="Écouter l’hommage">' +
         '<audio id="hom-audio" preload="metadata" playsinline></audio>' +
         '<p class="hom-piste-titre" id="hom-piste-titre">Hommage</p>' +
+        '<div class="hom-onde" id="hom-onde" aria-hidden="true"></div>' +
         '<div class="hom-commande">' +
           '<button type="button" class="hom-jouer" id="hom-jouer" aria-label="Écouter">' +
             '<span class="hom-jouer-ico" aria-hidden="true"></span></button>' +
@@ -201,6 +282,32 @@
       h += '<p class="hom-bientot">L’enregistrement sera déposé ici très bientôt.</p>';
     }
 
+    if (m.paroles) {
+      /* Les paroles se replient : sur un téléphone, quatre strophes
+         repoussent le partage et le QR hors de l'écran, et personne ne
+         défile jusqu'en bas devant une tombe. */
+      h += '<details class="hom-paroles"><summary>Lire les paroles</summary>' +
+        '<div class="hom-paroles-corps">' +
+        esc(m.paroles).split(/\n{2,}/).map(function (bloc) {
+          return '<p>' + bloc.replace(/\n/g, '<br>') + '</p>';
+        }).join('') + '</div></details>';
+    }
+
+    var photos = (m.photos || []).filter(function (p) { return p && p.url; });
+    if (photos.length) {
+      h += '<div class="hom-galerie">' + photos.slice(0, 12).map(function (p, i) {
+        return '<figure><img src="' + esc(p.url) + '" alt="' + esc(p.legende || ('Photo ' + (i + 1))) +
+          '" loading="lazy" decoding="async">' +
+          (p.legende ? '<figcaption>' + esc(p.legende) + '</figcaption>' : '') + '</figure>';
+      }).join('') + '</div>';
+    }
+
+    /* Le QR de cette page, sur la page elle-même : c'est ce qu'on
+       photographie pour le montrer à quelqu'un, et ce qu'un
+       marbrier demande. Il n'apparaît que si l'encodeur est chargé. */
+    h += '<details class="hom-qr"><summary>Le code de cette page</summary>' +
+      '<div class="hom-qr-corps" id="hom-qr-corps"></div></details>';
+
     /* Partager : l'adresse de cette page, rien d'autre. Le lien est le
        même que celui du QR — c'est ce que les familles s'envoient. */
     h += '<div class="hom-partage">' +
@@ -211,8 +318,24 @@
     h += '</article>';
 
     ecrire(h);
-    document.title = (m.nom ? m.nom + ' — ' : '') + 'En mémoire · Melodia Funèbre';
+    document.title = m._demo
+      ? 'Exemple de page hommage · Melodia Funèbre'
+      : (m.nom ? m.nom + ' — ' : '') + 'En mémoire · Melodia Funèbre';
     if (pistes.length) brancherLecteur();
+
+    var qrBloc = document.querySelector('.hom-qr');
+    if (qrBloc) qrBloc.addEventListener('toggle', function () {
+      var hote = document.getElementById('hom-qr-corps');
+      if (!qrBloc.open || !hote || hote.dataset.fait) return;
+      hote.dataset.fait = '1';
+      if (!window.MelodiaQR) {
+        hote.innerHTML = '<p class="hom-qr-note">Le code se trouve sur la plaque fournie avec cet hommage.</p>';
+        return;
+      }
+      hote.innerHTML = '<div class="hom-qr-image">' +
+        window.MelodiaQR.svg(location.href, { niveau: 'H', marge: 3, fond: '#ffffff', encre: '#0b0b11' }) +
+        '</div><p class="hom-qr-note">Scannez-le, ou photographiez-le pour le transmettre.</p>';
+    });
 
     var bp = document.getElementById('hom-partager');
     bp.addEventListener('click', async function () {
@@ -236,6 +359,7 @@
   /* ─── Aller chercher la fiche ─── */
   async function charger() {
     var j = jeton();
+    if (j === 'demo' || j === 'exemple') return rendre(DEMO);
     if (!j) {
       return messageSimple('Adresse incomplète',
         'Ce lien ne désigne aucun hommage. Scannez à nouveau le code de la plaque, ou vérifiez l’adresse recopiée.');

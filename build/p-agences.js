@@ -32,8 +32,11 @@ module.exports = {
       <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Proposez à vos familles un service qu'aucune agence voisine n'offre : une œuvre musicale composée pour leur défunt, livrée en vingt-quatre heures, avec sa page hommage et son QR code. Vous présentez, nous composons, vous conservez 60 %.</p>
       <div class="hero-actions reveal in reveal-d3" style="margin-top:2.4rem;">
         <a href="#partenariat" class="btn btn-gold btn-lg">Organiser une démonstration</a>
-        <a href="#calculateur" class="btn btn-outline btn-lg">${ICON.euro} Simuler mes revenus</a>
+        <a href="/exemple" class="btn btn-outline btn-lg">Voir un hommage</a>
       </div>
+      <p class="note" style="margin-top:1.4rem;">
+        Aucun formulaire à remplir pour la démonstration · <a href="#calculateur">Simuler mes revenus</a>
+      </p>
     </div>
   </section>
 

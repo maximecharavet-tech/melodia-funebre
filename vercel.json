@@ -12,6 +12,16 @@
   },
   "redirects": [
     {
+      "source": "/exemple",
+      "destination": "/m/demo",
+      "permanent": false
+    },
+    {
+      "source": "/voir-un-hommage",
+      "destination": "/m/demo",
+      "permanent": false
+    },
+    {
       "source": "/agences",
       "destination": "/professionnels",
       "permanent": true
