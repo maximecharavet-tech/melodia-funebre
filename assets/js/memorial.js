@@ -189,6 +189,20 @@
             '<input class="field-input" id="mem-portrait" placeholder="https://…" value="' + esc(m.portrait_url) + '">' +
             '<p class="field-aide">Facultatif. Sans photo, la page affiche un ornement sobre.</p></div>' +
 
+          /* Les paroles et les photos existaient en base et s'affichaient
+             sur la page publique, mais aucun écran ne permettait de les
+             remplir. La maison les saisit souvent au téléphone, pendant
+             que la famille dicte. */
+          '<div class="field"><label class="field-label" for="mem-paroles">Les paroles</label>' +
+            '<textarea class="field-area" id="mem-paroles" rows="5" ' +
+              'placeholder="Elles se déplient sur la page, sous l’enregistrement.">' + esc(m.paroles || '') + '</textarea></div>' +
+
+          /* Repéré par un attribut, pas par un identifiant : l'alphabet
+             des jetons commence par « 23456789 », et querySelector
+             refuse un sélecteur d'identifiant ouvrant sur un chiffre.
+             Un memorial sur huit aurait perdu son éditeur de photos. */
+          '<div class="mem-photos-bloc" data-photos></div>' +
+
           '<div class="mem-pistes-bloc">' +
             '<div class="field-label">Enregistrements proposés</div>' +
             (pistes.length
@@ -220,6 +234,21 @@
   /* ─── Brancher une fiche dépliée ─── */
   function brancher(hote, m, options, apres) {
     options = options || {};
+
+    /* Le même éditeur de photos que dans l'espace des familles : une
+       seule règle de cinq, un seul chemin de dépôt, une seule façon
+       de retirer un fichier du stockage. */
+    var boitePhotos = hote.querySelector('[data-photos]');
+    if (boitePhotos && window.MelodiaPhotos) {
+      window.MelodiaPhotos.monter(boitePhotos, {
+        jeton: m.jeton,
+        photos: m.photos || [],
+        sauver: async function (liste) {
+          var maj = await enregistrer(m.jeton, { photos: liste });
+          m.photos = (maj && maj.photos) || liste;
+        }
+      });
+    }
     var dire = function (t, ok) {
       var e = $('mem-msg-' + m.jeton);
       if (!e) return;
@@ -261,12 +290,19 @@
       if (act === 'enregistrer') {
         b.disabled = true; b.textContent = 'Enregistrement…';
         try {
+          /* Les champs sont relus dans la fiche ouverte, pas dans le
+             document : deux fiches dépliées en même temps portent les
+             mêmes identifiants, et un getElementById rendait toujours
+             la première — enregistrer la seconde recopiait alors les
+             valeurs de l'autre défunt. */
+          var ch = function (id) { return hote.querySelector('#' + id); };
           var maj = await enregistrer(m.jeton, {
-            nom: $('mem-nom').value.trim(),
-            ne_le: $('mem-ne').value || null,
-            parti_le: $('mem-parti').value || null,
-            message: $('mem-mot').value.trim(),
-            portrait_url: $('mem-portrait').value.trim()
+            nom: ch('mem-nom').value.trim(),
+            ne_le: ch('mem-ne').value || null,
+            parti_le: ch('mem-parti').value || null,
+            message: ch('mem-mot').value.trim(),
+            portrait_url: ch('mem-portrait').value.trim(),
+            paroles: ch('mem-paroles').value
           });
           Object.assign(m, maj || {});
           dire('Enregistré.', true);

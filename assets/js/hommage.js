@@ -295,6 +295,10 @@
 
     var photos = (m.photos || []).filter(function (p) { return p && p.url; });
     if (photos.length) {
+      /* La base en accepte cinq — contrainte memoriaux_cinq_photos. Le
+         garde-fou reste plus large que la règle : si la maison décide
+         un jour d'en autoriser huit, mieux vaut que la page les
+         affiche toutes plutôt qu'elle en escamote trois en silence. */
       h += '<div class="hom-galerie">' + photos.slice(0, 12).map(function (p, i) {
         return '<figure><img src="' + esc(p.url) + '" alt="' + esc(p.legende || ('Photo ' + (i + 1))) +
           '" loading="lazy" decoding="async">' +

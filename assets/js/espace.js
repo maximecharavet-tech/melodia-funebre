@@ -189,7 +189,7 @@
 
     h += '<nav class="esp-onglets">' +
       [['hommages', 'Mes hommages', etat.commandes.length],
-       ['plaque', 'Ma plaque', null],
+       ['plaque', 'Sa page de souvenir', null],
        ['demandes', 'Mes demandes', etat.demandes.length],
        ['compte', 'Mon compte', null]].map(function (t) {
         return '<button type="button" class="esp-onglet' + (etat.vue === t[0] ? ' actif' : '') +
@@ -214,11 +214,13 @@
          il s'agit du nom d'un parent. */
       h += '<div id="esp-plaque"></div>';
       setTimeout(function () {
-        if (window.MelodiaMemorial) {
-          window.MelodiaMemorial.panneau(document.getElementById('esp-plaque'), { email: (u && u.email) || '' });
+        /* L'écran de la famille, pas le panneau de la maison : voir
+           assets/js/souvenir.js pour la raison. */
+        if (window.MelodiaSouvenir) {
+          window.MelodiaSouvenir.espace(document.getElementById('esp-plaque'), { email: (u && u.email) || '' });
         } else {
           document.getElementById('esp-plaque').innerHTML =
-            '<div class="esp-vide"><p>Le module des plaques ne s\'est pas chargé.</p></div>';
+            '<div class="esp-vide"><p>Le module des pages de souvenir ne s\'est pas chargé.</p></div>';
         }
       }, 0);
     } else if (etat.vue === 'demandes') {
