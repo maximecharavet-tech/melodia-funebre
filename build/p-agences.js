@@ -20,6 +20,7 @@ module.exports = {
   title: "Hommage musical pour pompes funèbres : devenir partenaire | Melodia Funèbre",
   desc: "Solution d'hommage musical pour les pompes funèbres : page hommage, QR code, 60 % de marge, aucun investissement. Demandez une démonstration.",
   jsonld: [P.jsonldFil('Pour les professionnels', '/professionnels')],
+  scripts: ['assets/js/partenariat.js'],
   body: `
   <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
     <div class="orn-rosace-hote" data-orn-rosace="agences" data-orn-traits="3"></div>
@@ -142,7 +143,83 @@ ${P.faq(FAQ_B2B)}
     </div>
   </section>
 
-  <section class="section section-top" style="padding-bottom:6rem;">
+  <!-- ═══ LES CONDITIONS, ET LA DEMANDE ═══
+       Cette section porte l'ancre « #partenariat » : c'est là que
+       mènent tous les boutons « Devenir partenaire » du site. -->
+  <section class="section section-top" id="partenariat">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.8rem;">
+        <div class="eyebrow">Conditions professionnelles</div>
+        <h2 class="h-xl">Devenir<br><em>partenaire.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:44rem;">Aucun investissement, aucun stock, aucun minimum. Vous ne réglez que les hommages effectivement commandés par vos familles.</p>
+      </div>
+
+      <div class="part-duo">
+        <!-- Les conditions chiffrées ne sont pas affichées ici : elles
+             se discutent selon le volume et le secteur, et un tarif
+             gravé sur une page publique se retourne contre celui qui
+             l'a écrit dès la première négociation. -->
+        <div class="part-conditions reveal">
+          <h3 class="part-titre">Ce qui est convenu</h3>
+          <ul class="part-liste">
+            <li><b>Marge agence</b><span>Vous conservez la majeure partie du montant réglé par la famille.</span></li>
+            <li><b>Tarif conseillé</b><span>Nous vous transmettons une grille de prix conseillés, que vous restez libre d'ajuster.</span></li>
+            <li><b>Options</b><span>Version longue, instruments rares, langue étrangère, plaque à QR code.</span></li>
+            <li><b>Règlement</b><span>Mensuel, sur facture récapitulative. Rien à avancer.</span></li>
+            <li><b>Exclusivité</b><span>Un nombre limité d'agences par bassin de population.</span></li>
+          </ul>
+          <p class="part-note">Conditions professionnelles détaillées sur demande — elles dépendent de votre volume et de votre secteur.</p>
+          <div class="part-supports">
+            <span class="eyebrow">Ce que nous fournissons</span>
+            <ul>
+              <li>Kit de présentation pour vos conseillers</li>
+              <li>Première composition offerte, à présenter à une famille</li>
+              <li>Fichier de gravure pour la plaque à QR code</li>
+              <li>Accès à votre espace partenaire en ligne</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Six champs, pas douze : chaque champ supplémentaire coûte
+             des demandes. Le reste se dit au téléphone. -->
+        <form class="part-form reveal" id="form-partenariat" novalidate>
+          <h3 class="part-titre">Votre demande</h3>
+
+          <div class="field">
+            <span class="field-label">Je souhaite</span>
+            <div class="part-choix" role="radiogroup" aria-label="Objet de votre demande">
+              <label><input type="radio" name="objet" value="Demander une démonstration" checked><span>Une démonstration</span></label>
+              <label><input type="radio" name="objet" value="Devenir partenaire"><span>Devenir partenaire</span></label>
+              <label><input type="radio" name="objet" value="Recevoir les informations professionnelles"><span>Les informations</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field"><label class="field-label" for="pt-societe">Nom de l'entreprise *</label>
+              <input class="field-input" id="pt-societe" name="societe" autocomplete="organization" required></div>
+            <div class="field"><label class="field-label" for="pt-contact">Nom du contact *</label>
+              <input class="field-input" id="pt-contact" name="contact" autocomplete="name" required></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label class="field-label" for="pt-email">Email professionnel *</label>
+              <input class="field-input" id="pt-email" name="email" type="email" autocomplete="email" inputmode="email" required></div>
+            <div class="field"><label class="field-label" for="pt-tel">Téléphone *</label>
+              <input class="field-input" id="pt-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" required></div>
+          </div>
+          <div class="field"><label class="field-label" for="pt-ville">Ville *</label>
+            <input class="field-input" id="pt-ville" name="ville" autocomplete="address-level2" required></div>
+          <div class="field"><label class="field-label" for="pt-message">Message</label>
+            <textarea class="field-area" id="pt-message" name="message" rows="3" placeholder="Votre volume annuel, vos questions, vos contraintes."></textarea></div>
+
+          <div class="form-msg" id="pt-msg"></div>
+          <button type="submit" class="btn btn-gold btn-block btn-lg" id="pt-envoyer">Envoyer ma demande</button>
+          <p class="part-rgpd">Vos coordonnées servent uniquement à répondre à cette demande. Elles ne sont ni revendues, ni utilisées pour autre chose. Voir notre <a href="/confidentialite">politique de confidentialité</a>.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-bottom:6rem;">
     <div class="wrap center reveal">
       <h2 class="h-xl">Votre secteur est-il<br>encore <em>libre ?</em></h2>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Nous limitons le nombre d'agences partenaires par bassin de population. Un appel de trois minutes suffit à le savoir.</p>
