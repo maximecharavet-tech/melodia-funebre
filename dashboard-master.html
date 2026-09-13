@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css?v=cc9ef4fd">
-<link rel="stylesheet" href="assets/css/dashboard.css?v=45721b4b">
+<link rel="stylesheet" href="assets/css/dashboard.css?v=1a455975">
 <link rel="stylesheet" href="assets/css/relief.css?v=68839a50">
 <link rel="stylesheet" href="assets/css/mobile.css?v=9f45e378">
 </head>
@@ -30,6 +30,7 @@
     <button class="side-item" data-v="agenda"><span class="ico">◷</span>Agenda</button>
     <button class="side-item" data-v="messagerie"><span class="ico">✉</span>Messagerie<span class="side-badge" id="badge-msg" style="display:none;">0</span></button>
     <button class="side-item" data-v="catalogue"><span class="ico">♫</span>Catalogue</button>
+    <button class="side-item" data-v="plaques"><span class="ico">▦</span>Plaques QR</button>
     <button class="side-item" data-v="social"><span class="ico">◉</span>Réseaux sociaux</button>
     <button class="side-item" data-v="candidatures"><span class="ico">✦</span>Candidatures<span class="side-badge" id="badge-cand" style="display:none;">0</span></button>
     <button class="side-item" data-v="demandes"><span class="ico">✉</span>Demandes<span class="side-badge" id="badge-dem" style="display:none;">0</span></button>
@@ -74,6 +75,8 @@
 <script src="assets/js/livraison.js?v=8816d59c"></script>
 <script src="assets/js/atelier-music.js?v=4d8dcbf9"></script>
 <script src="assets/js/proprietaire.js?v=0e7fe552"></script>
+<script src="assets/js/qr.js?v=da53dd71"></script>
+<script src="assets/js/memorial.js?v=f939fb27"></script>
 <script src="assets/js/motdepasse.js?v=865738d9"></script>
 <script src="assets/js/intranet.js?v=4b2436ff"></script>
 <script src="assets/js/relief.js?v=99c4c9ba"></script>
@@ -175,6 +178,7 @@ function go(v) {
     pilotage: ['Poste de pilotage', 'Ce qui <em>appelle une action</em>'],
     demandes: ['Familles', 'Les <em>demandes</em>'],
     reglages: ['Configuration', 'Les <em>réglages</em>'],
+    plaques: ['Souvenir', 'Les <em>plaques</em> à QR code'],
     systeme: ['Configuration', 'Le <em>système</em>']
   }[v];
   document.getElementById('head-eyebrow').textContent = H[0];
@@ -187,6 +191,14 @@ function go(v) {
     if (window.MelodiaIntranet) window.MelodiaIntranet.vues[INTRA[v]](document.getElementById('intra-root'));
     else document.getElementById('intra-root').innerHTML =
       '<div class="form-msg err" style="display:block;">Le module intranet ne s\'est pas chargé.</div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  if (v === 'plaques') {
+    document.getElementById('view').innerHTML = '<div id="mem-root"></div>';
+    if (window.MelodiaMemorial) window.MelodiaMemorial.panneau(document.getElementById('mem-root'), { peutSupprimer: true });
+    else document.getElementById('mem-root').innerHTML =
+      '<div class="form-msg err" style="display:block;">Le module des plaques ne s\'est pas chargé.</div>';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }

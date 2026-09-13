@@ -39,6 +39,19 @@
   ],
   "headers": [
     {
+      "source": "/hommage",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, noimageindex"
+        }
+      ]
+    },
+    {
       "source": "/audio/(.*)",
       "headers": [
         {
@@ -133,6 +146,12 @@
           "value": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/m/:jeton",
+      "destination": "/hommage?j=:jeton"
     }
   ]
 }

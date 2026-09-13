@@ -1,0 +1,213 @@
+/* ═══════════════════════════════════════════════════════════════
+   hommage.css — La page du QR code
+
+   Elle se lit debout, en plein soleil, sur l'écran d'un téléphone.
+   D'où trois écarts assumés avec le reste du site :
+
+   • Le texte est plus grand et plus clair. Le gris « cendre » du site
+     passe très bien dans un bureau ; sur un écran à quarante pour cent
+     de luminosité sous le soleil de midi, il disparaît.
+   • Tout ce qui se touche fait au moins cinquante-six pixels. On tient
+     son téléphone d'une main et des fleurs de l'autre.
+   • Rien ne bouge au chargement. Une animation d'entrée sur la page
+     d'un mort est une faute de ton.
+   ═══════════════════════════════════════════════════════════════ */
+
+.page-hommage {
+  background: radial-gradient(120% 80% at 50% 0%, #12121a 0%, var(--ink) 62%);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex; flex-direction: column;
+}
+
+.hom-page {
+  flex: 1;
+  width: 100%; max-width: 34rem;
+  margin: 0 auto;
+  padding: clamp(1.6rem, 6vw, 3rem) clamp(1.1rem, 5vw, 2rem) 2rem;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+/* ─── L'attente ─── */
+.hom-attente { text-align: center; color: var(--bone); padding: 4rem 0; }
+.hom-sceau { display: block; width: 46px; height: 46px; margin: 0 auto 1rem; color: var(--or-patina); opacity: 0.6; }
+.hom-sceau svg { width: 100%; height: 100%; }
+.hom-attente p { font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.26em; text-transform: uppercase; }
+
+/* ─── La carte ─── */
+.hom-carte {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.008));
+  padding: clamp(1.5rem, 5vw, 2.4rem) clamp(1.2rem, 4.5vw, 2.2rem) clamp(1.4rem, 4vw, 2rem);
+  box-shadow: 0 30px 80px -40px rgba(0,0,0,0.9);
+}
+
+.hom-tete { text-align: center; }
+
+.hom-portrait {
+  width: clamp(112px, 34vw, 148px); height: clamp(112px, 34vw, 148px);
+  margin: 0 auto 1.3rem;
+  border-radius: 50%; overflow: hidden;
+  border: 1px solid var(--line-strong);
+  /* Le filet d'or est l'unique ornement du portrait : un cadre plus
+     appuyé ferait médaille militaire. */
+  box-shadow: 0 0 0 6px rgba(201,168,76,0.05), 0 16px 40px -18px rgba(0,0,0,0.9);
+  background: var(--ink-3);
+}
+.hom-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hom-portrait-vide { display: grid; place-items: center; color: var(--or-deep); }
+.hom-portrait-vide svg { width: 46%; height: 46%; }
+
+.hom-sur {
+  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--or-patina); margin: 0 0 0.7rem;
+}
+.hom-nom {
+  font-family: var(--ff-d); font-weight: 300;
+  font-size: clamp(2rem, 8.5vw, 2.9rem); line-height: 1.1;
+  color: var(--paper); margin: 0; letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+.hom-dates {
+  font-family: var(--ff-m); font-size: 0.76rem; letter-spacing: 0.2em;
+  color: var(--bone); margin: 0.75rem 0 0;
+}
+
+/* ─── Les quelques mots de la famille ─── */
+.hom-mot {
+  margin: 1.9rem 0 0; padding: 1.2rem 0 0;
+  border-top: 1px solid var(--line-soft);
+  text-align: center;
+}
+.hom-mot p {
+  font-family: var(--ff-d); font-style: italic;
+  font-size: clamp(1.12rem, 4.4vw, 1.3rem); line-height: 1.65;
+  color: var(--silver); margin: 0 0 0.6rem;
+}
+.hom-mot p:last-child { margin-bottom: 0; }
+
+/* ─── Le lecteur ─── */
+.hom-lecteur {
+  margin-top: 1.9rem; padding-top: 1.6rem;
+  border-top: 1px solid var(--line-soft);
+  text-align: center;
+}
+.hom-piste-titre {
+  font-family: var(--ff-d); font-size: 1.28rem; color: var(--paper);
+  margin: 0 0 1.2rem; line-height: 1.3;
+}
+.hom-commande { display: flex; justify-content: center; margin-bottom: 1.3rem; }
+
+.hom-jouer {
+  width: 78px; height: 78px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-strong);
+  background: radial-gradient(120% 120% at 30% 22%, rgba(227,201,119,0.2), rgba(201,168,76,0.06) 60%, transparent);
+  color: var(--or-bright); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.18s var(--ease), border-color 0.25s, background 0.25s;
+}
+.hom-jouer:active { transform: scale(0.94); }
+.hom-jouer.joue { border-color: var(--or); background: radial-gradient(120% 120% at 30% 22%, rgba(227,201,119,0.3), rgba(201,168,76,0.1) 60%, transparent); }
+.hom-jouer-ico { width: 30px; height: 30px; display: block; }
+.hom-jouer-ico svg { width: 100%; height: 100%; display: block; margin-left: 2px; }
+.hom-jouer.joue .hom-jouer-ico svg { margin-left: 0; }
+
+.hom-temps {
+  display: flex; align-items: center; gap: 0.8rem;
+  font-family: var(--ff-m); font-size: 0.68rem; color: var(--bone);
+  font-variant-numeric: tabular-nums;
+}
+/* La barre est haute de vingt-deux pixels alors que le trait n'en fait
+   que trois : le reste est une zone de touche invisible. Une barre de
+   trois pixels ne s'attrape pas au pouce. */
+.hom-barre {
+  flex: 1; height: 22px; position: relative; cursor: pointer;
+  display: flex; align-items: center;
+}
+.hom-barre::before {
+  content: ''; position: absolute; left: 0; right: 0; height: 3px;
+  background: var(--line-soft); border-radius: 2px;
+}
+.hom-barre span {
+  position: relative; display: block; height: 3px; width: 0;
+  background: var(--or); border-radius: 2px;
+  transition: width 0.2s linear;
+}
+.hom-barre:focus-visible { outline: 1px solid var(--or-patina); outline-offset: 4px; }
+
+.hom-pistes { list-style: none; margin: 1.4rem 0 0; padding: 0; display: grid; gap: 0.35rem; }
+.hom-piste {
+  width: 100%; min-height: 56px;
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.7rem 0.9rem; text-align: left;
+  background: none; border: 1px solid var(--line-soft); border-radius: 3px;
+  color: var(--bone); font-family: var(--ff-b); font-size: 0.95rem; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.25s, color 0.25s, background 0.25s;
+}
+.hom-piste:active { background: var(--or-soft); }
+.hom-piste.actif { border-color: var(--line-strong); color: var(--paper); background: var(--or-soft); }
+.hom-piste-n {
+  flex: none; width: 26px; height: 26px; display: grid; place-items: center;
+  border: 1px solid var(--line-soft); border-radius: 50%;
+  font-family: var(--ff-m); font-size: 0.6rem; color: var(--or-patina);
+}
+.hom-piste.actif .hom-piste-n { border-color: var(--or); color: var(--or); }
+
+.hom-bientot {
+  margin: 1.9rem 0 0; padding-top: 1.6rem;
+  border-top: 1px solid var(--line-soft);
+  text-align: center; color: var(--bone); font-size: 0.98rem;
+}
+
+/* ─── Partager ─── */
+.hom-partage {
+  margin-top: 1.8rem; padding-top: 1.3rem;
+  border-top: 1px solid var(--line-soft);
+  display: flex; align-items: center; justify-content: center; gap: 0.9rem; flex-wrap: wrap;
+}
+.hom-partage .btn { min-height: 50px; }
+.hom-partage-dit {
+  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--green);
+}
+
+.hom-signe {
+  margin: 1.4rem 0 0; text-align: center;
+  font-size: 0.82rem; color: var(--ash); line-height: 1.6;
+}
+.hom-signe a { color: var(--or-patina); text-underline-offset: 3px; }
+
+/* ─── Quand il n'y a rien à montrer ─── */
+.hom-vide { text-align: center; padding: 2rem 0; }
+.hom-orn { font-size: 1.6rem; color: var(--or-deep); margin-bottom: 1rem; }
+.hom-vide-titre {
+  font-family: var(--ff-d); font-weight: 300; font-size: clamp(1.6rem, 6vw, 2.1rem);
+  color: var(--paper); margin: 0 0 0.9rem;
+}
+.hom-vide-txt { color: var(--bone); line-height: 1.75; margin: 0 0 1.7rem; font-size: 1rem; }
+.hom-vide-txt a { color: var(--or-patina); }
+
+/* ─── Le pied ─── */
+.hom-pied {
+  border-top: 1px solid var(--line-soft);
+  padding: 1.3rem 1.2rem calc(1.3rem + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+}
+.hom-marque { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+.hom-marque img { border-radius: 50%; }
+.hom-marque b { font-family: var(--ff-d); font-size: 1rem; color: var(--paper); font-weight: 400; display: block; line-height: 1.1; }
+.hom-marque em {
+  font-family: var(--ff-m); font-style: normal; font-size: 0.46rem;
+  letter-spacing: 0.26em; text-transform: uppercase; color: var(--or-patina);
+}
+.hom-mention { margin: 0; font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dust); }
+.hom-mention a { color: var(--dust); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hom-barre span { transition: none; }
+  .hom-jouer:active { transform: none; }
+}

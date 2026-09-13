@@ -189,6 +189,7 @@
 
     h += '<nav class="esp-onglets">' +
       [['hommages', 'Mes hommages', etat.commandes.length],
+       ['plaque', 'Ma plaque', null],
        ['demandes', 'Mes demandes', etat.demandes.length],
        ['compte', 'Mon compte', null]].map(function (t) {
         return '<button type="button" class="esp-onglet' + (etat.vue === t[0] ? ' actif' : '') +
@@ -206,6 +207,20 @@
               'ou vérifiez que vous utilisez bien l\'adresse donnée lors de la commande.</p>' +
             '<a href="/offres" class="btn btn-gold">Commander un hommage</a>' +
           '</div>';
+    } else if (etat.vue === 'plaque') {
+      /* La famille garde la main sur sa propre page : elle la publie,
+         elle la retire, sans passer par la maison. C'est ce que le
+         règlement exige, et c'est surtout la moindre des choses quand
+         il s'agit du nom d'un parent. */
+      h += '<div id="esp-plaque"></div>';
+      setTimeout(function () {
+        if (window.MelodiaMemorial) {
+          window.MelodiaMemorial.panneau(document.getElementById('esp-plaque'), { email: (u && u.email) || '' });
+        } else {
+          document.getElementById('esp-plaque').innerHTML =
+            '<div class="esp-vide"><p>Le module des plaques ne s\'est pas chargé.</p></div>';
+        }
+      }, 0);
     } else if (etat.vue === 'demandes') {
       h += '<div class="esp-actions" style="margin-bottom:1.4rem;">' +
         '<button type="button" class="btn btn-gold" data-demande="">Nouvelle demande</button></div>';

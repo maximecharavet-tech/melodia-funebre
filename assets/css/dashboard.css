@@ -1190,3 +1190,88 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   text-align: center; color: var(--or-patina);
   font-size: 1.1rem; line-height: 1; margin: 0.35rem 0 0.55rem;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LES PLAQUES À QR CODE
+   ═══════════════════════════════════════════════════════════════ */
+
+.mem-candidates { margin: 1.4rem 0; padding: 1rem; border: 1px dashed var(--line); border-radius: var(--radius); }
+.mem-candidates ul { list-style: none; margin: 0.7rem 0 0; padding: 0; display: grid; gap: 0.45rem; }
+.mem-candidates li {
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+  padding: 0.55rem 0.7rem; background: var(--ink-2);
+  border: 1px solid var(--line-soft); border-radius: var(--radius); min-width: 0;
+}
+.mem-c-nom { font-family: var(--ff-d); font-size: 1.05rem; color: var(--paper); flex: 1; min-width: 0; }
+.mem-c-ref { font-family: var(--ff-m); font-size: 0.55rem; letter-spacing: 0.12em; color: var(--dust); }
+
+.mem-liste { display: grid; gap: 0.5rem; margin-top: 1.2rem; }
+.mem-item { border: 1px solid var(--line-soft); border-radius: var(--radius); background: var(--ink-2); overflow: hidden; }
+.mem-item.ouvert { border-color: var(--line-strong); }
+.mem-tete {
+  width: 100%; min-height: 52px;
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.7rem 0.9rem; text-align: left;
+  background: none; border: 0; color: var(--bone); cursor: pointer; min-width: 0;
+}
+.mem-pastille {
+  flex: none; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--dust); box-shadow: 0 0 0 3px rgba(255,255,255,0.03);
+}
+/* Le vert dit « visible de tous », pas « tout va bien » : c'est
+   l'information qui compte quand on survole une liste de vingt pages. */
+.mem-pastille.en-ligne { background: var(--green); box-shadow: 0 0 0 3px rgba(74,222,128,0.12); }
+.mem-t-nom { flex: 1; font-family: var(--ff-d); font-size: 1.1rem; color: var(--paper); min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mem-t-etat { font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); }
+.mem-corps { padding: 0 0.9rem 1.1rem; }
+
+.mem-colonnes { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 1.6rem; align-items: start; }
+@media (max-width: 860px) { .mem-colonnes { grid-template-columns: minmax(0, 1fr); } }
+
+/* Le QR se montre sur fond blanc, toujours. Un code clair sur fond
+   sombre est refusé par une bonne part des lecteurs de téléphone —
+   ils cherchent du noir sur du blanc, dans cet ordre. */
+.mem-qr { background: #fff; padding: 10px; border-radius: var(--radius); width: 100%; max-width: 230px; }
+.mem-qr svg { display: block; width: 100%; height: auto; }
+.mem-qr-note { font-size: 0.74rem; color: var(--ash); line-height: 1.55; margin: 0.7rem 0 0; }
+
+.mem-adresse {
+  display: flex; align-items: center; gap: 0.5rem; margin-top: 0.9rem;
+  padding: 0.5rem 0.6rem; background: var(--ink-3);
+  border: 1px solid var(--line-soft); border-radius: var(--radius); min-width: 0;
+}
+.mem-adresse code {
+  flex: 1; min-width: 0; font-family: var(--ff-m); font-size: 0.66rem;
+  color: var(--or-patina); overflow-wrap: anywhere;
+}
+.mem-exports { display: grid; gap: 0.4rem; margin-top: 0.9rem; }
+.mem-voir {
+  display: block; margin-top: 0.9rem; font-size: 0.8rem;
+  color: var(--or-patina); text-underline-offset: 3px;
+}
+
+.mem-duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+.mem-pistes-bloc { margin: 1.1rem 0; }
+.mem-pistes { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.35rem; }
+.mem-pistes li {
+  display: flex; align-items: center; gap: 0.7rem; min-width: 0;
+  padding: 0.5rem 0.7rem; background: var(--ink-3);
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+}
+.mem-piste-n {
+  flex: none; width: 22px; height: 22px; display: grid; place-items: center;
+  border: 1px solid var(--line-soft); border-radius: 50%;
+  font-family: var(--ff-m); font-size: 0.55rem; color: var(--or-patina);
+}
+.mem-piste-t { flex: 1; min-width: 0; font-size: 0.9rem; color: var(--bone);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.mem-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem; }
+.mem-etat {
+  margin: 0.9rem 0 0; font-size: 0.82rem; line-height: 1.6; color: var(--ash);
+  padding-left: 0.8rem; border-left: 2px solid var(--line-soft);
+}
+.mem-etat.en-ligne { color: var(--bone); border-left-color: var(--green); }
+.mem-vide { font-size: 0.88rem; color: var(--ash); line-height: 1.6; margin: 0.5rem 0 0; }
+.field-aide { font-size: 0.76rem; color: var(--dust); line-height: 1.55; margin: 0.35rem 0 0; }
