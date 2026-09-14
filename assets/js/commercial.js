@@ -1250,7 +1250,7 @@
        fichier-ci (voir build/pdf-manuel.js), donc il ne peut pas
        raconter autre chose que la console. */
     return '<div class="panel doc-panneau" style="margin-bottom:1.4rem;">' +
-        '<div class="panel-title">Le <em>manuel</em> de vente</div>' +
+        '<div class="panel-title">Vos <em>documents</em></div>' +
         '<div class="panel-sub">Tout ce qui suit, sur papier</div>' +
         '<p class="panel-note">Dix-huit pages : les chiffres à connaître, le plan de prospection, ' +
           'le script d\'appel, les douze objections, les lieux de culte et les modèles de courriel. ' +
@@ -1261,6 +1261,14 @@
             '<span class="doc-nom">Manuel de vente</span>' +
             '<span class="doc-dit">Il contient les tarifs, les marges et les méthodes : ' +
               'il ne se remet pas à une agence.</span>' +
+            '<span class="doc-act">Télécharger</span>' +
+          '</a>' +
+          '<a class="doc-carte" href="/documents/melodia-plan-linkedin.pdf" download>' +
+            '<span class="doc-genre">PDF · 19 pages · interne</span>' +
+            '<span class="doc-nom">Plan LinkedIn</span>' +
+            '<span class="doc-dit">Se faire connaître des dirigeants avant de les appeler : ' +
+              'la ligne éditoriale, six publications prêtes à copier, les messages de contact ' +
+              'et ce qu\'il ne faut jamais faire sur ce réseau.</span>' +
             '<span class="doc-act">Télécharger</span>' +
           '</a>' +
           '<a class="doc-carte" href="/documents/melodia-brochure-partenaire.pdf" download>' +
