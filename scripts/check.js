@@ -67,7 +67,8 @@ try {
    l'ouverture du fichier, jamais avant — d'où ce contrôle, qui vérifie
    aussi que le PDF n'est pas un fichier vide de zéro octet. */
 for (const [f, mini] of [['documents/melodia-brochure-partenaire.pdf', 400],
-                         ['documents/melodia-manuel-de-vente.pdf', 200]]) {
+                         ['documents/melodia-manuel-de-vente.pdf', 200],
+                         ['documents/melodia-plan-linkedin.pdf', 200]]) {
   if (!fs.existsSync(f)) {
     console.error(`  MANQUE ${f} — relancez « npm run pdf »`);
     ok = false;

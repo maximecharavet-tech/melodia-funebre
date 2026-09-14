@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /* ═══════════════════════════════════════════════════════════════
-   MELODIA — Fabrique des deux documents imprimés
+   MELODIA — Fabrique des documents imprimés
 
-       node build/pdf.js          les deux
-       node build/pdf.js manuel   celui-là seulement
+       node build/pdf.js           les trois
+       node build/pdf.js manuel    celui-là seulement
 
    Le rendu passe par Chromium : c'est le seul moteur disponible ici
    qui sache poser une police embarquée, un fond perdu et une coupe de
@@ -12,7 +12,7 @@
    demande playwright-core — et le dit clairement s'il manque, plutôt
    que d'échouer sur un « Cannot find module ».
 
-   Les deux documents lisent les mêmes sources que le site : les
+   Les trois documents lisent les mêmes sources que le site : les
    offres et les options du contenu publié, le contenu commercial de
    la console. Aucun chiffre n'est retapé.
    ═══════════════════════════════════════════════════════════════ */
@@ -54,25 +54,34 @@ function donnees() {
   return { offres: c.offers || [], options: OPTIONS, mail: MAIL, demos: (c.demos || []).length };
 }
 
-const PIED = `
+/* Le pied de page des documents en flux. Il porte le nom du document :
+   deux outils internes qui circulent ensemble dans une sacoche doivent
+   se distinguer sans qu'on remonte à la couverture. */
+const pied = (nom) => `
   <div style="width:100%;font-family:Helvetica,Arial,sans-serif;font-size:7pt;color:#9a8a5c;
               padding:0 16mm;display:flex;justify-content:space-between;">
-    <span>Melodia Funèbre — Manuel de vente · document interne</span>
+    <span>Melodia Funèbre — ${nom} · document interne</span>
     <span class="pageNumber"></span>
   </div>`;
+
+const enFlux = (nom) => ({
+  displayHeaderFooter: true,
+  headerTemplate: '<span></span>',
+  footerTemplate: pied(nom)
+});
 
 async function fabriquer(quoi) {
   const nav = await chromium().launch({ executablePath: executable() });
   const d = donnees();
   fs.mkdirSync(SORTIE, { recursive: true });
 
+  const tout = !quoi;
   const lot = [];
-  if (quoi !== 'manuel') lot.push([require('./pdf-brochure.js'), { margin: { top: 0, right: 0, bottom: 0, left: 0 } }]);
-  if (quoi !== 'brochure') lot.push([require('./pdf-manuel.js'), {
-    displayHeaderFooter: true,
-    headerTemplate: '<span></span>',
-    footerTemplate: PIED
-  }]);
+  if (tout || quoi === 'brochure') {
+    lot.push([require('./pdf-brochure.js'), { margin: { top: 0, right: 0, bottom: 0, left: 0 } }]);
+  }
+  if (tout || quoi === 'manuel') lot.push([require('./pdf-manuel.js'), enFlux('Manuel de vente')]);
+  if (tout || quoi === 'linkedin') lot.push([require('./pdf-linkedin.js'), enFlux('Plan LinkedIn')]);
 
   for (const [mod, options] of lot) {
     const page = await nav.newPage();
@@ -94,8 +103,8 @@ async function fabriquer(quoi) {
 }
 
 const quoi = (process.argv[2] || '').toLowerCase();
-if (quoi && quoi !== 'manuel' && quoi !== 'brochure') {
-  console.error('  Usage : node build/pdf.js [brochure|manuel]');
+if (quoi && ['manuel', 'brochure', 'linkedin'].indexOf(quoi) === -1) {
+  console.error('  Usage : node build/pdf.js [brochure|manuel|linkedin]');
   process.exit(1);
 }
 fabriquer(quoi).catch(e => { console.error('  ' + e.message); process.exit(1); });

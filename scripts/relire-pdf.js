@@ -204,12 +204,18 @@ module.exports = { lire, auditer };
 if (require.main === module) {
   const a = process.argv.slice(2);
   if (!a.length) {
-    /* Sans argument : les deux documents de la maison. */
+    /* Sans argument : tous les documents de la maison. Chacun est relu
+       avec SES titres attendus — relire le plan LinkedIn avec ceux du
+       manuel ne dirait rien de ses propres parties manquantes. */
     const path = require('path');
     const d = path.join(__dirname, '..', 'documents');
-    const titres = require('../build/pdf-manuel.js').TITRES || [];
+    const lot = [
+      ['melodia-brochure-partenaire.pdf', []],
+      ['melodia-manuel-de-vente.pdf', require('../build/pdf-manuel.js').TITRES || []],
+      ['melodia-plan-linkedin.pdf', require('../build/pdf-linkedin.js').TITRES || []]
+    ];
     let n = 0;
-    for (const f of ['melodia-brochure-partenaire.pdf', 'melodia-manuel-de-vente.pdf']) {
+    for (const [f, titres] of lot) {
       const c = path.join(d, f);
       if (fs.existsSync(c)) n += auditer(c, titres);
       else console.error('  MANQUE ' + c + ' — lancez « npm run pdf »');
