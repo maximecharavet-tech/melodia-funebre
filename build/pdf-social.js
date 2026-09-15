@@ -14,7 +14,7 @@
    au moment où il arrive, et servir de preuve aux professionnels.
 
    Ce qui est lu, et non retapé :
-     · les offres et les dix-huit œuvres, du contenu publié ;
+     · les offres et les œuvres, du contenu publié ;
      · les interdits de prospection, de commercial-contenu.js ;
      · les adresses /ecouter/<titre>, calculées par adresses.js ;
      · les limites de signes par réseau, lues dans intranet.js —
@@ -70,6 +70,18 @@ function limites() {
   });
   return o;
 }
+
+/* Le nombre d'œuvres était écrit « dix-huit » en toutes lettres à neuf
+   endroits de ce document. Une œuvre ajoutée au catalogue, et le plan
+   mentait sur son propre contenu — précisément la divergence que toute
+   la maison s'interdit. Il se compte désormais, et s'écrit en lettres
+   parce que le corps du texte n'est pas un tableau. */
+const LETTRES = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit',
+  'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept',
+  'dix-huit', 'dix-neuf', 'vingt', 'vingt et une', 'vingt-deux', 'vingt-trois',
+  'vingt-quatre', 'vingt-cinq'];
+const enLettres = (n) => LETTRES[n] || String(n);
+const Cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const memeTitre = (s) => String(s).replace(/[’‘‛`´]/g, "'").trim().toLowerCase();
 function parTitre(liste, titre) {
@@ -262,13 +274,13 @@ function audience(V) {
 }
 
 /* ═══ 3. LES TROIS RÉSEAUX ═══ */
-function reseaux(L) {
+function reseaux(L, nb) {
   const R = [
     {
       nom: 'TikTok', role: 'La portée',
       corps: [
         'C’est le seul réseau où un compte neuf, sans un seul abonné, peut être vu par cent mille personnes dès la troisième vidéo. Aucun autre ne fait cela. Pour une maison inconnue, c’est décisif.',
-        'Et c’est un réseau <strong>sonore</strong> : la musique n’y est pas un décor, c’est le contenu. Dix-huit œuvres originales sont exactement la matière qu’il récompense.'
+        'Et c’est un réseau <strong>sonore</strong> : la musique n’y est pas un décor, c’est le contenu. ' + Cap(enLettres(nb)) + ' œuvres originales sont exactement la matière qu’il récompense.'
       ],
       fiches: [
         ['Ce qu’on y met', 'Les vidéos verticales du catalogue, une œuvre par publication. Le disque qui tourne, le titre, trente-cinq secondes.'],
@@ -335,17 +347,17 @@ function reseaux(L) {
 /* ═══ 4. CE QUE VOUS POSSÉDEZ DÉJÀ ═══ */
 function arsenal(O) {
   const A = [
-    ['Dix-huit œuvres originales', 'gratuit · déjà là',
+    [Cap(enLettres(O.length)) + ' œuvres originales', 'gratuit · déjà là',
      'Composées, mixées, à vous. Aucun droit à régler, aucune limite d’usage. C’est la seule ' +
      'matière que personne d’autre au monde ne peut publier — et sur des réseaux sonores, ' +
      'c’est un avantage que l’argent n’achète pas.'],
-    ['Dix-huit vidéos verticales', 'gratuit · npm run video',
+    [Cap(enLettres(O.length)) + ' vidéos verticales', 'gratuit · npm run video',
      'Le disque d’or qui tourne, le titre, l’extrait le plus fort de la piste, en 1080 × 1920. ' +
      'Prêtes pour TikTok, les Reels et les Stories. Le format 4:5 du fil Instagram se fabrique ' +
      'avec la même commande.'],
-    ['Dix-huit vignettes 1200 × 630', 'gratuit · npm run partage',
+    [Cap(enLettres(O.length)) + ' vignettes 1200 × 630', 'gratuit · npm run partage',
      'Déjà en place pour le partage de liens. Elles servent telles quelles au fil Facebook.'],
-    ['Dix-huit pages d’écoute', 'gratuit · déjà en ligne',
+    [Cap(enLettres(O.length)) + ' pages d’écoute', 'gratuit · déjà en ligne',
      'Une adresse par œuvre, avec le lecteur, le récit et les paroles. C’est la destination ' +
      'de tous vos liens de profil : jamais la page d’accueil, toujours l’œuvre dont vous ' +
      'venez de parler.'],
@@ -388,7 +400,7 @@ function arsenal(O) {
 
     <div class="bloc ligne-or conclut" style="margin-top:6mm;">
       <p>Le disque des vidéos n’est pas redessiné : il est lu dans la feuille de style du
-      site. Une retouche de l’or sur le site se retrouve dans les dix-huit vidéos à la
+      site. Une retouche de l’or sur le site se retrouve dans les ${enLettres(O.length)} vidéos à la
       commande suivante. C’est la règle de toute la maison — rien n’est recopié, donc rien ne
       peut diverger.</p>
     </div>
@@ -396,7 +408,7 @@ function arsenal(O) {
 }
 
 /* ═══ 5. L'IA, GRATUITEMENT ═══ */
-function ia() {
+function ia(nb) {
   const U = [
     ['Écrire et décliner les textes', 'Claude, ChatGPT, Gemini — tous ont une offre gratuite',
      'Le vrai gain n’est pas d’écrire un texte, c’est d’en décliner un en trois versions pour ' +
@@ -423,7 +435,7 @@ function ia() {
     </div>
 
     <p>Votre outil d’IA le plus rentable, vous venez de le lire : c’est le générateur de
-    vidéos. Il fabrique dix-huit montages à la demande, indéfiniment, sans abonnement et sans
+    vidéos. Il fabrique ${enLettres(nb)} montages à la demande, indéfiniment, sans abonnement et sans
     que vos œuvres quittent votre machine. Aucun service en ligne ne fera mieux, et la
     plupart vous factureraient au fichier.</p>
 
@@ -473,7 +485,7 @@ function formats(O) {
     ['L’œuvre nue', 'TikTok · Reels · Facebook',
      'La vidéo du catalogue, trois lignes de texte, rien d’autre. C’est le format de base et ' +
      'celui qui porte tout : il démontre au lieu d’affirmer.',
-     'Deux fois par semaine, indéfiniment. Dix-huit œuvres tiennent neuf semaines sans répétition.'],
+     'Deux fois par semaine, indéfiniment. ' + Cap(enLettres(O.length)) + ' œuvres tiennent ' + enLettres(Math.round(O.length / 2)) + ' semaines sans répétition.'],
     ['Le registre inattendu', 'TikTok · Reels',
      'Une polyphonie corse, un bélé antillais, un klezmer. La surprise est le moteur : on ' +
      'n’attend pas cela d’un service funéraire, donc on regarde jusqu’au bout.',
@@ -821,9 +833,9 @@ function html() {
 ${couverture(O)}
 ${these()}
 ${audience(V)}
-${reseaux(L)}
+${reseaux(L, O.length)}
 ${arsenal(O)}
-${ia()}
+${ia(O.length)}
 ${formats(O)}
 ${modeles(O, V, L)}
 ${calendrier(O)}

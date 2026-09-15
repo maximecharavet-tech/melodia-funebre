@@ -10,6 +10,18 @@
   },
   "demos": [
     {
+      "id": "demo-20",
+      "visible": true,
+      "title": "Constantine dans ton cœur",
+      "who": "Bob, 79 ans",
+      "lieu": "Constantine et la France",
+      "style": "Soul jazz",
+      "audio": "audio/bob.mp3",
+      "story": "Né là-bas, arrivé ici, et jamais tout à fait reparti de ni l’un ni l’autre. Une vie de mains dans le cambouis et de dimanches à rallonge, une veste marron qu’il refusait de remplacer, et cette manie de dire « juste un petit moment » quand on lui demandait de rester. Sa famille voulait qu’on entende son rire, pas son absence. Rhodes, contrebasse, balais sur la caisse claire et une trompette sourdine — la musique qu’il mettait le dimanche.",
+      "lyrics": "Oh Bob, regarde-nous ce soir\nOn parle encore de toi\nDe tes éclats de rire dans le couloir\nDe ta façon de dire « ça ira »",
+      "brief": "rieur · bricoleur · fidèle"
+    },
+    {
       "id": "demo-8",
       "visible": true,
       "title": "Jusqu'au jour où l'on se retrouve",
