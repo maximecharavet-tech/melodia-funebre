@@ -1,6 +1,6 @@
 {
   "index.html": {
-    "empreinte": "64638548e5ab5c51c895fbf81b2aa1d4f361bea2",
+    "empreinte": "1dabc1496dd13b6e2e131e577e55c83f9ad50083",
     "date": "2026-09-15"
   },
   "offres.html": {
@@ -8,7 +8,7 @@
     "date": "2026-09-15"
   },
   "demos.html": {
-    "empreinte": "35a8d838c736680626d9f48cbfd9eea461846b9f",
+    "empreinte": "9eda44a5cc009598c00d20add6ffdd8b50b5743d",
     "date": "2026-09-15"
   },
   "processus.html": {
@@ -156,7 +156,11 @@
     "date": "2026-09-15"
   },
   "de-son-vivant.html": {
-    "empreinte": "b070c05b89168e34bb530728fd7acc2adffa4008",
+    "empreinte": "d2f3ecb5ec82e25055e07e8637e0151cb02c567a",
+    "date": "2026-09-15"
+  },
+  "ecouter-ce-que-je-n-ai-pas-su-vous-dire.html": {
+    "empreinte": "b88f14201c3ee08ed2bc724317404ba4dc414280",
     "date": "2026-09-15"
   }
 }

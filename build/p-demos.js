@@ -23,7 +23,7 @@ module.exports = {
   <section class="section-sm" style="padding-top:2.4rem;">
     <div class="wrap">
 ${P.vitrineBarre()}
-${P.oeuvres()}
+${P.oeuvres('hommage')}
     </div>
   </section>
 

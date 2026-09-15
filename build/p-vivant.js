@@ -86,9 +86,13 @@ module.exports = {
   title: 'Offrir la chanson d’une vie, de son vivant | Melodia Funèbre',
   desc: 'Une œuvre originale composée pour quelqu’un qui est encore là — un anniversaire, ' +
         'des noces d’or, un départ. Elle l’entend, elle peut la corriger, et elle reste.',
-  scripts: [],
+  /* La platine — le disque d'or qui tourne — est montée par ce script,
+     le même que sur /demos. Sans lui, la grille reste une liste de
+     liens : lisible, mais ce n'est pas ce qui a été demandé. */
+  scripts: ['assets/js/catalogue.js'],
   jsonld: [
     P.jsonldFil('De son vivant', '/de-son-vivant'),
+    ...(P.jsonldVivants ? [P.jsonldVivants] : []),
     {
       '@context': 'https://schema.org',
       '@type': 'Service',
@@ -211,6 +215,22 @@ module.exports = {
       </div>
     </div>
   </section>
+
+${P.oeuvres('vivant') ? `
+  <section class="section section-alt" id="messages">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Les messages laissés</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Ce qu’ils ont voulu dire,<br><em>pour le jour où ils ne seraient plus là.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:62ch;">
+          Ces œuvres-là ne racontent pas quelqu’un : c’est quelqu’un qui parle. Elles ont été
+          commandées de leur vivant, avec leurs mots, pour être entendues par leurs proches
+          le jour venu. Appuyez sur lecture — le disque tourne, comme pour les autres.
+        </p>
+      </div>
+${P.oeuvres('vivant')}
+    </div>
+  </section>` : ''}
 
 ${P.pricing()}
 ${P.partage('Offrir la chanson d’une vie', 'Une œuvre composée pour quelqu’un qui est encore là — et qui peut l’entendre.')}

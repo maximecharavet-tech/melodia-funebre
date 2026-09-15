@@ -71,7 +71,7 @@ ${P.marquee()}
         <p class="lead" style="margin:1.6rem auto 0;max-width:64ch;">Voici nos hommages, tous réunis. Chacun est né d'un entretien de cinq minutes avec une famille : rien n'a été pris dans un catalogue, tout a été écrit pour eux. La personne est décrite à côté de sa chanson.</p>
       </div>
 ${P.vitrineBarre()}
-${P.oeuvres()}
+${P.oeuvres('hommage')}
     </div>
   </section>
 

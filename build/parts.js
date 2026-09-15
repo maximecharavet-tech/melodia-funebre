@@ -87,11 +87,41 @@ ${STYLES.map(s => `    <span class="marquee-item">${s}</span>`).join('\n')}
    personne, et le catalogue reste lisible si le JavaScript ne charge
    pas. catalogue.js reprend ensuite ces fiches pour l'écoute, et les
    remonte quand le propriétaire ajoute une musique depuis sa console. */
-function oeuvres() {
-  const liste = TRACKS;
+/* Les libellés changent avec la nature de l'œuvre. Un hommage est
+   composé POUR un défunt, d'après les mots de sa famille ; un message
+   de son vivant est composé PAR quelqu'un, d'après ce qu'il a demandé
+   lui-même. Employer les mêmes mots pour les deux ferait dire au site
+   une chose fausse sur la moitié de son catalogue. */
+const REGISTRES = {
+  hommage: {
+    qui: 'Pour',
+    brief: 'Les mots de la famille',
+    mention: 'Chaque œuvre a bien été composée pour une personne. Les prénoms et les ' +
+             'récits qui les accompagnent ont été modifiés : nous ne publions jamais ' +
+             'l’histoire d’une famille.'
+  },
+  vivant: {
+    qui: 'De',
+    brief: 'Ce qu’il nous a demandé',
+    mention: 'Ces œuvres ont été commandées par les personnes elles-mêmes, de leur ' +
+             'vivant, pour être entendues plus tard par leurs proches. Les prénoms et ' +
+             'les récits ont été modifiés, comme pour le reste du catalogue.'
+  }
+};
+
+/* « categorie » filtre la grille ; sans elle, tout le catalogue. */
+function oeuvres(categorie) {
+  const R = REGISTRES[categorie] || REGISTRES.hommage;
+  const liste = categorie ? TRACKS.filter((t) => (t.categorie || 'hommage') === categorie) : TRACKS;
+  if (!liste.length) return '';
   /* L'adresse de chaque œuvre est calculée au même endroit que celle
      des pages d'écoute : voir build/adresses.js. */
-  const slugs = require('./adresses.js').adresses(liste);
+  /* Les adresses sont calculées sur le catalogue ENTIER, jamais sur la
+     grille filtrée : deux œuvres homonymes se distinguent par un
+     suffixe, et ce suffixe doit être le même ici que sur la page
+     d'écoute, sinon le lien mène nulle part. */
+  const tousSlugs = require('./adresses.js').adresses(TRACKS);
+  const slugs = liste.map((t) => tousSlugs[TRACKS.indexOf(t)]);
   const barres = Array.from({ length: 20 },
     (_, b) => `<span style="animation-delay:${(b * 0.07).toFixed(2)}s"></span>`).join('');
 
@@ -111,7 +141,7 @@ function oeuvres() {
             <div class="oeuvre-style">${esc(t.style)}${lieu}</div>
 ${t.mention ? `            <div class="oeuvre-mention">${esc(t.mention)}</div>\n` : ''}
             <h3 class="oeuvre-titre"><em>${esc(t.title)}</em></h3>
-            <div class="oeuvre-qui">Pour ${esc(t.who)}</div>
+            <div class="oeuvre-qui">${R.qui} ${esc(t.who)}</div>
             <div class="oeuvre-liens">
               <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-${i}"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
               <!-- La page de l'œuvre : c'est elle qu'on partage. Un lien
@@ -121,7 +151,7 @@ ${t.mention ? `            <div class="oeuvre-mention">${esc(t.mention)}</div>\n
             <div class="oeuvre-detail" id="oe-detail-${i}">
               <p class="oeuvre-recit">${esc(t.story)}</p>
 ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</blockquote>\n` : ''}              <div class="oeuvre-brief">
-                <span class="mono">Les mots de la famille</span>
+                <span class="mono">${esc(R.brief)}</span>
                 <em>${String(t.brief).split('·').map(m => m.trim()).filter(Boolean)
                        .map(m => `<span class="oeuvre-mot">${esc(m)}</span>`).join('')}</em>
               </div>
@@ -137,6 +167,10 @@ ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</bl
     id: t.id, title: t.title, who: t.who, lieu: t.lieu,
     style: t.style, audio: t.file, story: t.story,
     lyrics: t.lyrics, brief: t.brief, photo: t.photo || '', mention: t.mention || '',
+    /* La platine remplace la grille : sans ce champ, elle écrirait
+       « Pour X » et « Les mots de la famille » sur un message que la
+       personne a commandé elle-même. */
+    categorie: t.categorie || 'hommage',
     page: '/ecouter/' + slugs[liste.indexOf(t)]
   }));
 
@@ -160,7 +194,7 @@ ${t.lyrics ? `              <blockquote class="oeuvre-vers">${esc(t.lyrics)}</bl
 
      Les deux lignes coûtent peu et mettent le catalogue à l'abri. */
   const avecPortrait = liste.some(t => t.photo);
-  const mention = `\n      <p class="catalogue-mention center">Chaque œuvre a bien été composée pour une personne. Les prénoms et les récits qui les accompagnent ont été modifiés : nous ne publions jamais l'histoire d'une famille.${
+  const mention = `\n      <p class="catalogue-mention center">${R.mention}${
     avecPortrait ? " Les portraits sont des illustrations — une famille nous confie des mots, pas toujours un visage." : ''
   }</p>`;
 
@@ -175,7 +209,7 @@ ${fiches}
    contenu publié — ils suivent donc les ajouts faits en console. */
 function vitrineBarre() {
   return `      <div class="cat-barre reveal">
-        <p class="cat-compte"><span data-catalogue-libelle>${TRACKS.length} hommages</span> composés à ce jour</p>
+        <p class="cat-compte"><span data-catalogue-libelle>${TRACKS.filter((t) => (t.categorie || 'hommage') === 'hommage').length} hommages</span> composés à ce jour</p>
         <button type="button" class="btn btn-gold" data-tout-ecouter>
           <span class="cat-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
           <span data-libelle>Tout écouter</span>
@@ -375,14 +409,20 @@ const jsonldSite = {
    de répondre « oui, en voici des exemples » plutôt que « peut-être ».
    La liste suit TRACKS : elle n'annonce pas un nombre écrit à la main,
    qui vieillirait à chaque ajout comme l'a fait le reste du site. */
-const jsonldCatalogue = {
+/* Deux listes, parce qu'il y a deux objets. Ranger un message laissé
+   de son vivant parmi « les hommages » déclarerait aux moteurs une
+   chose fausse : personne n'a composé cette œuvre pour un défunt, son
+   auteur l'a commandée lui-même. Le filtre n'est donc pas cosmétique. */
+const duRegistre = (c) => TRACKS.filter((t) => (t.categorie || 'hommage') === c);
+
+const listeOeuvres = (liste, id, nom, desc) => ({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  '@id': SITE + '/demos#catalogue',
-  name: 'Les hommages composés par Melodia Funèbre',
-  description: "Chaque œuvre a été écrite pour une seule personne, d'après l'entretien mené avec sa famille.",
-  numberOfItems: TRACKS.length,
-  itemListElement: TRACKS.map((t, i) => ({
+  '@id': SITE + id,
+  name: nom,
+  description: desc,
+  numberOfItems: liste.length,
+  itemListElement: liste.map((t, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     item: {
@@ -396,7 +436,23 @@ const jsonldCatalogue = {
       isFamilyFriendly: true
     }
   }))
-};
+});
+
+const jsonldCatalogue = listeOeuvres(
+  duRegistre('hommage'), '/demos#catalogue',
+  'Les hommages composés par Melodia Funèbre',
+  "Chaque œuvre a été écrite pour une seule personne, d'après l'entretien mené avec sa famille.");
+
+/* Les messages laissés de son vivant. La liste n'est publiée que si
+   elle contient quelque chose : une liste vide annoncerait un
+   catalogue qui n'existe pas. */
+const jsonldVivants = duRegistre('vivant').length
+  ? listeOeuvres(
+      duRegistre('vivant'), '/de-son-vivant#messages',
+      'Les messages laissés de son vivant',
+      'Des œuvres commandées par les personnes elles-mêmes, de leur vivant, pour être ' +
+      'entendues par leurs proches le jour venu.')
+  : null;
 
 /* La marche à suivre, en sept étapes. Un « HowTo » est l'une des
    formes qu'un assistant reprend le plus volontiers pour répondre à
@@ -495,4 +551,4 @@ function jsonldFil(titre, chemin) {
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: fil };
 }
 
-module.exports = { partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldProcessus, jsonldFil };
+module.exports = { partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldVivants, jsonldProcessus, jsonldFil };

@@ -31,7 +31,14 @@ if (fs.existsSync(fichierContenu)) {
       visibles(c.demos).forEach(d => data.TRACKS.push({
         id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
         file: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief,
-        photo: d.photo || '', mention: d.mention || ''
+        photo: d.photo || '', mention: d.mention || '',
+        /* « vivant » range l'œuvre sur /de-son-vivant plutôt que dans le
+           catalogue des hommages. Ce ne sont pas les mêmes objets : un
+           hommage est écrit SUR quelqu'un après sa mort, un message de
+           son vivant est écrit PAR quelqu'un, pour le jour où il ne
+           sera plus là. Les mélanger dans une même grille rendrait les
+           deux incompréhensibles. Champ absent = hommage. */
+        categorie: d.categorie || 'hommage'
       }));
     }
     if (c.offers) {
