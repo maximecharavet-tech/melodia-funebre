@@ -1271,6 +1271,13 @@
               'et ce qu\'il ne faut jamais faire sur ce réseau.</span>' +
             '<span class="doc-act">Télécharger</span>' +
           '</a>' +
+          '<a class="doc-carte" href="/documents/melodia-plan-reseaux-sociaux.pdf" download>' +
+            '<span class="doc-genre">PDF · 19 pages · interne</span>' +
+            '<span class="doc-nom">Plan réseaux sociaux</span>' +
+            '<span class="doc-dit">Instagram, Facebook et TikTok : la stratégie, six formats, ' +
+              'quatre modèles prêts à publier, la modération des commentaires et la mesure.</span>' +
+            '<span class="doc-act">Télécharger</span>' +
+          '</a>' +
           '<a class="doc-carte" href="/documents/melodia-brochure-partenaire.pdf" download>' +
             '<span class="doc-genre">PDF · 13 pages</span>' +
             '<span class="doc-nom">Brochure partenaire</span>' +

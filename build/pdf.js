@@ -82,6 +82,7 @@ async function fabriquer(quoi) {
   }
   if (tout || quoi === 'manuel') lot.push([require('./pdf-manuel.js'), enFlux('Manuel de vente')]);
   if (tout || quoi === 'linkedin') lot.push([require('./pdf-linkedin.js'), enFlux('Plan LinkedIn')]);
+  if (tout || quoi === 'social') lot.push([require('./pdf-social.js'), enFlux('Plan réseaux sociaux')]);
 
   for (const [mod, options] of lot) {
     const page = await nav.newPage();
@@ -103,8 +104,8 @@ async function fabriquer(quoi) {
 }
 
 const quoi = (process.argv[2] || '').toLowerCase();
-if (quoi && ['manuel', 'brochure', 'linkedin'].indexOf(quoi) === -1) {
-  console.error('  Usage : node build/pdf.js [brochure|manuel|linkedin]');
+if (quoi && ['manuel', 'brochure', 'linkedin', 'social'].indexOf(quoi) === -1) {
+  console.error('  Usage : node build/pdf.js [brochure|manuel|linkedin|social]');
   process.exit(1);
 }
 fabriquer(quoi).catch(e => { console.error('  ' + e.message); process.exit(1); });

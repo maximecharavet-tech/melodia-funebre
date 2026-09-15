@@ -212,7 +212,8 @@ if (require.main === module) {
     const lot = [
       ['melodia-brochure-partenaire.pdf', []],
       ['melodia-manuel-de-vente.pdf', require('../build/pdf-manuel.js').TITRES || []],
-      ['melodia-plan-linkedin.pdf', require('../build/pdf-linkedin.js').TITRES || []]
+      ['melodia-plan-linkedin.pdf', require('../build/pdf-linkedin.js').TITRES || []],
+      ['melodia-plan-reseaux-sociaux.pdf', require('../build/pdf-social.js').TITRES || []]
     ];
     let n = 0;
     for (const [f, titres] of lot) {
