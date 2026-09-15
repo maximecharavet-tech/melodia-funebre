@@ -93,16 +93,35 @@ ${STYLES.map(s => `    <span class="marquee-item">${s}</span>`).join('\n')}
    lui-même. Employer les mêmes mots pour les deux ferait dire au site
    une chose fausse sur la moitié de son catalogue. */
 const REGISTRES = {
+  /* 1 · L'hommage — composé SUR quelqu'un, après sa mort, d'après ce
+     que sa famille raconte de lui. */
   hommage: {
     qui: 'Pour',
     brief: 'Les mots de la famille',
+    partage: 'Partager cet hommage',
     mention: 'Chaque œuvre a bien été composée pour une personne. Les prénoms et les ' +
              'récits qui les accompagnent ont été modifiés : nous ne publions jamais ' +
              'l’histoire d’une famille.'
   },
+  /* 2 · L'œuvre offerte — composée POUR quelqu'un qui est encore là,
+     d'après ce que sa famille raconte. Les mots sont donc ceux de la
+     famille, exactement comme pour un hommage : seul le moment change.
+     C'est le cas de Ruth, et confondre ce registre avec le suivant
+     ferait dire au site qu'elle a commandé sa propre chanson. */
   vivant: {
+    qui: 'Pour',
+    brief: 'Les mots de la famille',
+    partage: 'Partager cette œuvre',
+    mention: 'Ces œuvres ont été offertes à des personnes bien vivantes, qui les ont ' +
+             'écoutées. Les prénoms et les récits ont été modifiés, comme pour le reste ' +
+             'du catalogue.'
+  },
+  /* 3 · Le message laissé — composé PAR quelqu'un, de son vivant, pour
+     être entendu par ses proches le jour venu. Les mots sont les siens. */
+  message: {
     qui: 'De',
     brief: 'Ce qu’il nous a demandé',
+    partage: 'Partager ce message',
     mention: 'Ces œuvres ont été commandées par les personnes elles-mêmes, de leur ' +
              'vivant, pour être entendues plus tard par leurs proches. Les prénoms et ' +
              'les récits ont été modifiés, comme pour le reste du catalogue.'
@@ -446,12 +465,13 @@ const jsonldCatalogue = listeOeuvres(
 /* Les messages laissés de son vivant. La liste n'est publiée que si
    elle contient quelque chose : une liste vide annoncerait un
    catalogue qui n'existe pas. */
-const jsonldVivants = duRegistre('vivant').length
+const duVivant = () => TRACKS.filter((t) => ['vivant', 'message'].indexOf(t.categorie) !== -1);
+const jsonldVivants = duVivant().length
   ? listeOeuvres(
-      duRegistre('vivant'), '/de-son-vivant#messages',
-      'Les messages laissés de son vivant',
-      'Des œuvres commandées par les personnes elles-mêmes, de leur vivant, pour être ' +
-      'entendues par leurs proches le jour venu.')
+      duVivant(), '/de-son-vivant#oeuvres',
+      'Les œuvres composées du vivant de la personne',
+      'Des œuvres écrites pendant que la personne était encore là — offertes par ses ' +
+      'proches, ou laissées par elle pour le jour venu.')
   : null;
 
 /* La marche à suivre, en sept étapes. Un « HowTo » est l'une des

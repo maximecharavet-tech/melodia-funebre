@@ -140,24 +140,21 @@ module.exports = {
     </div>
   </section>
 
-  <section class="section section-alt">
-    <div class="wrap wrap-tight">
-      <div class="reveal center">
-        <div class="eyebrow">Une œuvre, déjà</div>
-        <h2 class="h-lg" style="margin-top:.8rem;">Ruth avait <em>quatre-vingt-cinq ans</em><br>quand elle a entendu la sienne.</h2>
-        <p class="lead" style="margin:1.4rem auto 0;max-width:60ch;">
-          Ses enfants voulaient lui dire de son vivant ce qu’on dit trop souvent après. Nous
-          avons écrit un klezmer. Elle l’a écouté, assise, et elle a corrigé deux choses —
-          c’est ce qui a rendu l’œuvre juste.
+${P.oeuvres('vivant') ? `
+  <section class="section section-alt" id="oeuvres">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Offertes de leur vivant</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Elles les ont entendues,<br><em>et elles ont corrigé deux choses.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:62ch;">
+          Ruth avait quatre-vingt-cinq ans. Ses enfants voulaient lui dire de son vivant ce
+          qu’on dit trop souvent après. Elle a écouté son klezmer, assise, et elle a corrigé
+          deux détails — c’est exactement ce qui a rendu l’œuvre juste.
         </p>
-        <div class="hero-actions" style="margin-top:2rem;justify-content:center;">
-          <a href="/ecouter/eshet-chayil-femme-de-valeur" class="btn btn-outline btn-lg">Écouter « Eshet Chayil »</a>
-        </div>
-        <p class="catalogue-mention center" style="margin-top:2rem;">Comme pour tout le catalogue,
-        le prénom et le récit ont été modifiés : nous ne publions jamais l’histoire d’une famille.</p>
       </div>
+${P.oeuvres('vivant')}
     </div>
-  </section>
+  </section>` : ''}
 
   <section class="section">
     <div class="wrap wrap-tight">
@@ -216,8 +213,8 @@ module.exports = {
     </div>
   </section>
 
-${P.oeuvres('vivant') ? `
-  <section class="section section-alt" id="messages">
+${P.oeuvres('message') ? `
+  <section class="section" id="messages">
     <div class="wrap">
       <div class="reveal center" style="margin-bottom:2.6rem;">
         <div class="eyebrow">Les messages laissés</div>
@@ -228,7 +225,7 @@ ${P.oeuvres('vivant') ? `
           le jour venu. Appuyez sur lecture — le disque tourne, comme pour les autres.
         </p>
       </div>
-${P.oeuvres('vivant')}
+${P.oeuvres('message')}
     </div>
   </section>` : ''}
 

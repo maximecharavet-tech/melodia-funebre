@@ -23,7 +23,11 @@
      voir REGISTRES dans build/parts.js. */
   var REGISTRES = {
     hommage: { qui: 'Pour', brief: 'Les mots de la famille', partage: 'Partager cet hommage' },
-    vivant:  { qui: 'De',   brief: 'Ce qu’il nous a demandé',  partage: 'Partager ce message' }
+    /* Offerte à une personne vivante : les mots restent ceux de sa
+       famille. Seul le moment change, pas l'auteur du récit. */
+    vivant:  { qui: 'Pour', brief: 'Les mots de la famille', partage: 'Partager cette œuvre' },
+    /* Laissé par la personne elle-même : les mots sont les siens. */
+    message: { qui: 'De',   brief: 'Ce qu’il nous a demandé',  partage: 'Partager ce message' }
   };
 
   var grille = document.querySelector('[data-catalogue]');

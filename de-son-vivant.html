@@ -38,7 +38,7 @@
    pour les révéler, la page se servirait presque vide. On les rétablit. */
 .reveal,.oeuvre{opacity:1!important;transform:none!important}
 </style></noscript>
-<script type="application/ld+json">[{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://melodia-funebre.fr/"},{"@type":"ListItem","position":2,"name":"De son vivant","item":"https://melodia-funebre.fr/de-son-vivant"}]},{"@context":"https://schema.org","@type":"Service","@id":"https://melodia-funebre.fr/de-son-vivant#service","name":"Chanson personnalisée offerte de son vivant","serviceType":"Composition musicale personnalisée","description":"Une œuvre originale écrite pour une personne vivante, à offrir pour un anniversaire, des noces d’or, un départ en retraite ou simplement pour dire merci.","provider":{"@id":"https://melodia-funebre.fr/#organisation"},"areaServed":"FR","audience":{"@type":"Audience","audienceType":"Familles et proches"}}]</script>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://melodia-funebre.fr/"},{"@type":"ListItem","position":2,"name":"De son vivant","item":"https://melodia-funebre.fr/de-son-vivant"}]},{"@context":"https://schema.org","@type":"ItemList","@id":"https://melodia-funebre.fr/de-son-vivant#oeuvres","name":"Les œuvres composées du vivant de la personne","description":"Des œuvres écrites pendant que la personne était encore là — offertes par ses proches, ou laissées par elle pour le jour venu.","numberOfItems":1,"itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"MusicRecording","name":"Eshet Chayil, femme de valeur","description":"Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.","genre":"Klezmer","inLanguage":"fr-FR","byArtist":{"@id":"https://melodia-funebre.fr/#organisation"},"audio":{"@type":"AudioObject","contentUrl":"https://melodia-funebre.fr/audio/ruth.mp3","encodingFormat":"audio/mpeg"},"isFamilyFriendly":true}}]},{"@context":"https://schema.org","@type":"Service","@id":"https://melodia-funebre.fr/de-son-vivant#service","name":"Chanson personnalisée offerte de son vivant","serviceType":"Composition musicale personnalisée","description":"Une œuvre originale écrite pour une personne vivante, à offrir pour un anniversaire, des noces d’or, un départ en retraite ou simplement pour dire merci.","provider":{"@id":"https://melodia-funebre.fr/#organisation"},"areaServed":"FR","audience":{"@type":"Audience","audienceType":"Familles et proches"}}]</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Aller au contenu</a>
@@ -124,22 +124,55 @@
     </div>
   </section>
 
-  <section class="section section-alt">
-    <div class="wrap wrap-tight">
-      <div class="reveal center">
-        <div class="eyebrow">Une œuvre, déjà</div>
-        <h2 class="h-lg" style="margin-top:.8rem;">Ruth avait <em>quatre-vingt-cinq ans</em><br>quand elle a entendu la sienne.</h2>
-        <p class="lead" style="margin:1.4rem auto 0;max-width:60ch;">
-          Ses enfants voulaient lui dire de son vivant ce qu’on dit trop souvent après. Nous
-          avons écrit un klezmer. Elle l’a écouté, assise, et elle a corrigé deux choses —
-          c’est ce qui a rendu l’œuvre juste.
+
+  <section class="section section-alt" id="oeuvres">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Offertes de leur vivant</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Elles les ont entendues,<br><em>et elles ont corrigé deux choses.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:62ch;">
+          Ruth avait quatre-vingt-cinq ans. Ses enfants voulaient lui dire de son vivant ce
+          qu’on dit trop souvent après. Elle a écouté son klezmer, assise, et elle a corrigé
+          deux détails — c’est exactement ce qui a rendu l’œuvre juste.
         </p>
-        <div class="hero-actions" style="margin-top:2rem;justify-content:center;">
-          <a href="/ecouter/eshet-chayil-femme-de-valeur" class="btn btn-outline btn-lg">Écouter « Eshet Chayil »</a>
-        </div>
-        <p class="catalogue-mention center" style="margin-top:2rem;">Comme pour tout le catalogue,
-        le prénom et le récit ont été modifiés : nous ne publions jamais l’histoire d’une famille.</p>
       </div>
+      <div class="catalogue" data-catalogue>
+        <article class="oeuvre reveal" data-oeuvre="0" data-style="Klezmer">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>R</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="0" aria-label="Écouter Eshet Chayil, femme de valeur"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Klezmer · Paris et Israël</div>
+            <div class="oeuvre-mention">Composé pour une vivante</div>
+
+            <h3 class="oeuvre-titre"><em>Eshet Chayil, femme de valeur</em></h3>
+            <div class="oeuvre-qui">Pour Ruth, 85 ans</div>
+            <div class="oeuvre-liens">
+              <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-0"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              <!-- La page de l'œuvre : c'est elle qu'on partage. Un lien
+                   vers le catalogue entier ne dit pas ce qu'on va entendre. -->
+              <a class="oeuvre-partager" href="/ecouter/eshet-chayil-femme-de-valeur" aria-label="Page de « Eshet Chayil, femme de valeur », à partager"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.4 13.4l7.2 4.2M15.6 6.4l-7.2 4.2"/></svg><span>Partager</span></a>
+            </div>
+            <div class="oeuvre-detail" id="oe-detail-0">
+              <p class="oeuvre-recit">Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.</p>
+              <blockquote class="oeuvre-vers">Ruth, Eshet Chayil, femme de valeur
+Qui trouvera une femme comme toi ?
+Ton prix dépasse celui des perles
+Tu as marché entre deux terres avec foi</blockquote>
+              <div class="oeuvre-brief">
+                <span class="mono">Les mots de la famille</span>
+                <em><span class="oeuvre-mot">croyante</span><span class="oeuvre-mot">debout</span><span class="oeuvre-mot">rassembleuse</span></em>
+              </div>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+      </div>
+      <p class="catalogue-mention center">Ces œuvres ont été offertes à des personnes bien vivantes, qui les ont écoutées. Les prénoms et les récits ont été modifiés, comme pour le reste du catalogue.</p>
+      <script type="application/json" id="oeuvres-data">[{"id":"demo-11","title":"Eshet Chayil, femme de valeur","who":"Ruth, 85 ans","lieu":"Paris et Israël","style":"Klezmer","audio":"audio/ruth.mp3","story":"Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.","lyrics":"Ruth, Eshet Chayil, femme de valeur\nQui trouvera une femme comme toi ?\nTon prix dépasse celui des perles\nTu as marché entre deux terres avec foi","brief":"croyante · debout · rassembleuse","photo":"","mention":"Composé pour une vivante","categorie":"vivant","page":"/ecouter/eshet-chayil-femme-de-valeur"}]</script>
     </div>
   </section>
 
@@ -429,7 +462,7 @@
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=fd39b940"></script>
-<script src="/assets/js/catalogue.js?v=1e236ce2"></script>
+<script src="/assets/js/catalogue.js?v=f173c94a"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->

@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = '4bf75b9906';
+const VERSION = '23f866f26b';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -74,7 +74,7 @@ const PRECHARGE = [
   "/assets/js/rappel.js?v=1840ff2c",
   "/assets/js/courrier.js?v=7feee7d2",
   "/assets/js/ornements.js?v=fd39b940",
-  "/assets/js/catalogue.js?v=1e236ce2",
+  "/assets/js/catalogue.js?v=f173c94a",
   "/site.webmanifest",
   "/assets/img/icons/icon-192.png",
   "/assets/img/icons/icon-512.png"
