@@ -359,6 +359,13 @@ ${P.faq(FAQ_B2B)}
               <label><input type="radio" name="objet" value="Demander une démonstration" checked><span>Une démonstration</span></label>
               <label><input type="radio" name="objet" value="Devenir partenaire"><span>Devenir partenaire</span></label>
               <label><input type="radio" name="objet" value="Recevoir les informations professionnelles"><span>Les informations</span></label>
+              <!-- Une maison de retraite, un club d'aînés ou un CSE ne vient pas
+                   pour un hommage funéraire : il vient pour une œuvre offerte du
+                   vivant de la personne. Sans cette case, sa demande arrivait
+                   confondue avec celle d'une pompe funèbre, et l'appel repartait
+                   sur le mauvais pied. La page « De son vivant » y mène avec
+                   ?objet=etablissement, et partenariat.js coche alors la case. -->
+              <label><input type="radio" name="objet" value="Établissement ou association (de son vivant)"><span>Un établissement</span></label>
             </div>
           </div>
 
