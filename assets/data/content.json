@@ -34,6 +34,18 @@
       "brief": "lumineux · inachevé · aimé"
     },
     {
+      "id": "demo-21",
+      "visible": true,
+      "title": "Sous le lierre",
+      "who": "Yvette, la mamie de la maison",
+      "lieu": "",
+      "style": "Musette",
+      "audio": "audio/yvette.mp3",
+      "story": "Une maison qui ne désemplissait pas, des cartables dans l’entrée et toujours une place de plus à table. Elle avait rencontré Marcel un soir d’été, il lui avait offert trois roses, et ils n’ont plus jamais cessé d’agrandir la table. Sa famille voulait une valse, pas un chant grave : accordéon, violon, clarinette et contrebasse, avec un chœur d’enfants sur le refrain — ceux-là mêmes qui criaient « Mamie, encore un tour ! ».",
+      "lyrics": "Mamie Yvette, Mamie Yvette\nOn gardera ta voix dans nos têtes\nTu avais rempli toute une vie\nDe petits bonheurs, de grandes envies",
+      "brief": "généreuse · rieuse · rassembleuse"
+    },
+    {
       "id": "demo-18",
       "visible": true,
       "title": "Qui danse avec le vent",
@@ -239,6 +251,18 @@
       "lyrics": "Mathieu, tu étais la lumière\nAu milieu de la nuit.\nLa main qui rassure,\nLa voix qui dit : « Je suis là. »",
       "lieu": "",
       "visible": true
+    },
+    {
+      "id": "demo-22",
+      "visible": true,
+      "title": "Une lumière sur le porche",
+      "who": "Mitch, papy de sept petits-enfants",
+      "lieu": "",
+      "style": "Country americana",
+      "audio": "audio/mitch.mp3",
+      "story": "Un vieux garage en bois où dormaient les outils et les années, chaque rayure sur le métal portant le secret d’un été. Sarah l’attendait sous le porche, au bord de la rivière ; sont venus trois enfants, puis sept petits-enfants courant dans la poussière. Une americana qui passe du français à l’anglais sans prévenir, comme on passe d’une génération à l’autre : guitare aux doigts, pedal steel, fiddle et contrebasse, avec un chœur d’enfants pour la fin.",
+      "lyrics": "Mitch...\nYou built a life from little things\nDes matins d’or et des nuits de pluie\nUne maison, quelques rêves\nEt l’amour comme unique richesse",
+      "brief": "patient · bâtisseur · fidèle"
     }
   ],
   "offers": [

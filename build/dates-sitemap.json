@@ -1,14 +1,14 @@
 {
   "index.html": {
-    "empreinte": "b55c10189f0743e9f4e76896595a4bc48ad20873",
+    "empreinte": "90ecf4e92750ec0956436d01d66fe57fb1165435",
     "date": "2026-09-15"
   },
   "offres.html": {
-    "empreinte": "b3648543adbc207cb399cd6c2458baa588ce26f7",
+    "empreinte": "90552da018e5093a3ec40f35d1744d9d98a47e3b",
     "date": "2026-09-15"
   },
   "demos.html": {
-    "empreinte": "09597f4d696380f68b6cc2a2b8d7c479e23f7eff",
+    "empreinte": "35a8d838c736680626d9f48cbfd9eea461846b9f",
     "date": "2026-09-15"
   },
   "processus.html": {
@@ -56,7 +56,7 @@
     "date": "2026-09-13"
   },
   "professionnels.html": {
-    "empreinte": "75f4134fbf48f31fdefe2d292eaea417ed2a80c0",
+    "empreinte": "917731d12c96a94bda08973a25431d71c34de737",
     "date": "2026-09-15"
   },
   "chanson-hommage.html": {
@@ -72,8 +72,8 @@
     "date": "2026-09-13"
   },
   "ecouter-jusqu-au-jour-ou-l-on-se-retrouve.html": {
-    "empreinte": "9dad91755e437ea553596d06c113990530d895ca",
-    "date": "2026-09-13"
+    "empreinte": "736a053ec7ec7c6353ff5aab183b387a2d771691",
+    "date": "2026-09-15"
   },
   "ecouter-qui-danse-avec-le-vent.html": {
     "empreinte": "0769a026bd15088f49c188a2a1e68bf18942ed07",
@@ -132,19 +132,27 @@
     "date": "2026-09-13"
   },
   "ecouter-le-jardin-du-temps.html": {
-    "empreinte": "080dc6fd61e834c6bed559a8fab6487d719952e4",
+    "empreinte": "457753092756d65ef6f5e6ff047f426ccc5c54f5",
     "date": "2026-09-15"
   },
   "ecouter-saudade-noite.html": {
-    "empreinte": "12467709776813292d095ab34f64e3dc4966136e",
+    "empreinte": "577d55f370314f3f8969bff333e86fe1ffbff569",
     "date": "2026-09-15"
   },
   "ecouter-la-lumiere-que-tu-laissais.html": {
-    "empreinte": "f542e9bc9e835f51761ff605a81e666215fdcdf1",
+    "empreinte": "837a56410ad4250a7ae06ea8e776f4670c1ee65e",
     "date": "2026-09-15"
   },
   "ecouter-constantine-dans-ton-coeur.html": {
-    "empreinte": "b4277c6551873ca67487e25cb26f477e241fc1b7",
+    "empreinte": "3dd8042099ce0b09226632b3fd82d1b0b60a5c58",
+    "date": "2026-09-15"
+  },
+  "ecouter-sous-le-lierre.html": {
+    "empreinte": "428e228c9a0942b345e445419c327b47a9cf60b9",
+    "date": "2026-09-15"
+  },
+  "ecouter-une-lumiere-sur-le-porche.html": {
+    "empreinte": "a8bbe7450d1a05255755a33b314d7a31e0491b45",
     "date": "2026-09-15"
   }
 }
