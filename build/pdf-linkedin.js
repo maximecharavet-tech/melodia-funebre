@@ -873,4 +873,7 @@ const TITRES = [
   'Ce qu’il y a à faire'
 ];
 
-module.exports = { html, fichier: 'melodia-plan-linkedin.pdf', TITRES };
+/* FLUX est exporté : le plan réseaux sociaux est son frère et doit
+   couler exactement pareil. Deux copies de cette feuille auraient
+   divergé au premier réglage. */
+module.exports = { html, fichier: 'melodia-plan-linkedin.pdf', TITRES, FLUX };

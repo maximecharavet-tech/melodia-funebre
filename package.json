@@ -15,6 +15,7 @@
     "pages": "node build/build.js",
     "pdf": "node build/pdf.js",
     "pdf:relire": "node scripts/relire-pdf.js",
-    "partage": "node build/partage-images.js"
+    "partage": "node build/partage-images.js",
+    "video": "node build/video.js"
   }
 }
