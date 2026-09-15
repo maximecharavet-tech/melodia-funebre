@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = '44dd4d70e3';
+const VERSION = 'd78306f99a';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;

@@ -57,7 +57,7 @@ if (fs.existsSync(fichierContenu)) {
 
 /* ─── Génération ─── */
 const { page } = require('./gen.js');
-const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-agences', 'p-rejoindre', 'p-contact', 'p-application', 'p-compte', 'p-404'];
+const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-vivant', 'p-agences', 'p-rejoindre', 'p-contact', 'p-application', 'p-compte', 'p-404'];
 
 let total = 0;
 for (const m of pages) {
@@ -218,6 +218,10 @@ const SITE_URL = 'https://melodia-funebre.fr';
 const PLAN = [
   ['index.html', '1.0', 'weekly'],
   ['offres.html', '1.0', 'monthly'],
+  /* Le second marché de la maison : la même œuvre, commandée pendant
+     que la personne est encore là. Priorité haute — c'est la seule
+     page du site dont la demande peut être suscitée. */
+  ['de-son-vivant.html', '0.9', 'monthly', '/de-son-vivant'],
   ['demos.html', '0.9', 'weekly'],
   ['processus.html', '0.9', 'monthly'],
   ['rites.html', '0.9', 'monthly'],
