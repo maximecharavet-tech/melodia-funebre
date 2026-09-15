@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=4d618362">
+<link rel="stylesheet" href="/assets/css/style.css?v=e25daa96">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -489,6 +489,13 @@
               <label><input type="radio" name="objet" value="Demander une démonstration" checked><span>Une démonstration</span></label>
               <label><input type="radio" name="objet" value="Devenir partenaire"><span>Devenir partenaire</span></label>
               <label><input type="radio" name="objet" value="Recevoir les informations professionnelles"><span>Les informations</span></label>
+              <!-- Une maison de retraite, un club d'aînés ou un CSE ne vient pas
+                   pour un hommage funéraire : il vient pour une œuvre offerte du
+                   vivant de la personne. Sans cette case, sa demande arrivait
+                   confondue avec celle d'une pompe funèbre, et l'appel repartait
+                   sur le mauvais pied. La page « De son vivant » y mène avec
+                   ?objet=etablissement, et partenariat.js coche alors la case. -->
+              <label><input type="radio" name="objet" value="Établissement ou association (de son vivant)"><span>Un établissement</span></label>
             </div>
           </div>
 
@@ -629,7 +636,7 @@
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=fd39b940"></script>
-<script src="/assets/js/partenariat.js?v=c47dc129"></script>
+<script src="/assets/js/partenariat.js?v=092feca3"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->

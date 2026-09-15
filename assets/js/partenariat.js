@@ -37,6 +37,19 @@
     return e ? String(e.value || '').trim() : '';
   }
 
+  /* Arriver depuis « De son vivant » coche la bonne case : un directeur
+     d'EHPAD n'a pas à chercher laquelle le concerne dans une liste
+     écrite pour les pompes funèbres. Le paramètre est lu ici plutôt
+     que dans la page, pour rester avec le reste de la logique du
+     formulaire. */
+  (function preselection() {
+    try {
+      if (!/[?&]objet=etablissement\b/.test(location.search)) return;
+      var r = form.querySelector('input[name="objet"][value^="Établissement"]');
+      if (r) r.checked = true;
+    } catch (e) { /* un paramètre d'adresse ne casse jamais le formulaire */ }
+  })();
+
   function objet() {
     var l = form.querySelectorAll('input[name="objet"]');
     for (var i = 0; i < l.length; i++) if (l[i].checked) return l[i].value;

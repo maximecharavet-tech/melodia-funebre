@@ -18,6 +18,18 @@
 (function () {
   'use strict';
 
+  /* Les deux natures d'œuvre du catalogue, et les mots qui vont avec.
+     Ils doivent dire la même chose que le rendu sans JavaScript :
+     voir REGISTRES dans build/parts.js. */
+  var REGISTRES = {
+    hommage: { qui: 'Pour', brief: 'Les mots de la famille', partage: 'Partager cet hommage' },
+    /* Offerte à une personne vivante : les mots restent ceux de sa
+       famille. Seul le moment change, pas l'auteur du récit. */
+    vivant:  { qui: 'Pour', brief: 'Les mots de la famille', partage: 'Partager cette œuvre' },
+    /* Laissé par la personne elle-même : les mots sont les siens. */
+    message: { qui: 'De',   brief: 'Ce qu’il nous a demandé',  partage: 'Partager ce message' }
+  };
+
   var grille = document.querySelector('[data-catalogue]');
   if (!grille) return;
 
@@ -302,7 +314,13 @@
     m.hidden = !o.mention;
 
     platine.querySelector('[data-titre]').textContent = o.title || 'Sans titre';
-    platine.querySelector('[data-qui]').textContent = o.who ? 'Pour ' + o.who : '';
+    /* Un hommage est composé POUR un défunt ; un message laissé de son
+       vivant est composé PAR son auteur, pour ses proches. Les deux
+       objets cohabitent au catalogue depuis qu'il existe une page
+       « De son vivant » : la platine lit donc le registre au lieu de
+       supposer. */
+    var reg = REGISTRES[o.categorie] || REGISTRES.hommage;
+    platine.querySelector('[data-qui]').textContent = o.who ? reg.qui + ' ' + o.who : '';
 
     var r = platine.querySelector('[data-recit]');
     r.textContent = o.story || '';
@@ -314,6 +332,7 @@
 
     var b = platine.querySelector('[data-brief]');
     b.hidden = !o.brief;
+    b.querySelector('span').textContent = reg.brief;
     if (o.brief) b.querySelector('em').innerHTML = jetons(o.brief);
 
     /* L'adresse vient du contenu publié, calculée à la génération :
@@ -323,6 +342,10 @@
     var part = platine.querySelector('[data-partage-lien]');
     if (part) {
       var lien = part.querySelector('[data-page]');
+      /* « Partager cet hommage » sous un message qu'une personne a
+         laissé elle-même serait le troisième mot faux de cette carte. */
+      var etiq = lien.querySelector('span');
+      if (etiq) etiq.textContent = reg.partage;
       if (o.page) {
         lien.setAttribute('href', o.page);
         lien.setAttribute('aria-label', 'Page de « ' + (o.title || 'cet hommage') + ' », à partager');

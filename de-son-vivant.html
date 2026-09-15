@@ -32,13 +32,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=4d618362">
+<link rel="stylesheet" href="/assets/css/style.css?v=e25daa96">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
 .reveal,.oeuvre{opacity:1!important;transform:none!important}
 </style></noscript>
-<script type="application/ld+json">[{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://melodia-funebre.fr/"},{"@type":"ListItem","position":2,"name":"De son vivant","item":"https://melodia-funebre.fr/de-son-vivant"}]},{"@context":"https://schema.org","@type":"Service","@id":"https://melodia-funebre.fr/de-son-vivant#service","name":"Chanson personnalisée offerte de son vivant","serviceType":"Composition musicale personnalisée","description":"Une œuvre originale écrite pour une personne vivante, à offrir pour un anniversaire, des noces d’or, un départ en retraite ou simplement pour dire merci.","provider":{"@id":"https://melodia-funebre.fr/#organisation"},"areaServed":"FR","audience":{"@type":"Audience","audienceType":"Familles et proches"}}]</script>
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://melodia-funebre.fr/"},{"@type":"ListItem","position":2,"name":"De son vivant","item":"https://melodia-funebre.fr/de-son-vivant"}]},{"@context":"https://schema.org","@type":"ItemList","@id":"https://melodia-funebre.fr/de-son-vivant#oeuvres","name":"Les œuvres composées du vivant de la personne","description":"Des œuvres écrites pendant que la personne était encore là — offertes par ses proches, ou laissées par elle pour le jour venu.","numberOfItems":1,"itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"MusicRecording","name":"Eshet Chayil, femme de valeur","description":"Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.","genre":"Klezmer","inLanguage":"fr-FR","byArtist":{"@id":"https://melodia-funebre.fr/#organisation"},"audio":{"@type":"AudioObject","contentUrl":"https://melodia-funebre.fr/audio/ruth.mp3","encodingFormat":"audio/mpeg"},"isFamilyFriendly":true}}]},{"@context":"https://schema.org","@type":"Service","@id":"https://melodia-funebre.fr/de-son-vivant#service","name":"Chanson personnalisée offerte de son vivant","serviceType":"Composition musicale personnalisée","description":"Une œuvre originale écrite pour une personne vivante, à offrir pour un anniversaire, des noces d’or, un départ en retraite ou simplement pour dire merci.","provider":{"@id":"https://melodia-funebre.fr/#organisation"},"areaServed":"FR","audience":{"@type":"Audience","audienceType":"Familles et proches"}}]</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Aller au contenu</a>
@@ -124,22 +124,55 @@
     </div>
   </section>
 
-  <section class="section section-alt">
-    <div class="wrap wrap-tight">
-      <div class="reveal center">
-        <div class="eyebrow">Une œuvre, déjà</div>
-        <h2 class="h-lg" style="margin-top:.8rem;">Ruth avait <em>quatre-vingt-cinq ans</em><br>quand elle a entendu la sienne.</h2>
-        <p class="lead" style="margin:1.4rem auto 0;max-width:60ch;">
-          Ses enfants voulaient lui dire de son vivant ce qu’on dit trop souvent après. Nous
-          avons écrit un klezmer. Elle l’a écouté, assise, et elle a corrigé deux choses —
-          c’est ce qui a rendu l’œuvre juste.
+
+  <section class="section section-alt" id="oeuvres">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Offertes de leur vivant</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Elles les ont entendues,<br><em>et elles ont corrigé deux choses.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:62ch;">
+          Ruth avait quatre-vingt-cinq ans. Ses enfants voulaient lui dire de son vivant ce
+          qu’on dit trop souvent après. Elle a écouté son klezmer, assise, et elle a corrigé
+          deux détails — c’est exactement ce qui a rendu l’œuvre juste.
         </p>
-        <div class="hero-actions" style="margin-top:2rem;justify-content:center;">
-          <a href="/ecouter/eshet-chayil-femme-de-valeur" class="btn btn-outline btn-lg">Écouter « Eshet Chayil »</a>
-        </div>
-        <p class="catalogue-mention center" style="margin-top:2rem;">Comme pour tout le catalogue,
-        le prénom et le récit ont été modifiés : nous ne publions jamais l’histoire d’une famille.</p>
       </div>
+      <div class="catalogue" data-catalogue>
+        <article class="oeuvre reveal" data-oeuvre="0" data-style="Klezmer">
+          <div class="oeuvre-haut">
+            <div class="oeuvre-sceau" aria-hidden="true"><span>R</span></div>
+            <button type="button" class="oeuvre-lire" data-lire="0" aria-label="Écouter Eshet Chayil, femme de valeur"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="oeuvre-onde" aria-hidden="true"><span style="animation-delay:0.00s"></span><span style="animation-delay:0.07s"></span><span style="animation-delay:0.14s"></span><span style="animation-delay:0.21s"></span><span style="animation-delay:0.28s"></span><span style="animation-delay:0.35s"></span><span style="animation-delay:0.42s"></span><span style="animation-delay:0.49s"></span><span style="animation-delay:0.56s"></span><span style="animation-delay:0.63s"></span><span style="animation-delay:0.70s"></span><span style="animation-delay:0.77s"></span><span style="animation-delay:0.84s"></span><span style="animation-delay:0.91s"></span><span style="animation-delay:0.98s"></span><span style="animation-delay:1.05s"></span><span style="animation-delay:1.12s"></span><span style="animation-delay:1.19s"></span><span style="animation-delay:1.26s"></span><span style="animation-delay:1.33s"></span></div>
+            <span class="oeuvre-duree" data-duree>—:—</span>
+          </div>
+          <div class="oeuvre-corps">
+            <div class="oeuvre-style">Klezmer · Paris et Israël</div>
+            <div class="oeuvre-mention">Composé pour une vivante</div>
+
+            <h3 class="oeuvre-titre"><em>Eshet Chayil, femme de valeur</em></h3>
+            <div class="oeuvre-qui">Pour Ruth, 85 ans</div>
+            <div class="oeuvre-liens">
+              <button type="button" class="oeuvre-plus" data-plus aria-expanded="false" aria-controls="oe-detail-0"><span data-plus-libelle>Son histoire</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              <!-- La page de l'œuvre : c'est elle qu'on partage. Un lien
+                   vers le catalogue entier ne dit pas ce qu'on va entendre. -->
+              <a class="oeuvre-partager" href="/ecouter/eshet-chayil-femme-de-valeur" aria-label="Page de « Eshet Chayil, femme de valeur », à partager"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.4 13.4l7.2 4.2M15.6 6.4l-7.2 4.2"/></svg><span>Partager</span></a>
+            </div>
+            <div class="oeuvre-detail" id="oe-detail-0">
+              <p class="oeuvre-recit">Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.</p>
+              <blockquote class="oeuvre-vers">Ruth, Eshet Chayil, femme de valeur
+Qui trouvera une femme comme toi ?
+Ton prix dépasse celui des perles
+Tu as marché entre deux terres avec foi</blockquote>
+              <div class="oeuvre-brief">
+                <span class="mono">Les mots de la famille</span>
+                <em><span class="oeuvre-mot">croyante</span><span class="oeuvre-mot">debout</span><span class="oeuvre-mot">rassembleuse</span></em>
+              </div>
+            </div>
+          </div>
+          <div class="oeuvre-jauge" aria-hidden="true"><span></span></div>
+        </article>
+      </div>
+      <p class="catalogue-mention center">Ces œuvres ont été offertes à des personnes bien vivantes, qui les ont écoutées. Les prénoms et les récits ont été modifiés, comme pour le reste du catalogue.</p>
+      <script type="application/json" id="oeuvres-data">[{"id":"demo-11","title":"Eshet Chayil, femme de valeur","who":"Ruth, 85 ans","lieu":"Paris et Israël","style":"Klezmer","audio":"audio/ruth.mp3","story":"Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.","lyrics":"Ruth, Eshet Chayil, femme de valeur\nQui trouvera une femme comme toi ?\nTon prix dépasse celui des perles\nTu as marché entre deux terres avec foi","brief":"croyante · debout · rassembleuse","photo":"","mention":"Composé pour une vivante","categorie":"vivant","page":"/ecouter/eshet-chayil-femme-de-valeur"}]</script>
     </div>
   </section>
 
@@ -220,6 +253,8 @@
     </div>
   </section>
 
+
+
         <div class="card price card-lift reveal" data-offer-id="essentiel">
           <span class="price-tag" style="display:none"></span>
           <div class="price-name">Essentiel</div>
@@ -272,6 +307,116 @@
           </ul>
           <a href="/offres" class="btn btn-outline btn-block">Choisir Mémorial</a>
         </div>
+
+  <!-- ═══ LES PRESCRIPTEURS ═══
+       Un directeur d'EHPAD n'achète pas ce qu'achète une famille. Cette
+       partie lui parle à lui : budget, lien avec les familles, charge de
+       travail, et surtout les garde-fous — sa première crainte est qu'on
+       vienne vendre quelque chose à ses résidents. -->
+  <section class="section section-alt" id="etablissements">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.8rem;">
+        <div class="eyebrow">Établissements et associations</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Vous accompagnez des gens<br><em>pour qui c’est exactement le moment.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:64ch;">
+          Une maison de retraite, un club d’aînés, un CSE qui prépare un départ : vous
+          cherchez tous quelque chose à proposer qui ne soit ni un soin, ni une facture,
+          ni un cadeau qu’on oublie dans un tiroir. C’est précisément ce que nous faisons.
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-top:2rem;">
+        
+          <div class="carte reveal reveal-d1">
+            <h3 class="h-sm">EHPAD et résidences seniors</h3>
+            <p style="margin-top:.7rem;">Un budget animation, une équipe qui cherche toute l’année ce qui sortira de l’ordinaire, et des familles avec qui il faut entretenir un lien qui ne parle pas que de santé.</p>
+          </div>
+          <div class="carte reveal reveal-d2">
+            <h3 class="h-sm">Résidences autonomie et foyers-logements</h3>
+            <p style="margin-top:.7rem;">Les résidents y sont valides et décident eux-mêmes. C’est le public le plus direct : ils commandent pour eux, ou leurs enfants pour eux.</p>
+          </div>
+          <div class="carte reveal reveal-d3">
+            <h3 class="h-sm">Clubs et associations d’aînés</h3>
+            <p style="margin-top:.7rem;">Générations, clubs du troisième âge, amicales. Une seule présentation devant trente personnes vaut trente conversations, et le bouche-à-oreille y est réel.</p>
+          </div>
+          <div class="carte reveal reveal-d1">
+            <h3 class="h-sm">CCAS et services municipaux</h3>
+            <p style="margin-top:.7rem;">Semaine bleue, repas des aînés, doyens de la commune. Une œuvre pour les cent ans du doyen se photographie, se raconte, et fait le tour du bulletin municipal.</p>
+          </div>
+          <div class="carte reveal reveal-d2">
+            <h3 class="h-sm">Comités d’entreprise et CSE</h3>
+            <p style="margin-top:.7rem;">Les départs en retraite. Le budget existe, il est prévu, et personne ne sait jamais quoi offrir après quarante ans de métier. Aucun tabou, aucune urgence, une date connue des mois à l’avance.</p>
+          </div>
+          <div class="carte reveal reveal-d3">
+            <h3 class="h-sm">Biographes familiaux et généalogistes</h3>
+            <p style="margin-top:.7rem;">Ils recueillent déjà des récits de vie : nous en faisons la version qui s’écoute. Le métier est voisin, la clientèle identique, et les deux services se renforcent.</p>
+          </div>
+      </div>
+
+      <div class="wrap-tight" style="margin-top:4rem;padding:0;">
+        <div class="reveal center">
+          <div class="eyebrow">Deux façons de travailler ensemble</div>
+          <h3 class="h-md" style="margin-top:.7rem;">Vous commandez,<br><em>ou vous prescrivez.</em></h3>
+        </div>
+        <div class="grid-2" style="margin-top:2.2rem;">
+          
+            <div class="carte reveal reveal-d1">
+              <h3 class="h-sm">L’établissement commande</h3>
+              <p style="margin-top:.7rem;">Sur son budget animation. Une œuvre pour un résident dont c’est l’anniversaire, ou une œuvre collective pour la maison entière, écrite à partir des récits de plusieurs résidents. C’est l’établissement qui paie, et la famille ne débourse rien.</p>
+            </div>
+            <div class="carte reveal reveal-d2">
+              <h3 class="h-sm">L’établissement prescrit</h3>
+              <p style="margin-top:.7rem;">Il informe simplement les familles que cela existe. Elles commandent, et vous conservez <b>40 % du montant réglé</b> : 59 € sur Essentiel à 149 €, 119 € sur Prestige à 299 €, 199 € sur Mémorial à 499 €. Le même taux pour les trois offres, réglé sur facture récapitulative mensuelle. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée.</p>
+            </div>
+        </div>
+      </div>
+
+      <!-- L'atelier : le seul format qui se facture à l'établissement
+           plutôt qu'à une famille, et celui qui se raconte le mieux. -->
+      <div class="wrap-tight reveal" style="margin-top:4rem;padding:0;">
+        <div class="carte" style="padding:clamp(1.6rem,4vw,2.6rem);">
+          <div class="eyebrow">Le format qui marche le mieux chez vous</div>
+          <h3 class="h-md" style="margin-top:.7rem;">L’atelier <em>récits de vie</em></h3>
+          <p style="margin-top:1rem;">
+            Une séance chez vous, avec un petit groupe de résidents : chacun raconte ce qu’il
+            veut bien raconter. Nous en tirons une œuvre — pour l’un d’eux, ou pour la maison
+            entière. Quelques jours plus tard, écoute collective, avec les familles si vous
+            le souhaitez.
+          </p>
+          <p style="margin-top:1rem;">
+            C’est une animation dont on parle pendant des mois, qui se photographie, qui
+            trouve sa place dans votre journal et dans vos échanges avec les familles — et
+            qui ne vous demande aucune préparation. Nous venons avec les questions.
+          </p>
+        </div>
+      </div>
+
+      <!-- Les garde-fous. Ce n'est pas de la prudence juridique : c'est
+           l'argument qui permet à un directeur de dire oui. -->
+      <div class="wrap-tight reveal" style="margin-top:3rem;padding:0;">
+        <div class="eyebrow center">Ce que nous nous interdisons</div>
+        <h3 class="h-md center" style="margin-top:.7rem;">Cinq règles,<br><em>écrites avant que vous les demandiez.</em></h3>
+        <ul class="liste-or" style="margin-top:1.8rem;">
+          <li>Nous ne démarchons jamais un résident directement. Jamais.</li><li>La famille décide et paie — sauf si l’établissement commande sur son propre budget.</li><li>Aucune exclusivité, aucun minimum, aucun engagement de durée.</li><li>Nous ne mettons jamais en avant la maladie, l’âge ou la fin de vie pour vendre.</li><li>Rien n’est affiché ni distribué chez vous sans que vous l’ayez lu et approuvé.</li><li>La part qui vous revient est écrite sur cette page, pas négociée au cas par cas.</li>
+        </ul>
+        <p style="margin-top:1.4rem;text-align:center;color:var(--dust);font-size:.92rem;">
+          Vous accueillez des personnes vulnérables. Si nous ne tenions pas ces règles-là,
+          vous auriez raison de ne pas nous ouvrir la porte.
+        </p>
+      </div>
+
+      <div class="center reveal" style="margin-top:3.4rem;">
+        <div class="hero-actions" style="justify-content:center;">
+          <a href="/professionnels?objet=etablissement#partenariat" class="btn btn-gold btn-lg">Recevoir le dossier établissement</a>
+          <button type="button" class="btn btn-outline btn-lg" data-rappel><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg> En parler de vive voix</button>
+        </div>
+        <p style="margin-top:1.2rem;color:var(--dust);font-size:.9rem;">
+          Un appel de dix minutes suffit à savoir si cela a du sens chez vous.
+        </p>
+      </div>
+    </div>
+  </section>
+
 
   <section class="section-sm partage-sec">
     <div class="wrap">
@@ -427,6 +572,7 @@
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=fd39b940"></script>
+<script src="/assets/js/catalogue.js?v=f173c94a"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->

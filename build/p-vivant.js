@@ -1,5 +1,21 @@
 const { ICON, SITE } = require('./gen.js');
 const P = require('./parts.js');
+const { OFFERS } = require('./data.js');
+
+/* La part du prescripteur. Les montants nets ne sont PAS écrits à la
+   main : ils se calculent depuis les offres publiées, comme partout
+   ailleurs dans la maison. Un tarif modifié en console corrige donc
+   cette page au prochain « npm run pages » — sans quoi elle
+   annoncerait un jour une rémunération qui n'existe plus. */
+const PART = 0.40;
+/* Arrondi vers le bas à l'euro, comme la page des pompes funèbres :
+   on n'annonce jamais plus que ce qu'on verse. */
+const net = (prix) => Math.floor(prix * PART);
+const partCent = Math.round(PART * 100);
+
+const montants = () => OFFERS
+  .map((o) => net(o.price) + ' € sur ' + o.name + ' à ' + o.price + ' €')
+  .join(', ');
 
 /* ═══════════════════════════════════════════════════════════════
    L'HOMMAGE DE SON VIVANT — la page qui change la taille du marché
@@ -65,6 +81,55 @@ const OCCASIONS = [
    'ce qu’on fera entendre à ceux qui restent, c’est leur épargner une décision de plus.']
 ];
 
+/* ─── LES PRESCRIPTEURS ──────────────────────────────────────────
+   Le funéraire a ses pompes funèbres ; ce marché-ci a les siens, et
+   ce ne sont pas les mêmes. Ils partagent un trait : ils accompagnent
+   des gens pour qui c'est exactement le bon moment, et ils cherchent
+   tous quelque chose à proposer qui ne soit ni un soin ni une
+   facture. */
+const LIEUX = [
+  ['EHPAD et résidences seniors',
+   'Un budget animation, une équipe qui cherche toute l’année ce qui sortira de l’ordinaire, ' +
+   'et des familles avec qui il faut entretenir un lien qui ne parle pas que de santé.'],
+  ['Résidences autonomie et foyers-logements',
+   'Les résidents y sont valides et décident eux-mêmes. C’est le public le plus direct : ' +
+   'ils commandent pour eux, ou leurs enfants pour eux.'],
+  ['Clubs et associations d’aînés',
+   'Générations, clubs du troisième âge, amicales. Une seule présentation devant trente ' +
+   'personnes vaut trente conversations, et le bouche-à-oreille y est réel.'],
+  ['CCAS et services municipaux',
+   'Semaine bleue, repas des aînés, doyens de la commune. Une œuvre pour les cent ans ' +
+   'du doyen se photographie, se raconte, et fait le tour du bulletin municipal.'],
+  ['Comités d’entreprise et CSE',
+   'Les départs en retraite. Le budget existe, il est prévu, et personne ne sait jamais ' +
+   'quoi offrir après quarante ans de métier. Aucun tabou, aucune urgence, une date connue ' +
+   'des mois à l’avance.'],
+  ['Biographes familiaux et généalogistes',
+   'Ils recueillent déjà des récits de vie : nous en faisons la version qui s’écoute. ' +
+   'Le métier est voisin, la clientèle identique, et les deux services se renforcent.']
+];
+
+const FACONS = [
+  ['L’établissement commande',
+   'Sur son budget animation. Une œuvre pour un résident dont c’est l’anniversaire, ou une ' +
+   'œuvre collective pour la maison entière, écrite à partir des récits de plusieurs ' +
+   'résidents. C’est l’établissement qui paie, et la famille ne débourse rien.'],
+  ['L’établissement prescrit',
+   'Il informe simplement les familles que cela existe. Elles commandent, et vous conservez ' +
+   '<b>' + partCent + ' % du montant réglé</b> : ' + montants() + '. Le même taux pour les ' +
+   'trois offres, réglé sur facture récapitulative mensuelle. Aucun investissement, aucun ' +
+   'stock, aucun minimum, aucun engagement de durée.']
+];
+
+const GARDES = [
+  'Nous ne démarchons jamais un résident directement. Jamais.',
+  'La famille décide et paie — sauf si l’établissement commande sur son propre budget.',
+  'Aucune exclusivité, aucun minimum, aucun engagement de durée.',
+  'Nous ne mettons jamais en avant la maladie, l’âge ou la fin de vie pour vendre.',
+  'Rien n’est affiché ni distribué chez vous sans que vous l’ayez lu et approuvé.',
+  'La part qui vous revient est écrite sur cette page, pas négociée au cas par cas.'
+];
+
 const DIFFERENCES = [
   ['Elle l’entend', 'Et c’est tout ce qui change. Une œuvre écrite après ne peut plus être ' +
    'corrigée par celui qu’elle raconte. Ici, elle peut dire « ce n’était pas en 1974 », ' +
@@ -86,9 +151,13 @@ module.exports = {
   title: 'Offrir la chanson d’une vie, de son vivant | Melodia Funèbre',
   desc: 'Une œuvre originale composée pour quelqu’un qui est encore là — un anniversaire, ' +
         'des noces d’or, un départ. Elle l’entend, elle peut la corriger, et elle reste.',
-  scripts: [],
+  /* La platine — le disque d'or qui tourne — est montée par ce script,
+     le même que sur /demos. Sans lui, la grille reste une liste de
+     liens : lisible, mais ce n'est pas ce qui a été demandé. */
+  scripts: ['assets/js/catalogue.js'],
   jsonld: [
     P.jsonldFil('De son vivant', '/de-son-vivant'),
+    ...(P.jsonldVivants ? [P.jsonldVivants] : []),
     {
       '@context': 'https://schema.org',
       '@type': 'Service',
@@ -136,24 +205,21 @@ module.exports = {
     </div>
   </section>
 
-  <section class="section section-alt">
-    <div class="wrap wrap-tight">
-      <div class="reveal center">
-        <div class="eyebrow">Une œuvre, déjà</div>
-        <h2 class="h-lg" style="margin-top:.8rem;">Ruth avait <em>quatre-vingt-cinq ans</em><br>quand elle a entendu la sienne.</h2>
-        <p class="lead" style="margin:1.4rem auto 0;max-width:60ch;">
-          Ses enfants voulaient lui dire de son vivant ce qu’on dit trop souvent après. Nous
-          avons écrit un klezmer. Elle l’a écouté, assise, et elle a corrigé deux choses —
-          c’est ce qui a rendu l’œuvre juste.
+${P.oeuvres('vivant') ? `
+  <section class="section section-alt" id="oeuvres">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Offertes de leur vivant</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Elles les ont entendues,<br><em>et elles ont corrigé deux choses.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:62ch;">
+          Ruth avait quatre-vingt-cinq ans. Ses enfants voulaient lui dire de son vivant ce
+          qu’on dit trop souvent après. Elle a écouté son klezmer, assise, et elle a corrigé
+          deux détails — c’est exactement ce qui a rendu l’œuvre juste.
         </p>
-        <div class="hero-actions" style="margin-top:2rem;justify-content:center;">
-          <a href="/ecouter/eshet-chayil-femme-de-valeur" class="btn btn-outline btn-lg">Écouter « Eshet Chayil »</a>
-        </div>
-        <p class="catalogue-mention center" style="margin-top:2rem;">Comme pour tout le catalogue,
-        le prénom et le récit ont été modifiés : nous ne publions jamais l’histoire d’une famille.</p>
       </div>
+${P.oeuvres('vivant')}
     </div>
-  </section>
+  </section>` : ''}
 
   <section class="section">
     <div class="wrap wrap-tight">
@@ -212,7 +278,109 @@ module.exports = {
     </div>
   </section>
 
+${P.oeuvres('message') ? `
+  <section class="section" id="messages">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">Les messages laissés</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Ce qu’ils ont voulu dire,<br><em>pour le jour où ils ne seraient plus là.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:62ch;">
+          Ces œuvres-là ne racontent pas quelqu’un : c’est quelqu’un qui parle. Elles ont été
+          commandées de leur vivant, avec leurs mots, pour être entendues par leurs proches
+          le jour venu. Appuyez sur lecture — le disque tourne, comme pour les autres.
+        </p>
+      </div>
+${P.oeuvres('message')}
+    </div>
+  </section>` : ''}
+
 ${P.pricing()}
+
+  <!-- ═══ LES PRESCRIPTEURS ═══
+       Un directeur d'EHPAD n'achète pas ce qu'achète une famille. Cette
+       partie lui parle à lui : budget, lien avec les familles, charge de
+       travail, et surtout les garde-fous — sa première crainte est qu'on
+       vienne vendre quelque chose à ses résidents. -->
+  <section class="section section-alt" id="etablissements">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.8rem;">
+        <div class="eyebrow">Établissements et associations</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Vous accompagnez des gens<br><em>pour qui c’est exactement le moment.</em></h2>
+        <p class="lead" style="margin:1.4rem auto 0;max-width:64ch;">
+          Une maison de retraite, un club d’aînés, un CSE qui prépare un départ : vous
+          cherchez tous quelque chose à proposer qui ne soit ni un soin, ni une facture,
+          ni un cadeau qu’on oublie dans un tiroir. C’est précisément ce que nous faisons.
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-top:2rem;">
+        ${LIEUX.map(([t, p], i) => `
+          <div class="carte reveal reveal-d${(i % 3) + 1}">
+            <h3 class="h-sm">${t}</h3>
+            <p style="margin-top:.7rem;">${p}</p>
+          </div>`).join('')}
+      </div>
+
+      <div class="wrap-tight" style="margin-top:4rem;padding:0;">
+        <div class="reveal center">
+          <div class="eyebrow">Deux façons de travailler ensemble</div>
+          <h3 class="h-md" style="margin-top:.7rem;">Vous commandez,<br><em>ou vous prescrivez.</em></h3>
+        </div>
+        <div class="grid-2" style="margin-top:2.2rem;">
+          ${FACONS.map(([t, p], i) => `
+            <div class="carte reveal reveal-d${i + 1}">
+              <h3 class="h-sm">${t}</h3>
+              <p style="margin-top:.7rem;">${p}</p>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- L'atelier : le seul format qui se facture à l'établissement
+           plutôt qu'à une famille, et celui qui se raconte le mieux. -->
+      <div class="wrap-tight reveal" style="margin-top:4rem;padding:0;">
+        <div class="carte" style="padding:clamp(1.6rem,4vw,2.6rem);">
+          <div class="eyebrow">Le format qui marche le mieux chez vous</div>
+          <h3 class="h-md" style="margin-top:.7rem;">L’atelier <em>récits de vie</em></h3>
+          <p style="margin-top:1rem;">
+            Une séance chez vous, avec un petit groupe de résidents : chacun raconte ce qu’il
+            veut bien raconter. Nous en tirons une œuvre — pour l’un d’eux, ou pour la maison
+            entière. Quelques jours plus tard, écoute collective, avec les familles si vous
+            le souhaitez.
+          </p>
+          <p style="margin-top:1rem;">
+            C’est une animation dont on parle pendant des mois, qui se photographie, qui
+            trouve sa place dans votre journal et dans vos échanges avec les familles — et
+            qui ne vous demande aucune préparation. Nous venons avec les questions.
+          </p>
+        </div>
+      </div>
+
+      <!-- Les garde-fous. Ce n'est pas de la prudence juridique : c'est
+           l'argument qui permet à un directeur de dire oui. -->
+      <div class="wrap-tight reveal" style="margin-top:3rem;padding:0;">
+        <div class="eyebrow center">Ce que nous nous interdisons</div>
+        <h3 class="h-md center" style="margin-top:.7rem;">Cinq règles,<br><em>écrites avant que vous les demandiez.</em></h3>
+        <ul class="liste-or" style="margin-top:1.8rem;">
+          ${GARDES.map((g) => `<li>${g}</li>`).join('')}
+        </ul>
+        <p style="margin-top:1.4rem;text-align:center;color:var(--dust);font-size:.92rem;">
+          Vous accueillez des personnes vulnérables. Si nous ne tenions pas ces règles-là,
+          vous auriez raison de ne pas nous ouvrir la porte.
+        </p>
+      </div>
+
+      <div class="center reveal" style="margin-top:3.4rem;">
+        <div class="hero-actions" style="justify-content:center;">
+          <a href="/professionnels?objet=etablissement#partenariat" class="btn btn-gold btn-lg">Recevoir le dossier établissement</a>
+          <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} En parler de vive voix</button>
+        </div>
+        <p style="margin-top:1.2rem;color:var(--dust);font-size:.9rem;">
+          Un appel de dix minutes suffit à savoir si cela a du sens chez vous.
+        </p>
+      </div>
+    </div>
+  </section>
+
 ${P.partage('Offrir la chanson d’une vie', 'Une œuvre composée pour quelqu’un qui est encore là — et qui peut l’entendre.')}
 
   <section class="section section-top" style="padding-bottom:6rem;">
