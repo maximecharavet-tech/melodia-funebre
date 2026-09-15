@@ -1,5 +1,21 @@
 const { ICON, SITE } = require('./gen.js');
 const P = require('./parts.js');
+const { OFFERS } = require('./data.js');
+
+/* La part du prescripteur. Les montants nets ne sont PAS écrits à la
+   main : ils se calculent depuis les offres publiées, comme partout
+   ailleurs dans la maison. Un tarif modifié en console corrige donc
+   cette page au prochain « npm run pages » — sans quoi elle
+   annoncerait un jour une rémunération qui n'existe plus. */
+const PART = 0.40;
+/* Arrondi vers le bas à l'euro, comme la page des pompes funèbres :
+   on n'annonce jamais plus que ce qu'on verse. */
+const net = (prix) => Math.floor(prix * PART);
+const partCent = Math.round(PART * 100);
+
+const montants = () => OFFERS
+  .map((o) => net(o.price) + ' € sur ' + o.name + ' à ' + o.price + ' €')
+  .join(', ');
 
 /* ═══════════════════════════════════════════════════════════════
    L'HOMMAGE DE SON VIVANT — la page qui change la taille du marché
@@ -99,9 +115,10 @@ const FACONS = [
    'œuvre collective pour la maison entière, écrite à partir des récits de plusieurs ' +
    'résidents. C’est l’établissement qui paie, et la famille ne débourse rien.'],
   ['L’établissement prescrit',
-   'Il informe simplement les familles que cela existe. Elles commandent, et l’établissement ' +
-   'est rémunéré pour chaque œuvre — dans les mêmes conditions que nos partenaires, à ' +
-   'convenir ensemble au téléphone.']
+   'Il informe simplement les familles que cela existe. Elles commandent, et vous conservez ' +
+   '<b>' + partCent + ' % du montant réglé</b> : ' + montants() + '. Le même taux pour les ' +
+   'trois offres, réglé sur facture récapitulative mensuelle. Aucun investissement, aucun ' +
+   'stock, aucun minimum, aucun engagement de durée.']
 ];
 
 const GARDES = [
@@ -109,7 +126,8 @@ const GARDES = [
   'La famille décide et paie — sauf si l’établissement commande sur son propre budget.',
   'Aucune exclusivité, aucun minimum, aucun engagement de durée.',
   'Nous ne mettons jamais en avant la maladie, l’âge ou la fin de vie pour vendre.',
-  'Rien n’est affiché ni distribué chez vous sans que vous l’ayez lu et approuvé.'
+  'Rien n’est affiché ni distribué chez vous sans que vous l’ayez lu et approuvé.',
+  'La part qui vous revient est écrite sur cette page, pas négociée au cas par cas.'
 ];
 
 const DIFFERENCES = [
