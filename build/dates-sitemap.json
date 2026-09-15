@@ -1,6 +1,6 @@
 {
   "index.html": {
-    "empreinte": "90ecf4e92750ec0956436d01d66fe57fb1165435",
+    "empreinte": "64638548e5ab5c51c895fbf81b2aa1d4f361bea2",
     "date": "2026-09-15"
   },
   "offres.html": {
@@ -152,7 +152,11 @@
     "date": "2026-09-15"
   },
   "ecouter-une-lumiere-sur-le-porche.html": {
-    "empreinte": "a8bbe7450d1a05255755a33b314d7a31e0491b45",
+    "empreinte": "483db621530d06635b2d36721150402b5c5a1db4",
+    "date": "2026-09-15"
+  },
+  "de-son-vivant.html": {
+    "empreinte": "b070c05b89168e34bb530728fd7acc2adffa4008",
     "date": "2026-09-15"
   }
 }
