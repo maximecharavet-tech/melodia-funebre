@@ -251,6 +251,18 @@
       "lyrics": "Mathieu, tu étais la lumière\nAu milieu de la nuit.\nLa main qui rassure,\nLa voix qui dit : « Je suis là. »",
       "lieu": "",
       "visible": true
+    },
+    {
+      "id": "demo-22",
+      "visible": true,
+      "title": "Une lumière sur le porche",
+      "who": "Mitch, papy de sept petits-enfants",
+      "lieu": "",
+      "style": "Country americana",
+      "audio": "audio/mitch.mp3",
+      "story": "Un vieux garage en bois où dormaient les outils et les années, chaque rayure sur le métal portant le secret d’un été. Sarah l’attendait sous le porche, au bord de la rivière ; sont venus trois enfants, puis sept petits-enfants courant dans la poussière. Une americana qui passe du français à l’anglais sans prévenir, comme on passe d’une génération à l’autre : guitare aux doigts, pedal steel, fiddle et contrebasse, avec un chœur d’enfants pour la fin.",
+      "lyrics": "Mitch...\nYou built a life from little things\nDes matins d’or et des nuits de pluie\nUne maison, quelques rêves\nEt l’amour comme unique richesse",
+      "brief": "patient · bâtisseur · fidèle"
     }
   ],
   "offers": [
