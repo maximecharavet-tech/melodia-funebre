@@ -1,14 +1,14 @@
 {
   "index.html": {
-    "empreinte": "b55c10189f0743e9f4e76896595a4bc48ad20873",
+    "empreinte": "ff16920baf85277b4adeba120ce14610f323262e",
     "date": "2026-09-15"
   },
   "offres.html": {
-    "empreinte": "b3648543adbc207cb399cd6c2458baa588ce26f7",
+    "empreinte": "e5e00733cf7cf971165943ba109405386d063b7c",
     "date": "2026-09-15"
   },
   "demos.html": {
-    "empreinte": "09597f4d696380f68b6cc2a2b8d7c479e23f7eff",
+    "empreinte": "34b998cfd65606933d0d72d24825dbf81fed242a",
     "date": "2026-09-15"
   },
   "processus.html": {
@@ -56,7 +56,7 @@
     "date": "2026-09-13"
   },
   "professionnels.html": {
-    "empreinte": "75f4134fbf48f31fdefe2d292eaea417ed2a80c0",
+    "empreinte": "3969d6d367ca630d6421996325ed4956ef0c067d",
     "date": "2026-09-15"
   },
   "chanson-hommage.html": {
@@ -132,19 +132,23 @@
     "date": "2026-09-13"
   },
   "ecouter-le-jardin-du-temps.html": {
-    "empreinte": "080dc6fd61e834c6bed559a8fab6487d719952e4",
+    "empreinte": "e2950614a0df81bf8f147673209f063539c6e4c8",
     "date": "2026-09-15"
   },
   "ecouter-saudade-noite.html": {
-    "empreinte": "12467709776813292d095ab34f64e3dc4966136e",
+    "empreinte": "c6750caa9c40a8f435aa54be019ac8f2f00cd77f",
     "date": "2026-09-15"
   },
   "ecouter-la-lumiere-que-tu-laissais.html": {
-    "empreinte": "f542e9bc9e835f51761ff605a81e666215fdcdf1",
+    "empreinte": "5af1e48ce6ee2b057c7d09b83876ca7d5ffd9b48",
     "date": "2026-09-15"
   },
   "ecouter-constantine-dans-ton-coeur.html": {
-    "empreinte": "b4277c6551873ca67487e25cb26f477e241fc1b7",
+    "empreinte": "800e244766ad343b045dba0e46d04ef795e8991b",
+    "date": "2026-09-15"
+  },
+  "ecouter-sous-le-lierre.html": {
+    "empreinte": "f3f05c06188aabb89ed7dfb776f487c8e2dfb6db",
     "date": "2026-09-15"
   }
 }

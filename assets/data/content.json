@@ -239,6 +239,18 @@
       "lyrics": "Mathieu, tu étais la lumière\nAu milieu de la nuit.\nLa main qui rassure,\nLa voix qui dit : « Je suis là. »",
       "lieu": "",
       "visible": true
+    },
+    {
+      "id": "demo-21",
+      "visible": true,
+      "title": "Sous le lierre",
+      "who": "Yvette, la mamie de la maison",
+      "lieu": "",
+      "style": "Musette",
+      "audio": "audio/yvette.mp3",
+      "story": "Une maison qui ne désemplissait pas, des cartables dans l’entrée et toujours une place de plus à table. Elle avait rencontré Marcel un soir d’été, il lui avait offert trois roses, et ils n’ont plus jamais cessé d’agrandir la table. Sa famille voulait une valse, pas un chant grave : accordéon, violon, clarinette et contrebasse, avec un chœur d’enfants sur le refrain — ceux-là mêmes qui criaient « Mamie, encore un tour ! ».",
+      "lyrics": "Mamie Yvette, Mamie Yvette\nOn gardera ta voix dans nos têtes\nTu avais rempli toute une vie\nDe petits bonheurs, de grandes envies",
+      "brief": "généreuse · rieuse · rassembleuse"
     }
   ],
   "offers": [
