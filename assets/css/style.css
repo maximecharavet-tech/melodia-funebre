@@ -4259,82 +4259,217 @@ body.a-ecoute { padding-bottom: 5rem; }
 .part-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
 .part-liste li { display: grid; gap: 0.25rem; padding-left: 1rem; border-left: 1px solid var(--line); }
 
-/* ─── LES REGISTRES ───────────────────────────────────────────────
-   Une liste de dix-sept mots en grille ne dit rien : on la survole et
-   on n'en retient aucun. Chaque registre porte donc l'œuvre qui le
-   prouve, et mène à son écoute. Ceux qu'on sait faire sans en avoir
-   encore d'exemple restent affichés, en retrait — c'est honnête, et
-   cela vaut mieux que de les cacher.
+/* ─── LES REGISTRES : LE CARROUSEL ────────────────────────────────
+   Trois états successifs de cette section :
 
-   Les cartes sont séparées par un filet d'un pixel obtenu en laissant
-   le fond de la grille transparaître : aucune bordure à faire
-   coïncider, et jamais de double trait aux jonctions. */
-.registres {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-  gap: 1px; background: var(--line); border: 1px solid var(--line);
-}
-.registre {
-  background: var(--ink-2); padding: 1.5rem 1.25rem;
-  display: grid; gap: 0.5rem; align-content: start;
-  text-decoration: none; position: relative;
-  transition: background 0.45s var(--ease), transform 0.45s var(--ease);
-}
-a.registre:hover, a.registre:focus-visible {
-  background: rgba(201, 168, 76, 0.055); transform: translateY(-2px);
-}
-/* L'emblème : de l'or à peine posé, qui s'allume quand la carte
-   s'anime. Il occupe le haut de la carte et ne pousse rien : la
-   grille reste alignée. */
-.registre-glyphe {
-  width: 30px; height: 30px; color: var(--or-deep); display: block;
-  margin-bottom: 0.15rem;
-  transition: color 0.5s var(--ease), transform 0.5s var(--ease);
-}
-a.registre:hover .registre-glyphe,
-a.registre:focus-visible .registre-glyphe { color: var(--or); transform: scale(1.06); }
-.registre-vide .registre-glyphe { opacity: 0.45; }
+     1. vingt mots en grille — illisible, on n'en retenait aucun ;
+     2. vingt pictogrammes de 24 px — maigres à côté du reste du site,
+        et cinq rangées de cartes qui mangeaient un écran entier ;
+     3. ceci : une seule ligne qui défile, où chaque registre porte
+        une illustration d'instrument dessinée en grand.
 
-/* Le tracé se dessine. « pathLength=1 » ayant ramené tous les tracés à
-   la même longueur, une seule règle suffit pour les vingt emblèmes ;
-   le léger décalage entre les formes donne le geste d'une main qui
-   dessine plutôt que d'un rideau qui se lève. */
-@keyframes registre-tracer { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-a.registre:hover .registre-glyphe > [pathLength],
-a.registre:focus-visible .registre-glyphe > [pathLength] {
-  stroke-dasharray: 1; animation: registre-tracer 0.85s var(--ease) both;
+   La bande défile nativement. Le JavaScript n'ajoute que les flèches,
+   la jauge et le glisser à la souris ; sans lui, on fait défiler au
+   doigt, à la molette ou au clavier, et rien n'est perdu. */
+.reg-carrousel { position: relative; margin-top: 2.6rem; }
+.reg-piste {
+  display: flex; gap: 14px; padding: 3px 0 5px;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  scrollbar-width: none; -ms-overflow-style: none;
 }
-a.registre:hover .registre-glyphe > [pathLength]:nth-child(2) { animation-delay: 0.08s; }
-a.registre:hover .registre-glyphe > [pathLength]:nth-child(3) { animation-delay: 0.16s; }
-a.registre:hover .registre-glyphe > [pathLength]:nth-child(4) { animation-delay: 0.24s; }
-a.registre:hover .registre-glyphe > [pathLength]:nth-child(n+5) { animation-delay: 0.3s; }
+/* La barre de défilement est masquée : la jauge d'or la remplace, et
+   elle, au moins, est dans la couleur de la maison. */
+.reg-piste::-webkit-scrollbar { display: none; }
+.reg-piste.reg-attrape { scroll-behavior: auto; cursor: grabbing; }
+.reg-piste.reg-attrape * { pointer-events: none; }
 
-.registre-nom {
-  font-family: var(--ff-d); font-weight: 300; font-size: 1.24rem;
-  line-height: 1.18; color: var(--paper); margin: 0;
+.reg-carte {
+  flex: 0 0 clamp(172px, 21vw, 216px); scroll-snap-align: start;
+  text-decoration: none; color: inherit; overflow: hidden;
+  display: flex; flex-direction: column; position: relative;
+  border-radius: 14px; border: 1px solid rgba(201, 168, 76, 0.15);
+  background: linear-gradient(168deg, #14120d 0%, #0b0a0b 52%, #08080a 100%);
+  transition: border-color var(--t-mid) var(--ease), box-shadow var(--t-mid) var(--ease),
+              transform var(--t-mid) var(--ease);
 }
-.registre-oeuvre { font-size: 0.83rem; line-height: 1.5; color: var(--bone); }
-.registre-oeuvre em { font-style: italic; color: var(--silver); }
-.registre-lien {
-  display: inline-flex; align-items: center; gap: 0.45rem; margin-top: 0.15rem;
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.22em;
-  text-transform: uppercase; color: var(--or);
+/* La carte survolée s'entoure d'or et se décolle : c'est la bague
+   lumineuse de la référence, faite d'une bordure et d'une ombre
+   portée dorée — aucune image, aucun calque de plus. */
+a.reg-carte:hover, a.reg-carte:focus-visible {
+  border-color: rgba(201, 168, 76, 0.45); transform: translateY(-3px);
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.16),
+              0 22px 46px -20px rgba(201, 168, 76, 0.34);
 }
-.registre-lien svg { width: 0.66rem; height: 0.66rem; flex: none; }
-a.registre:hover .registre-lien { color: var(--or-clair, #e3c977); }
-.registre-vide .registre-nom { color: var(--bone); }
-.registre-sur {
-  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--dust);
+a.reg-carte:focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+
+/* ─── L'illustration ───
+   Elle occupe un carré plein en haut de la carte, sur un fond un peu
+   plus clair que la carte : l'objet se détache sans avoir besoin d'un
+   cadre dessiné. */
+.reg-cadre {
+  position: relative; display: block; aspect-ratio: 208 / 226; overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(201, 168, 76, 0.09), transparent 66%),
+    linear-gradient(180deg, #100f0c 0%, #0a0a0b 72%, #060607 100%);
 }
+.reg-art {
+  display: block; width: 100%; height: 100%;
+  transition: transform 0.85s var(--ease);
+}
+.reg-halo { opacity: 0.55; transition: opacity 0.7s var(--ease); }
+.reg-sol { opacity: 0.6; transition: opacity 0.7s var(--ease); }
+/* Le reflet est flouté d'un cheveu : un miroir net se lirait comme un
+   second objet posé à l'envers. */
+.reg-reflet { filter: blur(1.1px); opacity: 0.34; }
+a.reg-carte:hover .reg-halo, a.reg-carte:focus-visible .reg-halo { opacity: 1; }
+a.reg-carte:hover .reg-sol, a.reg-carte:focus-visible .reg-sol { opacity: 1; }
+a.reg-carte:hover .reg-art, a.reg-carte:focus-visible .reg-art { transform: scale(1.075) rotate(-1.6deg); }
+/* Un registre « sur demande » n'est pas un registre éteint : la
+   maison sait le composer, elle n'en a simplement pas encore
+   d'exemple. Il reste donc doré, seulement en retrait — le gris le
+   faisait passer pour indisponible. */
+.reg-vide .reg-art { opacity: 0.6; }
+.reg-vide .reg-halo, .reg-vide .reg-sol { opacity: 0.3; }
+
+/* Le reflet qui balaie l'or au survol. Une seule passe, jamais en
+   boucle : un scintillement permanent sur vingt cartes donnerait une
+   vitrine de casino, pas une maison de deuil. */
+.reg-cadre::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(246, 231, 189, 0.15) 50%, transparent 62%);
+  transform: translateX(-130%);
+  transition: transform 0.95s var(--ease);
+}
+a.reg-carte:hover .reg-cadre::after, a.reg-carte:focus-visible .reg-cadre::after { transform: translateX(130%); }
+
+/* ─── Le texte ───
+   En colonne souple, et non en grille : les titres d'œuvres tiennent
+   sur une, deux ou trois lignes selon leur longueur, et les « Écouter »
+   se retrouvaient à trois hauteurs différentes d'une carte à l'autre.
+   Poussés en bas par « margin-top:auto », ils s'alignent tous. */
+.reg-corps {
+  flex: 1; display: flex; flex-direction: column; gap: 0.3rem;
+  align-items: center; text-align: center;
+  padding: 0.9rem 0.9rem 1.15rem;
+}
+/* Le nom en capitales espacées : c'est ce qui donne à la référence
+   son air de plaque gravée plutôt que de liste. Cormorant tient bien
+   la capitale ; à cette taille il faut lui ouvrir l'interlettrage,
+   sinon les lettres se collent. */
+.reg-nom {
+  font-family: var(--ff-d); font-weight: 400; font-size: 0.93rem;
+  line-height: 1.25; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--paper); margin: 0;
+}
+.reg-traits {
+  margin: 0; font-size: 0.73rem; line-height: 1.4; color: var(--ash);
+}
+.reg-oeuvre { font-size: 0.76rem; line-height: 1.45; color: var(--bone); margin: 0; }
+/* Les cartes d'une bande souple prennent toutes la hauteur de la plus
+   haute : un seul titre long, et les vingt gagnaient quarante pixels
+   de vide sous « Écouter ». Le titre est donc borné à deux lignes et
+   la personne à deux lignes — la hauteur du lot est bornée avec eux.
+   Les navigateurs sans « line-clamp » affichent simplement le texte
+   entier : rien n'est caché, la carte est seulement plus haute. */
+.reg-titre {
+  font-style: italic; color: var(--silver); display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.reg-qui {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* La pastille de lecture. Elle ne joue rien sur place : elle mène à
+   l'écoute, comme toute la carte. C'est donc un repère, pas un
+   bouton — le lien, c'est la carte entière. */
+.reg-jouer {
+  margin-top: auto; margin-bottom: 0; flex: none;
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid rgba(201, 168, 76, 0.42); color: var(--or);
+  background: rgba(201, 168, 76, 0.05);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease),
+              transform var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.reg-jouer svg { width: 12px; height: 12px; margin-left: 2px; }
+a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
+  background: var(--or); color: var(--ink); border-color: var(--or); transform: scale(1.09);
+}
+/* « Écouter » reste lu par les lecteurs d'écran : une pastille et un
+   triangle ne disent rien à qui n'y voit pas. */
+.reg-hors-vue {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+.reg-sur {
+  margin-top: auto; padding-top: 0.9rem; font-family: var(--ff-m); font-size: 0.52rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust);
+}
+.reg-vide .reg-nom { color: var(--bone); }
+
+/* ─── Les flèches ───
+   Créées par le script, donc absentes quand il ne tourne pas : on ne
+   laisse pas deux boutons morts sur la page. Elles s'effacent au bout
+   de la course au lieu de griser — arrivé au bord, il n'y a plus rien
+   à indiquer. */
+.reg-fleche {
+  position: absolute; top: 34%; transform: translateY(-50%); z-index: 4;
+  width: 46px; height: 46px; border-radius: 50%; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  background: rgba(8, 8, 13, 0.88); border: 1px solid var(--line-strong);
+  color: var(--or); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease),
+              opacity var(--t-mid) var(--ease), transform var(--t-fast) var(--ease);
+}
+.reg-fleche svg { width: 20px; height: 20px; }
+.reg-fleche:hover { background: var(--or); color: var(--ink); border-color: var(--or); }
+.reg-fleche:focus-visible { outline: 2px solid var(--or-bright); outline-offset: 3px; }
+.reg-fleche:disabled { opacity: 0; pointer-events: none; }
+.reg-prec { left: -14px; }
+.reg-prec svg { transform: rotate(180deg); }
+.reg-suiv { right: -14px; }
+@media (max-width: 900px) { .reg-prec { left: 6px; } .reg-suiv { right: 6px; } }
+
+/* Sur un téléphone, deux cartes de 172 px tenaient à l'écran — et
+   chaque ligne de texte s'y brisait en deux, ce qui creusait un grand
+   vide sous les cartes courtes (elles prennent toutes la hauteur de la
+   plus haute). Une carte et demie, plus large : les titres tiennent sur
+   une ligne, le vide disparaît, et l'instrument est enfin grand. */
+@media (max-width: 600px) {
+  .reg-carte { flex-basis: min(72vw, 290px); }
+  .reg-nom { font-size: 1.22rem; }
+  .reg-oeuvre { font-size: 0.8rem; }
+}
+
+/* ─── La jauge ───
+   Elle dit deux choses d'un coup d'œil : quelle part du catalogue est
+   à l'écran (sa largeur), et où l'on en est (sa position). */
+.reg-jauge {
+  position: relative; height: 2px; margin-top: 1.1rem;
+  background: var(--line); overflow: hidden;
+}
+.reg-jauge span {
+  position: absolute; inset: 0 auto 0 0; width: 30%;
+  background: var(--or-grad);
+  transition: transform 0.18s linear, width 0.3s var(--ease);
+}
+.reg-aide {
+  display: none; margin-top: 0.7rem; font-family: var(--ff-m);
+  font-size: 0.54rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dust); text-align: center;
+}
+@media (hover: none) { .reg-aide { display: block; } }
+/* Le script ne tourne pas : pas de flèches, donc on dit comment faire. */
+.reg-carrousel:not(.reg-vivant) .reg-aide { display: block; }
+
 @media (prefers-reduced-motion: reduce) {
-  a.registre:hover, a.registre:focus-visible { transform: none; }
-  /* L'emblème s'allume toujours — c'est une couleur, pas un mouvement —
-     mais il ne se redessine plus et ne grandit plus. */
-  a.registre:hover .registre-glyphe { transform: none; }
-  a.registre:hover .registre-glyphe > [pathLength],
-  a.registre:focus-visible .registre-glyphe > [pathLength] {
-    animation: none; stroke-dasharray: none;
-  }
+  .reg-piste { scroll-behavior: auto; }
+  /* L'or s'allume toujours — c'est une couleur, pas un mouvement —
+     mais l'illustration ne bouge plus et le reflet ne balaie plus. */
+  a.reg-carte:hover .reg-art, a.reg-carte:focus-visible .reg-art { transform: none; }
+  .reg-cadre::after { display: none; }
+  .reg-jauge span { transition: none; }
 }
 
 /* Les règles que la maison s'impose, sur « De son vivant ». Elles se
