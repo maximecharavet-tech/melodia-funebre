@@ -40,7 +40,8 @@ const OR = 'url(#ins-or)';        /* l'or vertical : les corps */
 const ORH = 'url(#ins-orh)';      /* l'or de biais : les faces éclairées */
 const OMBRE = 'url(#ins-ombre)';  /* le creux : ouïes, grilles, pavillons */
 const BOIS = 'url(#ins-bois)';    /* le bois : manches, fûts */
-const NACRE = 'url(#ins-nacre)';  /* la nacre : touches, peaux */
+const NACRE = 'url(#ins-nacre)';  /* la nacre froide : touches de piano, lune */
+const IVOIRE = 'url(#ins-ivoire)'; /* l'ivoire chaud : les peaux tendues */
 const TR = '#1d1709';             /* le trait gravé */
 
 /* Les dégradés, déclarés une seule fois par page. */
@@ -77,9 +78,41 @@ const DEFS = `<svg class="ins-defs" width="0" height="0" aria-hidden="true" focu
 <stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
 <mask id="ins-reflet" maskUnits="userSpaceOnUse" x="0" y="179" width="180" height="23">
 <rect x="0" y="179" width="180" height="23" fill="url(#ins-fondu)"/></mask>
+<!-- L'ORFÈVRERIE.
+
+     Un dégradé, si riche soit-il, reste plat : il colore une surface,
+     il ne lui donne pas d'arête. Ce filtre, lui, en fabrique une.
+
+     Il prend la silhouette du dessin, la floute pour en faire une
+     carte de hauteur, y fait tomber une lumière rasante, et ne garde
+     l'éclat obtenu qu'à l'intérieur du tracé. Résultat : chaque bord
+     reçoit son biseau, chaque corde son filet de lumière — le même
+     relief qu'un objet massif tourné vers une fenêtre.
+
+     Puis l'objet rayonne : une copie floutée, teintée d'or, posée
+     DERRIÈRE lui. C'est ce halo rapproché qui fait la différence
+     entre « doré » et « en or ».
+
+     Tout est calculé par le navigateur, à chaque affichage. Aucune
+     image, aucun octet de plus. -->
+<filter id="ins-orfevre" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="bosse"/>
+<feSpecularLighting in="bosse" surfaceScale="1.8" specularConstant="0.42" specularExponent="32"
+lighting-color="#fff7e2" result="eclat"><feDistantLight azimuth="238" elevation="56"/></feSpecularLighting>
+<feComposite in="eclat" in2="SourceAlpha" operator="in" result="eclatDedans"/>
+<feComposite in="SourceGraphic" in2="eclatDedans" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="metal"/>
+<feGaussianBlur in="SourceAlpha" stdDeviation="5" result="aura"/>
+<feColorMatrix in="aura" type="matrix" result="auraOr"
+values="0 0 0 0 0.86  0 0 0 0 0.70  0 0 0 0 0.32  0 0 0 0.2 0"/>
+<feMerge><feMergeNode in="auraOr"/><feMergeNode in="metal"/></feMerge>
+</filter>
+<linearGradient id="ins-ivoire" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fdf3dd"/><stop offset=".4" stop-color="#e8d7b2"/>
+<stop offset=".75" stop-color="#c0a878"/><stop offset="1" stop-color="#8e7a50"/></linearGradient>
 <clipPath id="ins-rond"><circle cx="90" cy="90" r="64"/></clipPath>
 <clipPath id="ins-grille"><rect x="32" y="66" width="116" height="74" rx="3"/></clipPath>
 <clipPath id="ins-capsule"><rect x="70" y="28" width="40" height="62" rx="20"/></clipPath>
+<clipPath id="ins-capsule2"><rect x="66" y="22" width="48" height="72" rx="24"/></clipPath>
 <clipPath id="ins-globe"><circle cx="90" cy="90" r="44"/></clipPath>
 </defs></svg>`;
 
@@ -314,7 +347,7 @@ const INSTRUMENTS = {
     boucle(4, (i) => `<circle cx="${[155, 163, 169, 177][i]}" cy="${[17, 11, 25, 19][i]}" r="2.4" fill="${ORH}" stroke="${TR}" stroke-opacity=".6" stroke-width=".7"/>`) +
     `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${OR}" stroke="${TR}" stroke-width="2.2"/>` +
     tirants +
-    `<circle cx="${cx}" cy="${cy}" r="${r - 9}" fill="${NACRE}" stroke="${TR}" stroke-width="1.6"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="${r - 9}" fill="${IVOIRE}" stroke="${TR}" stroke-width="1.6"/>` +
     `<circle cx="${cx}" cy="${cy}" r="${r - 14}" fill="none" stroke="${TR}" stroke-opacity=".18" stroke-width="1"/>` +
     cordes +
     `<path d="M60 126h26l-3 8H63z" fill="#191308" stroke="${TR}" stroke-width=".8"/>` +
@@ -341,7 +374,7 @@ const INSTRUMENTS = {
     `<path d="M51 78c9 5 23 7 39 7s30-2 39-7" fill="none" stroke="${OR}" stroke-width="3.2"/>` +
     lacets +
     `<path d="M56 126c8 4 21 6 34 6s26-2 34-6" fill="none" stroke="${OR}" stroke-width="3.2"/>` +
-    `<ellipse cx="90" cy="64" rx="41" ry="15" fill="${NACRE}" stroke="${TR}" stroke-width="1.8"/>` +
+    `<ellipse cx="90" cy="64" rx="41" ry="15" fill="${IVOIRE}" stroke="${TR}" stroke-width="1.8"/>` +
     `<ellipse cx="90" cy="64" rx="31" ry="10.5" fill="none" stroke="${TR}" stroke-opacity=".2" stroke-width="1"/>` +
     `<ellipse cx="90" cy="64" rx="43" ry="16" fill="none" stroke="${OR}" stroke-width="3.6"/>` +
     `<path d="M60 55c8-3 19-5 30-5" ${LUM}/>`;
@@ -383,23 +416,23 @@ const INSTRUMENTS = {
 
 /* Le micro de studio : grille, suspension élastique, corps, pied. */
 'Chanson française':
-  `<ellipse cx="90" cy="70" rx="43" ry="47" fill="none" stroke="${OR}" stroke-width="3.4"/>` +
-  boucle(8, (i) => {
-    const a = (i / 8) * Math.PI * 2 + 0.4;
-    return ligne(90 + Math.cos(a) * 41, 70 + Math.sin(a) * 45, 90 + Math.cos(a) * 21, 70 + Math.sin(a) * 23,
-      ' stroke="#c9a84c" stroke-opacity=".45" stroke-width="1.4"');
-  }) +
-  `<rect x="70" y="28" width="40" height="62" rx="20" fill="${OMBRE}" stroke="${OR}" stroke-width="2.6"/>` +
-  `<g clip-path="url(#ins-capsule)">` +
-  boucle(10, (i) => ligne(70, 30 + i * 6.4, 110, 30 + i * 6.4, ' stroke="#c9a84c" stroke-opacity=".32" stroke-width="1"')) +
-  boucle(7, (i) => ligne(72 + i * 6, 28, 72 + i * 6, 90, ' stroke="#c9a84c" stroke-opacity=".22" stroke-width="1"')) +
+  /* Le micro de studio, troisième état. Avec sa suspension complète,
+     on y lisait un miroir à main ; allégée, on y lisait un fer à
+     cheval. La suspension saute : ce qui dit « micro » sans hésiter,
+     c'est la grille bombée, son collier de métal et son pied lesté. */
+  `<rect x="66" y="22" width="48" height="72" rx="24" fill="${OMBRE}" stroke="${OR}" stroke-width="2.8"/>` +
+  `<g clip-path="url(#ins-capsule2)">` +
+  boucle(12, (i) => ligne(66, 24 + i * 6.2, 114, 24 + i * 6.2, ' stroke="#c9a84c" stroke-opacity=".34" stroke-width="1"')) +
+  boucle(8, (i) => ligne(68 + i * 6, 22, 68 + i * 6, 94, ' stroke="#c9a84c" stroke-opacity=".22" stroke-width="1"')) +
   `</g>` +
-  `<rect x="78" y="90" width="24" height="20" rx="3" fill="${OR}" stroke="${TR}" stroke-width="1.4"/>` +
-  `<path d="M82 96h16M82 101h16" ${G}/>` +
-  `<path d="M90 110v34" fill="none" stroke="${OR}" stroke-width="5" stroke-linecap="round"/>` +
-  `<path d="M60 160h60l6 10H54z" fill="${OR}" stroke="${TR}" stroke-width="1.6"/>` +
-  `<rect x="80" y="142" width="20" height="18" rx="3" fill="${ORH}" stroke="${TR}" stroke-width="1.2"/>` +
-  `<path d="M76 40a18 18 0 0 1 10-8" ${LUM}/>`,
+  `<rect x="64" y="52" width="52" height="7" rx="2" fill="${ORH}" stroke="${TR}" stroke-width="1"/>` +
+  `<rect x="64" y="86" width="52" height="9" rx="3" fill="${OR}" stroke="${TR}" stroke-width="1.2"/>` +
+  `<path d="M74 95h32l-4 26H78z" fill="${OR}" stroke="${TR}" stroke-width="1.4"/>` +
+  `<path d="M78 103h24M78 110h24" ${G}/>` +
+  `<rect x="85" y="121" width="10" height="26" fill="${ORH}" stroke="${TR}" stroke-width="1.2"/>` +
+  `<ellipse cx="90" cy="150" rx="26" ry="7" fill="${ORH}" stroke="${TR}" stroke-width="1.4"/>` +
+  `<path d="M64 150c0 8 12 14 26 14s26-6 26-14v8c0 8-12 14-26 14s-26-6-26-14z" fill="${OR}" stroke="${TR}" stroke-width="1.4"/>` +
+  `<path d="M72 34a20 20 0 0 1 12-9" ${LUM}/>`,
 
 /* La plume : la variété douce n'a pas d'instrument propre — elle a
    l'écriture. Les barbes sont calculées le long de la hampe. */
@@ -539,7 +572,12 @@ function illustration(registre) {
   return '<svg class="reg-art" viewBox="-14 -12 208 226" aria-hidden="true" focusable="false">' +
     '<circle class="reg-halo" cx="90" cy="88" r="84" fill="url(#ins-lueur)"/>' +
     '<ellipse class="reg-sol" cx="90" cy="180" rx="56" ry="6" fill="url(#ins-sol)"/>' +
-    '<g class="reg-objet" id="' + id + '">' + d + '</g>' +
+    /* Le filtre est porté par une enveloppe, PAS par le groupe lui-même :
+       le reflet réutilise le groupe intérieur et échappe donc à
+       l'orfèvrerie. Il est flouté et à un tiers d'opacité — personne
+       n'y verra le biseau manquant, et la page économise la moitié
+       des passes de filtre. */
+    '<g filter="url(#ins-orfevre)"><g class="reg-objet" id="' + id + '">' + d + '</g></g>' +
     /* Le miroir : y devient 358 - y, soit un retournement autour de
        la ligne de sol (179). */
     '<g class="reg-reflet" mask="url(#ins-reflet)">' +
