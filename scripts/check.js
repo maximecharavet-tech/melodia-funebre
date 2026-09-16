@@ -201,24 +201,46 @@ try {
   }
 }
 
-/* Deux registres ne doivent jamais porter le même emblème : ce serait
-   pire que pas d'emblème du tout, puisque le lecteur y lirait une
-   parenté qui n'existe pas. Le repli à la note ne compte pas — il est
-   fait pour être partagé par tous les registres sans dessin. */
+/* Deux registres ne doivent jamais porter la même illustration : ce
+   serait pire que pas d'illustration du tout, puisque le lecteur y
+   lirait une parenté qui n'existe pas. Le repli au disque ne compte
+   pas — il est fait pour être partagé par tous les registres sans
+   dessin.
+
+   Et chaque registre du catalogue doit AVOIR son dessin : sans ce
+   contrôle, un style ajouté demain en console sortirait avec un
+   disque générique au milieu de dix-neuf instruments, et personne ne
+   le verrait avant un client. */
 {
-  const { GLYPHES } = require('../build/glyphes.js');
+  const { INSTRUMENTS } = require('../build/instruments.js');
   const vus = new Map();
   const jumeaux = [];
-  for (const [nom, d] of Object.entries(GLYPHES)) {
+  for (const [nom, d] of Object.entries(INSTRUMENTS)) {
     if (vus.has(d)) jumeaux.push(vus.get(d) + ' et ' + nom);
     else vus.set(d, nom);
   }
   if (jumeaux.length) {
-    console.error('  EMBLÈMES EN DOUBLE :');
+    console.error('  ILLUSTRATIONS EN DOUBLE :');
     jumeaux.forEach((x) => console.error('         ' + x));
     ok = false;
-  } else {
-    console.log(`  ok   ${Object.keys(GLYPHES).length} emblèmes, tous distincts`);
+  }
+
+  const { STYLES } = require('../build/data.js');
+  const c = JSON.parse(fs.readFileSync('assets/data/content.json', 'utf8'));
+  const attendus = [...new Set([
+    ...(c.demos || []).filter((d) => d.visible !== false).map((d) => d.style),
+    ...STYLES
+  ])].filter(Boolean);
+  const nus = attendus.filter((x) => !INSTRUMENTS[x]);
+  if (nus.length) {
+    console.error('  REGISTRE SANS ILLUSTRATION — il sortirait avec le disque de repli :');
+    nus.forEach((x) => console.error('         ' + x));
+    ok = false;
+  }
+
+  if (!jumeaux.length && !nus.length) {
+    console.log(`  ok   ${Object.keys(INSTRUMENTS).length} illustrations, toutes distinctes, ` +
+                `${attendus.length} registres servis`);
   }
 }
 

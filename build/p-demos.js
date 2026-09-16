@@ -2,7 +2,7 @@ const { ICON } = require('./gen.js');
 const P = require('./parts.js');
 const { STYLES, TRACKS } = require('./data.js');
 const { adresses } = require('./adresses.js');
-const { glyphe } = require('./glyphes.js');
+const { illustration, DEFS } = require('./instruments.js');
 
 const esc = (x) => String(x == null ? '' : x)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -18,9 +18,13 @@ const esc = (x) => String(x == null ? '' : x)
    été ajoutés aux œuvres sans l'être à la liste. Une famille pouvait
    entendre une musette sur le site sans pouvoir en commander une.
    La liste est donc l'union des deux, et scripts/check.js refuse
-   désormais qu'elles divergent. */
+   désormais qu'elles divergent.
+
+   La forme, elle, a changé trois fois. Grille de mots, puis grille de
+   pictogrammes, puis ceci : une bande qui défile, où chaque registre
+   porte l'instrument qui le joue, dessiné en grand. Vingt cartes ne
+   prennent plus cinq rangées mais une seule ligne. */
 function registres() {
-  const hommages = TRACKS.filter((t) => (t.categorie || 'hommage') === 'hommage');
   const slugs = adresses(TRACKS);
 
   /* Pour chaque registre, la première œuvre qui l'illustre. C'est elle
@@ -30,27 +34,33 @@ function registres() {
   TRACKS.forEach((t) => { if (t.style && !exemple[t.style]) exemple[t.style] = t; });
 
   const tous = [...new Set([...TRACKS.map((t) => t.style), ...STYLES])].filter(Boolean);
-  /* Ceux qui ont une preuve d'abord : ils portent l'argument. Les
-     autres suivent, et disent honnêtement qu'ils sont sur demande. */
+  /* Ceux qui ont une preuve d'abord : ils portent l'argument, et ce
+     sont eux qu'on voit sans avoir à faire défiler. Les autres
+     suivent, et disent honnêtement qu'ils sont sur demande. */
   return tous
     .map((nom) => ({ nom, t: exemple[nom] }))
     .sort((a, b) => (a.t ? 0 : 1) - (b.t ? 0 : 1))
     .map((r) => {
+      const visuel = `<div class="reg-cadre">${illustration(r.nom)}</div>`;
       if (!r.t) {
-        return `        <div class="registre registre-vide reveal">
-          ${glyphe(r.nom)}
-          <h3 class="registre-nom">${esc(r.nom)}</h3>
-          <span class="registre-sur">Sur demande</span>
-        </div>`;
+        return `          <div class="reg-carte reg-vide">
+            ${visuel}
+            <div class="reg-corps">
+              <h3 class="reg-nom">${esc(r.nom)}</h3>
+              <span class="reg-sur">Sur demande</span>
+            </div>
+          </div>`;
       }
       const slug = slugs[TRACKS.indexOf(r.t)];
       const pour = (r.t.categorie || 'hommage') === 'message' ? 'De' : 'Pour';
-      return `        <a class="registre reveal" href="/ecouter/${esc(slug)}">
-          ${glyphe(r.nom)}
-          <h3 class="registre-nom">${esc(r.nom)}</h3>
-          <p class="registre-oeuvre"><em>${esc(r.t.title)}</em><br>${pour} ${esc(r.t.who)}</p>
-          <span class="registre-lien"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Écouter</span>
-        </a>`;
+      return `          <a class="reg-carte" href="/ecouter/${esc(slug)}">
+            ${visuel}
+            <div class="reg-corps">
+              <h3 class="reg-nom">${esc(r.nom)}</h3>
+              <p class="reg-oeuvre"><em class="reg-titre">${esc(r.t.title)}</em><span class="reg-qui">${pour} ${esc(r.t.who)}</span></p>
+              <span class="reg-lien"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Écouter</span>
+            </div>
+          </a>`;
     }).join('\n');
 }
 
@@ -67,7 +77,7 @@ module.exports = {
   file: 'demos.html',
   title: `Écouter ${nbHommages} hommages composés sur mesure | Melodia Funèbre`,
   desc: "Pour chaque hommage : la personne, son histoire, les mots que sa famille nous avait confiés, et l'œuvre qui en est née — écoutable en ligne.",
-  scripts: ['assets/js/catalogue.js'],
+  scripts: ['assets/js/catalogue.js', 'assets/js/registres.js'],
   /* Chaque œuvre porte « byArtist » vers l'entité « maison » : elle
      est donc déclarée sur cette page, sans quoi les dix-sept
      références pointent dans le vide. */
@@ -121,8 +131,13 @@ ${P.oeuvres('hommage')}
         <h2 class="h-xl">Chaque vie a <em>sa musique.</em></h2>
         <p class="lead" style="margin-top:1.4rem;max-width:64ch;margin-left:auto;margin-right:auto;">${Cap(mot(nbRegistres))} registres de départ, ajustés pendant l'entretien. Ceux que nous avons déjà composés s'écoutent d'un clic. Si le style qui lui ressemble n'est dans aucun d'eux, dites-le-nous : nous composons aussi hors catalogue.</p>
       </div>
-      <div class="registres">
+${DEFS}
+      <div class="reg-carrousel reveal" data-carrousel>
+        <div class="reg-piste" data-piste role="list" aria-label="Les registres musicaux">
 ${registres()}
+        </div>
+        <div class="reg-jauge"><span data-jauge></span></div>
+        <p class="reg-aide">Faites glisser pour voir les ${mot(nbRegistres)} registres</p>
       </div>
       <div class="center reveal" style="margin-top:3rem;">
         <a href="/offres" class="btn btn-gold btn-lg">Commander dans ce style</a>
