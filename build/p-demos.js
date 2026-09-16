@@ -2,7 +2,7 @@ const { ICON } = require('./gen.js');
 const P = require('./parts.js');
 const { STYLES, TRACKS } = require('./data.js');
 const { adresses } = require('./adresses.js');
-const { illustration, DEFS } = require('./instruments.js');
+const { illustration, mots, DEFS } = require('./instruments.js');
 
 const esc = (x) => String(x == null ? '' : x)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -41,12 +41,15 @@ function registres() {
     .map((nom) => ({ nom, t: exemple[nom] }))
     .sort((a, b) => (a.t ? 0 : 1) - (b.t ? 0 : 1))
     .map((r) => {
+      const m = mots(r.nom);
+      const traits = m ? `<p class="reg-traits">${esc(m[0])} &middot; ${esc(m[1])}</p>` : '';
       const visuel = `<div class="reg-cadre">${illustration(r.nom)}</div>`;
       if (!r.t) {
         return `          <div class="reg-carte reg-vide">
             ${visuel}
             <div class="reg-corps">
               <h3 class="reg-nom">${esc(r.nom)}</h3>
+              ${traits}
               <span class="reg-sur">Sur demande</span>
             </div>
           </div>`;
@@ -57,8 +60,9 @@ function registres() {
             ${visuel}
             <div class="reg-corps">
               <h3 class="reg-nom">${esc(r.nom)}</h3>
+              ${traits}
               <p class="reg-oeuvre"><em class="reg-titre">${esc(r.t.title)}</em><span class="reg-qui">${pour} ${esc(r.t.who)}</span></p>
-              <span class="reg-lien"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Écouter</span>
+              <span class="reg-jouer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span class="reg-hors-vue">Écouter</span></span>
             </div>
           </a>`;
     }).join('\n');

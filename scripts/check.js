@@ -238,9 +238,19 @@ try {
     ok = false;
   }
 
-  if (!jumeaux.length && !nus.length) {
+  /* Et ses deux mots. Un registre qui en manque sort avec une carte
+     amputée d'une ligne, et le lot perd son alignement. */
+  const { MOTS } = require('../build/instruments.js');
+  const muets = attendus.filter((x) => !MOTS[x]);
+  if (muets.length) {
+    console.error('  REGISTRE SANS SES DEUX MOTS — la carte sortirait amputée :');
+    muets.forEach((x) => console.error('         ' + x));
+    ok = false;
+  }
+
+  if (!jumeaux.length && !nus.length && !muets.length) {
     console.log(`  ok   ${Object.keys(INSTRUMENTS).length} illustrations, toutes distinctes, ` +
-                `${attendus.length} registres servis`);
+                `${attendus.length} registres servis, tous avec leurs deux mots`);
   }
 }
 

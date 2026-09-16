@@ -46,24 +46,40 @@ const TR = '#1d1709';             /* le trait gravé */
 /* Les dégradés, déclarés une seule fois par page. */
 const DEFS = `<svg class="ins-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
 <linearGradient id="ins-or" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#eed9a0"/><stop offset=".34" stop-color="#c9a84c"/>
-<stop offset=".72" stop-color="#8d7436"/><stop offset="1" stop-color="#5b4a21"/></linearGradient>
+<stop offset="0" stop-color="#fff6dc"/><stop offset=".11" stop-color="#e6cd85"/>
+<stop offset=".27" stop-color="#ab8a3e"/><stop offset=".42" stop-color="#6b5525"/>
+<stop offset=".57" stop-color="#c7a64b"/><stop offset=".71" stop-color="#f2dfa8"/>
+<stop offset=".86" stop-color="#9b7e37"/><stop offset="1" stop-color="#4b3c1b"/></linearGradient>
 <linearGradient id="ins-orh" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#f6e7bd"/><stop offset=".48" stop-color="#c9a84c"/>
-<stop offset="1" stop-color="#77612e"/></linearGradient>
+<stop offset="0" stop-color="#fffaec"/><stop offset=".17" stop-color="#eed898"/>
+<stop offset=".37" stop-color="#b19040"/><stop offset=".54" stop-color="#78602a"/>
+<stop offset=".71" stop-color="#dcc06c"/><stop offset=".87" stop-color="#f6e6b6"/>
+<stop offset="1" stop-color="#877030"/></linearGradient>
 <linearGradient id="ins-ombre" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#2b2315"/><stop offset="1" stop-color="#0c0b07"/></linearGradient>
+<stop offset="0" stop-color="#312817"/><stop offset=".5" stop-color="#171308"/>
+<stop offset="1" stop-color="#0a0905"/></linearGradient>
 <linearGradient id="ins-bois" x1="0" y1="0" x2="1" y2="0">
-<stop offset="0" stop-color="#8a6a34"/><stop offset=".5" stop-color="#5a431f"/>
-<stop offset="1" stop-color="#32250f"/></linearGradient>
+<stop offset="0" stop-color="#b58447"/><stop offset=".22" stop-color="#7a5a29"/>
+<stop offset=".5" stop-color="#412f13"/><stop offset=".78" stop-color="#83612d"/>
+<stop offset="1" stop-color="#2a1d0b"/></linearGradient>
 <linearGradient id="ins-nacre" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#faf6ea"/><stop offset="1" stop-color="#b8b09a"/></linearGradient>
-<radialGradient id="ins-lueur"><stop offset="0" stop-color="rgba(201,168,76,.30)"/>
-<stop offset=".55" stop-color="rgba(201,168,76,.08)"/>
+<stop offset="0" stop-color="#fffdf6"/><stop offset=".38" stop-color="#eae3d0"/>
+<stop offset=".72" stop-color="#c2baa3"/><stop offset="1" stop-color="#8f8874"/></linearGradient>
+<radialGradient id="ins-lueur"><stop offset="0" stop-color="rgba(224,186,104,.34)"/>
+<stop offset=".42" stop-color="rgba(201,168,76,.13)"/>
 <stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<radialGradient id="ins-sol"><stop offset="0" stop-color="rgba(232,204,140,.42)"/>
+<stop offset=".6" stop-color="rgba(201,168,76,.12)"/>
+<stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<linearGradient id="ins-fondu" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity=".5"/>
+<stop offset=".45" stop-color="#fff" stop-opacity=".12"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<mask id="ins-reflet" maskUnits="userSpaceOnUse" x="0" y="179" width="180" height="23">
+<rect x="0" y="179" width="180" height="23" fill="url(#ins-fondu)"/></mask>
+<clipPath id="ins-rond"><circle cx="90" cy="90" r="64"/></clipPath>
 <clipPath id="ins-grille"><rect x="32" y="66" width="116" height="74" rx="3"/></clipPath>
 <clipPath id="ins-capsule"><rect x="70" y="28" width="40" height="62" rx="20"/></clipPath>
-<clipPath id="ins-rond"><circle cx="90" cy="90" r="64"/></clipPath>
 <clipPath id="ins-globe"><circle cx="90" cy="90" r="44"/></clipPath>
 </defs></svg>`;
 
@@ -423,7 +439,7 @@ const INSTRUMENTS = {
   `<ellipse cx="145" cy="129" rx="6" ry="12" fill="none" stroke="${OR}" stroke-opacity=".5" stroke-width="1"/>` +
   `<rect x="30" y="92" width="10" height="12" rx="3" fill="${OR}" stroke="${TR}" stroke-width="1"/>` +
   `<rect x="140" y="92" width="10" height="12" rx="3" fill="${OR}" stroke="${TR}" stroke-width="1"/>` +
-  `<path d="M35 160c-4 12 4 18 14 16 8-2 10-8 8-14" fill="none" stroke="${OR}" stroke-width="3" stroke-linecap="round"/>` +
+  `<path d="M35 162c-2 9 1 15 8 18 5 2 11 2 16 0" fill="none" stroke="${OR}" stroke-width="3" stroke-linecap="round"/>` +
   `<path d="M22 112a14 14 0 0 1 8-9" ${LUM}/>`,
 
 /* ─────────────────────────── LES SIGNES ───────────────────────── */
@@ -497,13 +513,70 @@ const REPLI =
   `<circle cx="90" cy="90" r="3.4" fill="${OMBRE}"/>` +
   `<path d="M52 66a46 46 0 0 1 26-22" ${LUM}/>`;
 
-/* L'illustration complète : la lueur derrière, l'objet devant. Les deux
-   sont séparés pour que le CSS puisse animer l'un sans l'autre. */
+/* L'illustration complète. Ce qui la fait passer du pictogramme à
+   l'objet, ce n'est pas le dessin — c'est ce qu'il y a autour :
+
+     · une lueur derrière, qui décolle l'objet du fond ;
+     · une ombre portée au sol, qui le POSE quelque part ;
+     · et son reflet, retourné, fondu, qui dit que le sol est laqué.
+
+   Le reflet ne redessine rien : c'est un « use » du même groupe,
+   retourné par une matrice. Vingt reflets ne coûtent donc pas vingt
+   dessins de plus, seulement vingt lignes.
+
+   Le compteur sert à donner à chaque objet un identifiant unique dans
+   la page — sans quoi le reflet de la vingtième carte pointerait sur
+   le dessin de la première. */
+let compteur = 0;
+
 function illustration(registre) {
   const d = INSTRUMENTS[registre] || REPLI;
-  return '<svg class="reg-art" viewBox="0 0 180 180" aria-hidden="true" focusable="false">' +
-    '<circle class="reg-halo" cx="90" cy="90" r="80" fill="url(#ins-lueur)"/>' +
-    '<g class="reg-objet">' + d + '</g></svg>';
+  const id = 'ins-o' + (++compteur);
+  /* La boîte de dessin fait 180 × 180 ; la vue en montre un peu plus,
+     pour que le manche d'une guitare ou le bec d'un saxophone ne
+     viennent pas buter contre le bord de la carte. Les 24 unités du
+     bas logent le reflet. */
+  return '<svg class="reg-art" viewBox="-14 -12 208 226" aria-hidden="true" focusable="false">' +
+    '<circle class="reg-halo" cx="90" cy="88" r="84" fill="url(#ins-lueur)"/>' +
+    '<ellipse class="reg-sol" cx="90" cy="180" rx="56" ry="6" fill="url(#ins-sol)"/>' +
+    '<g class="reg-objet" id="' + id + '">' + d + '</g>' +
+    /* Le miroir : y devient 358 - y, soit un retournement autour de
+       la ligne de sol (179). */
+    '<g class="reg-reflet" mask="url(#ins-reflet)">' +
+    '<use href="#' + id + '" transform="matrix(1 0 0 -1 0 358)"/></g>' +
+    '</svg>';
 }
 
-module.exports = { illustration, INSTRUMENTS, REPLI, DEFS };
+/* Deux mots par registre — ce qu'on entend, pas ce qu'on voit. Ils
+   tiennent sous le nom, séparés d'un point médian. Aucun n'est un
+   argument de vente : « Feutré · Intime » dit ce que ça fait à
+   l'oreille, « Le plus demandé » dirait autre chose. */
+const MOTS = {
+  'Piano classique': ['Épuré', 'Intemporel'],
+  'Musette': ['Tendre', 'Populaire'],
+  'Folk acoustique': ['Simple', 'Sincère'],
+  'Rock': ['Franc', 'Électrique'],
+  'Ballade rock': ['Ample', 'Émouvant'],
+  'Celtique': ['Ancien', 'Marin'],
+  'Soul jazz': ['Chaleureux', 'Habité'],
+  'Country americana': ['Rugueux', 'Tendre'],
+  'Jazz doux': ['Feutré', 'Intime'],
+  'Klezmer': ['Grave', 'Dansant'],
+  'Bélé antillais': ['Vivant', 'Enraciné'],
+  'Gospel': ['Lumineux', 'Choral'],
+  'Polyphonie corse': ['Nu', 'Puissant'],
+  'Chanson française': ['Écrit', 'Familier'],
+  'Variété douce': ['Doux', 'Direct'],
+  'R&B': ['Souple', 'Moderne'],
+  'Reggae': ['Léger', 'Solaire'],
+  'Bossa nova': ['Suave', 'Nostalgique'],
+  'Musique du monde': ['Voyageur', 'Métissé'],
+  'Funk': ['Joyeux', 'Entraînant']
+};
+
+/* Un registre sans mots n'en reçoit aucun plutôt qu'un mot faux :
+   la carte se contente alors de son nom. scripts/check.js signale
+   le manque au moment de la génération. */
+const mots = (registre) => MOTS[registre] || null;
+
+module.exports = { illustration, mots, INSTRUMENTS, MOTS, REPLI, DEFS };
