@@ -337,25 +337,106 @@
      et les découpeuses attendent, et le fichier reste minuscule. La
      marge de quatre modules est exigée par la norme — sans elle,
      beaucoup de lecteurs échouent. */
+  /* ─── La réserve centrale, quand un logo vient s'y poser ───
+
+     Un QR se relit même amputé : le niveau « H » autorise trente pour
+     cent de dégâts. Un logo au centre consomme donc une part de cette
+     réserve, et c'est la seule raison pour laquelle on peut s'y
+     risquer — sur un niveau « L », la même image rendrait le code
+     illisible.
+
+     On reste très en deçà du budget : un carré de 22 % du côté occupe
+     moins de 5 % de la surface. Le compte est fait ici, à l'exécution,
+     et le rendu REFUSE de poser un logo trop grand plutôt que de
+     produire un code que personne ne pourra scanner.
+
+     Les modules couverts ne sont pas seulement cachés : ils ne sont
+     pas dessinés. Un module noir qui dépasse d'un pixel sous le logo
+     donne un liseré sale, et sur une découpe vectorielle il ferait un
+     trou dans la matière. */
+  function reserve(q, marge, options) {
+    if (!options.logo) return null;
+    var part = options.logoTaille == null ? 0.22 : options.logoTaille;
+    if (part > 0.30) throw new Error(
+      'Logo trop grand pour rester lisible : ' + Math.round(part * 100) + ' % du côté.');
+    /* Un nombre IMPAIR de modules se centre exactement sur une matrice
+       elle-même impaire ; un nombre pair décalerait la réserve d'un
+       demi-module et mordrait un côté plus que l'autre. */
+    var n = Math.round(q.taille * part);
+    if (n % 2 === 0) n += 1;
+    var debut = Math.floor((q.taille - n) / 2);
+    return { debut: debut, fin: debut + n, n: n, x: debut + marge };
+  }
+
   function svg(texte, options) {
     options = options || {};
     var q = matrice(texte, options);
     var marge = options.marge == null ? 4 : options.marge;
     var cote = q.taille + marge * 2;
+    var r = reserve(q, marge, options);
     var d = '';
     for (var i = 0; i < q.taille; i++) {
       for (var j = 0; j < q.taille; j++) {
         if (!q.modules[i][j]) continue;
+        if (r && i >= r.debut && i < r.fin && j >= r.debut && j < r.fin) continue;
         d += 'M' + (j + marge) + ' ' + (i + marge) + 'h1v1h-1z';
       }
     }
     var fond = options.fond || '#ffffff';
     var encre = options.encre || '#000000';
+
+    /* Le médaillon : une pastille de fond, puis l'image. La pastille
+       déborde d'un demi-module pour que le logo ne touche jamais un
+       module noir — c'est ce contact qui fait hésiter les lecteurs. */
+    var centre = '';
+    if (r) {
+      var pad = 0.5;
+      /* ─── Le sceau vectoriel ───
+         Le logo de la maison est riche : un oiseau, une clé de sol,
+         une portée. Mesuré sur un rendu réel, il est magnifique à
+         1200 pixels et devient une tache dorée en dessous de 400 —
+         c'est-à-dire à la taille où ce QR apparaît sur un écran.
+
+         Pour ces tailles-là, on dessine plutôt le monogramme : un
+         cercle d'encre, un filet d'or, « MF ». Aucune image, aucun
+         poids, et net à toutes les échelles — y compris sous la
+         fraise d'un graveur, qui ne sait pas graver une photo. */
+      if (options.logoTexte) {
+        var cx = r.x + r.n / 2, ray = r.n / 2 + pad;
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + cote + ' ' + cote + '" ' +
+          'role="img" aria-label="' + (options.titre || 'QR code').replace(/[<>&"]/g, '') + '">' +
+          (fond === 'none' ? '' : '<rect width="' + cote + '" height="' + cote + '" fill="' + fond + '"/>') +
+          '<path fill="' + encre + '" d="' + d + '" shape-rendering="crispEdges"/>' +
+          '<circle cx="' + cx + '" cy="' + cx + '" r="' + ray + '" fill="' +
+            (options.logoFond || '#0b0b11') + '"/>' +
+          '<circle cx="' + cx + '" cy="' + cx + '" r="' + (ray - r.n * 0.09) + '" fill="none" ' +
+            'stroke="' + (options.logoOr || '#c9a84c') + '" stroke-width="' + (r.n * 0.035) + '"/>' +
+          '<text x="' + cx + '" y="' + cx + '" fill="' + (options.logoOr || '#c9a84c') + '" ' +
+            'font-family="\'Cormorant Garamond\',Georgia,serif" font-size="' + (r.n * 0.52) + '" ' +
+            'font-weight="400" letter-spacing="' + (r.n * 0.02) + '" ' +
+            'text-anchor="middle" dominant-baseline="central">' +
+            (options.logoTexte === true ? 'MF' : String(options.logoTexte).slice(0, 3)) +
+          '</text></svg>';
+      }
+      var forme = options.logoForme === 'carre'
+        ? '<rect x="' + (r.x - pad) + '" y="' + (r.x - pad) + '" width="' + (r.n + pad * 2) +
+          '" height="' + (r.n + pad * 2) + '" rx="' + (r.n * 0.16) + '" fill="' +
+          (options.logoFond || '#0b0b11') + '"/>'
+        : '<circle cx="' + (r.x + r.n / 2) + '" cy="' + (r.x + r.n / 2) + '" r="' +
+          (r.n / 2 + pad) + '" fill="' + (options.logoFond || '#0b0b11') + '"/>';
+      var m = r.n * 0.08;   /* le logo respire dans sa pastille */
+      centre = forme +
+        '<image href="' + String(options.logo).replace(/"/g, '&quot;') + '" ' +
+        'x="' + (r.x + m) + '" y="' + (r.x + m) + '" ' +
+        'width="' + (r.n - m * 2) + '" height="' + (r.n - m * 2) + '" ' +
+        'preserveAspectRatio="xMidYMid meet"/>';
+    }
+
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + cote + ' ' + cote + '" ' +
       'shape-rendering="crispEdges" role="img" aria-label="' +
       (options.titre || 'QR code').replace(/[<>&"]/g, '') + '">' +
       (fond === 'none' ? '' : '<rect width="' + cote + '" height="' + cote + '" fill="' + fond + '"/>') +
-      '<path fill="' + encre + '" d="' + d + '"/></svg>';
+      '<path fill="' + encre + '" d="' + d + '"/>' + centre + '</svg>';
   }
 
   /* Rendu en pixels, pour l'aperçu à l'écran et l'export à la

@@ -402,7 +402,7 @@
         return;
       }
       hote.innerHTML = '<div class="hom-qr-image">' +
-        window.MelodiaQR.svg(location.href, { niveau: 'H', marge: 3, fond: '#ffffff', encre: '#0b0b11' }) +
+        window.MelodiaQR.svg(location.href, { niveau: 'H', marge: 3, fond: '#ffffff', encre: '#0b0b11', logo: true, logoTexte: 'MF', logoTaille: 0.22 }) +
         '</div><p class="hom-qr-note">Scannez-le, ou photographiez-le pour le transmettre.</p>';
     });
 
