@@ -2,6 +2,7 @@ const { ICON } = require('./gen.js');
 const P = require('./parts.js');
 const { STYLES, TRACKS } = require('./data.js');
 const { adresses } = require('./adresses.js');
+const { glyphe } = require('./glyphes.js');
 
 const esc = (x) => String(x == null ? '' : x)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -37,6 +38,7 @@ function registres() {
     .map((r) => {
       if (!r.t) {
         return `        <div class="registre registre-vide reveal">
+          ${glyphe(r.nom)}
           <h3 class="registre-nom">${esc(r.nom)}</h3>
           <span class="registre-sur">Sur demande</span>
         </div>`;
@@ -44,6 +46,7 @@ function registres() {
       const slug = slugs[TRACKS.indexOf(r.t)];
       const pour = (r.t.categorie || 'hommage') === 'message' ? 'De' : 'Pour';
       return `        <a class="registre reveal" href="/ecouter/${esc(slug)}">
+          ${glyphe(r.nom)}
           <h3 class="registre-nom">${esc(r.nom)}</h3>
           <p class="registre-oeuvre"><em>${esc(r.t.title)}</em><br>${pour} ${esc(r.t.who)}</p>
           <span class="registre-lien"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Écouter</span>

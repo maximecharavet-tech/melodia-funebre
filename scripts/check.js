@@ -201,6 +201,27 @@ try {
   }
 }
 
+/* Deux registres ne doivent jamais porter le même emblème : ce serait
+   pire que pas d'emblème du tout, puisque le lecteur y lirait une
+   parenté qui n'existe pas. Le repli à la note ne compte pas — il est
+   fait pour être partagé par tous les registres sans dessin. */
+{
+  const { GLYPHES } = require('../build/glyphes.js');
+  const vus = new Map();
+  const jumeaux = [];
+  for (const [nom, d] of Object.entries(GLYPHES)) {
+    if (vus.has(d)) jumeaux.push(vus.get(d) + ' et ' + nom);
+    else vus.set(d, nom);
+  }
+  if (jumeaux.length) {
+    console.error('  EMBLÈMES EN DOUBLE :');
+    jumeaux.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log(`  ok   ${Object.keys(GLYPHES).length} emblèmes, tous distincts`);
+  }
+}
+
 /* Un registre du catalogue doit être proposé à la commande.
    Trois l'avaient cessé : soul jazz, musette et country americana
    avaient été ajoutés aux œuvres sans l'être à la liste des styles.

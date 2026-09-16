@@ -4282,6 +4282,32 @@ body.a-ecoute { padding-bottom: 5rem; }
 a.registre:hover, a.registre:focus-visible {
   background: rgba(201, 168, 76, 0.055); transform: translateY(-2px);
 }
+/* L'emblème : de l'or à peine posé, qui s'allume quand la carte
+   s'anime. Il occupe le haut de la carte et ne pousse rien : la
+   grille reste alignée. */
+.registre-glyphe {
+  width: 30px; height: 30px; color: var(--or-deep); display: block;
+  margin-bottom: 0.15rem;
+  transition: color 0.5s var(--ease), transform 0.5s var(--ease);
+}
+a.registre:hover .registre-glyphe,
+a.registre:focus-visible .registre-glyphe { color: var(--or); transform: scale(1.06); }
+.registre-vide .registre-glyphe { opacity: 0.45; }
+
+/* Le tracé se dessine. « pathLength=1 » ayant ramené tous les tracés à
+   la même longueur, une seule règle suffit pour les vingt emblèmes ;
+   le léger décalage entre les formes donne le geste d'une main qui
+   dessine plutôt que d'un rideau qui se lève. */
+@keyframes registre-tracer { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+a.registre:hover .registre-glyphe > [pathLength],
+a.registre:focus-visible .registre-glyphe > [pathLength] {
+  stroke-dasharray: 1; animation: registre-tracer 0.85s var(--ease) both;
+}
+a.registre:hover .registre-glyphe > [pathLength]:nth-child(2) { animation-delay: 0.08s; }
+a.registre:hover .registre-glyphe > [pathLength]:nth-child(3) { animation-delay: 0.16s; }
+a.registre:hover .registre-glyphe > [pathLength]:nth-child(4) { animation-delay: 0.24s; }
+a.registre:hover .registre-glyphe > [pathLength]:nth-child(n+5) { animation-delay: 0.3s; }
+
 .registre-nom {
   font-family: var(--ff-d); font-weight: 300; font-size: 1.24rem;
   line-height: 1.18; color: var(--paper); margin: 0;
@@ -4302,6 +4328,13 @@ a.registre:hover .registre-lien { color: var(--or-clair, #e3c977); }
 }
 @media (prefers-reduced-motion: reduce) {
   a.registre:hover, a.registre:focus-visible { transform: none; }
+  /* L'emblème s'allume toujours — c'est une couleur, pas un mouvement —
+     mais il ne se redessine plus et ne grandit plus. */
+  a.registre:hover .registre-glyphe { transform: none; }
+  a.registre:hover .registre-glyphe > [pathLength],
+  a.registre:focus-visible .registre-glyphe > [pathLength] {
+    animation: none; stroke-dasharray: none;
+  }
 }
 
 /* Les règles que la maison s'impose, sur « De son vivant ». Elles se
