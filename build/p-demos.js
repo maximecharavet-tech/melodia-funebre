@@ -1,10 +1,68 @@
 const { ICON } = require('./gen.js');
 const P = require('./parts.js');
-const { STYLES } = require('./data.js');
+const { STYLES, TRACKS } = require('./data.js');
+const { adresses } = require('./adresses.js');
+
+const esc = (x) => String(x == null ? '' : x)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/* ─── LES REGISTRES ──────────────────────────────────────────────
+   Cette section annonçait « huit registres de départ » et en listait
+   dix-sept ; la page promettait « 17 hommages » quand le catalogue en
+   comptait vingt. Trois nombres écrits à la main, trois mensonges
+   involontaires. Tout se compte désormais.
+
+   Et surtout : trois registres du catalogue — soul jazz, musette,
+   country americana — n'étaient PAS proposés, parce qu'ils avaient
+   été ajoutés aux œuvres sans l'être à la liste. Une famille pouvait
+   entendre une musette sur le site sans pouvoir en commander une.
+   La liste est donc l'union des deux, et scripts/check.js refuse
+   désormais qu'elles divergent. */
+function registres() {
+  const hommages = TRACKS.filter((t) => (t.categorie || 'hommage') === 'hommage');
+  const slugs = adresses(TRACKS);
+
+  /* Pour chaque registre, la première œuvre qui l'illustre. C'est elle
+     qui transforme un mot en porte : on n'ouvre pas une liste, on
+     ouvre une écoute. */
+  const exemple = {};
+  TRACKS.forEach((t) => { if (t.style && !exemple[t.style]) exemple[t.style] = t; });
+
+  const tous = [...new Set([...TRACKS.map((t) => t.style), ...STYLES])].filter(Boolean);
+  /* Ceux qui ont une preuve d'abord : ils portent l'argument. Les
+     autres suivent, et disent honnêtement qu'ils sont sur demande. */
+  return tous
+    .map((nom) => ({ nom, t: exemple[nom] }))
+    .sort((a, b) => (a.t ? 0 : 1) - (b.t ? 0 : 1))
+    .map((r) => {
+      if (!r.t) {
+        return `        <div class="registre registre-vide reveal">
+          <h3 class="registre-nom">${esc(r.nom)}</h3>
+          <span class="registre-sur">Sur demande</span>
+        </div>`;
+      }
+      const slug = slugs[TRACKS.indexOf(r.t)];
+      const pour = (r.t.categorie || 'hommage') === 'message' ? 'De' : 'Pour';
+      return `        <a class="registre reveal" href="/ecouter/${esc(slug)}">
+          <h3 class="registre-nom">${esc(r.nom)}</h3>
+          <p class="registre-oeuvre"><em>${esc(r.t.title)}</em><br>${pour} ${esc(r.t.who)}</p>
+          <span class="registre-lien"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Écouter</span>
+        </a>`;
+    }).join('\n');
+}
+
+const nbHommages = TRACKS.filter((t) => (t.categorie || 'hommage') === 'hommage').length;
+const nbRegistres = new Set([...TRACKS.map((t) => t.style), ...STYLES].filter(Boolean)).size;
+
+const LETTRES = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf',
+  'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit',
+  'dix-neuf', 'vingt', 'vingt et un', 'vingt-deux', 'vingt-trois', 'vingt-quatre', 'vingt-cinq'];
+const mot = (n) => LETTRES[n] || String(n);
+const Cap = (x) => x.charAt(0).toUpperCase() + x.slice(1);
 
 module.exports = {
   file: 'demos.html',
-  title: 'Écouter 17 hommages composés sur mesure | Melodia Funèbre',
+  title: `Écouter ${nbHommages} hommages composés sur mesure | Melodia Funèbre`,
   desc: "Pour chaque hommage : la personne, son histoire, les mots que sa famille nous avait confiés, et l'œuvre qui en est née — écoutable en ligne.",
   scripts: ['assets/js/catalogue.js'],
   /* Chaque œuvre porte « byArtist » vers l'entité « maison » : elle
@@ -58,10 +116,10 @@ ${P.oeuvres('hommage')}
       <div class="center reveal" style="margin-bottom:3rem;">
         <div class="eyebrow">Les registres</div>
         <h2 class="h-xl">Chaque vie a <em>sa musique.</em></h2>
-        <p class="lead" style="margin-top:1.4rem;">Huit registres de départ, ajustés pendant l'entretien. Si le style qui lui ressemble n'est pas dans cette liste, dites-le nous : nous composons aussi hors catalogue.</p>
+        <p class="lead" style="margin-top:1.4rem;max-width:64ch;margin-left:auto;margin-right:auto;">${Cap(mot(nbRegistres))} registres de départ, ajustés pendant l'entretien. Ceux que nous avons déjà composés s'écoutent d'un clic. Si le style qui lui ressemble n'est dans aucun d'eux, dites-le-nous : nous composons aussi hors catalogue.</p>
       </div>
-      <div class="grid-4">
-${STYLES.map(s => `        <div class="acte reveal" style="text-align:center;padding:1.6rem 1rem;"><h3 style="font-size:1.15rem;margin:0;">${s}</h3></div>`).join('\n')}
+      <div class="registres">
+${registres()}
       </div>
       <div class="center reveal" style="margin-top:3rem;">
         <a href="/offres" class="btn btn-gold btn-lg">Commander dans ce style</a>
@@ -69,7 +127,7 @@ ${STYLES.map(s => `        <div class="acte reveal" style="text-align:center;pad
     </div>
   </section>
 
-${P.partage('Dix-sept hommages composés sur mesure', "Chacun écrit pour une seule personne, d'après ce que sa famille en a raconté.")}
+${P.partage(`${Cap(mot(nbHommages))} hommages composés sur mesure`, "Chacun écrit pour une seule personne, d'après ce que sa famille en a raconté.")}
 ${P.urgency()}
 
   <section class="section section-top" style="padding-bottom:6rem;">

@@ -4259,6 +4259,51 @@ body.a-ecoute { padding-bottom: 5rem; }
 .part-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
 .part-liste li { display: grid; gap: 0.25rem; padding-left: 1rem; border-left: 1px solid var(--line); }
 
+/* ─── LES REGISTRES ───────────────────────────────────────────────
+   Une liste de dix-sept mots en grille ne dit rien : on la survole et
+   on n'en retient aucun. Chaque registre porte donc l'œuvre qui le
+   prouve, et mène à son écoute. Ceux qu'on sait faire sans en avoir
+   encore d'exemple restent affichés, en retrait — c'est honnête, et
+   cela vaut mieux que de les cacher.
+
+   Les cartes sont séparées par un filet d'un pixel obtenu en laissant
+   le fond de la grille transparaître : aucune bordure à faire
+   coïncider, et jamais de double trait aux jonctions. */
+.registres {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+}
+.registre {
+  background: var(--ink-2); padding: 1.5rem 1.25rem;
+  display: grid; gap: 0.5rem; align-content: start;
+  text-decoration: none; position: relative;
+  transition: background 0.45s var(--ease), transform 0.45s var(--ease);
+}
+a.registre:hover, a.registre:focus-visible {
+  background: rgba(201, 168, 76, 0.055); transform: translateY(-2px);
+}
+.registre-nom {
+  font-family: var(--ff-d); font-weight: 300; font-size: 1.24rem;
+  line-height: 1.18; color: var(--paper); margin: 0;
+}
+.registre-oeuvre { font-size: 0.83rem; line-height: 1.5; color: var(--bone); }
+.registre-oeuvre em { font-style: italic; color: var(--silver); }
+.registre-lien {
+  display: inline-flex; align-items: center; gap: 0.45rem; margin-top: 0.15rem;
+  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--or);
+}
+.registre-lien svg { width: 0.66rem; height: 0.66rem; flex: none; }
+a.registre:hover .registre-lien { color: var(--or-clair, #e3c977); }
+.registre-vide .registre-nom { color: var(--bone); }
+.registre-sur {
+  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--dust);
+}
+@media (prefers-reduced-motion: reduce) {
+  a.registre:hover, a.registre:focus-visible { transform: none; }
+}
+
 /* Les règles que la maison s'impose, sur « De son vivant ». Elles se
    lisent comme un engagement, pas comme un argumentaire : un filet
    d'or à gauche, du texte, et rien d'autre. */

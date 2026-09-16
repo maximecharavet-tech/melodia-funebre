@@ -269,6 +269,11 @@ function chaineQR(options) {
     new Function('window', fs.readFileSync(path.join(__dirname, '..', 'assets/js/qr.js'), 'utf8'))(faux);
     qr = faux.MelodiaQR.svg(SITE + '/m/demo', {
       niveau: 'H', marge: 2, fond: '#ffffff', encre: '#0b0b11',
+      /* Le sceau au centre : c'est un vrai QR, et il porte la marque.
+         Le monogramme plutôt que le logo complet — mesuré, celui-ci
+         devient une tache dorée en dessous de 400 pixels, et ce QR-ci
+         s'affiche à deux cents. */
+      logo: true, logoTexte: 'MF', logoTaille: 0.22,
       titre: 'QR code de démonstration Melodia Funèbre'
     });
   } catch (e) {

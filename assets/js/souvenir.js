@@ -118,7 +118,7 @@
   /* ─── Une page, dépliée ─── */
   function vueFiche(m) {
     var url = MEM.adresse(m.jeton);
-    var qr = window.MelodiaQR ? window.MelodiaQR.svg(url, { niveau: 'H', marge: 3, fond: '#ffffff', encre: '#0b0b11' }) : '';
+    var qr = window.MelodiaQR ? window.MelodiaQR.svg(url, { niveau: 'H', marge: 3, fond: '#ffffff', encre: '#0b0b11', logo: true, logoTexte: 'MF', logoTaille: 0.22 }) : '';
     var pistes = (m.pistes || []).filter(function (p) { return p && p.url; });
     var vie = [jour(m.ne_le), jour(m.parti_le)].filter(Boolean).join(' — ');
 

@@ -151,7 +151,7 @@
   /* ─── La fiche, dépliée ─── */
   function vueFiche(m, options) {
     options = options || {};
-    var qr = window.MelodiaQR.svg(adresse(m.jeton), { niveau: 'H', marge: 3, fond: '#ffffff', encre: '#0b0b11' });
+    var qr = window.MelodiaQR.svg(adresse(m.jeton), { niveau: 'H', marge: 3, fond: '#ffffff', encre: '#0b0b11', logo: true, logoTexte: 'MF', logoTaille: 0.22 });
     var info = window.MelodiaQR.matrice(adresse(m.jeton), { niveau: 'H' });
     var pistes = m.pistes || [];
 

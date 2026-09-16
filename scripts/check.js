@@ -201,6 +201,32 @@ try {
   }
 }
 
+/* Un registre du catalogue doit être proposé à la commande.
+   Trois l'avaient cessé : soul jazz, musette et country americana
+   avaient été ajoutés aux œuvres sans l'être à la liste des styles.
+   Une famille pouvait donc entendre une musette sur le site sans
+   pouvoir en commander une — et rien ne le signalait. */
+{
+  const { STYLES } = require('../build/data.js');
+  const c = JSON.parse(fs.readFileSync('assets/data/content.json', 'utf8'));
+  const duCatalogue = [...new Set((c.demos || [])
+    .filter((d) => d.visible !== false).map((d) => d.style).filter(Boolean))];
+  const html = fs.existsSync('demos.html') ? fs.readFileSync('demos.html', 'utf8') : '';
+  /* Le nom est cherché tel que la page l'ÉCRIT, pas tel qu'il est
+     stocké : « R&B » y devient « R&amp;B », et un contrôle naïf
+     accusait la page d'un défaut qu'elle n'avait pas. */
+  const ech = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const absents = duCatalogue.filter((st) => !html.includes('>' + ech(st) + '<'));
+  if (absents.length) {
+    console.error('  REGISTRE NON PROPOSÉ — au catalogue, absent de /demos :');
+    absents.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log(`  ok   ${duCatalogue.length} registres du catalogue, tous proposés ` +
+                `(${STYLES.length} dans la liste de départ)`);
+  }
+}
+
 /* Aucune page ne doit partir avec un lien mort vers une page du site. */
 const pages = files.filter(f => f.endsWith('.html'));
 /* Toutes les pages du dépôt, pas seulement celles de la liste : les
