@@ -280,6 +280,72 @@ try {
   }
 }
 
+/* LA MÉDIATHÈQUE DE CAMPAGNE DOIT TENIR SES PROMESSES.
+
+   build/medias.js déclare chaque affiche et chaque vidéo avec son
+   fichier, ses dimensions et son audience. Une déclaration qui ment
+   est pire que pas de déclaration : la page afficherait un cadre vide,
+   ou annoncerait « 941 × 1672 » sous une image qui n'en fait pas
+   autant.
+
+   On vérifie donc trois choses : que le fichier existe, que les
+   dimensions annoncées sont celles du fichier, et qu'aucune pièce ne
+   dépasse son budget de poids — une page de vente qui met huit
+   secondes à charger ne vend rien. */
+{
+  const MED = require('../build/medias.js');
+  const BUDGET = { affiche: 400 * 1024, video: 8 * 1024 * 1024 };
+
+  /* Les dimensions d'un JPEG se lisent dans ses marqueurs SOF. */
+  const tailleJpeg = (f) => {
+    const b = fs.readFileSync(f);
+    let i = 2;
+    while (i < b.length) {
+      if (b[i] !== 0xFF) { i++; continue; }
+      const m = b[i + 1];
+      if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) {
+        return [b.readUInt16BE(i + 7), b.readUInt16BE(i + 5)];
+      }
+      i += 2 + b.readUInt16BE(i + 2);
+    }
+    return [0, 0];
+  };
+
+  const fautes = [];
+  for (const m of MED.MEDIAS) {
+    const f = MED.DOSSIER + m.fichier;
+    if (!fs.existsSync(f)) { fautes.push(`${m.fichier} : déclaré, absent du dépôt`); continue; }
+    const poids = fs.statSync(f).size;
+    if (poids > BUDGET[m.type]) {
+      fautes.push(`${m.fichier} : ${Math.round(poids / 1024)} Ko, budget ${Math.round(BUDGET[m.type] / 1024)} Ko`);
+    }
+    if (m.affiche && !fs.existsSync(MED.DOSSIER + m.affiche)) {
+      fautes.push(`${m.affiche} : image d'attente déclarée, absente`);
+    }
+    /* Les dimensions ne se vérifient que sur les JPEG : pour la vidéo
+       il faudrait décoder le conteneur, et l'affiche d'attente en
+       porte déjà la preuve. */
+    const jpeg = m.type === 'video' ? (m.affiche || '') : m.fichier;
+    if (/\.jpe?g$/i.test(jpeg)) {
+      const [w, h] = tailleJpeg(MED.DOSSIER + jpeg);
+      if (w !== m.largeur || h !== m.hauteur) {
+        fautes.push(`${jpeg} : annoncé ${m.largeur} × ${m.hauteur}, mesuré ${w} × ${h}`);
+      }
+    }
+  }
+
+  if (fautes.length) {
+    console.error('  MÉDIATHÈQUE — déclaration fausse :');
+    fautes.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    const total = MED.MEDIAS.reduce((s, m) => s + fs.statSync(MED.DOSSIER + m.fichier).size, 0);
+    console.log(`  ok   ${MED.MEDIAS.length} pièces de campagne, dimensions exactes, ` +
+                `${Math.round(total / 1024)} Ko au total ` +
+                `(${MED.ATTENDUS.length} annoncées, pas encore reçues)`);
+  }
+}
+
 /* AUCUN TEXTE SOUS 12,5 PIXELS.
 
    Les familles qui lisent ce site ont souvent soixante-dix ou

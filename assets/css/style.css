@@ -4526,6 +4526,77 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   .reg-jauge span { transition: none; }
 }
 
+/* ─── LE KIT DE COMMUNICATION ───────────────────────────────────
+   Le matériel de campagne, montré à une agence avant qu'on lui
+   demande de devenir partenaire. Les pièces sont toutes au format
+   vertical — affiches et vidéo se rangent donc dans la même grille,
+   sans exception à prévoir. */
+.kit {
+  display: grid; gap: 1.6rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin-top: 1rem;
+}
+.kit-piece {
+  margin: 0; display: flex; flex-direction: column;
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--ink-2); overflow: hidden;
+  transition: border-color var(--t-mid) var(--ease);
+}
+.kit-piece:hover { border-color: var(--line-strong); }
+
+/* Le cadre impose le rapport vertical à tout le monde : une vidéo de
+   484 × 850 et une affiche de 941 × 1672 y prennent la même place, et
+   la grille ne se décale pas pendant le chargement. */
+.kit-cadre {
+  position: relative; aspect-ratio: 9 / 16; background: var(--ink-3);
+}
+.kit-media {
+  display: block; width: 100%; height: 100%;
+  /* « contain » et non « cover » : ce sont des affiches, leur texte
+     est le sujet. Le cadrage au remplissage coupait « Devenez
+     partenaire » sur la gauche — une affiche tronquée ne s'envoie
+     pas à un prospect. Les pièces n'ont pas toutes le même rapport
+     (2:3 pour l'une, 9:16 pour les autres) : les bandes noires sont
+     le prix à payer pour les montrer entières. */
+  object-fit: contain;
+}
+.kit-piece figcaption {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  padding: 1.1rem 1.2rem 1.3rem;
+}
+.kit-a-qui {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--or-patina);
+}
+.kit-titre {
+  margin: 0; font-family: var(--ff-d); font-weight: 300;
+  font-size: 1.3rem; line-height: 1.2; color: var(--paper);
+}
+.kit-legende { margin: 0; font-size: 0.92rem; line-height: 1.6; color: var(--bone); }
+.kit-usage { margin: 0; font-size: 0.88rem; line-height: 1.6; color: var(--ash); }
+.kit-usage strong { color: var(--bone); font-weight: 400; }
+.kit-format {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.08em;
+  color: var(--dust);
+}
+.kit-tele {
+  margin-top: 0.4rem; align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 1.1rem; border-radius: var(--radius);
+  border: 1px solid var(--line-strong); color: var(--or);
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em;
+  text-transform: uppercase; text-decoration: none;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.kit-tele svg { width: 0.95rem; height: 0.95rem; flex: none; }
+.kit-tele:hover, .kit-tele:focus-visible {
+  background: var(--or); color: var(--ink); border-color: var(--or);
+}
+.kit-note {
+  margin-top: 2.2rem; font-size: 0.92rem; line-height: 1.7;
+  color: var(--ash); max-width: 60ch; margin-left: auto; margin-right: auto;
+}
+
 /* ─── LES PAGES DE REQUÊTE ─────────────────────────────────────
    Treize pages qui partagent une mise en page et aucun contenu. Ces
    quatre éléments n'existent que là : la situation du lecteur, le
