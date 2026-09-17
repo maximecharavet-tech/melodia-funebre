@@ -280,6 +280,74 @@ try {
   }
 }
 
+/* LES TREIZE PAGES DE REQUÊTE NE DOIVENT PAS SE RESSEMBLER.
+
+   Elles visent des formulations voisines — « chanson hommage défunt »,
+   « chanson personnalisée défunt », « créer une chanson pour un
+   défunt ». Google appelle « doorway pages » une grappe de pages
+   quasi identiques qui ne diffèrent que par le mot-clé, et les
+   déclasse en bloc. Le risque n'est pas théorique : il suffit qu'un
+   jour on reprenne un paragraphe d'une page pour l'autre.
+
+   On mesure donc la ressemblance réelle, en séquences de six mots
+   consécutifs (deux textes différents n'en partagent presque aucune),
+   sur la partie propre à chaque page — le corps et les questions,
+   sans le bloc de proposition ni les pieds communs.
+
+   Au moment où ce contrôle a été écrit, la paire la plus proche était
+   à 1 %. Le seuil est fixé à 12 % : très au-dessus de ce qui existe,
+   très en dessous de ce que produirait un gabarit rempli. */
+{
+  const modules = ['../build/p-chansons.js', '../build/p-fabrication.js',
+                   '../build/p-ceremonie.js', '../build/p-memoire.js'];
+  const requetes = [].concat(...modules.map((m) => require(m)));
+  const SEUIL = 0.12;
+
+  const mots = (p) => p.body.split('guide-fin')[0]
+    .replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ')
+    .toLowerCase().replace(/[^a-zàâäéèêëîïôöùûüç' -]/g, ' ')
+    .split(/\s+/).filter(Boolean);
+  const seqs = (w) => {
+    const s = new Set();
+    for (let i = 0; i + 6 <= w.length; i++) s.add(w.slice(i, i + 6).join(' '));
+    return s;
+  };
+
+  const vus = requetes.map((p) => ({ f: p.file, s: seqs(mots(p)), n: mots(p).length }));
+  const trop = [];
+  let pire = 0;
+  for (let i = 0; i < vus.length; i++) {
+    for (let j = i + 1; j < vus.length; j++) {
+      let inter = 0;
+      for (const x of vus[i].s) if (vus[j].s.has(x)) inter++;
+      const jac = inter / (vus[i].s.size + vus[j].s.size - inter);
+      if (jac > pire) pire = jac;
+      if (jac > SEUIL) trop.push(`${vus[i].f} et ${vus[j].f} : ${(jac * 100).toFixed(0)} %`);
+    }
+  }
+
+  /* Une page trop courte ne se classe pas, quelle que soit sa
+     singularité. Cinq cents mots est le plancher que la maison
+     s'impose pour une page d'acquisition. */
+  const courtes = vus.filter((x) => x.n < 500);
+
+  if (trop.length) {
+    console.error('  PAGES DE REQUÊTE TROP RESSEMBLANTES :');
+    trop.forEach((x) => console.error('         ' + x));
+    ok = false;
+  }
+  if (courtes.length) {
+    console.error('  PAGE DE REQUÊTE TROP COURTE (moins de 500 mots) :');
+    courtes.forEach((x) => console.error(`         ${x.f} : ${x.n} mots`));
+    ok = false;
+  }
+  if (!trop.length && !courtes.length) {
+    console.log(`  ok   ${vus.length} pages de requête, ressemblance maximale ` +
+                `${(pire * 100).toFixed(1)} % (seuil ${SEUIL * 100} %), ` +
+                `${Math.min(...vus.map((x) => x.n))} mots au minimum`);
+  }
+}
+
 /* Aucune page ne doit partir avec un lien mort vers une page du site. */
 const pages = files.filter(f => f.endsWith('.html'));
 /* Toutes les pages du dépôt, pas seulement celles de la liste : les
