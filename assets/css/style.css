@@ -40,7 +40,7 @@
   --ivory-line: rgba(10, 8, 4, 0.1);
   --ivory-ink: #17150f;
   --ivory-soft: #55503f;
-  --ivory-dim: #7d7663;
+  --ivory-dim: #6a6453;
 
   /* ─── Sémantique ─── */
   --green: #4ade80;
@@ -59,9 +59,9 @@
   --fs-lg: clamp(1.35rem, 2.4vw, 1.9rem);
   --fs-lead: clamp(1rem, 1.35vw, 1.2rem);
   --fs-body: 1rem;
-  --fs-sm: 0.92rem;
-  --fs-xs: 0.8rem;
-  --fs-eyebrow: 0.56rem;
+  --fs-sm: 1rem;
+  --fs-xs: 0.9rem;
+  --fs-eyebrow: 0.78rem;
 
   /* ─── Rythme ─── */
   --sp-section: clamp(4.5rem, 10vw, 9rem);
@@ -162,7 +162,7 @@ ul { list-style: none; }
 
 .eyebrow {
   font-family: var(--ff-m); font-size: var(--fs-eyebrow); font-weight: 500;
-  letter-spacing: 0.32em; text-transform: uppercase; color: var(--or-patina);
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--or-patina);
   margin-bottom: 1.4rem; display: flex; align-items: center; gap: 0.8rem;
 }
 .center .eyebrow { justify-content: center; }
@@ -179,7 +179,7 @@ ul { list-style: none; }
   opacity: 0.55;
 }
 .mono {
-  font-family: var(--ff-m); font-size: var(--fs-eyebrow); letter-spacing: 0.22em;
+  font-family: var(--ff-m); font-size: var(--fs-eyebrow); letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina);
 }
 
@@ -240,8 +240,8 @@ ul { list-style: none; }
 .nav-brand:hover .nav-logo { transform: scale(1.06); box-shadow: 0 0 22px rgba(201, 168, 76, 0.3); }
 .nav-name { display: block; font-family: var(--ff-d); font-size: 1.22rem; line-height: 1; color: var(--paper); }
 .nav-sub {
-  display: block; font-family: var(--ff-m); font-size: 0.46rem;
-  letter-spacing: 0.34em; text-transform: uppercase; color: var(--or-patina); margin-top: 3px;
+  display: block; font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--or-patina); margin-top: 3px;
 }
 .nav-links { display: flex; align-items: center; gap: 1.9rem; }
 .nav-links a {
@@ -310,8 +310,8 @@ ul { list-style: none; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
   padding: 0.95rem 2rem; border-radius: var(--radius);
-  font-family: var(--ff-m); font-size: 0.62rem; font-weight: 500;
-  letter-spacing: 0.24em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.834rem; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
   cursor: pointer; position: relative; overflow: hidden;
   transition: transform var(--t-fast) var(--ease), box-shadow var(--t-mid), background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
   white-space: nowrap; text-align: center; border: 1px solid transparent;
@@ -334,9 +334,24 @@ ul { list-style: none; }
 .btn-dark:hover { background: var(--ink-3); }
 .section-light .btn-outline { border-color: rgba(107, 88, 40, 0.4); color: var(--or-deep); }
 .section-light .btn-outline:hover { background: rgba(201, 168, 76, 0.1); border-color: var(--or-deep); }
-.btn-sm { padding: 0.62rem 1.2rem; font-size: 0.55rem; }
-.btn-lg { padding: 1.15rem 2.6rem; font-size: 0.66rem; }
-.btn-block { width: 100%; }
+.btn-sm { padding: 0.62rem 1.2rem; font-size: 0.802rem; }
+.btn-lg { padding: 1.15rem 2.6rem; font-size: 0.852rem; }
+/* Marge intérieure réduite sur les boutons pleine largeur : ils
+   héritaient des 2 rem des boutons en ligne, et le libellé agrandi
+   s'y faisait rogner — « .btn » coupe ce qui dépasse, à cause du
+   reflet qu'il fait passer au survol. */
+/* Un bouton pleine largeur ne doit jamais rogner son libellé : il
+   hérite de « .btn » une marge de 2 rem, l'interdiction de passer à
+   la ligne, et une coupe nette pour le reflet du survol. Avec des
+   libellés agrandis, « Pour les professionnels » se faisait amputer —
+   à 1280 px d'abord, puis à 1024 px une fois la marge réduite.
+   La marge réduite ne suffisait donc pas : on l'autorise à tenir sur
+   deux lignes, ce qui ne peut plus déborder quelle que soit la
+   largeur de sa colonne. */
+.btn-block {
+  width: 100%; padding-inline: 1.1rem;
+  white-space: normal; line-height: 1.35;
+}
 .btn[disabled], .btn.is-loading { opacity: 0.5; pointer-events: none; }
 .btn.is-loading::after {
   content: ''; width: 13px; height: 13px; border: 2px solid currentColor;
@@ -380,7 +395,7 @@ ul { list-style: none; }
    ═══════════════════════════════════════════════════════════════ */
 .badge {
   display: inline-flex; align-items: center; gap: 0.45rem;
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
   padding: 0.35rem 0.75rem; border-radius: 100px;
   border: 1px solid var(--line-strong); color: var(--or); background: var(--or-soft);
 }
@@ -398,7 +413,7 @@ ul { list-style: none; }
 }
 .trust-item {
   display: flex; align-items: center; gap: 0.55rem;
-  font-family: var(--ff-m); font-size: 0.55rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.802rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--ash);
 }
 .trust-item svg { width: 15px; height: 15px; color: var(--or-patina); flex: none; }
@@ -428,7 +443,7 @@ ul { list-style: none; }
 .hero-caption .hero-actions { margin-top: 2.6rem; }
 .hero-scroll {
   position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 3;
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.3em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust); text-align: center;
 }
 .hero-scroll::after {
@@ -443,7 +458,7 @@ ul { list-style: none; }
   background: linear-gradient(90deg, rgba(201, 168, 76, 0.1), rgba(201, 168, 76, 0.03));
   border-bottom: 1px solid var(--line); padding: 0.55rem var(--pad);
   display: flex; align-items: center; justify-content: center; gap: 0.7rem;
-  font-family: var(--ff-m); font-size: 0.55rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.802rem; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--bone); text-align: center;
 }
 .urgency-bar a { color: var(--or); border-bottom: 1px solid var(--line-strong); }
@@ -459,7 +474,7 @@ ul { list-style: none; }
   -webkit-text-fill-color: transparent; color: var(--or);
 }
 .stat-label {
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.24em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--ash); margin-top: 0.65rem;
 }
 .section-light .stat-label { color: var(--ivory-dim); }
@@ -497,7 +512,7 @@ ul { list-style: none; }
 .step-body h3 { font-family: var(--ff-d); font-size: 1.5rem; font-weight: 400; color: var(--paper); margin-bottom: 0.5rem; }
 .step-body p { color: var(--ash); font-size: var(--fs-sm); max-width: 58ch; }
 .step-time {
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--or-patina); margin-top: 0.7rem; display: inline-block;
 }
 .section-light .steps::before { background: linear-gradient(180deg, var(--or-deep), rgba(107, 88, 40, 0.3), transparent); }
@@ -522,17 +537,17 @@ ul { list-style: none; }
 .price-tag {
   position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
   background: var(--or-grad); color: #120e04; font-family: var(--ff-m);
-  font-size: 0.48rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
   padding: 0.34rem 0.95rem; border-radius: 100px; white-space: nowrap;
 }
 .price-name {
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.28em;
+  font-family: var(--ff-m); font-size: 0.816rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina); margin-bottom: 1.1rem;
 }
 .price-amount { font-family: var(--ff-d); font-size: 3.4rem; line-height: 1; color: var(--paper); }
 .price-amount span { font-size: 1.4rem; color: var(--or); vertical-align: super; margin-left: 0.1em; }
 .price-note {
-  font-family: var(--ff-m); font-size: 0.48rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--dust); margin-top: 0.5rem;
 }
 .price-desc { color: var(--ash); font-size: var(--fs-sm); margin: 1rem 0 1.6rem; min-height: 2.8em; }
@@ -556,7 +571,7 @@ ul { list-style: none; }
 .compare { width: 100%; border-collapse: collapse; min-width: 620px; font-size: var(--fs-sm); }
 .compare th, .compare td { padding: 0.95rem 1.1rem; text-align: center; border-bottom: 1px solid var(--line-soft); }
 .compare thead th {
-  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.798rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--or-patina); background: var(--surface); position: sticky; top: 0;
 }
 .compare tbody th { text-align: left; font-weight: 400; color: var(--bone); }
@@ -571,6 +586,36 @@ ul { list-style: none; }
 .section-light .compare tbody th { color: var(--ivory-ink); }
 .section-light .compare td { color: var(--ivory-soft); }
 
+/* ─── LISIBILITÉ DES SECTIONS CLAIRES ──────────────────────────
+   Les familles qui lisent ce site ont souvent soixante-dix ou
+   quatre-vingts ans. Sur les fonds clairs, deux choses les gênaient :
+   le Jost en graisse 300, qui s'amincit sur fond blanc jusqu'à
+   paraître gris, et le vert du « Oui » du comparatif.
+
+   La graisse passe à 400 sur les fonds clairs uniquement : sur le
+   fond noir du reste du site, le 300 reste net parce que le texte
+   clair sur fond sombre s'épaissit optiquement. Le même réglage
+   partout aurait alourdi les pages sombres sans rien gagner. */
+.section-light .lead,
+.section-light .prose p,
+.section-light .prose li,
+.section-light .compare td,
+.section-light .compare tbody th,
+.section-light .card p,
+.section-light .note { font-weight: 400; }
+
+/* Le vert vif (#4ade80) donne 1,7 de contraste sur blanc : illisible.
+   Il n'était d'ailleurs pas appliqué ici, la règle de section claire
+   l'emportant — de sorte que les « Oui » n'avaient plus aucune marque
+   distinctive. Un vert forêt les rend à la fois lisibles (6,5 sur
+   blanc) et visibles. */
+.section-light .compare .yes { color: #1f6b3c; font-weight: 500; }
+
+/* La colonne de la maison portait un fond doré à 4,5 % d'opacité —
+   invisible sur ivoire. Elle est marquée par un filet, qui se voit. */
+.section-light .compare .col-hl { background: rgba(201, 168, 76, 0.1); }
+.section-light .compare thead th.col-hl { box-shadow: inset 0 3px 0 var(--or); }
+
 /* ═══════════════════════════════════════════════════════════════
    CITATIONS & TÉMOIGNAGES
    ═══════════════════════════════════════════════════════════════ */
@@ -580,18 +625,18 @@ ul { list-style: none; }
   font-style: italic; font-weight: 300; line-height: 1.4; color: var(--bone);
 }
 .quote-band cite {
-  display: block; margin-top: 1.6rem; font-family: var(--ff-m); font-size: 0.52rem;
-  letter-spacing: 0.28em; text-transform: uppercase; color: var(--or-patina); font-style: normal;
+  display: block; margin-top: 1.6rem; font-family: var(--ff-m); font-size: 0.789rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--or-patina); font-style: normal;
 }
 
 .testi { display: flex; flex-direction: column; height: 100%; }
-.testi-stars { color: var(--or); font-size: 0.85rem; letter-spacing: 0.18em; margin-bottom: 1.1rem; }
+.testi-stars { color: var(--or); font-size: 0.85rem; letter-spacing: 0.15em; margin-bottom: 1.1rem; }
 .testi-text {
   font-family: var(--ff-d); font-style: italic; font-size: 1.15rem; line-height: 1.6;
   color: var(--bone); flex: 1;
 }
 .testi-who {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--or-patina); margin-top: 1.6rem;
 }
 .section-light .testi-text { color: var(--ivory-ink); }
@@ -644,7 +689,7 @@ ul { list-style: none; }
 .field { margin-bottom: 1.35rem; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
 .field-label {
-  display: block; font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em;
+  display: block; font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.55rem;
 }
 .field-input, .field-area, .field-select {
@@ -664,9 +709,9 @@ ul { list-style: none; }
   background-repeat: no-repeat; background-position: right 0.9rem center; background-size: 15px; padding-right: 2.6rem;
 }
 .field-select option { background: var(--ink-3); color: var(--paper); }
-.field-hint { font-size: 0.78rem; color: var(--dust); margin-top: 0.42rem; line-height: 1.5; }
+.field-hint { font-size: 0.88rem; color: var(--dust); margin-top: 0.42rem; line-height: 1.5; }
 .field-input.invalid, .field-area.invalid, .field-select.invalid { border-color: var(--red); }
-.field-err { font-size: 0.76rem; color: var(--red); margin-top: 0.38rem; display: none; }
+.field-err { font-size: 0.88rem; color: var(--red); margin-top: 0.38rem; display: none; }
 .field-input.invalid ~ .field-err, .field-area.invalid ~ .field-err, .field-select.invalid ~ .field-err { display: block; }
 
 .check {
@@ -692,7 +737,7 @@ ul { list-style: none; }
   border-left: 1.5px solid var(--or); border-bottom: 1.5px solid var(--or); transform: rotate(-45deg);
 }
 .choice-title { font-family: var(--ff-d); font-size: 1.1rem; color: var(--paper); }
-.choice-sub { font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash); margin-top: 0.3rem; }
+.choice-sub { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash); margin-top: 0.3rem; }
 .choice.selected .choice-sub { color: var(--or-patina); }
 
 .form-msg {
@@ -719,13 +764,13 @@ ul { list-style: none; }
 .wz-dot {
   width: 27px; height: 27px; border-radius: 50%; display: grid; place-items: center;
   border: 1px solid var(--line-soft); background: var(--ink); position: relative; z-index: 1;
-  font-family: var(--ff-m); font-size: 0.6rem; color: var(--dust);
+  font-family: var(--ff-m); font-size: 0.825rem; color: var(--dust);
   transition: all var(--t-mid) var(--ease);
 }
 .wz-node.active .wz-dot { border-color: var(--or); color: var(--or); box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.1); }
 .wz-node.done .wz-dot { background: var(--or-grad); border-color: transparent; color: #120e04; }
 .wz-label {
-  font-family: var(--ff-m); font-size: 0.46rem; letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--dust); text-align: center; transition: color var(--t-mid);
 }
 .wz-node.active .wz-label { color: var(--or); }
@@ -745,7 +790,7 @@ ul { list-style: none; }
   padding: 1.5rem; position: sticky; top: 90px;
 }
 .wz-recap-head {
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.24em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--or-patina); margin-bottom: 1.1rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line-soft);
 }
 .wz-line {
@@ -757,7 +802,7 @@ ul { list-style: none; }
   display: flex; justify-content: space-between; align-items: baseline;
   margin-top: 1rem; padding-top: 1.1rem; border-top: 1px solid var(--line-soft);
 }
-.wz-total span { font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ash); }
+.wz-total span { font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ash); }
 .wz-total b { font-family: var(--ff-d); font-size: 2.1rem; font-weight: 400; color: var(--or); }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -770,7 +815,7 @@ ul { list-style: none; }
 }
 .calc-row { margin-bottom: 1.7rem; }
 .calc-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.8rem; gap: 1rem; }
-.calc-head label { font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--or-patina); }
+.calc-head label { font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--or-patina); }
 .calc-val { font-family: var(--ff-d); font-size: 1.5rem; color: var(--paper); }
 .calc-range { width: 100%; -webkit-appearance: none; appearance: none; height: 3px; background: rgba(255,255,255,0.1); border-radius: 100px; cursor: pointer; }
 .calc-range::-webkit-slider-thumb {
@@ -794,7 +839,7 @@ ul { list-style: none; }
   -webkit-text-fill-color: transparent; color: var(--or);
 }
 .calc-cell-lbl {
-  font-family: var(--ff-m); font-size: 0.46rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--ash); margin-top: 0.6rem; line-height: 1.5;
 }
 
@@ -867,11 +912,11 @@ ul { list-style: none; }
 .footer-logo { height: 52px; width: 52px; object-fit: cover; border-radius: 50%; border: 1px solid var(--line); margin-bottom: 1.1rem; }
 .footer-tag { color: var(--ash); font-size: 0.86rem; line-height: 1.65; max-width: 30ch; }
 .footer-baseline {
-  font-family: var(--ff-m); font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--dust); margin-top: 1.2rem; line-height: 2;
 }
 .footer h4 {
-  font-family: var(--ff-m); font-size: 0.5rem; font-weight: 500; letter-spacing: 0.26em;
+  font-family: var(--ff-m); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina); margin-bottom: 1.1rem;
 }
 .footer-links { display: grid; gap: 0.62rem; }
@@ -880,7 +925,7 @@ ul { list-style: none; }
 .footer-bottom {
   border-top: 1px solid var(--line-soft); padding-top: 1.6rem;
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.14em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--dust);
 }
 .footer-bottom .gold { color: var(--or-patina); }
@@ -896,10 +941,10 @@ ul { list-style: none; }
 .opts { margin-top: 1.6rem; display: grid; gap: 0.6rem; }
 .opts-tete { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
 .opts-titre {
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or);
 }
-.opts-sous { font-size: 0.8rem; color: var(--dust); }
+.opts-sous { font-size: 0.88rem; color: var(--dust); }
 
 .opt {
   display: flex; gap: 0.85rem; align-items: flex-start;
@@ -924,14 +969,14 @@ ul { list-style: none; }
 .opt-tete { display: flex; align-items: baseline; gap: 0.7rem; justify-content: space-between; }
 .opt-titre { font-size: 0.96rem; color: var(--paper); }
 .opt-prix {
-  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.06em;
+  font-family: var(--ff-m); font-size: 0.88rem; letter-spacing: 0.06em;
   color: var(--or); white-space: nowrap; flex: none;
 }
 .opt-prix.opt-comprise { color: var(--green); }
 .opt-aide { display: block; font-size: 0.82rem; color: var(--ash); line-height: 1.65; margin-top: 0.35rem; }
 
 @media (max-width: 720px) {
-  .opts-titre { font-size: 0.66rem; letter-spacing: 0.12em; }
+  .opts-titre { font-size: 0.852rem; letter-spacing: 0.12em; }
   .opts-sous, .opt-aide { font-size: 0.88rem; }
   .opt-titre { font-size: 1rem; }
   .opt-prix { font-size: 0.86rem; }
@@ -975,11 +1020,11 @@ ul { list-style: none; }
 .esp-marque span { display: flex; flex-direction: column; line-height: 1.1; }
 .esp-marque b { font-family: var(--ff-d); font-size: 1.05rem; color: var(--paper); font-weight: 400; }
 .esp-marque em {
-  font-family: var(--ff-m); font-size: 0.48rem; letter-spacing: 0.24em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina); font-style: normal;
 }
 .esp-joindre {
-  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.798rem; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--ash); padding: 0.7rem 0;
 }
 .esp-joindre:hover { color: var(--or); }
@@ -1007,7 +1052,7 @@ ul { list-style: none; }
 .esp-onglet:hover { color: var(--paper); border-color: var(--line-strong); }
 .esp-onglet.actif { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
 .esp-compte {
-  font-family: var(--ff-m); font-size: 0.62rem; color: var(--ink);
+  font-family: var(--ff-m); font-size: 0.834rem; color: var(--ink);
   background: var(--or-patina); border-radius: 999px; padding: 0.1rem 0.42rem;
 }
 .esp-onglet.actif .esp-compte { background: var(--or); }
@@ -1022,7 +1067,7 @@ ul { list-style: none; }
 .esp-tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.9rem; }
 .esp-nom { font-family: var(--ff-d); font-size: 1.35rem; color: var(--paper); margin: 0; line-height: 1.25; }
 .esp-meta {
-  font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.1em;
+  font-family: var(--ff-m); font-size: 0.825rem; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--dust); margin-top: 0.35rem;
   overflow-wrap: anywhere;
 }
@@ -1049,7 +1094,7 @@ ul { list-style: none; }
   flex: none; width: 27px; height: 27px; border-radius: 50%;
   display: grid; place-items: center; position: relative; z-index: 1;
   border: 1px solid var(--line-soft); background: var(--ink);
-  font-family: var(--ff-m); font-size: 0.66rem; color: var(--dust);
+  font-family: var(--ff-m); font-size: 0.852rem; color: var(--dust);
 }
 .esp-frise .faite .esp-point { border-color: rgba(74, 222, 128, 0.45); color: var(--green); }
 .esp-frise .ici .esp-point { border-color: var(--or); color: var(--or); background: var(--or-soft); }
@@ -1094,7 +1139,7 @@ ul { list-style: none; }
   background: var(--or-soft); border: 1px solid var(--line-strong);
 }
 .esp-reponse b {
-  display: block; font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.18em;
+  display: block; font-family: var(--ff-m); font-size: 0.798rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or); margin-bottom: 0.5rem;
 }
 .esp-reponse p { color: var(--paper); font-size: 0.94rem; line-height: 1.75; margin: 0; white-space: pre-wrap; }
@@ -1121,8 +1166,8 @@ ul { list-style: none; }
 @media (prefers-reduced-motion: reduce) { .esp-voile { animation: none; } }
 
 @media (max-width: 720px) {
-  .esp-joindre { font-size: 0.68rem; letter-spacing: 0.1em; }
-  .esp-meta { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .esp-joindre { font-size: 0.861rem; letter-spacing: 0.1em; }
+  .esp-meta { font-size: 0.879rem; letter-spacing: 0.06em; }
   .esp-nom { font-size: 1.25rem; }
   .esp-aide { font-size: 0.9rem; }
   .esp-ligne { font-size: 0.95rem; }
@@ -1147,11 +1192,11 @@ ul { list-style: none; }
 }
 .equipe figcaption {
   position: absolute; left: 1.4rem; right: 1.4rem; bottom: 1.1rem; z-index: 1;
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--bone);
 }
 @media (max-width: 720px) {
-  .equipe figcaption { font-size: 0.68rem; letter-spacing: 0.1em; left: 1rem; right: 1rem; bottom: 0.85rem; }
+  .equipe figcaption { font-size: 0.861rem; letter-spacing: 0.1em; left: 1rem; right: 1rem; bottom: 0.85rem; }
 }
 
 /* ─── « Propulsé par » ───
@@ -1161,7 +1206,7 @@ ul { list-style: none; }
 .propulse { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line-soft); display: flex; justify-content: center; }
 .propulse-lien {
   display: inline-flex; align-items: center; gap: 0.55rem;
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust);
   transition: color var(--t-fast);
 }
@@ -1174,7 +1219,7 @@ ul { list-style: none; }
 .propulse:hover .propulse-marque { opacity: 1; filter: none; }
 .propulse-mots b { color: var(--silver-dim); font-weight: 400; letter-spacing: 0.14em; }
 @media (max-width: 720px) {
-  .propulse-lien { font-size: 0.62rem; letter-spacing: 0.12em; }
+  .propulse-lien { font-size: 0.834rem; letter-spacing: 0.12em; }
 }
 
 /* ─── Le dépôt d'un CV ───
@@ -1192,7 +1237,7 @@ ul { list-style: none; }
 .depot-cv-btn:hover { border-color: var(--or); color: var(--or); }
 .depot-cv-btn svg { width: 18px; height: 18px; flex: none; }
 .depot-cv-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.depot-cv-aide { font-size: 0.78rem; color: var(--dust); line-height: 1.6; margin-top: 0.7rem; }
+.depot-cv-aide { font-size: 0.88rem; color: var(--dust); line-height: 1.6; margin-top: 0.7rem; }
 .depot-cv-progres { height: 3px; background: var(--line-soft); border-radius: 2px; margin-top: 0.8rem; overflow: hidden; }
 .depot-cv-barre { height: 100%; width: 0; background: var(--or-grad); transition: width 0.4s ease; }
 @media (max-width: 720px) { .depot-cv-aide { font-size: 0.86rem; } }
@@ -1220,7 +1265,7 @@ ul { list-style: none; }
 .signature:hover .signature-portrait { filter: brightness(1.35); border-color: var(--or); }
 .signature-mots { display: flex; flex-direction: column; gap: 0.15rem; line-height: 1; }
 .signature-role {
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.2em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust);
 }
 .signature-nom {
@@ -1230,7 +1275,7 @@ ul { list-style: none; }
   -webkit-text-fill-color: transparent;
 }
 @media (max-width: 720px) {
-  .signature-role { font-size: 0.62rem; letter-spacing: 0.14em; }
+  .signature-role { font-size: 0.834rem; letter-spacing: 0.14em; }
   .signature-nom { font-size: 1.2rem; }
 }
 
@@ -1340,13 +1385,13 @@ ul { list-style: none; }
 .prose strong { color: var(--bone); font-weight: 400; }
 .prose table { width: 100%; border-collapse: collapse; margin-bottom: 1.4rem; font-size: 0.9rem; }
 .prose th, .prose td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line-soft); color: var(--ash); }
-.prose th { color: var(--or-patina); font-weight: 400; font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.prose th { color: var(--or-patina); font-weight: 400; font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em; text-transform: uppercase; }
 .tofill {
   background: rgba(251, 191, 36, 0.12); border: 1px dashed rgba(251, 191, 36, 0.45);
   border-radius: 3px; padding: 0.05em 0.45em; color: var(--amber);
   font-family: var(--ff-m); font-size: 0.82em;
 }
-.legal-date { font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust); margin-bottom: 2.5rem; }
+.legal-date { font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dust); margin-bottom: 2.5rem; }
 
 /* ═══════════════════════════════════════════════════════════════
    SEUIL D'ENTRÉE — l'ouverture avant le site
@@ -1513,13 +1558,13 @@ body.intro-open { overflow: hidden; }
 .intro-name {
   font-family: var(--ff-m); font-size: clamp(0.56rem, 1.7vw, 0.7rem);
   text-transform: uppercase; color: var(--or-patina);
-  letter-spacing: 0.75em; text-indent: 0.75em;
+  letter-spacing: 0.15em; text-indent: 0.75em;
   opacity: 0;
   animation: introNom 1.3s var(--ease-out) 1s forwards;
 }
 @keyframes introNom {
-  from { opacity: 0; letter-spacing: 0.75em; }
-  to { opacity: 1; letter-spacing: 0.34em; }
+  from { opacity: 0; letter-spacing: 0.15em; }
+  to { opacity: 1; letter-spacing: 0.15em; }
 }
 
 /* Signature musicale : le même motif que le lecteur du site */
@@ -1558,7 +1603,7 @@ body.intro-open { overflow: hidden; }
 @keyframes introFondu { to { opacity: 1; } }
 .intro-hint {
   display: block; margin-top: 1.4rem;
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.28em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust);
 }
 
@@ -1579,7 +1624,7 @@ body.intro-open { overflow: hidden; }
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.15em;
   }
   .intro-line { transform: scaleX(1) !important; }
   .intro-wave span { height: 10px; }
@@ -1614,8 +1659,8 @@ body.intro-open { overflow: hidden; }
   margin-top: 0.8rem;
   text-align: center;
   font-family: var(--ff-m);
-  font-size: 0.5rem;
-  letter-spacing: 0.18em;
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--dust);
 }
@@ -1666,9 +1711,9 @@ body.intro-open { overflow: hidden; }
 
   /* Les libellés longs ne tiennent pas avec 0.24em d'interlettrage */
   .btn { letter-spacing: 0.15em; white-space: normal; line-height: 1.35; }
-  .btn-lg { padding: 1rem 1.6rem; font-size: 0.62rem; }
+  .btn-lg { padding: 1rem 1.6rem; font-size: 0.834rem; }
 
-  .eyebrow { letter-spacing: 0.24em; }
+  .eyebrow { letter-spacing: 0.15em; }
   .eyebrow::before, .eyebrow::after { width: 18px; }
 
   /* Les consoles restent des outils de bureau, mais ne doivent pas
@@ -1737,8 +1782,8 @@ body.intro-open { overflow: hidden; }
 /* Mentions et notes de bas de bloc — en classe, donc ajustables sur mobile */
 .note {
   font-family: var(--ff-m);
-  font-size: 0.52rem;
-  letter-spacing: 0.18em;
+  font-size: 0.789rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--dust);
   line-height: 1.9;
@@ -1824,8 +1869,8 @@ body.intro-open { overflow: hidden; }
   margin-bottom: 1.8rem;
 }
 .cat-compte {
-  margin: 0; font-family: var(--ff-m); font-size: 0.56rem;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust);
+  margin: 0; font-family: var(--ff-m); font-size: 0.807rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--dust);
 }
 .cat-compte span { color: var(--or-patina); }
 
@@ -1849,7 +1894,7 @@ body.intro-open { overflow: hidden; }
   gap: 0.5rem; margin-bottom: 2.6rem;
 }
 .cat-filtre {
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--ash);
   background: transparent; border: 1px solid var(--line-soft);
   padding: 0.55rem 1rem; cursor: pointer;
@@ -1857,7 +1902,10 @@ body.intro-open { overflow: hidden; }
 }
 .cat-filtre span {
   display: inline-block; margin-left: 0.4rem;
-  color: var(--dust); font-size: 0.9em;
+  /* Le compteur était à 0,9em du libellé, soit 11,6 px. C'est une
+     information — le nombre d'œuvres du registre — et non un
+     ornement : il garde le corps du libellé. */
+  color: var(--ash); font-size: 1em;
 }
 .cat-filtre:hover { color: var(--bone); border-color: var(--line-strong); }
 .cat-filtre.actif {
@@ -2063,7 +2111,7 @@ body.intro-open { overflow: hidden; }
 }
 
 .oeuvre-duree {
-  flex: none; font-family: var(--ff-m); font-size: 0.62rem;
+  flex: none; font-family: var(--ff-m); font-size: 0.834rem;
   letter-spacing: 0.08em; color: var(--dust);
   transition: color 420ms var(--ease);
 }
@@ -2071,7 +2119,7 @@ body.intro-open { overflow: hidden; }
 
 .oeuvre-corps { position: relative; z-index: 2; padding: 1.5rem 1.5rem 1.6rem; flex: 1; }
 .oeuvre-style {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.22em;
+  font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina);
 }
 .oeuvre-titre {
@@ -2120,7 +2168,7 @@ body.intro-open { overflow: hidden; }
   border-top: 1px solid rgba(255, 255, 255, 0.055);
 }
 .oeuvre-brief .mono {
-  display: block; font-size: 0.5rem; letter-spacing: 0.22em;
+  display: block; font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust);
 }
 .oeuvre-brief em {
@@ -2173,7 +2221,7 @@ body.intro-open { overflow: hidden; }
   display: none; align-items: center; justify-content: space-between;
   width: 100%; margin-top: 1rem; padding: 0.7rem 0;
   border-top: 1px solid var(--line-soft);
-  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.834rem; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--or-patina);
   background: none; cursor: pointer;
   transition: color var(--t-fast);
@@ -2243,7 +2291,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   color: var(--paper); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .ecoute-info span {
-  display: block; font-family: var(--ff-m); font-size: 0.52rem;
+  display: block; font-family: var(--ff-m); font-size: 0.789rem;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
@@ -2263,7 +2311,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 .ecoute-jauge:focus-visible { outline: 1px solid var(--or); outline-offset: 4px; }
 
 .ecoute-temps {
-  flex: none; font-family: var(--ff-m); font-size: 0.6rem;
+  flex: none; font-family: var(--ff-m); font-size: 0.825rem;
   letter-spacing: 0.06em; color: var(--ash); white-space: nowrap;
 }
 
@@ -2323,17 +2371,17 @@ body.a-ecoute { padding-bottom: 5rem; }
   .oeuvre-sceau span { font-size: 1.2rem; }
   .oeuvre-lire { width: 44px; height: 44px; }
   .oeuvre-lire svg { width: 16px; height: 16px; }
-  .oeuvre-plus { min-height: 44px; padding: 0.85rem 0; font-size: 0.66rem; }
+  .oeuvre-plus { min-height: 44px; padding: 0.85rem 0; font-size: 0.852rem; }
 
   /* Un mono à 7,5 px ne se lit pas au bras tendu */
-  .oeuvre-style { font-size: 0.64rem; letter-spacing: 0.14em; }
-  .oeuvre-duree { font-size: 0.72rem; }
-  .oeuvre-brief .mono { font-size: 0.62rem; letter-spacing: 0.14em; }
+  .oeuvre-style { font-size: 0.843rem; letter-spacing: 0.14em; }
+  .oeuvre-duree { font-size: 0.879rem; }
+  .oeuvre-brief .mono { font-size: 0.834rem; letter-spacing: 0.14em; }
   .oeuvre-brief em { font-size: 1.02rem; }
 
   /* Le bandeau tenait sur trois lignes avant la première note */
   .cat-barre { gap: 0.9rem; margin-bottom: 1.2rem; }
-  .cat-compte { font-size: 0.66rem; letter-spacing: 0.12em; }
+  .cat-compte { font-size: 0.852rem; letter-spacing: 0.12em; }
 
   /* Les registres défilent sur une seule ligne au lieu d'en occuper trois */
   .cat-filtres {
@@ -2347,7 +2395,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   .cat-filtre {
     flex: none; scroll-snap-align: start;
     min-height: 42px; padding: 0.6rem 0.95rem;
-    font-size: 0.66rem; letter-spacing: 0.1em;
+    font-size: 0.852rem; letter-spacing: 0.1em;
   }
   .cat-filtre span { font-size: 1em; margin-left: 0.5rem; }
 }
@@ -2392,7 +2440,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   color: var(--paper); margin: 0;
 }
 .rite-tenue {
-  font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.14em;
+  font-family: var(--ff-m); font-size: 0.825rem; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--or-patina);
   padding: 0.35rem 0.75rem; border: 1px solid var(--line);
 }
@@ -2405,7 +2453,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem;
 }
 .rite-label {
-  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.798rem; letter-spacing: 0.15em;
   text-transform: uppercase; margin-bottom: 0.7rem;
 }
 .rite-oui .rite-label { color: var(--green); }
@@ -2436,9 +2484,9 @@ body.a-ecoute { padding-bottom: 5rem; }
   .rite { padding: 1.6rem 0; }
   .rite-listes { grid-template-columns: 1fr; gap: 1.2rem; }
   .rite-tete { gap: 0.6rem; }
-  .rite-tenue { font-size: 0.62rem; letter-spacing: 0.1em; }
+  .rite-tenue { font-size: 0.834rem; letter-spacing: 0.1em; }
   .rite-resume { font-size: 0.96rem; }
-  .rite-label { font-size: 0.64rem; letter-spacing: 0.12em; }
+  .rite-label { font-size: 0.843rem; letter-spacing: 0.12em; }
   .rite-listes li { font-size: 0.95rem; }
   .rite-mot { font-size: 1.04rem; }
 }
@@ -2469,14 +2517,14 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 .auth-switch-solo { justify-content: center; }
 .lien-bascule {
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.14em;
+  font-family: var(--ff-m); font-size: 0.816rem; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--ash); background: none; border: 0;
   cursor: pointer; padding: 0.35rem 0; transition: color var(--t-fast);
 }
 .lien-bascule:hover { color: var(--or); }
 .lien-bascule-or { color: var(--or); }
 .auth-note {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--dust); margin-top: 2rem; line-height: 1.9;
 }
 
@@ -2510,7 +2558,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 .auth-ou {
   display: flex; align-items: center; gap: 0.9rem;
   margin: 1.5rem 0 0.4rem;
-  font-family: var(--ff-m); font-size: 0.68rem;
+  font-family: var(--ff-m); font-size: 0.861rem;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--dust);
 }
 .auth-ou::before, .auth-ou::after {
@@ -2520,7 +2568,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (max-width: 720px) {
   .auth-pour { font-size: 0.9rem; }
   .btn-google { padding: 1.05rem 1rem; font-size: 0.95rem; }
-  .auth-ou { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .auth-ou { font-size: 0.879rem; letter-spacing: 0.08em; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2541,74 +2589,74 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (max-width: 720px) {
 
   /* ─── Surtitres et micro-typographie mono ─── */
-  .eyebrow { font-size: 0.75rem; letter-spacing: 0.18em; margin-bottom: 1.1rem; }
+  .eyebrow { font-size: 0.88rem; letter-spacing: 0.15em; margin-bottom: 1.1rem; }
   .eyebrow::before, .eyebrow::after { width: 16px; }
-  .mono, .card .mono { font-size: 0.75rem; letter-spacing: 0.13em; line-height: 1.7; }
-  .note { font-size: 0.75rem; letter-spacing: 0.05em; line-height: 1.7; }
-  .legal-date { font-size: 0.72rem; letter-spacing: 0.12em; }
-  .quote-band cite { font-size: 0.75rem; letter-spacing: 0.16em; }
+  .mono, .card .mono { font-size: 0.88rem; letter-spacing: 0.13em; line-height: 1.7; }
+  .note { font-size: 0.88rem; letter-spacing: 0.05em; line-height: 1.7; }
+  .legal-date { font-size: 0.879rem; letter-spacing: 0.12em; }
+  .quote-band cite { font-size: 0.88rem; letter-spacing: 0.16em; }
 
   /* ─── Repères de valeur : prix, chiffres, réassurance ─── */
-  .price-name { font-size: 0.75rem; letter-spacing: 0.18em; }
-  .price-note { font-size: 0.72rem; letter-spacing: 0.08em; line-height: 1.6; }
-  .price-tag  { font-size: 0.7rem;  letter-spacing: 0.12em; padding: 0.38rem 0.9rem; }
-  .stat-label { font-size: 0.72rem; letter-spacing: 0.1em; line-height: 1.5; }
-  .badge      { font-size: 0.72rem; letter-spacing: 0.09em; padding: 0.42rem 0.85rem; }
-  .trust-item { font-size: 0.75rem; letter-spacing: 0.04em; }
-  .step-time  { font-size: 0.72rem; letter-spacing: 0.11em; }
+  .price-name { font-size: 0.88rem; letter-spacing: 0.15em; }
+  .price-note { font-size: 0.879rem; letter-spacing: 0.08em; line-height: 1.6; }
+  .price-tag  { font-size: 0.87rem;  letter-spacing: 0.12em; padding: 0.38rem 0.9rem; }
+  .stat-label { font-size: 0.879rem; letter-spacing: 0.1em; line-height: 1.5; }
+  .badge      { font-size: 0.879rem; letter-spacing: 0.09em; padding: 0.42rem 0.85rem; }
+  .trust-item { font-size: 0.88rem; letter-spacing: 0.04em; }
+  .step-time  { font-size: 0.879rem; letter-spacing: 0.11em; }
 
   /* ─── Écoute et catalogue ───
      Les sélecteurs sont ici plus longs qu'ailleurs : le palier propre
      au catalogue, écrit plus haut, l'emporterait sinon par
      spécificité et non par ordre. */
-  .oeuvre-style { font-size: 0.73rem; letter-spacing: 0.09em; }
-  .oeuvre-brief .mono { font-size: 0.73rem; letter-spacing: 0.1em; }
-  .oeuvre-duree { font-size: 0.76rem; }
-  .oeuvre-plus { font-size: 0.76rem; letter-spacing: 0.08em; }
-  .cat-compte { font-size: 0.75rem; letter-spacing: 0.09em; }
-  .cat-filtre { font-size: 0.75rem; letter-spacing: 0.07em; }
-  .ecoute-info span { font-size: 0.73rem; letter-spacing: 0.09em; }
-  .player-head  { font-size: 0.73rem; letter-spacing: 0.11em; }
-  .pt-time      { font-size: 0.72rem; }
+  .oeuvre-style { font-size: 0.88rem; letter-spacing: 0.09em; }
+  .oeuvre-brief .mono { font-size: 0.88rem; letter-spacing: 0.1em; }
+  .oeuvre-duree { font-size: 0.88rem; }
+  .oeuvre-plus { font-size: 0.88rem; letter-spacing: 0.08em; }
+  .cat-compte { font-size: 0.88rem; letter-spacing: 0.09em; }
+  .cat-filtre { font-size: 0.88rem; letter-spacing: 0.07em; }
+  .ecoute-info span { font-size: 0.88rem; letter-spacing: 0.09em; }
+  .player-head  { font-size: 0.88rem; letter-spacing: 0.11em; }
+  .pt-time      { font-size: 0.879rem; }
 
   /* ─── Rites ─── */
-  .rite-tenue { font-size: 0.75rem; letter-spacing: 0.05em; line-height: 1.6; }
-  .rite-label { font-size: 0.73rem; letter-spacing: 0.1em; }
+  .rite-tenue { font-size: 0.88rem; letter-spacing: 0.05em; line-height: 1.6; }
+  .rite-label { font-size: 0.88rem; letter-spacing: 0.1em; }
 
   /* ─── Formulaires et tunnel de commande ─── */
-  .field-label { font-size: 0.75rem; letter-spacing: 0.11em; }
-  .field-hint, .field-err { font-size: 0.8rem; }
-  .calc-head label { font-size: 0.75rem; letter-spacing: 0.11em; }
-  .wz-dot { font-size: 0.72rem; }
-  .wz-recap-head, .wz-total span { font-size: 0.75rem; letter-spacing: 0.11em; }
+  .field-label { font-size: 0.88rem; letter-spacing: 0.11em; }
+  .field-hint, .field-err { font-size: 0.88rem; }
+  .calc-head label { font-size: 0.88rem; letter-spacing: 0.11em; }
+  .wz-dot { font-size: 0.879rem; }
+  .wz-recap-head, .wz-total span { font-size: 0.88rem; letter-spacing: 0.11em; }
   .check { font-size: 0.92rem; }
   /* « Mot de passe oublié » et « Créer un compte » sont les deux
      seules sorties de l'écran de connexion : 32 px de haut, on les
      manquait au pouce. */
   .lien-bascule {
-    font-size: 0.78rem; letter-spacing: 0.09em;
+    font-size: 0.88rem; letter-spacing: 0.09em;
     display: inline-flex; align-items: center; min-height: 44px;
   }
-  .auth-note { font-size: 0.72rem; letter-spacing: 0.09em; }
+  .auth-note { font-size: 0.879rem; letter-spacing: 0.09em; }
 
   /* ─── Tableaux comparatifs et juridiques ─── */
-  .compare thead th { font-size: 0.72rem; letter-spacing: 0.07em; }
+  .compare thead th { font-size: 0.879rem; letter-spacing: 0.07em; }
   .compare th, .compare td { padding: 0.85rem 0.75rem; }
-  .scroll-hint { font-size: 0.72rem; letter-spacing: 0.08em; }
-  .prose th { font-size: 0.72rem; letter-spacing: 0.1em; }
+  .scroll-hint { font-size: 0.879rem; letter-spacing: 0.08em; }
+  .prose th { font-size: 0.879rem; letter-spacing: 0.1em; }
 
   /* ─── Témoignages ─── */
-  .testi-who { font-size: 0.75rem; letter-spacing: 0.11em; line-height: 1.6; }
+  .testi-who { font-size: 0.88rem; letter-spacing: 0.11em; line-height: 1.6; }
 
   /* ─── En-tête et page d'entrée ─── */
-  .nav-sub { font-size: 0.7rem; letter-spacing: 0.17em; }
-  .hero-scroll { font-size: 0.72rem; letter-spacing: 0.18em; }
-  .intro-name { font-size: 0.7rem; letter-spacing: 0.42em; text-indent: 0.42em; }
-  .intro-hint { font-size: 0.75rem; letter-spacing: 0.09em; }
+  .nav-sub { font-size: 0.87rem; letter-spacing: 0.15em; }
+  .hero-scroll { font-size: 0.879rem; letter-spacing: 0.15em; }
+  .intro-name { font-size: 0.87rem; letter-spacing: 0.15em; text-indent: 0.42em; }
+  .intro-hint { font-size: 0.88rem; letter-spacing: 0.09em; }
 
   /* ─── Pied de page ─── */
-  .footer h4 { font-size: 0.75rem; letter-spacing: 0.15em; }
-  .footer-baseline, .footer-bottom { font-size: 0.72rem; letter-spacing: 0.06em; line-height: 1.9; }
+  .footer h4 { font-size: 0.88rem; letter-spacing: 0.15em; }
+  .footer-baseline, .footer-bottom { font-size: 0.879rem; letter-spacing: 0.06em; line-height: 1.9; }
   .footer-links a, .footer-links .lien-rappel, .lien-rappel { font-size: 0.92rem; }
 
   /* ─── Boutons ───
@@ -2618,10 +2666,10 @@ body.a-ecoute { padding-bottom: 5rem; }
      trois lignes serrées. La hauteur minimale de 48 px vient de la
      recommandation Android ; iOS demande 44. */
   .btn {
-    font-size: 0.8125rem; letter-spacing: 0.09em;
+    font-size: 0.88rem; letter-spacing: 0.09em;
     padding: 0.9rem 1.35rem; min-height: 48px; line-height: 1.3;
   }
-  .btn-sm { font-size: 0.76rem; letter-spacing: 0.08em; padding: 0.65rem 1rem; min-height: 42px; }
+  .btn-sm { font-size: 0.88rem; letter-spacing: 0.08em; padding: 0.65rem 1rem; min-height: 42px; }
   .btn-lg { font-size: 0.86rem; letter-spacing: 0.09em; padding: 1.05rem 1.5rem; }
   .btn svg { width: 16px; height: 16px; }
 }
@@ -2704,7 +2752,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   .prose .tab-fiches td { border-bottom: 0; padding: 0.55rem 0; }
   .prose .tab-fiches td::before {
     content: attr(data-l); display: block;
-    font-family: var(--ff-m); font-size: 0.72rem; letter-spacing: 0.1em;
+    font-family: var(--ff-m); font-size: 0.879rem; letter-spacing: 0.1em;
     text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.2rem;
   }
   .section-light .prose .tab-fiches tr { border-color: var(--ivory-line); }
@@ -2801,7 +2849,7 @@ body.a-ecoute { padding-bottom: 5rem; }
      différentes. On resserre l'interlettrage de cette barre — et
      d'elle seule — plutôt que de raccourcir le libellé. */
   .sticky-cta .btn {
-    font-size: 0.78rem; letter-spacing: 0.03em;
+    font-size: 0.88rem; letter-spacing: 0.03em;
     padding: 0.85rem 0.5rem; gap: 0.45rem;
   }
   .sticky-cta .btn svg { width: 15px; height: 15px; }
@@ -2853,7 +2901,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (max-width: 720px) {
   /* 7,4 px. Le libellé est coupé par un <br>, ce qui l'avait rendu
      invisible au premier relevé — corrigé des deux côtés. */
-  .calc-cell-lbl { font-size: 0.72rem; letter-spacing: 0.1em; margin-top: 0.5rem; }
+  .calc-cell-lbl { font-size: 0.879rem; letter-spacing: 0.1em; margin-top: 0.5rem; }
 
   /* Les deux issues de l'écran de connexion mesurent 157 et 124 px
      pour 281 px de carte : elles ne tiennent pas côte à côte, l'écart
@@ -2882,7 +2930,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 .oeuvre-mention {
   display: inline-flex; align-items: center; gap: 0.4rem;
   margin: 0 0 0.7rem;
-  font-family: var(--ff-m); font-size: 0.58rem;
+  font-family: var(--ff-m); font-size: 0.816rem;
   letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--cyan, #38bdf8);
   border: 1px solid rgba(56, 189, 248, 0.32);
@@ -2897,7 +2945,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   color: #0d6f96; border-color: rgba(13, 111, 150, 0.3); background: rgba(13, 111, 150, 0.06);
 }
 @media (max-width: 720px) {
-  .oeuvre-mention { font-size: 0.72rem; letter-spacing: 0.08em; padding: 0.34rem 0.7rem; }
+  .oeuvre-mention { font-size: 0.879rem; letter-spacing: 0.08em; padding: 0.34rem 0.7rem; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2919,7 +2967,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   background: rgba(4, 4, 7, 0.55);
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   color: var(--dust);
-  font-family: var(--ff-m); font-size: 0.62rem;
+  font-family: var(--ff-m); font-size: 0.834rem;
   letter-spacing: 0.16em; text-transform: uppercase;
   opacity: 0; animation: introFondu 0.8s ease 1.4s forwards;
   transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
@@ -2934,7 +2982,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (max-width: 640px) {
   .intro-son {
     top: 1rem; right: 1rem; padding: 0.5rem 0.8rem;
-    font-size: 0.72rem; letter-spacing: 0.08em;
+    font-size: 0.879rem; letter-spacing: 0.08em;
   }
   .intro-son .intro-son-mot { display: none; }
   .intro-son { padding: 0.7rem; }
@@ -2984,8 +3032,8 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 .accueil-sur {
   display: block;
-  font-family: var(--ff-m); font-size: 0.68rem;
-  letter-spacing: 0.34em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.861rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--or-patina);
 }
 .accueil-nom {
@@ -2997,8 +3045,8 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 .accueil-suite {
   display: block;
-  font-family: var(--ff-m); font-size: 0.66rem;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust);
+  font-family: var(--ff-m); font-size: 0.852rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--dust);
 }
 @keyframes accueilMonte {
   from { opacity: 0; transform: translateY(18px); }
@@ -3011,16 +3059,16 @@ body.a-ecoute { padding-bottom: 5rem; }
   min-height: 44px; padding: 0.6rem 1.4rem;
   border: 1px solid var(--line-strong); border-radius: 100px;
   background: rgba(4, 4, 7, 0.5); cursor: pointer;
-  color: var(--ash); font-family: var(--ff-m); font-size: 0.66rem;
-  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ash); font-family: var(--ff-m); font-size: 0.852rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
   transition: color var(--t-fast), border-color var(--t-fast);
 }
 .accueil-passer:hover { color: var(--or); border-color: var(--or-patina); }
 
 @media (max-width: 640px) {
-  .accueil-sur { font-size: 0.72rem; letter-spacing: 0.24em; }
-  .accueil-suite { font-size: 0.72rem; letter-spacing: 0.1em; }
-  .accueil-passer { font-size: 0.72rem; letter-spacing: 0.1em; bottom: 1.6rem; }
+  .accueil-sur { font-size: 0.879rem; letter-spacing: 0.15em; }
+  .accueil-suite { font-size: 0.879rem; letter-spacing: 0.1em; }
+  .accueil-passer { font-size: 0.879rem; letter-spacing: 0.1em; bottom: 1.6rem; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3057,7 +3105,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 .empreinte-mot em {
   display: block; margin-top: 0.15rem; font-style: normal;
-  font-family: var(--ff-m); font-size: 0.68rem;
+  font-family: var(--ff-m); font-size: 0.861rem;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--or-patina);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
@@ -3069,7 +3117,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 .empreinte-ou {
   display: flex; align-items: center; gap: 0.9rem;
   margin-top: 1.4rem;
-  font-family: var(--ff-m); font-size: 0.68rem;
+  font-family: var(--ff-m); font-size: 0.861rem;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--dust);
 }
 .empreinte-ou::before, .empreinte-ou::after {
@@ -3079,8 +3127,8 @@ body.a-ecoute { padding-bottom: 5rem; }
 @media (max-width: 720px) {
   .empreinte-btn { padding: 1.2rem; }
   .empreinte-mot b { font-size: 1rem; }
-  .empreinte-mot em { font-size: 0.72rem; letter-spacing: 0.08em; }
-  .empreinte-ou { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .empreinte-mot em { font-size: 0.879rem; letter-spacing: 0.08em; }
+  .empreinte-ou { font-size: 0.879rem; letter-spacing: 0.08em; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3258,11 +3306,11 @@ body.a-ecoute { padding-bottom: 5rem; }
 /* ─── Le pupitre ─── */
 .pupitre { position: relative; z-index: 2; min-width: 0; width: 100%; }
 .pup-style {
-  font-family: var(--ff-m); font-size: .58rem; letter-spacing: .34em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.816rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--or-patina); margin-bottom: .55rem;
 }
 .pup-mention {
-  display: inline-block; font-family: var(--ff-m); font-size: .55rem; letter-spacing: .2em;
+  display: inline-block; font-family: var(--ff-m); font-size: 0.802rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-bright); border: 1px solid var(--line-strong);
   padding: .24rem .6rem; margin-bottom: .7rem;
 }
@@ -3277,8 +3325,8 @@ body.a-ecoute { padding-bottom: 5rem; }
 .pup-bas { display: flex; align-items: center; gap: 1rem; }
 @media (max-width: 860px) { .pup-bas { justify-content: center; } }
 .pup-t {
-  font-family: var(--ff-m); font-weight: 300; font-size: .7rem; color: var(--dust);
-  font-variant-numeric: tabular-nums; letter-spacing: .04em; flex: 0 0 auto;
+  font-family: var(--ff-m); font-weight: 300; font-size: 0.87rem; color: var(--dust);
+  font-variant-numeric: tabular-nums; letter-spacing: 0.04em; flex: 0 0 auto;
 }
 .pup-t.fin { color: var(--or-patina); }
 
@@ -3340,7 +3388,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 .pup-brief { margin-top: 1.4rem; text-align: left; }
 .pup-brief > span {
-  display: block; font-family: var(--ff-m); font-size: .55rem; letter-spacing: .28em;
+  display: block; font-family: var(--ff-m); font-size: 0.802rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust); margin-bottom: .5rem;
 }
 .pup-brief em { display: flex; flex-wrap: wrap; gap: .4rem; font-style: normal; }
@@ -3534,7 +3582,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .past-style {
-  font-family: var(--ff-m); font-size: .45rem; letter-spacing: .11em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.11em; text-transform: uppercase;
   color: rgba(93, 90, 81, .8); margin-top: -.28rem; transition: color .5s;
   max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
@@ -3835,11 +3883,11 @@ body.a-ecoute { padding-bottom: 5rem; }
 }
 .rs-force::after {
   content: attr(data-mot); position: absolute; right: 0; top: 7px;
-  font-family: var(--ff-m); font-size: 0.55rem;
+  font-family: var(--ff-m); font-size: 0.802rem;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
 }
 @media (max-width: 560px) {
-  .rs-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .rs-force::after { font-size: 0.879rem; letter-spacing: 0.06em; }
   .rs-ligne .lien-bascule { min-height: 44px; }
 }
 
@@ -3908,7 +3956,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 .partage-r i {
   position: absolute; top: calc(100% + 6px); left: 50%;
   transform: translateX(-50%);
-  font-family: var(--ff-m); font-style: normal; font-size: 0.54rem;
+  font-family: var(--ff-m); font-style: normal; font-size: 0.798rem;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
   white-space: nowrap; opacity: 0; transition: opacity var(--t-fast);
   pointer-events: none;
@@ -3980,7 +4028,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   .partage-r svg { width: 19px; height: 19px; margin: 13.5px 0; }
   .partage-r i {
     position: static; transform: none; opacity: 1;
-    font-size: 0.62rem; letter-spacing: 0.06em; white-space: normal;
+    font-size: 0.834rem; letter-spacing: 0.06em; white-space: normal;
     max-width: 8ch; line-height: 1.3;
   }
   /* La couleur au contact se pose sur le rond, pas sur la colonne */
@@ -4001,7 +4049,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   .partage-natif::before { content: none; }
   .partage-natif svg { width: 18px; height: 18px; margin: 0; }
   .partage-natif i {
-    position: static; color: #120e04; font-size: 0.66rem;
+    position: static; color: #120e04; font-size: 0.852rem;
     letter-spacing: 0.16em; max-width: none;
   }
 }
@@ -4024,15 +4072,15 @@ body.a-ecoute { padding-bottom: 5rem; }
   /* Les étapes du tunnel de commande étaient à 7,4 px : on ne pouvait
      pas lire à quelle étape on se trouvait. C'est le seul repère de
      progression du parcours d'achat. */
-  .wz-label { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .wz-label { font-size: 0.879rem; letter-spacing: 0.06em; }
 
   /* Le titre du bloc des suppléments payants, et les registres du
      défilé d'hommages, à 7,2 px. */
-  .opts-titre { font-size: 0.76rem; letter-spacing: 0.1em; }
-  .past-style { font-size: 0.7rem; letter-spacing: 0.05em; }
+  .opts-titre { font-size: 0.88rem; letter-spacing: 0.1em; }
+  .past-style { font-size: 0.87rem; letter-spacing: 0.05em; }
   .past-nom { font-size: 0.86rem; }
-  .pup-style { font-size: 0.76rem; letter-spacing: 0.06em; }
-  .signature-role { font-size: 0.7rem; letter-spacing: 0.1em; }
+  .pup-style { font-size: 0.88rem; letter-spacing: 0.06em; }
+  .signature-role { font-size: 0.87rem; letter-spacing: 0.1em; }
 
   /* La case d'une option à 80 € mesurait 17 px de côté. L'étiquette
      entière est cliquable — c'est un <label> — mais une case qu'on
@@ -4048,7 +4096,7 @@ body.a-ecoute { padding-bottom: 5rem; }
   /* « Les mots de la famille », en tête de ce que la famille a
      raconté du défunt : c'est la phrase qui explique tout le
      service, et elle était à 8,8 px. */
-  .pup-brief > span, .mono { font-size: 0.72rem; letter-spacing: 0.12em; }
+  .pup-brief > span, .mono { font-size: 0.879rem; letter-spacing: 0.12em; }
 
   /* L'étiquette d'une option est un <label> : la viser n'importe où
      la coche. Mesurée entre 161 et 261 px de haut sur téléphone, elle
@@ -4100,20 +4148,20 @@ body.a-ecoute { padding-bottom: 5rem; }
   .eyebrow, .mono, .panel-sub, .kpi-label, .kpi-foot,
   .o-meta, .side-label, .side-urole, .past-style, .pup-style,
   .wz-label, .opts-titre, .signature-role, .footer-baseline {
-    font-size: 0.72rem;
+    font-size: 0.879rem;
     letter-spacing: 0.1em;
   }
-  .pill, .side-badge { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .pill, .side-badge { font-size: 0.879rem; letter-spacing: 0.08em; }
 
   /* Mesuré sur iPad mini : ces étiquettes-là descendaient entre 7,4 et
      9,6 px, et la plupart sont sur la page qui vend — le nom des trois
      offres à 9,3 px, les garanties à 8,8, la mention de TVA à 7,7. */
   .nav-sub, .price-note, .price-tag, .scroll-hint, .badge,
   .trust-item span, .intro-name, .pup-t, .opt-prix, .legal-date {
-    font-size: 0.72rem; letter-spacing: 0.09em;
+    font-size: 0.879rem; letter-spacing: 0.09em;
   }
   .price-name { font-size: 0.86rem; letter-spacing: 0.14em; }
-  .wz-dot { font-size: 0.8rem; }
+  .wz-dot { font-size: 0.88rem; }
 
   /* Les liens du pied de page faisaient 16 px de haut : dix-huit
      cibles impossibles à viser au doigt sur une tablette, alors que
@@ -4147,8 +4195,8 @@ body.a-ecoute { padding-bottom: 5rem; }
 .hero-jalons {
   display: flex; flex-wrap: wrap; justify-content: center;
   gap: 0.55rem 1.1rem; margin-top: 1.7rem;
-  font-family: var(--ff-m); font-size: 0.58rem;
-  letter-spacing: 0.24em; text-transform: uppercase; color: var(--or-patina);
+  font-family: var(--ff-m); font-size: 0.816rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--or-patina);
 }
 .hero-jalons span { position: relative; }
 .hero-jalons span + span::before {
@@ -4167,7 +4215,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 /* ─── Le bouton du bandeau ─── */
 .nav-cta-pro { white-space: nowrap; }
 .nav-compte {
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--ash);
 }
 .nav-compte:hover { color: var(--or-patina); }
@@ -4204,19 +4252,19 @@ body.a-ecoute { padding-bottom: 5rem; }
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   border: 1px solid var(--line-strong); border-radius: 999px;
   color: var(--or); text-decoration: none;
-  font-family: var(--ff-m); font-size: 0.56rem;
-  letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.807rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
   box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.85);
   transition: color var(--t-fast), border-color var(--t-fast), transform var(--t-fast) var(--ease);
 }
 .pro-flottant:hover { color: var(--or-bright); transform: translateY(-2px); }
-.pro-flottant-ico { font-size: 0.8rem; line-height: 1; }
+.pro-flottant-ico { font-size: 0.88rem; line-height: 1; }
 
 @media (max-width: 860px) {
   /* La barre d'actions occupe déjà le bas : le bouton monte au-dessus
      d'elle plutôt que de se poser dessus. */
   .pro-flottant { bottom: calc(4.6rem + env(safe-area-inset-bottom, 0px)); right: 0.9rem; padding: 0.65rem 0.9rem; }
-  .pro-flottant-mot { font-size: 0.52rem; letter-spacing: 0.14em; }
+  .pro-flottant-mot { font-size: 0.789rem; letter-spacing: 0.14em; }
 }
 @media (max-width: 420px) {
   .pro-flottant-mot { display: none; }
@@ -4363,9 +4411,9 @@ a.reg-carte:hover .reg-cadre::after, a.reg-carte:focus-visible .reg-cadre::after
   color: var(--paper); margin: 0;
 }
 .reg-traits {
-  margin: 0; font-size: 0.73rem; line-height: 1.4; color: var(--ash);
+  margin: 0; font-size: 0.88rem; line-height: 1.4; color: var(--ash);
 }
-.reg-oeuvre { font-size: 0.76rem; line-height: 1.45; color: var(--bone); margin: 0; }
+.reg-oeuvre { font-size: 0.88rem; line-height: 1.45; color: var(--bone); margin: 0; }
 /* Les cartes d'une bande souple prennent toutes la hauteur de la plus
    haute : un seul titre long, et les vingt gagnaient quarante pixels
    de vide sous « Écouter ». Le titre est donc borné à deux lignes et
@@ -4375,10 +4423,16 @@ a.reg-carte:hover .reg-cadre::after, a.reg-carte:focus-visible .reg-cadre::after
 .reg-titre {
   font-style: italic; color: var(--silver); display: -webkit-box;
   -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  overflow-wrap: anywhere;
 }
 .reg-qui {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
+  /* « tambouyé de Fort-de-France » ne tenait pas dans une carte de
+     tablette. « overflow-wrap » laisse le mot se couper, et les trois
+     pixels de marge laissent au dernier point des points de suite la
+     place de s'afficher — sans eux, on lit « Fort.. ». */
+  overflow-wrap: anywhere; padding: 0 3px;
 }
 /* La pastille de lecture. Elle ne joue rien sur place : elle mène à
    l'écoute, comme toute la carte. C'est donc un repère, pas un
@@ -4403,8 +4457,8 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
 }
 .reg-sur {
-  margin-top: auto; padding-top: 0.9rem; font-family: var(--ff-m); font-size: 0.52rem;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust);
+  margin-top: auto; padding-top: 0.9rem; font-family: var(--ff-m); font-size: 0.789rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--dust);
 }
 .reg-vide .reg-nom { color: var(--bone); }
 
@@ -4439,7 +4493,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 @media (max-width: 600px) {
   .reg-carte { flex-basis: min(72vw, 290px); }
   .reg-nom { font-size: 1.22rem; }
-  .reg-oeuvre { font-size: 0.8rem; }
+  .reg-oeuvre { font-size: 0.88rem; }
 }
 
 /* ─── La jauge ───
@@ -4456,7 +4510,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .reg-aide {
   display: none; margin-top: 0.7rem; font-family: var(--ff-m);
-  font-size: 0.54rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-size: 0.798rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--dust); text-align: center;
 }
 @media (hover: none) { .reg-aide { display: block; } }
@@ -4483,7 +4537,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
    lecteur, et non comme la première phrase du texte. */
 .req-situation {
   margin-top: 1.2rem; max-width: 56ch;
-  font-family: var(--ff-m); font-size: 0.6rem; line-height: 1.9;
+  font-family: var(--ff-m); font-size: 0.825rem; line-height: 1.9;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-patina);
   padding-left: 1rem; border-left: 1px solid var(--line-strong);
 }
@@ -4496,8 +4550,8 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   background: rgba(201, 168, 76, 0.03); max-width: 64ch;
 }
 .req-sommaire-t {
-  display: block; font-family: var(--ff-m); font-size: 0.54rem;
-  letter-spacing: 0.22em; text-transform: uppercase; color: var(--dust);
+  display: block; font-family: var(--ff-m); font-size: 0.798rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--dust);
   margin-bottom: 0.7rem;
 }
 .req-sommaire ol {
@@ -4523,7 +4577,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   color: var(--paper);
 }
 .req-extrait figcaption {
-  margin-top: 0.9rem; font-size: 0.78rem; line-height: 1.55; color: var(--ash);
+  margin-top: 0.9rem; font-size: 0.88rem; line-height: 1.55; color: var(--ash);
 }
 .req-extrait figcaption a { color: var(--or); text-decoration: none; }
 .req-extrait figcaption a:hover { color: var(--or-bright); text-decoration: underline; }
@@ -4572,7 +4626,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   width: 0.7rem; height: 1px; background: var(--or);
 }
 .part-liste b {
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.22em;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or); font-weight: 500;
 }
 .part-liste span { font-size: 0.92rem; line-height: 1.65; color: var(--bone); }
@@ -4593,7 +4647,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .part-supports li::before {
   content: '✦'; position: absolute; left: 0; top: 0.05rem;
-  color: var(--or-deep); font-size: 0.7rem;
+  color: var(--or-deep); font-size: 0.87rem;
 }
 
 /* ─── Le formulaire ─── */
@@ -4620,7 +4674,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   display: block; min-height: 48px;
   padding: 0.7rem 1rem; border: 1px solid var(--line-soft);
   border-radius: 999px; background: var(--ink-2);
-  font-family: var(--ff-m); font-size: 0.58rem;
+  font-family: var(--ff-m); font-size: 0.816rem;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
   display: flex; align-items: center;
   transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
@@ -4633,7 +4687,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .champ-faux { border-color: var(--red) !important; }
 
 .part-rgpd {
-  margin: 1rem 0 0; font-size: 0.76rem; line-height: 1.6; color: var(--dust);
+  margin: 1rem 0 0; font-size: 0.88rem; line-height: 1.6; color: var(--dust);
 }
 .part-rgpd a { color: var(--ash); text-underline-offset: 3px; }
 
@@ -4694,9 +4748,9 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   width: 43px; height: 43px; display: grid; place-items: center;
   border: 1px solid var(--line); border-radius: 50%;
   background: var(--ink);
-  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.06em; color: var(--or);
+  font-family: var(--ff-m); font-size: 0.834rem; letter-spacing: 0.06em; color: var(--or);
 }
-@media (max-width: 640px) { .parcours-n { width: 35px; height: 35px; font-size: 0.55rem; } }
+@media (max-width: 640px) { .parcours-n { width: 35px; height: 35px; font-size: 0.802rem; } }
 .parcours-e h3 {
   font-family: var(--ff-d); font-weight: 400; font-size: clamp(1.2rem, 2.6vw, 1.5rem);
   color: var(--paper); margin: 0 0 0.5rem; line-height: 1.25;
@@ -4751,7 +4805,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
      grignoter par l'arrondi du modèle de boîte. Quarante-huit, comme
      les pastilles du formulaire — c'est la vraie cible d'un pouce. */
   margin-top: 0.4rem; min-height: 48px; display: inline-flex; align-items: center;
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or);
 }
 .preuve a:hover { color: var(--or-bright); }
@@ -4779,7 +4833,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .app-bandeau-ico { border-radius: 10px; flex: none; }
 .app-bandeau-mots { flex: 1; min-width: 0; display: grid; gap: 2px; }
 .app-bandeau-mots b { font-size: 0.9rem; color: var(--paper); font-weight: 400; }
-.app-bandeau-mots span { font-size: 0.78rem; color: var(--ash); line-height: 1.4; }
+.app-bandeau-mots span { font-size: 0.88rem; color: var(--ash); line-height: 1.4; }
 .app-bandeau-oui { flex: none; white-space: nowrap; }
 .app-bandeau-non {
   flex: none; width: 34px; height: 34px; display: grid; place-items: center;
@@ -4815,7 +4869,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   background: none; border: 0; color: var(--ash); font-size: 0.9rem; cursor: pointer;
 }
 .app-marche-sur {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.26em;
+  font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.5rem;
 }
 .app-marche-titre {
@@ -4832,7 +4886,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .app-marche-n {
   flex: none; width: 30px; height: 30px; display: grid; place-items: center;
   border: 1px solid var(--line); border-radius: 50%;
-  font-family: var(--ff-m); font-size: 0.62rem; color: var(--or);
+  font-family: var(--ff-m); font-size: 0.834rem; color: var(--or);
 }
 /* Le glyphe du bouton de partage, ou celui du menu : les gens
    cherchent un dessin, pas un mot. */
@@ -4863,7 +4917,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .app-maj span { flex: 1; min-width: 0; font-size: 0.82rem; color: var(--bone); line-height: 1.4; }
 .app-maj-plus-tard {
   flex: none; width: 32px; height: 32px; display: grid; place-items: center;
-  background: none; border: 0; color: var(--dust); cursor: pointer; font-size: 0.8rem;
+  background: none; border: 0; color: var(--dust); cursor: pointer; font-size: 0.88rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4923,7 +4977,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 
 .ec-style {
   font-family: var(--ff-m); font-size: var(--fs-eyebrow);
-  letter-spacing: 0.22em; text-transform: uppercase; color: var(--or);
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--or);
 }
 .ec-titre {
   font-family: var(--ff-d); font-weight: 300;
@@ -4936,7 +4990,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .ec-ecoute { margin-top: 2.6rem; }
 .ec-ecoute audio { width: 100%; min-height: 44px; }
 .ec-note {
-  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.12em;
+  font-family: var(--ff-m); font-size: 0.834rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--dust); margin-top: 0.9rem; text-align: center;
 }
 
@@ -4949,11 +5003,11 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 
 .ec-mots { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.4rem; }
 .ec-mots .mono {
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.2em;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust); margin-right: 0.4rem;
 }
 .ec-mot {
-  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.834rem; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--or);
   border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.42rem 0.85rem;
 }
@@ -4979,11 +5033,11 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .ec-voisines a:hover { border-color: var(--line-strong); background: var(--ink-3); }
 .ec-v-style {
-  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.798rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust);
 }
 .ec-v-titre { font-family: var(--ff-d); font-size: 1.15rem; color: var(--ivory); line-height: 1.25; }
-.ec-v-qui { font-size: 0.8rem; color: var(--ash); }
+.ec-v-qui { font-size: 0.88rem; color: var(--ash); }
 
 /* ─── Le bloc de partage ─── */
 .ec-partage { margin-top: 2.6rem; }
@@ -4991,7 +5045,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .pa-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.8rem; margin-bottom: 1rem; }
 .pa-libelle {
   font-family: var(--ff-m); font-size: var(--fs-eyebrow);
-  letter-spacing: 0.22em; text-transform: uppercase; color: var(--or);
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--or);
 }
 .pa-dit { font-size: 0.84rem; color: var(--ash); }
 
@@ -5001,7 +5055,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   min-height: 48px; padding: 0 1rem;
   border: 1px solid var(--line-soft); border-radius: var(--radius);
   background: var(--ink-2); color: var(--bone);
-  font-family: var(--ff-m); font-size: 0.62rem;
+  font-family: var(--ff-m); font-size: 0.834rem;
   letter-spacing: 0.14em; text-transform: uppercase;
   transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
@@ -5009,13 +5063,13 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .pa-bouton:hover { color: var(--or); border-color: var(--line-strong); background: var(--ink-3); }
 .pa-natif { border-color: var(--line-strong); color: var(--or); }
 
-.pa-insta { font-size: 0.8rem; line-height: 1.8; color: var(--ash); margin-top: 1rem; max-width: 60ch; }
+.pa-insta { font-size: 0.88rem; line-height: 1.8; color: var(--ash); margin-top: 1rem; max-width: 60ch; }
 .pa-texte-lien {
   color: var(--or); text-decoration: underline; text-underline-offset: 3px;
   font: inherit; padding: 0;
 }
 .pa-echo {
-  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.14em;
+  font-family: var(--ff-m); font-size: 0.834rem; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--green); min-height: 1.2em; margin-top: 0.7rem;
 }
 
@@ -5027,7 +5081,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   min-height: 48px; padding: 0 0.85rem;
   border: 1px solid var(--line-soft); border-radius: var(--radius);
   color: var(--ash);
-  font-family: var(--ff-m); font-size: 0.56rem;
+  font-family: var(--ff-m); font-size: 0.807rem;
   letter-spacing: 0.16em; text-transform: uppercase;
   transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
 }
@@ -5035,7 +5089,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .oeuvre-partager:hover { color: var(--or); border-color: var(--line-strong); }
 
 @media (max-width: 640px) {
-  .pa-bouton span { font-size: 0.58rem; }
+  .pa-bouton span { font-size: 0.816rem; }
   .ec-vers blockquote { font-size: 1.15rem; padding-left: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -5049,7 +5103,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   min-height: 48px; padding: 0 1rem;
   border: 1px solid var(--line-soft); border-radius: var(--radius);
   color: var(--ash);
-  font-family: var(--ff-m); font-size: 0.58rem;
+  font-family: var(--ff-m); font-size: 0.816rem;
   letter-spacing: 0.16em; text-transform: uppercase;
   transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
 }
@@ -5118,8 +5172,8 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 
 .chaine-n {
   display: block; margin-top: 1.1rem;
-  font-family: var(--ff-m); font-size: 0.56rem;
-  letter-spacing: 0.22em; color: var(--dust);
+  font-family: var(--ff-m); font-size: 0.807rem;
+  letter-spacing: 0.15em; color: var(--dust);
 }
 .chaine-t {
   font-family: var(--ff-d); font-weight: 300; font-size: 1.3rem;
