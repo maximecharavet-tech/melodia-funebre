@@ -118,6 +118,18 @@ function proposition(texte, bouton) {
   </section>`;
 }
 
+/* Le titre en texte brut, dérivé du H1 plutôt que ressaisi.
+
+   La première version attendait un champ « h1texte » écrit à la main
+   dans chaque page. Aucune des treize ne le renseignait : le JSON-LD
+   partait donc SANS « headline » — que Google exige pour un Article —
+   et le bloc de partage recevait « undefined » comme titre. Rien ne
+   le signalait, puisqu'un champ absent disparaît simplement à la
+   sérialisation. Il se calcule maintenant tout seul. */
+const enClair = (p) => (p.h1texte || p.h1)
+  .replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '')
+  .replace(/\s+/g, ' ').trim();
+
 function jsonld(p) {
   const url = SITE + '/' + p.file.replace('.html', '');
   return [
@@ -125,7 +137,7 @@ function jsonld(p) {
       '@context': 'https://schema.org',
       '@type': 'Article',
       '@id': url + '#article',
-      headline: p.h1texte,
+      headline: enClair(p),
       description: p.desc,
       inLanguage: 'fr-FR',
       isAccessibleForFree: true,
@@ -176,7 +188,7 @@ ${p.corps}
 ${questions(p.questions)}
 ${proposition(p.proposition, p.bouton)}
 ${voisines(p.voisines)}
-${P.partage(p.h1texte, p.desc)}
+${P.partage(enClair(p), p.desc)}
 ${P.urgency()}`
   };
 }
