@@ -1,5 +1,6 @@
 const { ICON, MAIL } = require('./gen.js');
 const P = require('./parts.js');
+const MED = require('./medias.js');
 
 const FAQ_B2B = [
   { q: "Comment sommes-nous rémunérés exactement ?", a: "Vous conservez 60 % du montant payé par la famille. Sur une offre Prestige à 299 €, votre agence garde 179,40 € et nous reverse 119,60 €. Le règlement se fait mensuellement, sur facture récapitulative." },
@@ -9,6 +10,72 @@ const FAQ_B2B = [
   { q: "Combien de temps pour démarrer ?", a: "Vingt minutes. Vous créez votre compte partenaire, vous recevez le kit de présentation, et la première composition est offerte pour que vous puissiez la présenter à une famille avant tout engagement." },
   { q: "Y a-t-il une exclusivité territoriale ?", a: "Nous limitons volontairement le nombre d'agences partenaires par bassin de population, pour que le service reste un vrai facteur de différenciation. Demandez à être rappelé pour connaître la disponibilité de votre secteur." }
 ];
+
+/* ─── LE KIT DE COMMUNICATION ─────────────────────────────────────
+   Le dépôt portait quatre affiches depuis des mois, qui ne servaient
+   qu'à faire le fond des pages de la brochure PDF. Invisibles sur le
+   site, impossibles à récupérer : ni une agence partenaire, ni le
+   fondateur lui-même ne pouvaient savoir qu'elles existaient.
+
+   Elles deviennent un argument. Une agence qui hésite à proposer un
+   service nouveau se demande d'abord comment elle va l'expliquer à
+   ses familles : lui montrer le matériel AVANT de lui demander de
+   signer répond à la question sans qu'elle ait à la poser.
+
+   Sur la résolution, on ne ment pas. 941 × 1672, c'est un écran, pas
+   une affiche imprimable en grand format — le dire évite à un
+   partenaire de découvrir le problème chez son imprimeur, et donne
+   une raison d'appeler. */
+function kit() {
+  const piece = (m) => {
+    const src = '/' + MED.DOSSIER + m.fichier;
+    const visuel = m.type === 'video'
+      ? `<video class="kit-media" controls preload="none" playsinline
+             poster="/${MED.DOSSIER}${m.affiche}" width="${m.largeur}" height="${m.hauteur}">
+          ${m.leger ? `<source src="/${MED.DOSSIER}${m.leger}" type="video/webm">` : ''}
+          <source src="${src}" type="video/mp4">
+          Votre navigateur ne sait pas lire cette vidéo — le bouton ci-dessous la télécharge.
+        </video>`
+      : `<img class="kit-media" src="${src}" alt="Affiche : ${m.titre}"
+             width="${m.largeur}" height="${m.hauteur}" loading="lazy" decoding="async">`;
+    const format = m.type === 'video'
+      ? `Vidéo · ${m.duree} s · ${m.largeur} × ${m.hauteur}`
+      : `Image · ${m.largeur} × ${m.hauteur}`;
+    return `        <figure class="kit-piece reveal">
+          <div class="kit-cadre">${visuel}</div>
+          <figcaption>
+            <span class="kit-a-qui">${MED.AUDIENCES[m.audience]}</span>
+            <h3 class="kit-titre">${m.titre}</h3>
+            <p class="kit-legende">${m.legende}</p>
+            <p class="kit-usage"><strong>Où s'en servir :</strong> ${m.usage}</p>
+            <span class="kit-format">${format}</span>
+            <a class="kit-tele" href="${src}" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg> Télécharger</a>
+          </figcaption>
+        </figure>`;
+  };
+
+  /* La vidéo d'abord : c'est la pièce qu'on regarde, les affiches se
+     parcourent. Puis le professionnel avant les familles — nous
+     sommes sur la page des agences. */
+  const ordre = { mixte: 0, pro: 1, famille: 2 };
+  const pieces = [...MED.MEDIAS].sort((a, b) => ordre[a.audience] - ordre[b.audience]);
+
+  return `
+  <!-- ═══ LE KIT DE COMMUNICATION ═══ -->
+  <section class="section section-top" id="kit">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.8rem;">
+        <div class="eyebrow">Ce que nous vous fournissons</div>
+        <h2 class="h-xl">Les visuels sont<br><em>déjà faits.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:46rem;">Vous n'avez rien à produire. Voici le matériel, libre d'usage pour votre agence : à publier, à envoyer à une famille, à passer sur l'écran de votre accueil.</p>
+      </div>
+      <div class="kit">
+${pieces.map(piece).join('\n')}
+      </div>
+      <p class="center reveal kit-note">Ces fichiers sont calibrés pour l'écran — réseaux sociaux, courriel, écran d'accueil. Pour une impression grand format, demandez-nous les versions haute définition : <button type="button" class="lien-rappel" data-rappel>être rappelé</button>.</p>
+    </div>
+  </section>`;
+}
 
 module.exports = {
   /* Cette page s'appelait « /agences ». Elle devient « /professionnels »
@@ -305,6 +372,7 @@ ${P.faq(FAQ_B2B)}
     </div>
   </section>
 
+${kit()}
   <!-- ═══ LES CONDITIONS, ET LA DEMANDE ═══
        Cette section porte l'ancre « #partenariat » : c'est là que
        mènent tous les boutons « Devenir partenaire » du site. -->
