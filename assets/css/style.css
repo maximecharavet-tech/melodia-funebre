@@ -4472,6 +4472,93 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   .reg-jauge span { transition: none; }
 }
 
+/* ─── LES PAGES DE REQUÊTE ─────────────────────────────────────
+   Treize pages qui partagent une mise en page et aucun contenu. Ces
+   quatre éléments n'existent que là : la situation du lecteur, le
+   sommaire, l'extrait cité du catalogue, et les renvois motivés. */
+
+/* La situation, annoncée sous le titre. C'est elle qui distingue
+   réellement ces pages entre elles : même sujet, lecteurs différents.
+   Elle est en petites capitales pour se lire comme une adresse au
+   lecteur, et non comme la première phrase du texte. */
+.req-situation {
+  margin-top: 1.2rem; max-width: 56ch;
+  font-family: var(--ff-m); font-size: 0.6rem; line-height: 1.9;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-patina);
+  padding-left: 1rem; border-left: 1px solid var(--line-strong);
+}
+
+/* Le sommaire. Ses entrées sont extraites des titres du corps, donc
+   jamais divergentes. Numéroté : ces pages se lisent dans l'ordre. */
+.req-sommaire {
+  margin-top: 2.6rem; padding: 1.2rem 1.4rem;
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: rgba(201, 168, 76, 0.03); max-width: 64ch;
+}
+.req-sommaire-t {
+  display: block; font-family: var(--ff-m); font-size: 0.54rem;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--dust);
+  margin-bottom: 0.7rem;
+}
+.req-sommaire ol {
+  margin: 0; padding-left: 1.2rem; display: grid; gap: 0.35rem;
+  color: var(--or-patina); font-size: 0.86rem;
+}
+.req-sommaire a { color: var(--bone); text-decoration: none; }
+.req-sommaire a:hover, .req-sommaire a:focus-visible {
+  color: var(--or-bright); text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* L'extrait cité. Les vers viennent des œuvres réelles du site : le
+   filet d'or à gauche dit « ceci n'est pas de la prose », et la
+   légende renvoie à l'écoute — on peut vérifier. */
+.req-extrait {
+  margin: 1.8rem auto; max-width: 62ch;
+  padding: 1.4rem 1.6rem; border-left: 2px solid var(--or);
+  background: rgba(201, 168, 76, 0.035);
+}
+.req-extrait blockquote {
+  margin: 0; font-family: var(--ff-d); font-style: italic;
+  font-size: clamp(1.15rem, 2.2vw, 1.45rem); line-height: 1.5;
+  color: var(--paper);
+}
+.req-extrait figcaption {
+  margin-top: 0.9rem; font-size: 0.78rem; line-height: 1.55; color: var(--ash);
+}
+.req-extrait figcaption a { color: var(--or); text-decoration: none; }
+.req-extrait figcaption a:hover { color: var(--or-bright); text-decoration: underline; }
+
+/* Les listes détaillées de ces pages occupaient toute la largeur du
+   conteneur : des lignes de cent dix caractères, illisibles. Elles
+   reviennent à la mesure du reste du texte. */
+.req-liste { max-width: 74ch; margin-left: auto; margin-right: auto; }
+
+/* Les renvois. La RAISON d'aller voir ailleurs est en haut de la
+   carte et le titre en dessous : un bloc de liens sans raison est un
+   pied de page déguisé, et se lit comme tel. */
+.req-voisine {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  padding: 1.5rem 1.4rem; text-decoration: none;
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--ink-2);
+  transition: border-color var(--t-mid) var(--ease), background var(--t-mid) var(--ease),
+              transform var(--t-mid) var(--ease);
+}
+.req-voisine:hover, .req-voisine:focus-visible {
+  border-color: var(--line-strong); background: rgba(201, 168, 76, 0.045);
+  transform: translateY(-2px);
+}
+.req-voisine-q { font-size: 0.82rem; line-height: 1.5; color: var(--ash); }
+.req-voisine-t {
+  font-family: var(--ff-d); font-weight: 300; font-size: 1.16rem;
+  line-height: 1.2; color: var(--paper);
+}
+.req-voisine-l { font-size: 0.9rem; color: var(--or); margin-top: 0.2rem; }
+.req-voisine:hover .req-voisine-l { color: var(--or-bright); }
+@media (prefers-reduced-motion: reduce) {
+  .req-voisine:hover, .req-voisine:focus-visible { transform: none; }
+}
+
 /* Les règles que la maison s'impose, sur « De son vivant ». Elles se
    lisent comme un engagement, pas comme un argumentaire : un filet
    d'or à gauche, du texte, et rien d'autre. */
