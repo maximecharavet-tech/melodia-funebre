@@ -280,6 +280,42 @@ try {
   }
 }
 
+/* AUCUN TEXTE SOUS 12,5 PIXELS.
+
+   Les familles qui lisent ce site ont souvent soixante-dix ou
+   quatre-vingts ans. La feuille de style comptait 190 déclarations
+   de taille sous 13 px, jusqu'à 7,2 px — des libellés en capitales
+   espacées, illisibles pour qui n'a plus toute sa vue. Ils ont été
+   relevés au-dessus d'un plancher de 0,78 rem, soit 12,5 px.
+
+   Ce contrôle empêche le retour en arrière. Il accepte les deux
+   écritures — « 0.5rem » et « .5rem » —, faute de quoi la moitié des
+   déclarations lui échapperait : c'est exactement ce qui est arrivé
+   au premier passage, et quatre familles de libellés étaient restées
+   à 7 px sans que rien ne le signale. */
+{
+  const PLANCHER = 0.78;
+  const css = fs.readFileSync('assets/css/style.css', 'utf8');
+  const trop = [];
+  const re = /font-size:\s*(0?\.\d+)rem/g;
+  let m;
+  while ((m = re.exec(css))) {
+    const v = parseFloat('0' + m[1].replace(/^0/, ''));
+    if (v < PLANCHER - 0.001) {
+      const ligne = css.slice(0, m.index).split('\n').length;
+      trop.push(`ligne ${ligne} : ${m[0]} (${(v * 16).toFixed(1)} px)`);
+    }
+  }
+  if (trop.length) {
+    console.error(`  TEXTE SOUS ${(PLANCHER * 16).toFixed(1)} PX — illisible pour une personne âgée :`);
+    trop.slice(0, 8).forEach((x) => console.error('         ' + x));
+    if (trop.length > 8) console.error(`         … et ${trop.length - 8} autres`);
+    ok = false;
+  } else {
+    console.log(`  ok   aucune taille de texte sous ${(PLANCHER * 16).toFixed(1)} px dans la feuille`);
+  }
+}
+
 /* AUCUNE PAGE NE DOIT SERVIR LE MOT « undefined ».
 
    Trouvé en production : le JSON-LD des treize pages de requête
