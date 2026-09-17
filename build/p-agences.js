@@ -32,6 +32,7 @@ function kit() {
     const visuel = m.type === 'video'
       ? `<video class="kit-media" controls preload="none" playsinline
              poster="/${MED.DOSSIER}${m.affiche}" width="${m.largeur}" height="${m.hauteur}">
+          ${m.leger ? `<source src="/${MED.DOSSIER}${m.leger}" type="video/webm">` : ''}
           <source src="${src}" type="video/mp4">
           Votre navigateur ne sait pas lire cette vidéo — le bouton ci-dessous la télécharge.
         </video>`

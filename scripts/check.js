@@ -322,6 +322,16 @@ try {
     if (m.affiche && !fs.existsSync(MED.DOSSIER + m.affiche)) {
       fautes.push(`${m.affiche} : image d'attente déclarée, absente`);
     }
+    /* Un encodage « léger » qui pèse plus lourd que l'original ne
+       sert à rien et coûte un fichier de plus : le dire. */
+    if (m.leger) {
+      const fl = MED.DOSSIER + m.leger;
+      if (!fs.existsSync(fl)) fautes.push(`${m.leger} : version légère déclarée, absente`);
+      else if (fs.statSync(fl).size >= poids) {
+        fautes.push(`${m.leger} : ${Math.round(fs.statSync(fl).size / 1024)} Ko, ` +
+                    `soit plus que l'original (${Math.round(poids / 1024)} Ko)`);
+      }
+    }
     /* Les dimensions ne se vérifient que sur les JPEG : pour la vidéo
        il faudrait décoder le conteneur, et l'affiche d'attente en
        porte déjà la preuve. */

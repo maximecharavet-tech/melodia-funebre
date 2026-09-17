@@ -42,6 +42,12 @@ const MEDIAS = [
     id: 'violoncelliste',
     type: 'video',
     fichier: 'violoncelliste.mp4',
+    /* Deux encodages du même plan. Le WebM (VP9) pèse 2,8 Mo contre
+       5,7 : les navigateurs qui savent le lire — Chrome, Firefox,
+       Edge, Safari 14 et au-delà — téléchargent moitié moins. Le MP4
+       reste en second, pour tous les autres. À l'écran, les deux sont
+       indiscernables : comparés image par image à 484 px de large. */
+    leger: 'violoncelliste.webm',
     affiche: 'violoncelliste.jpg',      /* l'image d'attente */
     largeur: 484, hauteur: 850, duree: 30,
     audience: 'mixte',
