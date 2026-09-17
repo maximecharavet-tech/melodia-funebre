@@ -280,6 +280,64 @@ try {
   }
 }
 
+/* AUCUNE PAGE NE DOIT SERVIR LE MOT « undefined ».
+
+   Trouvé en production : le JSON-LD des treize pages de requête
+   partait sans « headline », et le bloc de partage recevait
+   « undefined » comme titre. La cause : le gabarit lisait un champ
+   que pas une seule page ne renseignait. Rien ne le signalait —
+   un champ absent disparaît à la sérialisation, et une chaîne
+   « undefined » s'affiche sans faire d'erreur.
+
+   Ce contrôle attrape toute la classe de bogues d'un coup, sur les
+   quarante-six pages et pas seulement sur les treize. Les blocs de
+   script sont retirés avant la recherche : « typeof x === 'undefined' »
+   y est parfaitement légitime. */
+{
+  /* Toutes les pages du répertoire, et pas seulement la liste écrite
+     à la main en tête de ce fichier : elle n'en contient que vingt,
+     et les treize nouvelles n'y étaient pas. */
+  const toutes = new Set(files.filter((f) => f.endsWith('.html')));
+  for (const f of fs.readdirSync('.')) if (/\.html$/.test(f)) toutes.add(f);
+  const suspectes = [];
+  for (const f of toutes) {
+    if (!fs.existsSync(f)) continue;
+    const sansScripts = fs.readFileSync(f, 'utf8')
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ');
+    if (/\bundefined\b/.test(sansScripts) || /\bNaN\b/.test(sansScripts)) {
+      const ou = (sansScripts.match(/.{0,40}\b(?:undefined|NaN)\b.{0,30}/) || [''])[0];
+      suspectes.push(`${f} : …${ou.replace(/\s+/g, ' ').trim()}…`);
+    }
+  }
+  if (suspectes.length) {
+    console.error('  VALEUR MANQUANTE SERVIE À L’ÉCRAN :');
+    suspectes.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log(`  ok   aucune valeur « undefined » ni « NaN » servie (${toutes.size} pages)`);
+  }
+}
+
+/* Et pour les pages de requête, le champ précis qui manquait : Google
+   exige « headline » sur un Article, et son absence ne se voit pas. */
+{
+  const modules = ['../build/p-chansons.js', '../build/p-fabrication.js',
+                   '../build/p-ceremonie.js', '../build/p-memoire.js'];
+  const nus = [].concat(...modules.map((m) => require(m)))
+    .filter((p) => {
+      const art = (p.jsonld || []).find((x) => x['@type'] === 'Article');
+      return !art || !art.headline || !String(art.headline).trim();
+    })
+    .map((p) => p.file);
+  if (nus.length) {
+    console.error('  ARTICLE JSON-LD SANS « headline » :');
+    nus.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log('  ok   toutes les pages de requête ont leur « headline »');
+  }
+}
+
 /* LES TREIZE PAGES DE REQUÊTE NE DOIVENT PAS SE RESSEMBLER.
 
    Elles visent des formulations voisines — « chanson hommage défunt »,
