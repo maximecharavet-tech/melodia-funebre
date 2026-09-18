@@ -294,7 +294,25 @@ ${P.oeuvres('message')}
     </div>
   </section>` : ''}
 
+  <!-- ═══ LES TARIFS ═══
+       « P.pricing() » ne rend que les trois cartes, sans conteneur :
+       posées telles quelles, elles étaient filles directes de <main>,
+       sans colonne ni grille. Mesuré à 1280 px de fenêtre : une carte
+       faisait 1261 px de large et commençait à 10 px du bord, quand
+       tout le reste de la page tient dans 1120, et les trois se
+       suivaient l'une sous l'autre. Le même enveloppement que sur la
+       page des offres remet tout en place. -->
+  <section class="section section-tight">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Les offres</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Les mêmes que pour<br><em>une cérémonie.</em></h2>
+      </div>
+      <div class="grid-3">
 ${P.pricing()}
+      </div>
+    </div>
+  </section>
 
   <!-- ═══ LES PRESCRIPTEURS ═══
        Un directeur d'EHPAD n'achète pas ce qu'achète une famille. Cette

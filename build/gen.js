@@ -234,6 +234,7 @@ function footer() {
           <li><a href="/professionnels">Pour les pompes funèbres</a></li>
           <li><a href="/professionnels#partenariat">Devenir partenaire</a></li>
           <li><a href="/professionnels#calculateur">Simuler mes revenus</a></li>
+          <li><a href="/qui-sommes-nous">Qui sommes-nous</a></li>
           <li><a href="/rejoindre">Nous rejoindre</a></li>
           <li><a href="/compte">Connexion partenaire</a></li>
         </ul>

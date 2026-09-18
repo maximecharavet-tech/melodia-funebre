@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=7753ef33">
+<link rel="stylesheet" href="/assets/css/style.css?v=6b0d80c2">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -255,6 +255,21 @@ Tu as marché entre deux terres avec foi</blockquote>
 
 
 
+  <!-- ═══ LES TARIFS ═══
+       « P.pricing() » ne rend que les trois cartes, sans conteneur :
+       posées telles quelles, elles étaient filles directes de <main>,
+       sans colonne ni grille. Mesuré à 1280 px de fenêtre : une carte
+       faisait 1261 px de large et commençait à 10 px du bord, quand
+       tout le reste de la page tient dans 1120, et les trois se
+       suivaient l'une sous l'autre. Le même enveloppement que sur la
+       page des offres remet tout en place. -->
+  <section class="section section-tight">
+    <div class="wrap">
+      <div class="reveal center" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Les offres</div>
+        <h2 class="h-lg" style="margin-top:.8rem;">Les mêmes que pour<br><em>une cérémonie.</em></h2>
+      </div>
+      <div class="grid-3">
         <div class="card price card-lift reveal" data-offer-id="essentiel">
           <span class="price-tag" style="display:none"></span>
           <div class="price-name">Essentiel</div>
@@ -307,6 +322,9 @@ Tu as marché entre deux terres avec foi</blockquote>
           </ul>
           <a href="/offres" class="btn btn-outline btn-block">Choisir Mémorial</a>
         </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ═══ LES PRESCRIPTEURS ═══
        Un directeur d'EHPAD n'achète pas ce qu'achète une famille. Cette
@@ -556,6 +574,7 @@ Tu as marché entre deux terres avec foi</blockquote>
           <li><a href="/professionnels">Pour les pompes funèbres</a></li>
           <li><a href="/professionnels#partenariat">Devenir partenaire</a></li>
           <li><a href="/professionnels#calculateur">Simuler mes revenus</a></li>
+          <li><a href="/qui-sommes-nous">Qui sommes-nous</a></li>
           <li><a href="/rejoindre">Nous rejoindre</a></li>
           <li><a href="/compte">Connexion partenaire</a></li>
         </ul>
