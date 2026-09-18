@@ -656,6 +656,143 @@ try {
   if (ok) console.log('  ok   ' + pagesVues + ' pages déclarent une icône de 48×48, tailles annoncées exactes');
 } catch (e) { console.error('  vérification des icônes impossible :', e.message); ok = false; }
 
+/* ─── La palette sombre servie sur fond ivoire ───
+   Le site a deux palettes : --paper / --ash / --bone pour le texte sur
+   noir, --ivory-ink / --ivory-soft pour le texte sur ivoire. Les blocs
+   sont écrits sur fond noir, puis certains sont réemployés dans une
+   « .section-light » — et la couleur, elle, ne suit pas. Mesuré sur la
+   page professionnels : 1,02 de contraste pour les intitulés en gras,
+   c'est-à-dire blanc sur blanc. L'or a le même défaut : --or vaut 2,03
+   sur l'ivoire, et le point clair de --or-grad tombe à 1,53.
+
+   On croise donc deux choses : les classes réellement employées dans une
+   section claire d'une page servie, et les règles qui leur donnent une
+   couleur de la palette sombre. Toute classe dans les deux listes doit
+   avoir sa contrepartie « .section-light ». Le rapprochement est fait
+   par nom de classe, pas par sélecteur exact : un « .section-light
+   .valeur li » couvre aussi « .valeur b ». C'est volontaire — la
+   vérification dit où regarder, elle ne remplace pas l'œil. */
+try {
+  /* Les teintes trop claires pour l'ivoire, mesurées sur #f4f1ea :
+     --paper 1,02 · --silver 1,26 · --bone 1,69 · --or 2,03 ·
+     --silver-dim 2,48 · --ash 3,13 · --or-patina 3,40. --dust, lui,
+     donne 6,11 : il est assez sombre pour les deux fonds, il ne figure
+     donc pas ici. */
+  const SOMBRES = ['--paper', '--ash', '--bone', '--silver', '--silver-dim',
+                   '--or', '--or-patina', '--or-bright', '--or-grad'];
+  /* « var(--or) » ne doit pas se déclencher sur « var(--or-deep) » : on
+     exige la parenthèse fermante ou une virgule juste après le nom. */
+  const cite = (decl, jeton) =>
+    new RegExp('var\\(\\s*' + jeton + '\\s*[,)]').test(decl);
+
+  /* Les classes présentes dans une section claire d'une page servie. */
+  const classesClaires = new Set();
+  let sections = 0;
+  for (const f of fs.readdirSync('.').filter((x) => x.endsWith('.html'))) {
+    const src = fs.readFileSync(f, 'utf8');
+    const ouvre = /<section[^>]*class="[^"]*\bsection-light\b[^"]*"[^>]*>/g;
+    let m;
+    while ((m = ouvre.exec(src))) {
+      sections++;
+      const balises = /<\/?section\b/g;
+      balises.lastIndex = ouvre.lastIndex;
+      let prof = 1, t, fin = src.length;
+      while ((t = balises.exec(src))) {
+        prof += t[0][1] === '/' ? -1 : 1;
+        if (!prof) { fin = t.index; break; }
+      }
+      for (const c of src.slice(ouvre.lastIndex, fin).matchAll(/class="([^"]+)"/g)) {
+        for (const x of c[1].trim().split(/\s+/)) classesClaires.add(x);
+      }
+    }
+  }
+
+  /* Les règles de la feuille, commentaires ôtés. */
+  const feuille = fs.readFileSync('assets/css/style.css', 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const regles = [...feuille.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .map((m) => ({ sel: m[1].trim(), decl: m[2] }));
+
+  /* Celles qui posent une couleur de texte sombre, ou le dégradé doré
+     découpé dans le texte — dont la couleur affichée est le dégradé. */
+  /* Une pastille noire posée dans une section claire garde légitimement
+     sa couleur claire : c'est le cas de « .parcours-n », disque d'encre
+     à chiffre doré. On ne signale donc pas une règle qui se donne
+     elle-même un fond sombre opaque. */
+  const FONDS_SOMBRES = ['--ink', '--ink-2', '--ink-3', '--surface', '--surface-2', '--surface-3'];
+  const ilotSombre = (decl) =>
+    /(^|;|\s)background(-color|-image)?\s*:/.test(decl) &&
+    FONDS_SOMBRES.some((j) => cite(decl, j));
+
+  /* La couleur d'un texte se lit dans « color », ou dans le dégradé
+     quand celui-ci est découpé dedans. */
+  const couleurLue = (decl) => {
+    const c = (decl.match(/(?:^|;|\s)color\s*:([^;]*)/) || [, ''])[1];
+    const g = /background-clip\s*:\s*text/.test(decl)
+      ? (decl.match(/(?:^|;|\s)background(?:-image)?\s*:([^;]*)/) || [, ''])[1] : '';
+    return c + ' ' + g;
+  };
+
+  /* Une règle « .section-light » qui reprend elle-même une teinte de la
+     palette sombre : c'est l'antidote qui rend malade. On la signale
+     tout de suite, sans passer par le rapprochement des classes. */
+  let rechutes = 0;
+  for (const r of regles) {
+    if (!/\.section-light/.test(r.sel)) continue;
+    if (ilotSombre(r.decl)) continue;
+    const j = SOMBRES.find((x) => cite(couleurLue(r.decl), x));
+    if (j) {
+      console.error('  PALETTE SOMBRE SUR IVOIRE  « ' + r.sel.replace(/\s+/g, ' ') +
+        ' » est une règle de section claire, et elle y pose « var(' + j + ') »');
+      rechutes++; ok = false;
+    }
+  }
+
+  const fautives = new Map();
+  for (const r of regles) {
+    if (/\.section-light/.test(r.sel)) continue;
+    if (ilotSombre(r.decl)) continue;
+    /* C'est la valeur de « color » qui compte, pas le fait que la règle
+       cite une teinte claire quelque part : un bouton doré à texte noir
+       écrit « background: var(--or-grad); color: #120e04 » et va très
+       bien. Le dégradé ne compte que s'il est découpé dans le texte,
+       auquel cas c'est lui qu'on lit. */
+    const valeurCouleur = (r.decl.match(/(?:^|;|\s)color\s*:([^;]*)/) || [, ''])[1];
+    const decoupe = /background-clip\s*:\s*text/.test(r.decl) &&
+      (r.decl.match(/(?:^|;|\s)background(?:-image)?\s*:([^;]*)/) || [, ''])[1];
+    const texteSombre = SOMBRES.some((j) => cite(valeurCouleur, j)) ||
+      (decoupe && SOMBRES.some((j) => cite(decoupe, j)));
+    if (!texteSombre) continue;
+    for (const c of r.sel.matchAll(/\.([A-Za-z0-9_-]+)/g)) {
+      if (classesClaires.has(c[1])) {
+        if (!fautives.has(c[1])) fautives.set(c[1], []);
+        fautives.get(c[1]).push(r.sel);
+      }
+    }
+  }
+
+  /* Une contrepartie claire pose bien une couleur, et pas seulement une
+     bordure ou un fond. */
+  const couvertes = new Set();
+  for (const r of regles) {
+    if (!/\.section-light/.test(r.sel)) continue;
+    if (!/(^|;|\s)color\s*:/.test(r.decl) && !/background-clip\s*:\s*text/.test(r.decl)) continue;
+    for (const c of r.sel.matchAll(/\.([A-Za-z0-9_-]+)/g)) couvertes.add(c[1]);
+  }
+
+  let nues = rechutes;
+  for (const [c, sels] of fautives) {
+    if (couvertes.has(c)) continue;
+    console.error('  PALETTE SOMBRE SUR IVOIRE  « .' + c + '  » est servie dans une section claire ' +
+      'mais n’a pas de règle « .section-light » qui lui rende une couleur lisible');
+    console.error('        en cause : ' + [...new Set(sels)].join(' , '));
+    nues++; ok = false;
+  }
+  if (!nues) {
+    console.log('  ok   ' + sections + ' sections claires, ' + classesClaires.size +
+      ' classes employées dedans, toutes avec leur couleur d’ivoire');
+  }
+} catch (e) { console.error('  vérification des palettes impossible :', e.message); ok = false; }
+
 /* Le message de fin doit dire ce qui ne va pas. « Des fichiers
    manquent » sur un écart de tarif envoie chercher au mauvais
    endroit. */
