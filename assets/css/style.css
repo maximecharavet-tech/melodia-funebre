@@ -5108,6 +5108,57 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .section-light .maison-precision { color: var(--ivory-dim); }
 
+/* ─── Le fondateur, et les maisons du groupe ─── */
+.fondateur-bloc {
+  display: grid; gap: 2.4rem; align-items: start;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  max-width: 62rem; margin-inline: auto;
+}
+@media (max-width: 860px) {
+  .fondateur-bloc { grid-template-columns: minmax(0, 1fr); max-width: 30rem; }
+}
+.fondateur-portrait { margin: 0; display: grid; gap: 0.7rem; }
+.fondateur-portrait img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+}
+.fondateur-portrait figcaption {
+  font-size: 0.82rem; line-height: 1.55; color: var(--dust); text-align: center;
+}
+.fondateur-mots p { color: var(--ash); line-height: 1.85; margin: 0 0 1rem; }
+.fondateur-mots p:last-child { margin-bottom: 0; }
+.fondateur-mots b { color: var(--paper); font-weight: 400; }
+
+.maisons {
+  display: grid; gap: 1.4rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 980px) { .maisons { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .maisons { grid-template-columns: minmax(0, 1fr); } }
+.maison-carte {
+  padding: 1.5rem 1.3rem; border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg); background: rgba(255, 255, 255, 0.014);
+  display: grid; gap: 0.6rem; justify-items: center; text-align: center;
+  align-content: start;
+}
+/* Les emblèmes n'ont pas tous le même rapport — la plaque de Ziggy est
+   deux fois plus haute que large. On les cale donc sur la même HAUTEUR,
+   pas sur la même largeur : ils s'alignent sans être déformés. */
+.maison-embleme {
+  height: 120px; width: auto; max-width: 100%;
+  border-radius: var(--radius); display: block;
+}
+.maison-carte h3 { margin: 0.4rem 0 0; }
+.maison-carte p { margin: 0; font-size: 0.88rem; line-height: 1.6; color: var(--ash); }
+
+/* La vidéo d'ambiance prend exactement la place qu'occupait la
+   photographie : même cadre, même filet, même arrondi. */
+.equipe-nue .atelier-film {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  background: var(--ink-3);
+}
+
 /* Les deux vues d'atelier, côte à côte. Même rapport toutes les deux :
    une simple grille suffit, les légendes s'alignent d'elles-mêmes. */
 .atelier-duo {

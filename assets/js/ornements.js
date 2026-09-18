@@ -191,7 +191,39 @@
     }
   }
 
+  /* ─── Les vidéos d'ambiance ───
+     Une boucle muette de dix secondes ne mérite pas d'être téléchargée
+     par quelqu'un qui n'ira jamais jusqu'à elle : « preload=none » la
+     laisse dormir, et on ne la lance qu'une fois entrée dans l'écran.
+     Quand elle en sort, on la met en pause — sans quoi elle tourne dans
+     le vide et vide la batterie d'un téléphone.
+
+     Et si la personne a demandé à son système de réduire les
+     animations, on ne lance rien du tout : on lui laisse l'image
+     d'attente, qui montre exactement la même chose, immobile. */
+  function videosAmbiance() {
+    var vids = document.querySelectorAll('video[data-ambiance]');
+    if (!vids.length) return;
+    var sobre = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (sobre || !('IntersectionObserver' in window)) return;
+    var oeil = new IntersectionObserver(function (entrees) {
+      entrees.forEach(function (x) {
+        if (x.isIntersecting) {
+          if (x.target.preload === 'none') x.target.preload = 'auto';
+          var essai = x.target.play();
+          /* Un navigateur peut refuser la lecture automatique : on ne
+             fait rien de plus, l'image d'attente reste. */
+          if (essai && essai.catch) essai.catch(function () {});
+        } else {
+          x.target.pause();
+        }
+      });
+    }, { threshold: 0.25 });
+    Array.prototype.forEach.call(vids, function (v) { oeil.observe(v); });
+  }
+
   window.MelodiaOrnements = { rosette: rosette, sceau: sceau, portee: portee, embleme: embleme, poser: poser, graine: graine };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', poser);
-  else poser();
+  function demarrer() { poser(); videosAmbiance(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', demarrer);
+  else demarrer();
 })();

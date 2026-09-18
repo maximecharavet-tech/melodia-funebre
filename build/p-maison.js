@@ -75,6 +75,37 @@ const HUMAIN = [
    'Si l’œuvre ne ressemble pas à la personne, nous la reprenons. Ce n’est pas un geste commercial : c’est quelqu’un qui réécrit, parce que le texte était faux.']
 ];
 
+/* Les quatre autres maisons du groupe, décrites avec les mots de la
+   planche fournie par le fondateur. Rien n'est reformulé ni enjolivé :
+   ce sont des sociétés réelles, et une description inventée sur une
+   page « qui sommes-nous » se vérifie en un clic.
+
+   Aucune adresse web n'est posée ici : seule authenticseal.ai figure
+   sur la planche, et envoyer des familles vers un site que la maison
+   n'a pas vérifié serait léger. Le fondateur donnera les liens. */
+const MAISONS = [
+  {
+    id: 'vigie-orbitale', nom: 'Vigie Orbitale', haut: 640,
+    quoi: 'Surveillance orbitale et intelligence spatiale pour la sécurité des territoires et des infrastructures.',
+    alt: 'Emblème de Vigie Orbitale : un globe terrestre sombre ceint d’un anneau d’acier et d’une traînée orange, un satellite en orbite.'
+  },
+  {
+    id: 'authenticseal', nom: 'AuthenticSeal AI', haut: 640,
+    quoi: 'Certification et authentification par l’IA, pour la vérification sécurisée des données et des systèmes.',
+    alt: 'Sceau d’AuthenticSeal AI : un médaillon circuit imprimé bleu et or portant une empreinte digitale stylisée et le mot « Certified ».'
+  },
+  {
+    id: 'ziggy', nom: 'Ziggy', haut: 640,
+    quoi: 'IA ludique et éducative, pour accompagner les enfants dans leurs découvertes.',
+    alt: 'Emblème de Ziggy gravé dans l’or : un petit robot souriant entouré d’orbites, un cœur-circuit au centre.'
+  },
+  {
+    id: 'melodia', nom: 'Melodia Funèbre', haut: 640,
+    quoi: 'Accompagnement musical et mémoriel — la maison dont vous lisez le site.',
+    alt: 'Emblème de Melodia Funèbre : les initiales MF en or dans un anneau, une colombe, une clé de sol et une portée.'
+  }
+];
+
 module.exports = {
   file: 'qui-sommes-nous.html',
   title: 'Qui sommes-nous — l’équipe de Melodia Funèbre',
@@ -169,13 +200,23 @@ ${HUMAIN.map(([t, p], i) => `        <div class="carte reveal reveal-d${(i % 3) 
         </p>
       </div>
 
+      <!-- La vidéo prend la place de la photographie large : c'était le
+           même plan, et le montrer deux fois n'apportait rien. Elle est
+           muette et dure dix secondes ; elle se lance quand elle entre
+           dans l'écran, se met en pause quand elle en sort, et ne se
+           lance pas du tout si la personne a demandé moins
+           d'animations — l'image d'attente montre alors la même chose,
+           immobile. Deux encodages : le WebM pèse 1084 Ko, le MP4 1229,
+           et le WebM passe en premier. -->
       <figure class="equipe equipe-nue reveal">
-        <img src="assets/img/maison/atelier-salle-1264.webp"
-             srcset="assets/img/maison/atelier-salle-880.webp 880w, assets/img/maison/atelier-salle-1264.webp 1264w"
-             sizes="(max-width: 1180px) 92vw, 1080px"
-             width="1264" height="720" loading="lazy" decoding="async"
-             alt="L’atelier de Melodia Funèbre : plusieurs personnes devant des écrans de station audio, casques sur les oreilles, claviers maîtres et guitares au mur, sous le logo de la maison.">
-        <figcaption>L’atelier. Chaque écran est un hommage en cours, et une famille qui attend.</figcaption>
+        <video class="atelier-film" data-ambiance muted loop playsinline preload="none"
+               poster="assets/img/campagne/atelier.jpg"
+               width="1264" height="720"
+               aria-label="L’atelier de Melodia Funèbre : la caméra traverse la salle où plusieurs personnes travaillent devant des stations audio, puis s’arrête sur deux d’entre elles penchées sur un même écran.">
+          <source src="assets/img/campagne/atelier.webm" type="video/webm">
+          <source src="assets/img/campagne/atelier.mp4" type="video/mp4">
+        </video>
+        <figcaption>L’atelier, dix secondes. Chaque écran est un hommage en cours, et une famille qui attend.</figcaption>
       </figure>
 
       <div class="atelier-duo" style="margin-top:1.8rem;">
@@ -214,6 +255,77 @@ ${EQUIPE.map((m, i) => `        <div class="carte reveal reveal-d${(i % 3) + 1}"
           <p style="margin-top:.9rem;">${m.mot}</p>
         </div>`).join('\n')}
       </div>
+    </div>
+  </section>
+
+  <!-- ═══ LE FONDATEUR ═══
+       Le pied de page de ce site porte « Propulsé par Hyper A.I Engine »
+       depuis le premier jour, sans que rien n'explique ce que c'est.
+       Cette rubrique le dit, et elle dit du même coup une chose que la
+       page a tout intérêt à assumer plutôt qu'à taire : la maison qui
+       fabrique les outils de Melodia est la maison du fondateur. C'est
+       précisément ce qui permet de promettre quelqu'un à chaque étape —
+       on ne dépend de personne pour l'outil.
+
+       Le portrait porte, en bas à gauche, la mention « Contenu généré
+       par l'IA ». Elle n'a pas été effacée : retirer une mention de
+       provenance pour faire passer une image pour une photographie
+       serait exactement ce que cette page reproche au reste du web. Le
+       fondateur l'a fournie deux fois en connaissance de cause ; elle
+       est donc publiée telle quelle, étiquette comprise. -->
+  <section class="section section-alt" id="fondateur">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.8rem;">
+        <div class="eyebrow">Le fondateur</div>
+        <h2 class="h-xl">Maxime Charavet,<br><em>et quatre autres maisons.</em></h2>
+      </div>
+
+      <div class="fondateur-bloc">
+        <figure class="fondateur-portrait reveal">
+          <img src="assets/img/ventures/maxime-bureau-960.webp"
+               srcset="assets/img/ventures/maxime-bureau-480.webp 480w, assets/img/ventures/maxime-bureau-960.webp 960w"
+               sizes="(max-width: 860px) 88vw, 380px"
+               width="960" height="1060" loading="lazy" decoding="async"
+               alt="Maxime Charavet à son bureau, devant le logo mural de Melodia Funèbre et la devise « Plus qu’une entreprise, une mission de vie ».">
+          <figcaption>L’image porte la mention « Contenu généré par l’IA » qui l’accompagnait. Nous ne l’avons pas retirée.</figcaption>
+        </figure>
+        <div class="fondateur-mots reveal reveal-d1">
+          <p>
+            Le pied de page de ce site annonce « Propulsé par Hyper A.I Engine » depuis
+            le premier jour, sans jamais dire ce que c’est. Le voici : <b>Hyper A.I
+            Engine</b> est la maison d’architecture logicielle que Maxime Charavet a
+            fondée, et d’où sortent les outils sur lesquels s’appuie la composition
+            de Melodia Funèbre.
+          </p>
+          <p>
+            Nous préférons l’écrire que le taire. C’est d’ailleurs ce qui nous permet
+            de promettre quelqu’un à chaque étape : la maison ne loue pas son outil à
+            un tiers, elle le fabrique, et elle peut donc décider qu’aucun hommage ne
+            part sans avoir été écouté par un humain.
+          </p>
+          <p>
+            Melodia Funèbre est l’une des quatre maisons du groupe. Les trois autres
+            ne parlent pas de musique, et n’ont rien à voir avec les obsèques —
+            elles disent seulement d’où vient la personne qui a monté celle-ci.
+          </p>
+        </div>
+      </div>
+
+      <div class="maisons" style="margin-top:3rem;">
+${MAISONS.map((m, i) => `        <div class="maison-carte reveal reveal-d${(i % 3) + 1}">
+          <img class="maison-embleme" src="assets/img/ventures/${m.id}-640.webp"
+               srcset="assets/img/ventures/${m.id}-320.webp 320w, assets/img/ventures/${m.id}-640.webp 640w"
+               sizes="132px" width="640" height="${m.haut}" loading="lazy" decoding="async"
+               alt="${m.alt}">
+          <h3 class="h-sm">${m.nom}</h3>
+          <p>${m.quoi}</p>
+        </div>`).join('\n')}
+      </div>
+
+      <p class="reveal center" style="margin:2.6rem auto 0;max-width:54ch;color:var(--bone);font-style:italic;">
+        « Unir l’intelligence artificielle, la technologie et l’humain pour construire
+        un futur sûr, authentique et harmonieux. »
+      </p>
     </div>
   </section>
 
