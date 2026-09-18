@@ -156,7 +156,7 @@ try {
   for (const f of aVerifier) {
     if (!fs.existsSync(f)) continue;
     const html = fs.readFileSync(f, 'utf8');
-    let n = (html.match(/\s(?:href|src|data-src)="(?:assets|audio)\//g) || []).length;
+    let n = (html.match(/\s(?:href|src|poster|data-src)="(?:assets|audio)\//g) || []).length;
     /* Le même angle mort que dans la fonction qui rend les chemins
        absolus : l'expression ci-dessus s'accroche au guillemet
        ouvrant et ne voit donc que la première adresse d'un

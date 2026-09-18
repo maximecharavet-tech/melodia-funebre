@@ -414,7 +414,11 @@ ${p.inline || ''}
    pages. Seules les références du dépôt sont touchées — les adresses
    complètes, déjà absolues, ne contiennent pas la forme visée. */
 function absolu(html) {
-  html = html.replace(/(\s(?:href|src|srcset|data-src)=")(assets\/|audio\/|sw\.js)/g, '$1/$2');
+  /* « poster » manquait à cette liste : la première vidéo du site n'en
+     avait pas, la deuxième si, et son image d'attente est partie en
+     relatif. C'est le même défaut que celui du « srcset », dans un
+     attribut de plus. */
+  html = html.replace(/(\s(?:href|src|srcset|poster|data-src)=")(assets\/|audio\/|sw\.js)/g, '$1/$2');
   /* « srcset » porte plusieurs adresses séparées par des virgules, et
      la règle ci-dessus n'en voit que la première : elle s'accroche au
      guillemet ouvrant. Les candidates suivantes restaient donc
