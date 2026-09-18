@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { ICON, SITE, SOCIAL } = require('./gen.js');
 const { OFFERS, TESTIS, FAQ, STYLES, TRACKS } = require('./data.js');
+const MED = require('./medias.js');
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -576,4 +577,53 @@ function jsonldFil(titre, chemin) {
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: fil };
 }
 
-module.exports = { partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldVivants, jsonldProcessus, jsonldFil };
+/* ─── Une pièce de la médiathèque ───
+   Ce rendu vivait dans « p-agences.js », où il ne servait qu'au kit.
+   Les affiches ont maintenant deux emplois — le kit des agences, et
+   la page « De son vivant » —, et un rendu recopié à deux endroits
+   finit toujours par diverger. Il est donc ici, une fois.
+
+   Le lien de téléchargement n'est pas décoratif : ces affiches sont
+   faites pour être imprimées ou renvoyées, pas seulement regardées. */
+function pieceMedia(m) {
+  const src = '/' + MED.DOSSIER + m.fichier;
+  const visuel = m.type === 'video'
+    ? `<video class="kit-media" controls preload="none" playsinline
+           poster="/${MED.DOSSIER}${m.affiche}" width="${m.largeur}" height="${m.hauteur}">
+        ${m.leger ? `<source src="/${MED.DOSSIER}${m.leger}" type="video/webm">` : ''}
+        <source src="${src}" type="video/mp4">
+        Votre navigateur ne sait pas lire cette vidéo — le bouton ci-dessous la télécharge.
+      </video>`
+    : `<img class="kit-media" src="${src}" alt="Affiche : ${esc(m.titre)}"
+           width="${m.largeur}" height="${m.hauteur}" loading="lazy" decoding="async">`;
+  const format = m.type === 'video'
+    ? `Vidéo · ${m.duree} s · ${m.largeur} × ${m.hauteur}`
+    : `Image · ${m.largeur} × ${m.hauteur}`;
+  return `        <figure class="kit-piece reveal">
+          <div class="kit-cadre">${visuel}</div>
+          <figcaption>
+            <span class="kit-a-qui">${MED.AUDIENCES[m.audience]}</span>
+            <h3 class="kit-titre">${esc(m.titre)}</h3>
+            <p class="kit-legende">${m.legende}</p>
+            <p class="kit-usage"><strong>Où s'en servir :</strong> ${m.usage}</p>
+            <span class="kit-format">${format}</span>
+            <a class="kit-tele" href="${src}" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg> Télécharger</a>
+          </figcaption>
+        </figure>`;
+}
+
+/* Une galerie d'affiches choisies par identifiant. Un identifiant
+   inconnu arrête la construction plutôt que de servir un trou : c'est
+   le même parti que pour les citations du catalogue. */
+function galerieMedias(ids, modifieur) {
+  const pieces = ids.map((id) => {
+    const m = MED.parId(id);
+    if (!m) throw new Error('médiathèque : « ' + id + ' » n’existe pas dans build/medias.js');
+    return m;
+  });
+  return `      <div class="kit${modifieur ? ' ' + modifieur : ''}">
+${pieces.map(pieceMedia).join('\n')}
+      </div>`;
+}
+
+module.exports = { pieceMedia, galerieMedias, partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldVivants, jsonldProcessus, jsonldFil };

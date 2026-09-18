@@ -86,6 +86,55 @@ const MEDIAS = [
     usage: 'Réseaux sociaux, brochure remise en agence.'
   },
   {
+    id: 'bien-plus-quun-souvenir',
+    type: 'affiche',
+    fichier: 'bien-plus-quun-souvenir.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'pro',
+    titre: 'Bien plus qu’un souvenir',
+    legende: 'La plus complète des affiches professionnelles : la plaque gravée et son QR en situation, cinq raisons de proposer le service, et les quatre sortes d’établissement à qui il s’adresse.',
+    usage: 'Salon professionnel, rendez-vous de présentation, vitrine d’agence, courriel de prospection.'
+  },
+  {
+    id: 'une-vie-en-musique',
+    type: 'affiche',
+    fichier: 'une-vie-en-musique.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'famille',
+    titre: 'Une vie en musique',
+    legende: 'Un homme âgé, et sa vie qui remonte en photographies le long d’une portée. Elle s’adresse à qui envisage de composer de son vivant, pas à une famille en deuil.',
+    usage: 'Page « De son vivant », réseaux sociaux, présentoir en maison de retraite ou en établissement de soins.'
+  },
+  {
+    id: 'dernier-message',
+    type: 'affiche',
+    fichier: 'dernier-message.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'famille',
+    titre: 'Un dernier message en musique',
+    legende: 'La même intention que la précédente, mais prise par les mots plutôt que par les images : ce qu’on voudrait dire, et qu’on ne dira pas deux fois.',
+    usage: 'Page « De son vivant », courrier aux familles, réseaux sociaux.'
+  },
+  {
+    id: 'melodies-generations',
+    type: 'affiche',
+    fichier: 'melodies-generations.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'famille',
+    /* ATTENTION AVANT DE S'EN SERVIR — cette affiche montre des
+       musiciens qui jouent, et la page des rites dit, pour le rite
+       juif : « Aucune musique pour l'enterrement lui-même : ce n'est
+       pas notre place. » La scène ne contredit la maison que si on la
+       présente comme un enterrement. Elle est juste pour une azkara,
+       un dévoilement de stèle ou un hommage civil — les temps de
+       mémoire que la maison sert effectivement, avec l'accord du
+       rabbin. C'est pourquoi la légende le dit, et c'est pourquoi
+       l'affiche n'est pas posée sur la page des rites. */
+    titre: 'Des mélodies qui relient les générations',
+    legende: 'Pour les temps de mémoire des communautés juives — azkara, dévoilement de stèle, hommage civil — et non pour l’enterrement, qui ne comporte pas de musique. À ne diffuser qu’avec cette précision.',
+    usage: 'Présentation à une communauté, courriel à un officiant, après accord du rabbin.'
+  },
+  {
     id: 'souvenirs-ukulele',
     type: 'affiche',
     fichier: 'souvenirs-ukulele.jpg',

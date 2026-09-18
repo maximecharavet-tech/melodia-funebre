@@ -109,6 +109,28 @@ function proposition(texte) {
   </section>`;
 }
 
+/* ─── Une affiche verticale dans le fil d'un guide ───
+   Ces pages sont longues et n'avaient aucune image : un mur de texte
+   que personne ne descend jusqu'au bout. Les affiches sont au format
+   9/16, c'est-à-dire très hautes — servies à la largeur du « .prose »,
+   elles feraient plus de mille pixels de haut et couperaient la
+   lecture au lieu de la respirer. D'où une largeur bridée à 23 rem.
+
+   Deux largeurs sont servies : 480 pixels couvre l'affichage courant,
+   941 le même écran en double densité. Sans cela on expédierait 300 Ko
+   pour un bloc de 368 pixels de large.
+
+   La légende ne redit pas l'image : elle prolonge le paragraphe qui la
+   précède. Une légende qui décrit ce qu'on voit déjà ne sert à rien. */
+const affiche = (nom, alt, legende) => `      <figure class="guide-photo guide-photo-haute reveal">
+        <img src="assets/img/guides/${nom}-941.webp"
+             srcset="assets/img/guides/${nom}-480.webp 480w, assets/img/guides/${nom}-941.webp 941w"
+             sizes="(max-width: 700px) 84vw, 368px"
+             width="941" height="1672" loading="lazy" decoding="async"
+             alt="${alt}">
+        <figcaption>${legende}</figcaption>
+      </figure>`;
+
 function guide(g) {
   return {
     file: g.file,
@@ -171,6 +193,9 @@ const guide1 = guide({
         <h2>Trois morceaux suffisent</h2>
         <p>La plupart des cérémonies, religieuses comme civiles, tiennent en trois moments musicaux : l'entrée, le recueillement, la sortie. Certaines familles en ajoutent un quatrième, pendant un dépôt de fleurs ou une lecture. Au-delà, la cérémonie se dilue et l'assemblée décroche — les officiants le disent tous.</p>
         <p><strong>Une cérémonie dure en général entre trente et quarante-cinq minutes</strong>, et la musique en occupe huit à douze. Ce n'est pas beaucoup : chaque morceau compte.</p>
+${affiche('la-musique-fait-vivre',
+  "Affiche Melodia Funèbre : une femme âgée, les yeux fermés, le visage levé ; devant elle un piano à queue couvert de lys et une portée de notes qui s’envole vers un coucher de soleil. Le texte dit : « La musique ne fait pas oublier, elle fait vivre le souvenir ».",
+  'Huit à douze minutes de musique dans une cérémonie qui en dure quarante. C’est peu — et c’est ce dont on se souvient.')}
       </div>
     </div>
   </section>
@@ -198,6 +223,9 @@ ${MOMENTS.map((m) => `        <div class="card reveal">
         <h2>Comment choisir, quand on n'a pas d'idée</h2>
         <p>La question n'est pas « quelle est la belle musique d'enterrement ». C'est <strong>« qu'est-ce qui lui ressemble »</strong>. Les cérémonies dont les familles nous reparlent des années après ne sont jamais celles où l'on a passé le morceau qu'il fallait passer.</p>
 
+${affiche('instruments-du-monde',
+  "Affiche Melodia Funèbre : un handpan, un oud, une flûte traversière, une kalimba et un bol chantant posés parmi des lys blancs et des bougies, devant un lac au soleil couchant. Une pierre gravée porte : « La musique fait vivre le souvenir ».",
+  'Handpan, oud, flûte, kalimba, bol chantant. Il n’existe pas d’instrument de circonstance : le bon est celui qu’il aurait reconnu.')}
         <h3>Partez de lui, pas du répertoire</h3>
         <p>Trois questions suffisent, et elles se posent en famille en dix minutes :</p>
         <ul>
@@ -260,6 +288,9 @@ ${MOMENTS.map((m) => `        <div class="card reveal">
   <section class="section-sm">
     <div class="wrap">
       <div class="prose reveal">
+${affiche('celebrer-une-vie',
+  "Affiche Melodia Funèbre : un piano à queue noir sur une terrasse de pierre, une partition ouverte, un portrait encadré d’un grand-père et de sa petite-fille, des lys, et un escalier de lumière montant dans les nuages. Le texte dit : « Des musiques pour célébrer une vie unique ».",
+  'Le portrait, la partition, les fleurs : tout cela se prépare à l’avance. Le son de la salle, lui, se vérifie la veille.')}
         <h2>Deux cas particuliers</h2>
         <p><strong>Si la cérémonie est religieuse</strong>, la tradition impose ses propres règles, et elles ne se ressemblent pas d'un rite à l'autre : ce qui est admis à l'église catholique ne l'est pas dans une liturgie orthodoxe, et la prière funéraire musulmane n'accueille pas de musique instrumentale. Nous les avons détaillées une par une sur <a href="/rites">la page consacrée aux rites</a>.</p>
         <p><strong>Si c'est une crémation</strong>, l'organisation du crématorium ajoute une contrainte de durée et un moment très particulier, celui de la disparition du cercueil. Nous en parlons dans <a href="/musique-cremation">le guide sur la musique en crémation</a>.</p>

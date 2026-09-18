@@ -413,7 +413,17 @@ ${p.inline || ''}
    pages. Seules les références du dépôt sont touchées — les adresses
    complètes, déjà absolues, ne contiennent pas la forme visée. */
 function absolu(html) {
-  return html.replace(/(\s(?:href|src|srcset|data-src)=")(assets\/|audio\/|sw\.js)/g, '$1/$2');
+  html = html.replace(/(\s(?:href|src|srcset|data-src)=")(assets\/|audio\/|sw\.js)/g, '$1/$2');
+  /* « srcset » porte plusieurs adresses séparées par des virgules, et
+     la règle ci-dessus n'en voit que la première : elle s'accroche au
+     guillemet ouvrant. Les candidates suivantes restaient donc
+     relatives — « /assets/…-700.webp 700w, assets/…-1100.webp 1100w ».
+     Cela marche tant que la page est à la racine, et casse le jour où
+     elle est servie sous /ecouter/ ou /m/, c'est-à-dire exactement
+     l'adresse qu'ouvre un QR code devant une tombe. On reprend donc
+     chaque candidate. */
+  return html.replace(/(\ssrcset=")([^"]*)"/g, (_, att, val) =>
+    att + val.split(',').map((c) => c.replace(/^(\s*)(assets\/|audio\/)/, '$1/$2')).join(',') + '"');
 }
 
 module.exports = { page, ICON, SITE, MAIL, SOCIAL, head, nav, footer, versionne, empreinterImages };
