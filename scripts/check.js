@@ -156,7 +156,14 @@ try {
   for (const f of aVerifier) {
     if (!fs.existsSync(f)) continue;
     const html = fs.readFileSync(f, 'utf8');
-    const n = (html.match(/\s(?:href|src|srcset|data-src)="(?:assets|audio)\//g) || []).length;
+    let n = (html.match(/\s(?:href|src|data-src)="(?:assets|audio)\//g) || []).length;
+    /* Le même angle mort que dans la fonction qui rend les chemins
+       absolus : l'expression ci-dessus s'accroche au guillemet
+       ouvrant et ne voit donc que la première adresse d'un
+       « srcset ». Les suivantes passaient. */
+    for (const m of html.matchAll(/\ssrcset="([^"]*)"/g)) {
+      n += m[1].split(',').filter((c) => /^\s*(?:assets|audio)\//.test(c)).length;
+    }
     if (n) fautives.push(`${f} (${n})`);
   }
   if (fautives.length) {

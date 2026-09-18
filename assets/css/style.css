@@ -5087,6 +5087,11 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
      un filet et une ombre portée la détachent sans l'encadrer. */
   box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
 }
+/* Une affiche 9/16 servie sur 40 rem ferait 1140 px de haut : elle
+   couperait le guide en deux au lieu de l'aérer. */
+.guide-photo-haute { max-width: 23rem; }
+@media (max-width: 700px) { .guide-photo-haute { max-width: 84vw; } }
+
 .guide-photo figcaption {
   font-size: 0.84rem; line-height: 1.6; color: var(--ash);
   text-align: center; max-width: 34rem;
