@@ -279,10 +279,10 @@ function footer() {
          signature technique, pas une publicité — d'où le corps réduit
          et l'emblème qui ne s'allume qu'au survol. -->
     <div class="propulse">
-      <span class="propulse-lien">
+      <a href="/hyper-ai-engine" class="propulse-lien">
         <img src="assets/img/hyper-engine.png" alt="" class="propulse-marque" width="26" height="24" loading="lazy">
         <span class="propulse-mots">Propulsé par <b>Hyper A.I Engine</b></span>
-      </span>
+      </a>
     </div>
   </div>
 </footer>`;

@@ -1243,6 +1243,9 @@ ul { list-style: none; }
    nom de la maison, qui est ce que le visiteur doit retenir. */
 .propulse { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line-soft); display: flex; justify-content: center; }
 .propulse-lien {
+  /* Devenu un lien vers la page de Hyper A.I Engine : sans cela il
+     hériterait du soulignement des liens du pied de page. */
+  text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.55rem;
   font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--dust);
@@ -5107,6 +5110,61 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   color: var(--ash); font-style: italic;
 }
 .section-light .maison-precision { color: var(--ivory-dim); }
+
+/* ─── La page Hyper A.I Engine ─── */
+.hyper-intro {
+  display: grid; gap: 2.4rem; align-items: center;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+}
+@media (max-width: 860px) {
+  .hyper-intro { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .hyper-intro .lead { margin-inline: auto; }
+}
+.hyper-embleme { width: 100%; height: auto; display: block; }
+.hyper-baseline {
+  margin: 1.2rem 0 0; font-family: var(--ff-m);
+  font-size: 0.95rem; letter-spacing: 0.14em; text-transform: uppercase;
+  line-height: 1.9; color: var(--or);
+}
+.hyper-baseline span { color: var(--ash); font-size: 0.82rem; letter-spacing: 0.1em; }
+
+.hyper-piliers {
+  display: grid; gap: 2.6rem; align-items: center;
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  max-width: 62rem; margin-inline: auto;
+}
+@media (max-width: 860px) {
+  .hyper-piliers { grid-template-columns: minmax(0, 1fr); max-width: 30rem; }
+}
+.hyper-piliers .guide-photo { margin-bottom: 0; max-width: 100%; }
+
+/* Les films des maisons : un cadre carré commun, pour que les trois
+   légendes tombent sur la même ligne alors que les formats diffèrent. */
+.films {
+  display: grid; gap: 1.8rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 58rem; margin-inline: auto;
+}
+@media (max-width: 900px) { .films { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 40rem; } }
+@media (max-width: 560px) { .films { grid-template-columns: minmax(0, 1fr); max-width: 22rem; } }
+.film { margin: 0; display: grid; gap: 0.8rem; }
+.film-cadre {
+  aspect-ratio: 1; background: var(--ink-3);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.film-cadre video {
+  display: block; width: 100%; height: 100%;
+  /* « contain » : le film de Ziggy est vertical, les deux autres sont
+     carrés. Remplir le cadre lui couperait la tête et le nom. */
+  object-fit: contain;
+}
+.film figcaption { display: grid; gap: 0.25rem; text-align: center; }
+.film figcaption b { font-family: var(--ff-d); font-size: 1.05rem; font-weight: 400; color: var(--paper); }
+.film figcaption span {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--dust);
+}
 
 /* ─── Le fondateur, et les maisons du groupe ─── */
 .fondateur-bloc {
