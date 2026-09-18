@@ -20,10 +20,10 @@ const P = require('./parts.js');
 
    Et la preuve n'est pas portée par les images — une photographie ne
    prouve plus rien à personne. Elle est portée par ce qu'un visiteur
-   peut FAIRE : demander un rappel, une visioconférence, un rendez-vous,
-   écrire au fondateur à son adresse en clair. Ce sont des promesses
-   vérifiables en trois minutes, et c'est ce qui distingue cette page
-   d'une page d'entreprise ordinaire.
+   peut FAIRE ou VÉRIFIER : demander un rappel, écrire au fondateur à son
+   adresse en clair, retrouver sa signature au pied de chaque page,
+   écouter les œuvres sans rien remplir. Que des faits déjà vrais
+   ailleurs sur le site — aucune promesse créée pour l'occasion.
    ═══════════════════════════════════════════════════════════════ */
 
 /* Les personnes, leurs fonctions et leur phrase, telles que le
@@ -78,7 +78,7 @@ const HUMAIN = [
 module.exports = {
   file: 'qui-sommes-nous.html',
   title: 'Qui sommes-nous — l’équipe de Melodia Funèbre',
-  desc: "L'équipe et la direction de Melodia Funèbre : cinq personnes, leurs noms, leurs fonctions. Un appel, une visioconférence ou un rendez-vous suffisent à les rencontrer.",
+  desc: "L'équipe et la direction de Melodia Funèbre : cinq personnes, leurs noms, leurs fonctions, et cinq façons de vérifier qu'il y a quelqu'un au bout du téléphone.",
   jsonld: [P.jsonldFil('Qui sommes-nous', '/qui-sommes-nous')],
   body: `
   <section class="page-head">
@@ -277,6 +277,6 @@ ${EQUIPE.map((m, i) => `        <div class="carte reveal reveal-d${(i % 3) + 1}"
     </div>
   </section>
 
-${P.partage('Qui sommes-nous', 'Cinq personnes, leurs noms et leurs fonctions — et quatre façons de vérifier qu’il y a quelqu’un au bout.')}
+${P.partage('Qui sommes-nous', 'Cinq personnes, leurs noms et leurs fonctions — et cinq façons de vérifier qu’il y a quelqu’un au bout.')}
 `
 };
