@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  La marque réduite de Melodia Funèbre : la source du favicon.
+
+  Le logo complet — l'anneau, la colombe, la clé de sol, la portée — est
+  magnifique à 192 pixels et illisible à 16, qui est la taille à laquelle
+  Google l'affiche à côté du site dans ses résultats. Cette marque-ci ne
+  garde que les deux initiales, dans la police et l'or de la maison, pour
+  qu'il reste quelque chose de reconnaissable une fois rapetissé.
+
+  Les lettres sont calibrées à 103 (et non 132) pour une raison mesurée :
+  Google découpe le favicon en rond sur mobile. À 132 la demi-diagonale
+  des lettres vaut 122,7 dans une boîte de 192 — le rond leur coupe les
+  empattements. À 103 elle vaut 95,8, juste sous le rayon du cercle
+  inscrit, qui est 96. C'est le plus grand corps qui tienne entier.
+
+  Ce fichier n'est pas servi (build/ est exclu du déploiement) et n'est
+  pas lu par « npm run pages » : il est la source d'où ont été rendus
+  favicon.ico et assets/img/icons/icon-32|48.png. Pour les refaire, il
+  faut le rendre avec Cormorant Garamond 600 — la fonte est dans
+  build/polices/ — puis rapetisser en Lanczos avec un léger renforcement
+  de netteté (rayon 0,6 · 70 %), sans quoi les lettres virent au gris.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" fill="#0b0b11"/>
+  <text x="96" y="96" fill="#e8cf86"
+        font-family="Cormorant Garamond, Georgia, serif" font-weight="600"
+        font-size="103" letter-spacing="-3.1"
+        text-anchor="middle" dominant-baseline="central">MF</text>
+</svg>

@@ -42,6 +42,14 @@
   --ivory-soft: #55503f;
   --ivory-dim: #6a6453;
 
+  /* L'or de la maison est fait pour le noir. Sur l'ivoire il s'efface :
+     --or donne 2,03 de contraste, et le point clair du dégradé tombe à
+     1,53 — c'est-à-dire presque rien. Ces deux jetons-ci sont le même
+     or, assombri jusqu'à passer 4,5 sur l'ivoire à tous ses points
+     (7,16 · 4,63 · 6,10). Ils ne servent que dans « .section-light ». */
+  --or-ivoire: #806a30;
+  --or-grad-ivoire: linear-gradient(135deg, #5f4e23 0%, #806a30 45%, #6b5828 100%);
+
   /* ─── Sémantique ─── */
   --green: #4ade80;
   --amber: #fbbf24;
@@ -204,6 +212,16 @@ ul { list-style: none; }
 .section-light::before { top: 0; }
 .section-light::after { bottom: 0; }
 .section-light .h-hero, .section-light .h-xl, .section-light .h-lg { color: var(--ivory-ink); }
+/* L'emphase en italique doré : le dégradé est découpé dans le texte, si
+   bien que la couleur affichée n'est pas « color » mais les points du
+   dégradé. Sur l'ivoire ils allaient de 3,40 à 1,53 — le mot mis en
+   valeur était le moins lisible de la phrase. */
+.section-light .h-hero em, .section-light .h-xl em, .section-light .h-lg em {
+  /* « background-image » et non « background » : le raccourci remettrait
+     « background-clip » à border-box, le dégradé se décollerait du texte
+     et peindrait un pavé doré à la place du mot. */
+  background-image: var(--or-grad-ivoire); color: var(--or-ivoire);
+}
 .section-light .lead { color: var(--ivory-soft); }
 .section-light .eyebrow { color: var(--or-deep); }
 .section-light .eyebrow::before, .section-light .eyebrow::after { background: rgba(107, 88, 40, 0.35); }
@@ -473,6 +491,8 @@ ul { list-style: none; }
   background: var(--or-grad); -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: var(--or);
 }
+.section-light .stat-num { background-image: var(--or-grad-ivoire); color: var(--or-ivoire); }
+.section-light .stat-num sup, .section-light .stat-num span { color: var(--or-ivoire); }
 .stat-label {
   font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--ash); margin-top: 0.65rem;
@@ -515,6 +535,7 @@ ul { list-style: none; }
   font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--or-patina); margin-top: 0.7rem; display: inline-block;
 }
+.section-light .step-time { color: var(--or-deep); }
 .section-light .steps::before { background: linear-gradient(180deg, var(--or-deep), rgba(107, 88, 40, 0.3), transparent); }
 .section-light .step-dot { background: var(--ivory); border-color: rgba(107, 88, 40, 0.35); color: var(--or-deep); }
 .section-light .step-body h3 { color: var(--ivory-ink); }
@@ -692,6 +713,23 @@ ul { list-style: none; }
   display: block; font-family: var(--ff-m); font-size: 0.789rem; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.55rem;
 }
+.section-light .field-label { color: var(--or-deep); }
+/* ─── Les champs sur fond clair ───
+   Écrits pour le fond noir : texte --paper, fond blanc à 2,5 %, bordure
+   blanche à 6 %. Servis sur la page contact, qui est claire, cela donne
+   deux pannes d'un coup — ce qu'on tape s'affiche à 1,15 de contraste,
+   c'est-à-dire invisible, et le cadre du champ n'existe plus. Seul le
+   texte d'exemple restait lisible, parce qu'il a sa propre couleur :
+   l'impression était celle d'un champ qui efface ce qu'on écrit. */
+.section-light .field-input,
+.section-light .field-area,
+.section-light .field-select {
+  color: var(--ivory-ink); background: #fff; border-color: rgba(10, 8, 4, 0.22);
+}
+.section-light .field-input::placeholder,
+.section-light .field-area::placeholder { color: var(--ivory-dim); }
+.section-light .field-select option { background: #fff; color: var(--ivory-ink); }
+.section-light .field-hint { color: var(--ivory-dim); }
 .field-input, .field-area, .field-select {
   width: 100%; background: rgba(255, 255, 255, 0.025); color: var(--paper);
   border: 1px solid var(--line-soft); border-radius: var(--radius);
@@ -4859,6 +4897,27 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   margin: 1.8rem 0 0; padding: 1rem 1.2rem;
   background: var(--or-soft); border-left: 2px solid var(--or-patina);
   font-size: 0.92rem; line-height: 1.7; color: var(--bone);
+}
+
+/* ─── Ces blocs sont servis sur ivoire, pas sur noir ───
+   « .parcours-e » et « .valeur » ont été écrits avec la palette du fond
+   sombre — --paper pour les intitulés, --ash pour le texte, --bone pour
+   la note. Sur l'ivoire, mesuré : 1,02 pour les intitulés en gras, ce
+   qui veut dire blanc sur blanc, invisible ; 3,13 pour le texte ; 1,62
+   pour la note. Les filets et le fond doré s'effaçaient de même. */
+.section-light .parcours-e h3 { color: var(--ivory-ink); }
+.section-light .parcours-e p  { color: var(--ivory-soft); }
+.section-light .parcours-e::before,
+.section-light .parcours-e::after { border-color: rgba(107, 88, 40, 0.4); }
+.section-light .valeur li {
+  color: var(--ivory-soft); border-left-color: rgba(10, 8, 4, 0.16);
+}
+/* Le gras passe à 500 : en Jost, un 400 assombri reste maigre, et c'est
+   l'amorce de chaque ligne qu'on doit pouvoir accrocher de l'œil. */
+.section-light .valeur b { color: var(--ivory-ink); font-weight: 500; }
+.section-light .valeur-note {
+  color: var(--ivory-soft);
+  background: rgba(107, 88, 40, 0.07); border-left-color: var(--or-deep);
 }
 
 /* ─── Ce que nous pouvons prouver ─── */

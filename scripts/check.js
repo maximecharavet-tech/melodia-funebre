@@ -16,6 +16,7 @@ const files = [
   'assets/img/plaque-qr-1100.webp', 'assets/img/plaque-qr-1100.jpg',
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'assets/img/maxime.png', 'assets/img/hyper-engine.png', 'assets/img/equipe.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
+  'assets/img/icons/icon-48.png', 'assets/img/icons/icon-32.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
   'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
   'vercel.json', 'robots.txt', 'sitemap.xml'
@@ -576,6 +577,221 @@ try {
     console.log('  ok   service QR à ' + a[1] + ' €, identique des deux côtés');
   }
 } catch (e) { console.error('  vérification du prix QR impossible :', e.message); ok = false; }
+
+/* ─── L'icône que Google affiche à côté du site ───
+   Google va chercher les <link rel="icon"> de la page et retient celle
+   qui approche le plus 48 pixels. Deux pannes silencieuses guettent :
+   un favicon.ico qui n'embarque pas de vignette 48 (Google rapetisse
+   alors la 32 et les lettres bavent), et une taille annoncée dans
+   « sizes » qui ne correspond pas au fichier — la déclaration ment,
+   Google choisit une autre icône, et le logo affiché n'est pas celui
+   qu'on croit. On lit donc les en-têtes des fichiers eux-mêmes. */
+function taillesIco(f) {
+  const b = fs.readFileSync(f);
+  if (b.readUInt16LE(0) !== 0 || b.readUInt16LE(2) !== 1) return null;  /* pas un ICO */
+  const n = b.readUInt16LE(4);
+  const t = [];
+  for (let i = 0; i < n; i++) {
+    const o = 6 + i * 16;
+    t.push([b[o] || 256, b[o + 1] || 256]);
+  }
+  return t;
+}
+function taillePng(f) {
+  const b = fs.readFileSync(f);
+  /* IHDR est toujours le premier bloc : 8 octets de signature, 8 d'en-tête
+     de bloc, puis largeur et hauteur sur quatre octets chacune. */
+  if (b.toString('hex', 0, 8) !== '89504e470d0a1a0a') return null;
+  return [b.readUInt32BE(16), b.readUInt32BE(20)];
+}
+
+try {
+  const ico = taillesIco('favicon.ico');
+  if (!ico) { console.error('  favicon.ico n’est pas un fichier ICO valide'); ok = false; }
+  else {
+    for (const attendu of [16, 32, 48]) {
+      if (!ico.some(([l, h]) => l === attendu && h === attendu)) {
+        console.error('  FAVICON  aucune vignette ' + attendu + '×' + attendu +
+          ' dans favicon.ico (présentes : ' + ico.map((t) => t.join('×')).join(', ') + ')');
+        ok = false;
+      }
+    }
+    if (ok) console.log('  ok   favicon.ico : ' + ico.map((t) => t.join('×')).join(', '));
+  }
+
+  /* Toutes les pages, et non la seule accueil : cinq pages sont écrites
+     à la main, hors du gabarit, et c'est précisément là que la
+     déclaration avait pris du retard — la console maître annonçait
+     encore le logo JPG, illisible à seize pixels. */
+  let pagesVues = 0;
+  for (const page of fs.readdirSync('.').filter((f) => f.endsWith('.html'))) {
+    const src = fs.readFileSync(page, 'utf8');
+    const liens = [...src.matchAll(/<link rel="(?:icon|apple-touch-icon)"[^>]*>/g)].map((m) => m[0]);
+    if (!liens.length) { console.error('  aucune icône déclarée dans ' + page); ok = false; continue; }
+    let quaranteHuit = ico && ico.some(([l, h]) => l === 48 && h === 48) &&
+      liens.some((l) => /favicon\.ico/.test(l));
+    for (const lien of liens) {
+      const href = (lien.match(/href="([^"]+)"/) || [])[1];
+      if (!href) continue;
+      const f = href.replace(/^\//, '').replace(/\?.*$/, '');
+      if (!fs.existsSync(f)) { console.error('  ICÔNE MANQUANTE  ' + href + ' (' + page + ')'); ok = false; continue; }
+      const annonce = (lien.match(/sizes="([^"]+)"/) || [])[1];
+      if (!/\.png$/.test(f)) continue;
+      const reelle = taillePng(f);
+      if (!reelle) { console.error('  ' + f + ' n’est pas un PNG lisible'); ok = false; continue; }
+      if (reelle[0] === 48 && reelle[1] === 48) quaranteHuit = true;
+      if (annonce && !annonce.split(/\s+/).includes(reelle.join('x'))) {
+        console.error('  TAILLE ANNONCÉE FAUSSE  ' + f + ' fait ' + reelle.join('×') +
+          ' mais se déclare « ' + annonce + ' » dans ' + page);
+        ok = false;
+      }
+    }
+    if (!quaranteHuit) {
+      console.error('  FAVICON  ' + page + ' ne déclare aucune icône de 48×48 — ' +
+        'c’est la taille que Google préfère, sans elle il prendra ce qu’il trouve');
+      ok = false;
+    }
+    pagesVues++;
+  }
+  if (ok) console.log('  ok   ' + pagesVues + ' pages déclarent une icône de 48×48, tailles annoncées exactes');
+} catch (e) { console.error('  vérification des icônes impossible :', e.message); ok = false; }
+
+/* ─── La palette sombre servie sur fond ivoire ───
+   Le site a deux palettes : --paper / --ash / --bone pour le texte sur
+   noir, --ivory-ink / --ivory-soft pour le texte sur ivoire. Les blocs
+   sont écrits sur fond noir, puis certains sont réemployés dans une
+   « .section-light » — et la couleur, elle, ne suit pas. Mesuré sur la
+   page professionnels : 1,02 de contraste pour les intitulés en gras,
+   c'est-à-dire blanc sur blanc. L'or a le même défaut : --or vaut 2,03
+   sur l'ivoire, et le point clair de --or-grad tombe à 1,53.
+
+   On croise donc deux choses : les classes réellement employées dans une
+   section claire d'une page servie, et les règles qui leur donnent une
+   couleur de la palette sombre. Toute classe dans les deux listes doit
+   avoir sa contrepartie « .section-light ». Le rapprochement est fait
+   par nom de classe, pas par sélecteur exact : un « .section-light
+   .valeur li » couvre aussi « .valeur b ». C'est volontaire — la
+   vérification dit où regarder, elle ne remplace pas l'œil. */
+try {
+  /* Les teintes trop claires pour l'ivoire, mesurées sur #f4f1ea :
+     --paper 1,02 · --silver 1,26 · --bone 1,69 · --or 2,03 ·
+     --silver-dim 2,48 · --ash 3,13 · --or-patina 3,40. --dust, lui,
+     donne 6,11 : il est assez sombre pour les deux fonds, il ne figure
+     donc pas ici. */
+  const SOMBRES = ['--paper', '--ash', '--bone', '--silver', '--silver-dim',
+                   '--or', '--or-patina', '--or-bright', '--or-grad'];
+  /* « var(--or) » ne doit pas se déclencher sur « var(--or-deep) » : on
+     exige la parenthèse fermante ou une virgule juste après le nom. */
+  const cite = (decl, jeton) =>
+    new RegExp('var\\(\\s*' + jeton + '\\s*[,)]').test(decl);
+
+  /* Les classes présentes dans une section claire d'une page servie. */
+  const classesClaires = new Set();
+  let sections = 0;
+  for (const f of fs.readdirSync('.').filter((x) => x.endsWith('.html'))) {
+    const src = fs.readFileSync(f, 'utf8');
+    const ouvre = /<section[^>]*class="[^"]*\bsection-light\b[^"]*"[^>]*>/g;
+    let m;
+    while ((m = ouvre.exec(src))) {
+      sections++;
+      const balises = /<\/?section\b/g;
+      balises.lastIndex = ouvre.lastIndex;
+      let prof = 1, t, fin = src.length;
+      while ((t = balises.exec(src))) {
+        prof += t[0][1] === '/' ? -1 : 1;
+        if (!prof) { fin = t.index; break; }
+      }
+      for (const c of src.slice(ouvre.lastIndex, fin).matchAll(/class="([^"]+)"/g)) {
+        for (const x of c[1].trim().split(/\s+/)) classesClaires.add(x);
+      }
+    }
+  }
+
+  /* Les règles de la feuille, commentaires ôtés. */
+  const feuille = fs.readFileSync('assets/css/style.css', 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const regles = [...feuille.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .map((m) => ({ sel: m[1].trim(), decl: m[2] }));
+
+  /* Celles qui posent une couleur de texte sombre, ou le dégradé doré
+     découpé dans le texte — dont la couleur affichée est le dégradé. */
+  /* Une pastille noire posée dans une section claire garde légitimement
+     sa couleur claire : c'est le cas de « .parcours-n », disque d'encre
+     à chiffre doré. On ne signale donc pas une règle qui se donne
+     elle-même un fond sombre opaque. */
+  const FONDS_SOMBRES = ['--ink', '--ink-2', '--ink-3', '--surface', '--surface-2', '--surface-3'];
+  const ilotSombre = (decl) =>
+    /(^|;|\s)background(-color|-image)?\s*:/.test(decl) &&
+    FONDS_SOMBRES.some((j) => cite(decl, j));
+
+  /* La couleur d'un texte se lit dans « color », ou dans le dégradé
+     quand celui-ci est découpé dedans. */
+  const couleurLue = (decl) => {
+    const c = (decl.match(/(?:^|;|\s)color\s*:([^;]*)/) || [, ''])[1];
+    const g = /background-clip\s*:\s*text/.test(decl)
+      ? (decl.match(/(?:^|;|\s)background(?:-image)?\s*:([^;]*)/) || [, ''])[1] : '';
+    return c + ' ' + g;
+  };
+
+  /* Une règle « .section-light » qui reprend elle-même une teinte de la
+     palette sombre : c'est l'antidote qui rend malade. On la signale
+     tout de suite, sans passer par le rapprochement des classes. */
+  let rechutes = 0;
+  for (const r of regles) {
+    if (!/\.section-light/.test(r.sel)) continue;
+    if (ilotSombre(r.decl)) continue;
+    const j = SOMBRES.find((x) => cite(couleurLue(r.decl), x));
+    if (j) {
+      console.error('  PALETTE SOMBRE SUR IVOIRE  « ' + r.sel.replace(/\s+/g, ' ') +
+        ' » est une règle de section claire, et elle y pose « var(' + j + ') »');
+      rechutes++; ok = false;
+    }
+  }
+
+  const fautives = new Map();
+  for (const r of regles) {
+    if (/\.section-light/.test(r.sel)) continue;
+    if (ilotSombre(r.decl)) continue;
+    /* C'est la valeur de « color » qui compte, pas le fait que la règle
+       cite une teinte claire quelque part : un bouton doré à texte noir
+       écrit « background: var(--or-grad); color: #120e04 » et va très
+       bien. Le dégradé ne compte que s'il est découpé dans le texte,
+       auquel cas c'est lui qu'on lit. */
+    const valeurCouleur = (r.decl.match(/(?:^|;|\s)color\s*:([^;]*)/) || [, ''])[1];
+    const decoupe = /background-clip\s*:\s*text/.test(r.decl) &&
+      (r.decl.match(/(?:^|;|\s)background(?:-image)?\s*:([^;]*)/) || [, ''])[1];
+    const texteSombre = SOMBRES.some((j) => cite(valeurCouleur, j)) ||
+      (decoupe && SOMBRES.some((j) => cite(decoupe, j)));
+    if (!texteSombre) continue;
+    for (const c of r.sel.matchAll(/\.([A-Za-z0-9_-]+)/g)) {
+      if (classesClaires.has(c[1])) {
+        if (!fautives.has(c[1])) fautives.set(c[1], []);
+        fautives.get(c[1]).push(r.sel);
+      }
+    }
+  }
+
+  /* Une contrepartie claire pose bien une couleur, et pas seulement une
+     bordure ou un fond. */
+  const couvertes = new Set();
+  for (const r of regles) {
+    if (!/\.section-light/.test(r.sel)) continue;
+    if (!/(^|;|\s)color\s*:/.test(r.decl) && !/background-clip\s*:\s*text/.test(r.decl)) continue;
+    for (const c of r.sel.matchAll(/\.([A-Za-z0-9_-]+)/g)) couvertes.add(c[1]);
+  }
+
+  let nues = rechutes;
+  for (const [c, sels] of fautives) {
+    if (couvertes.has(c)) continue;
+    console.error('  PALETTE SOMBRE SUR IVOIRE  « .' + c + '  » est servie dans une section claire ' +
+      'mais n’a pas de règle « .section-light » qui lui rende une couleur lisible');
+    console.error('        en cause : ' + [...new Set(sels)].join(' , '));
+    nues++; ok = false;
+  }
+  if (!nues) {
+    console.log('  ok   ' + sections + ' sections claires, ' + classesClaires.size +
+      ' classes employées dedans, toutes avec leur couleur d’ivoire');
+  }
+} catch (e) { console.error('  vérification des palettes impossible :', e.message); ok = false; }
 
 /* Le message de fin doit dire ce qui ne va pas. « Des fichiers
    manquent » sur un écart de tarif envoie chercher au mauvais
