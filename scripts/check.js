@@ -312,6 +312,28 @@ try {
     return [0, 0];
   };
 
+  /* Les affiches reçues en WebP se mesurent autrement : après « RIFF »
+     et « WEBP » vient un bloc qui porte la taille. VP8X la donne sur
+     trois octets moins un, VP8 (avec perte) sur quatorze bits, VP8L
+     (sans perte) sur un entier compacté. Sans cette lecture, une
+     affiche WebP échappait au contrôle des dimensions — et c'est
+     justement là qu'une déclaration fausse ne se voit pas. */
+  const tailleWebp = (f) => {
+    const b = fs.readFileSync(f);
+    if (b.toString('latin1', 0, 4) !== 'RIFF' || b.toString('latin1', 8, 12) !== 'WEBP') return [0, 0];
+    const bloc = b.toString('latin1', 12, 16);
+    if (bloc === 'VP8X') return [(b.readUIntLE(24, 3) & 0xFFFFFF) + 1, (b.readUIntLE(27, 3) & 0xFFFFFF) + 1];
+    if (bloc === 'VP8 ') return [b.readUInt16LE(26) & 0x3FFF, b.readUInt16LE(28) & 0x3FFF];
+    if (bloc === 'VP8L') {
+      const n = b.readUInt32LE(21);
+      return [(n & 0x3FFF) + 1, ((n >> 14) & 0x3FFF) + 1];
+    }
+    return [0, 0];
+  };
+
+  const mesurable = (f) => /\.(webp|jpe?g)$/i.test(f);
+  const mesure = (f) => (/\.webp$/i.test(f) ? tailleWebp(f) : tailleJpeg(f));
+
   const fautes = [];
   for (const m of MED.MEDIAS) {
     const f = MED.DOSSIER + m.fichier;
@@ -333,15 +355,17 @@ try {
                     `soit plus que l'original (${Math.round(poids / 1024)} Ko)`);
       }
     }
-    /* Les dimensions ne se vérifient que sur les JPEG : pour la vidéo
+    /* Les dimensions se lisent dans le fichier image : pour la vidéo
        il faudrait décoder le conteneur, et l'affiche d'attente en
        porte déjà la preuve. */
-    const jpeg = m.type === 'video' ? (m.affiche || '') : m.fichier;
-    if (/\.jpe?g$/i.test(jpeg)) {
-      const [w, h] = tailleJpeg(MED.DOSSIER + jpeg);
+    const image = m.type === 'video' ? (m.affiche || '') : m.fichier;
+    if (image && mesurable(image)) {
+      const [w, h] = mesure(MED.DOSSIER + image);
       if (w !== m.largeur || h !== m.hauteur) {
-        fautes.push(`${jpeg} : annoncé ${m.largeur} × ${m.hauteur}, mesuré ${w} × ${h}`);
+        fautes.push(`${image} : annoncé ${m.largeur} × ${m.hauteur}, mesuré ${w} × ${h}`);
       }
+    } else if (image) {
+      fautes.push(`${image} : format d'image non mesurable par le contrôle`);
     }
   }
 

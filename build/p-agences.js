@@ -22,38 +22,11 @@ const FAQ_B2B = [
    ses familles : lui montrer le matériel AVANT de lui demander de
    signer répond à la question sans qu'elle ait à la poser.
 
-   Sur la résolution, on ne ment pas. 941 × 1672, c'est un écran, pas
-   une affiche imprimable en grand format — le dire évite à un
-   partenaire de découvrir le problème chez son imprimeur, et donne
-   une raison d'appeler. */
+   Sur la résolution, on ne ment pas. 941 × 1672 ou 1024 × 1536, c'est
+   un écran : à 1024 pixels de large, une A4 tombe à 124 points par
+   pouce, ce qui se voit. Le dire évite à un partenaire de découvrir
+   le problème chez son imprimeur, et donne une raison d'appeler. */
 function kit() {
-  const piece = (m) => {
-    const src = '/' + MED.DOSSIER + m.fichier;
-    const visuel = m.type === 'video'
-      ? `<video class="kit-media" controls preload="none" playsinline
-             poster="/${MED.DOSSIER}${m.affiche}" width="${m.largeur}" height="${m.hauteur}">
-          ${m.leger ? `<source src="/${MED.DOSSIER}${m.leger}" type="video/webm">` : ''}
-          <source src="${src}" type="video/mp4">
-          Votre navigateur ne sait pas lire cette vidéo — le bouton ci-dessous la télécharge.
-        </video>`
-      : `<img class="kit-media" src="${src}" alt="Affiche : ${m.titre}"
-             width="${m.largeur}" height="${m.hauteur}" loading="lazy" decoding="async">`;
-    const format = m.type === 'video'
-      ? `Vidéo · ${m.duree} s · ${m.largeur} × ${m.hauteur}`
-      : `Image · ${m.largeur} × ${m.hauteur}`;
-    return `        <figure class="kit-piece reveal">
-          <div class="kit-cadre">${visuel}</div>
-          <figcaption>
-            <span class="kit-a-qui">${MED.AUDIENCES[m.audience]}</span>
-            <h3 class="kit-titre">${m.titre}</h3>
-            <p class="kit-legende">${m.legende}</p>
-            <p class="kit-usage"><strong>Où s'en servir :</strong> ${m.usage}</p>
-            <span class="kit-format">${format}</span>
-            <a class="kit-tele" href="${src}" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg> Télécharger</a>
-          </figcaption>
-        </figure>`;
-  };
-
   /* La vidéo d'abord : c'est la pièce qu'on regarde, les affiches se
      parcourent. Puis le professionnel avant les familles — nous
      sommes sur la page des agences. */
@@ -70,7 +43,7 @@ function kit() {
         <p class="lead" style="margin:1.6rem auto 0;max-width:46rem;">Vous n'avez rien à produire. Voici le matériel, libre d'usage pour votre agence : à publier, à envoyer à une famille, à passer sur l'écran de votre accueil.</p>
       </div>
       <div class="kit">
-${pieces.map(piece).join('\n')}
+${pieces.map(P.pieceMedia).join('\n')}
       </div>
       <p class="center reveal kit-note">Ces fichiers sont calibrés pour l'écran — réseaux sociaux, courriel, écran d'accueil. Pour une impression grand format, demandez-nous les versions haute définition : <button type="button" class="lien-rappel" data-rappel>être rappelé</button>.</p>
     </div>

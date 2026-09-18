@@ -4574,6 +4574,17 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   margin-top: 1rem;
 }
+/* Deux pièces seulement : « auto-fill » créait une troisième colonne
+   vide à côté d'elles. Le rapport du cadre passe aussi à 2/3, qui est
+   celui de ces deux affiches-là — plus de bandes noires, et l'image
+   occupe la place qu'on lui donne. */
+.kit-duo {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 56rem; margin-inline: auto;
+}
+.kit-duo .kit-cadre { aspect-ratio: 2 / 3; }
+@media (max-width: 720px) { .kit-duo { grid-template-columns: minmax(0, 1fr); max-width: 26rem; } }
+
 .kit-piece {
   margin: 0; display: flex; flex-direction: column;
   border: 1px solid var(--line); border-radius: var(--radius-lg);
@@ -4601,6 +4612,10 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .kit-piece figcaption {
   display: flex; flex-direction: column; gap: 0.5rem;
   padding: 1.1rem 1.2rem 1.3rem;
+  /* La légende occupe la hauteur restante, et le bouton est poussé en
+     bas : sans cela, deux cartes voisines aux textes inégaux posent
+     leur « Télécharger » à deux hauteurs différentes. */
+  flex: 1;
 }
 .kit-a-qui {
   font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.15em;
@@ -4618,6 +4633,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   color: var(--dust);
 }
 .kit-tele {
+  margin-top: auto;
   margin-top: 0.4rem; align-self: flex-start;
   display: inline-flex; align-items: center; gap: 0.5rem;
   padding: 0.6rem 1.1rem; border-radius: var(--radius);
