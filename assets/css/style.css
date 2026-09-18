@@ -5138,6 +5138,34 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .hyper-piliers .guide-photo { margin-bottom: 0; max-width: 100%; }
 
+/* Les films des maisons : un cadre carré commun, pour que les trois
+   légendes tombent sur la même ligne alors que les formats diffèrent. */
+.films {
+  display: grid; gap: 1.8rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 58rem; margin-inline: auto;
+}
+@media (max-width: 900px) { .films { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 40rem; } }
+@media (max-width: 560px) { .films { grid-template-columns: minmax(0, 1fr); max-width: 22rem; } }
+.film { margin: 0; display: grid; gap: 0.8rem; }
+.film-cadre {
+  aspect-ratio: 1; background: var(--ink-3);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.film-cadre video {
+  display: block; width: 100%; height: 100%;
+  /* « contain » : le film de Ziggy est vertical, les deux autres sont
+     carrés. Remplir le cadre lui couperait la tête et le nom. */
+  object-fit: contain;
+}
+.film figcaption { display: grid; gap: 0.25rem; text-align: center; }
+.film figcaption b { font-family: var(--ff-d); font-size: 1.05rem; font-weight: 400; color: var(--paper); }
+.film figcaption span {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--dust);
+}
+
 /* ─── Le fondateur, et les maisons du groupe ─── */
 .fondateur-bloc {
   display: grid; gap: 2.4rem; align-items: start;

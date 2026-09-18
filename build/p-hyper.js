@@ -1,6 +1,6 @@
 const { ICON, MAIL } = require('./gen.js');
 const P = require('./parts.js');
-const { MAISONS } = require('./groupe.js');
+const { MAISONS, avecFilm } = require('./groupe.js');
 
 /* ═══════════════════════════════════════════════════════════════
    HYPER A.I ENGINE
@@ -176,6 +176,56 @@ ${MAISONS.map((m, i) => `        <div class="maison-carte reveal reveal-d${(i % 
         « Unir l’intelligence artificielle, la technologie et l’humain pour construire
         un futur sûr, authentique et harmonieux. »
       </p>
+    </div>
+  </section>
+
+  <!-- ═══ LES FILMS ═══
+       Trois emblèmes animés, un par maison qui en a un. Ils portent du
+       son : ils ne se lancent donc jamais tout seuls — contrairement à
+       la boucle muette de l'atelier, qui démarre à l'entrée dans
+       l'écran. Ici, « controls » et « preload=none » : rien ne quitte
+       le serveur avant que quelqu'un appuie.
+
+       Le cadre est carré pour les trois, alors que celui de Ziggy est
+       vertical : c'est le seul moyen d'aligner les légendes sur une
+       même ligne. Les bandes sur les côtés sont le prix à payer pour
+       montrer l'image entière — le même parti que pour le kit des
+       agences.
+
+       UN SEUL FORMAT, ET C'EST MESURÉ. La vidéo de l'atelier est
+       servie en WebM parce qu'il y pèse 1084 Ko contre 1229 au MP4.
+       Ici c'est l'inverse, et largement : ces trois films sont pleins
+       de scintillement doré, ce qui est le pire cas pour VP9. Sur
+       Ziggy, ramené à 480 de large : 1737 Ko en H.264, 3795 en VP9 au
+       réglage le plus dur essayé. Un encodage « léger » deux fois plus
+       lourd que l'original ne sert personne — c'est exactement ce que
+       refuse le garde-fou de la médiathèque. Donc MP4 seul. -->
+  <section class="section" id="films">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.8rem;">
+        <div class="eyebrow">En mouvement</div>
+        <h2 class="h-xl">Les emblèmes,<br><em>animés.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:46rem;">
+          Ils ont du son. Rien ne se lance tout seul, et rien ne se télécharge
+          avant que vous appuyiez sur lecture.
+        </p>
+      </div>
+      <div class="films">
+${avecFilm().map((m, i) => `        <figure class="film reveal reveal-d${(i % 3) + 1}">
+          <div class="film-cadre">
+            <video controls preload="none" playsinline
+                   poster="assets/img/films/${m.id}.webp"
+                   aria-label="Film de présentation de ${m.nom}, ${m.film.duree} secondes, avec son.">
+              <source src="assets/img/films/${m.id}.mp4" type="video/mp4">
+              Votre navigateur ne sait pas lire cette vidéo.
+            </video>
+          </div>
+          <figcaption>
+            <b>${m.nom}</b>
+            <span>${m.film.duree} secondes, avec son</span>
+          </figcaption>
+        </figure>`).join('\n')}
+      </div>
     </div>
   </section>
 

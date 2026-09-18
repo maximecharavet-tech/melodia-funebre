@@ -38,4 +38,27 @@ const MAISONS = [
   }
 ];
 
-module.exports = { MAISONS };
+/* ─── Les films ───
+   Trois des quatre maisons ont le leur : un emblème animé, avec du son.
+   Le champ « film » est facultatif — une maison qui n'en a pas garde sa
+   seule vignette, et la page n'affiche que celles qui en ont une. Le
+   jour où le quatrième arrive, il suffit de l'ajouter ici.
+
+   « duree » sert à l'annoncer avant qu'on clique : personne n'ouvre
+   une vidéo sans savoir combien de temps elle prend. « carre » dit si
+   le film remplit le cadre ou s'il y laisse des bandes : Ziggy est
+   vertical, les deux autres sont carrés, et le cadre commun est carré
+   pour que les trois s'alignent.
+
+   Tous portent du son : ils ne se lancent donc JAMAIS tout seuls. Rien
+   ne se télécharge avant que quelqu'un appuie sur lecture. */
+const FILMS = {
+  'vigie-orbitale': { duree: 10, carre: true },
+  'authenticseal':  { duree: 15, carre: true },
+  'ziggy':          { duree: 25, carre: false }
+};
+
+/* Les maisons qui ont un film, dans l'ordre de MAISONS. */
+const avecFilm = () => MAISONS.filter((m) => FILMS[m.id]).map((m) => ({ ...m, film: FILMS[m.id] }));
+
+module.exports = { MAISONS, FILMS, avecFilm };
