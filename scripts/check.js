@@ -16,6 +16,7 @@ const files = [
   'assets/img/plaque-qr-1100.webp', 'assets/img/plaque-qr-1100.jpg',
   'assets/img/og-melodia.jpg', 'assets/img/intro-logo.jpg', 'assets/img/maxime.png', 'assets/img/hyper-engine.png', 'assets/img/equipe.jpg', 'favicon.ico', 'site.webmanifest',
   'assets/img/icons/icon-192.png', 'assets/img/icons/icon-512.png',
+  'assets/img/icons/icon-48.png', 'assets/img/icons/icon-32.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
   'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
   'vercel.json', 'robots.txt', 'sitemap.xml'
@@ -576,6 +577,84 @@ try {
     console.log('  ok   service QR à ' + a[1] + ' €, identique des deux côtés');
   }
 } catch (e) { console.error('  vérification du prix QR impossible :', e.message); ok = false; }
+
+/* ─── L'icône que Google affiche à côté du site ───
+   Google va chercher les <link rel="icon"> de la page et retient celle
+   qui approche le plus 48 pixels. Deux pannes silencieuses guettent :
+   un favicon.ico qui n'embarque pas de vignette 48 (Google rapetisse
+   alors la 32 et les lettres bavent), et une taille annoncée dans
+   « sizes » qui ne correspond pas au fichier — la déclaration ment,
+   Google choisit une autre icône, et le logo affiché n'est pas celui
+   qu'on croit. On lit donc les en-têtes des fichiers eux-mêmes. */
+function taillesIco(f) {
+  const b = fs.readFileSync(f);
+  if (b.readUInt16LE(0) !== 0 || b.readUInt16LE(2) !== 1) return null;  /* pas un ICO */
+  const n = b.readUInt16LE(4);
+  const t = [];
+  for (let i = 0; i < n; i++) {
+    const o = 6 + i * 16;
+    t.push([b[o] || 256, b[o + 1] || 256]);
+  }
+  return t;
+}
+function taillePng(f) {
+  const b = fs.readFileSync(f);
+  /* IHDR est toujours le premier bloc : 8 octets de signature, 8 d'en-tête
+     de bloc, puis largeur et hauteur sur quatre octets chacune. */
+  if (b.toString('hex', 0, 8) !== '89504e470d0a1a0a') return null;
+  return [b.readUInt32BE(16), b.readUInt32BE(20)];
+}
+
+try {
+  const ico = taillesIco('favicon.ico');
+  if (!ico) { console.error('  favicon.ico n’est pas un fichier ICO valide'); ok = false; }
+  else {
+    for (const attendu of [16, 32, 48]) {
+      if (!ico.some(([l, h]) => l === attendu && h === attendu)) {
+        console.error('  FAVICON  aucune vignette ' + attendu + '×' + attendu +
+          ' dans favicon.ico (présentes : ' + ico.map((t) => t.join('×')).join(', ') + ')');
+        ok = false;
+      }
+    }
+    if (ok) console.log('  ok   favicon.ico : ' + ico.map((t) => t.join('×')).join(', '));
+  }
+
+  /* Toutes les pages, et non la seule accueil : cinq pages sont écrites
+     à la main, hors du gabarit, et c'est précisément là que la
+     déclaration avait pris du retard — la console maître annonçait
+     encore le logo JPG, illisible à seize pixels. */
+  let pagesVues = 0;
+  for (const page of fs.readdirSync('.').filter((f) => f.endsWith('.html'))) {
+    const src = fs.readFileSync(page, 'utf8');
+    const liens = [...src.matchAll(/<link rel="(?:icon|apple-touch-icon)"[^>]*>/g)].map((m) => m[0]);
+    if (!liens.length) { console.error('  aucune icône déclarée dans ' + page); ok = false; continue; }
+    let quaranteHuit = ico && ico.some(([l, h]) => l === 48 && h === 48) &&
+      liens.some((l) => /favicon\.ico/.test(l));
+    for (const lien of liens) {
+      const href = (lien.match(/href="([^"]+)"/) || [])[1];
+      if (!href) continue;
+      const f = href.replace(/^\//, '').replace(/\?.*$/, '');
+      if (!fs.existsSync(f)) { console.error('  ICÔNE MANQUANTE  ' + href + ' (' + page + ')'); ok = false; continue; }
+      const annonce = (lien.match(/sizes="([^"]+)"/) || [])[1];
+      if (!/\.png$/.test(f)) continue;
+      const reelle = taillePng(f);
+      if (!reelle) { console.error('  ' + f + ' n’est pas un PNG lisible'); ok = false; continue; }
+      if (reelle[0] === 48 && reelle[1] === 48) quaranteHuit = true;
+      if (annonce && !annonce.split(/\s+/).includes(reelle.join('x'))) {
+        console.error('  TAILLE ANNONCÉE FAUSSE  ' + f + ' fait ' + reelle.join('×') +
+          ' mais se déclare « ' + annonce + ' » dans ' + page);
+        ok = false;
+      }
+    }
+    if (!quaranteHuit) {
+      console.error('  FAVICON  ' + page + ' ne déclare aucune icône de 48×48 — ' +
+        'c’est la taille que Google préfère, sans elle il prendra ce qu’il trouve');
+      ok = false;
+    }
+    pagesVues++;
+  }
+  if (ok) console.log('  ok   ' + pagesVues + ' pages déclarent une icône de 48×48, tailles annoncées exactes');
+} catch (e) { console.error('  vérification des icônes impossible :', e.message); ok = false; }
 
 /* Le message de fin doit dire ce qui ne va pas. « Des fichiers
    manquent » sur un écart de tarif envoie chercher au mauvais

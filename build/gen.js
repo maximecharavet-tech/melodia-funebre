@@ -96,6 +96,14 @@ const ICON = {
   qr: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M20 20h1M14 20h3"/></svg>'
 };
 
+/* Les icônes déclarées dans <head> sont la marque réduite « MF »
+   (build/marque.svg), et non le logo complet : c'est ce que Google affiche
+   à côté du site dans ses résultats, à seize pixels, où l'anneau, la
+   colombe et la clé de sol se réduisent à une tache sombre. Google retient
+   l'icône la plus proche de 48 px — d'où le 48 exact déclaré, qui l'emporte
+   sur le 180 de l'icône Apple. Le logo complet reste l'icône de
+   l'application (apple-touch-icon et manifeste), où la taille lui rend
+   justice. */
 function head(p) {
   /* L'adresse peut être réécrite : « ecouter-x.html » est servi à
      « /ecouter/x », et c'est cette adresse-là qui doit être canonique
@@ -129,8 +137,8 @@ ${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta prop
 <meta name="twitter:description" content="${p.desc}">
 <meta name="twitter:image" content="${image}">
 ${p.metas || ''}
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" type="image/png" sizes="192x192" href="/assets/img/icons/icon-192.png">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="48x48" href="${versionne('assets/img/icons/icon-48.png')}">
 <link rel="apple-touch-icon" href="/assets/img/icons/icon-180.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="apple-mobile-web-app-title" content="Melodia">
