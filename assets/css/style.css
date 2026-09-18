@@ -5108,6 +5108,14 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .section-light .maison-precision { color: var(--ivory-dim); }
 
+/* Les deux vues d'atelier, côte à côte. Même rapport toutes les deux :
+   une simple grille suffit, les légendes s'alignent d'elles-mêmes. */
+.atelier-duo {
+  display: grid; gap: 1.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 860px) { .atelier-duo { grid-template-columns: minmax(0, 1fr); } }
+
 /* Deux portraits verticaux côte à côte, centrés ensemble : « auto-fill »
    leur aurait fabriqué une troisième colonne vide. */
 .maison-duo {

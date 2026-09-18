@@ -140,6 +140,65 @@ ${HUMAIN.map(([t, p], i) => `        <div class="carte reveal reveal-d${(i % 3) 
     </div>
   </section>
 
+  <!-- ═══ L'ATELIER ═══
+       Placé juste après ce qu'aucun outil ne fait, et avant les noms :
+       on lit ce que des gens font, on les voit le faire, puis on
+       apprend comment ils s'appellent.
+
+       Ces trois images sont les seules du site à montrer la maison au
+       travail plutôt qu'une mise en scène. C'est pour cette page-ci
+       qu'elles comptent le plus : elles ne prouvent rien à elles
+       seules, mais elles montrent des écrans, des câbles et des tasses
+       — pas un décor.
+
+       À COMPLÉTER — les techniciens de production n'ont pas encore de
+       noms sur cette page. Le fondateur les fournira ; ils prendront la
+       même forme que les cinq cartes de la direction. En attendant, la
+       partie ne nomme personne plutôt que d'inventer. -->
+  <section class="section" id="atelier">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.6rem;">
+        <div class="eyebrow">La production</div>
+        <h2 class="h-xl">Ceux qui règlent<br><em>le son.</em></h2>
+        <p class="lead" style="margin:1.6rem auto 0;max-width:52rem;">
+          Entre l’entretien de cinq minutes et le fichier que reçoit la famille, il y a
+          des gens devant des écrans : ceux qui écrivent les paroles, ceux qui composent
+          et qui mixent, et celui qui écoute l’œuvre en entier avant qu’elle parte.
+          C’est le métier le moins visible de la maison, et c’est celui qui sépare
+          un hommage juste d’un hommage à peu près.
+        </p>
+      </div>
+
+      <figure class="equipe equipe-nue reveal">
+        <img src="assets/img/maison/atelier-salle-1264.webp"
+             srcset="assets/img/maison/atelier-salle-880.webp 880w, assets/img/maison/atelier-salle-1264.webp 1264w"
+             sizes="(max-width: 1180px) 92vw, 1080px"
+             width="1264" height="720" loading="lazy" decoding="async"
+             alt="L’atelier de Melodia Funèbre : plusieurs personnes devant des écrans de station audio, casques sur les oreilles, claviers maîtres et guitares au mur, sous le logo de la maison.">
+        <figcaption>L’atelier. Chaque écran est un hommage en cours, et une famille qui attend.</figcaption>
+      </figure>
+
+      <div class="atelier-duo" style="margin-top:1.8rem;">
+        <figure class="equipe equipe-nue reveal">
+          <img src="assets/img/maison/atelier-clavier-1264.webp"
+               srcset="assets/img/maison/atelier-clavier-640.webp 640w, assets/img/maison/atelier-clavier-1264.webp 1264w"
+               sizes="(max-width: 860px) 92vw, 520px"
+               width="1264" height="720" loading="lazy" decoding="async"
+               alt="Un compositeur de la maison, tourné vers un collègue, devant deux claviers maîtres et une console de mixage.">
+          <figcaption>La composition et le mixage : chercher le son qui ressemble à quelqu’un.</figcaption>
+        </figure>
+        <figure class="equipe equipe-nue reveal reveal-d1">
+          <img src="assets/img/maison/atelier-ecoute-1264.webp"
+               srcset="assets/img/maison/atelier-ecoute-640.webp 640w, assets/img/maison/atelier-ecoute-1264.webp 1264w"
+               sizes="(max-width: 860px) 92vw, 520px"
+               width="1264" height="720" loading="lazy" decoding="async"
+               alt="Plusieurs membres de la maison réunis autour d’un même écran de montage audio, en train d’écouter ensemble.">
+          <figcaption>La relecture. On écoute du début à la fin, ensemble — c’est l’étape que nous ne sautons jamais.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- ═══ L'ÉQUIPE ═══ -->
   <section class="section" id="equipe">
     <div class="wrap">
