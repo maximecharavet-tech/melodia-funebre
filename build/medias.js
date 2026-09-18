@@ -56,6 +56,22 @@ const MEDIAS = [
     usage: 'Réseaux sociaux, message à un prospect, écran d’accueil en agence.'
   },
   {
+    id: 'atelier',
+    type: 'video',
+    /* Le MP4 reste le fichier principal — c'est lui que Safari lit —
+       mais le WebM passe en premier dans la page : 1084 Ko contre 1229,
+       et les deux sont indiscernables, comparés image par image à
+       1264 px de large sur le plan le plus détaillé. */
+    fichier: 'atelier.mp4',
+    leger: 'atelier.webm',
+    affiche: 'atelier.jpg',
+    largeur: 1264, hauteur: 720, duree: 10,
+    audience: 'mixte',
+    titre: 'L’atelier, dix secondes',
+    legende: 'La caméra traverse la salle de composition, puis s’arrête sur deux personnes penchées sur le même écran. Muette : elle se passe partout, y compris sur un écran d’accueil.',
+    usage: 'Réseaux sociaux, écran d’accueil en agence, message à un prospect.'
+  },
+  {
     id: 'devenez-partenaire',
     type: 'affiche',
     fichier: 'affiche-partenaire.jpg',

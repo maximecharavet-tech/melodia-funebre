@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = 'acc74536df';
+const VERSION = '6769821d27';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -62,7 +62,7 @@ const PRECHARGE = [
   "/404",
   "/assets/img/icons/icon-48.png?v=08368217",
   "/assets/img/icons/icon-180.png?v=77f4ddbf",
-  "/assets/css/style.css?v=6b0d80c2",
+  "/assets/css/style.css?v=afae62cc",
   "/assets/img/intro-logo.jpg?v=1a9516a8",
   "/assets/img/intro-melodia.mp4?v=488159e4",
   "/assets/img/logo-melodia.jpg?v=c9f03ed0",
@@ -73,7 +73,7 @@ const PRECHARGE = [
   "/assets/js/application.js?v=921dfcdc",
   "/assets/js/rappel.js?v=1840ff2c",
   "/assets/js/courrier.js?v=7feee7d2",
-  "/assets/js/ornements.js?v=fd39b940",
+  "/assets/js/ornements.js?v=608a06ab",
   "/assets/js/catalogue.js?v=f173c94a",
   "/site.webmanifest",
   "/assets/img/icons/icon-192.png",
