@@ -5087,6 +5087,50 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
      un filet et une ombre portée la détachent sans l'encadrer. */
   box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
 }
+/* ─── La page « Qui sommes-nous » ─── */
+/* « .equipe » pose sa légende PAR-DESSUS l'image, sous un dégradé
+   sombre : c'était juste pour la photographie de l'atelier, qui ne
+   porte aucun texte. Le visuel de la direction, lui, a déjà ses noms
+   et son bandeau en bas — la légende tombait dedans et les deux
+   devenaient illisibles. Ce modificateur la remet sous l'image. */
+.equipe-nue { overflow: visible; border: 0; border-radius: 0; }
+.equipe-nue img { border: 1px solid var(--line-soft); border-radius: var(--radius-lg); }
+.equipe-nue::after { content: none; }
+.equipe-nue figcaption {
+  position: static; inset: auto; margin-top: 0.9rem; text-align: center;
+}
+
+/* La précision sous une fonction — « Ancien d'Universal Music ». Elle
+   se lit comme une note, pas comme un second titre. */
+.maison-precision {
+  margin-top: 0.3rem; font-size: 0.85rem; line-height: 1.5;
+  color: var(--ash); font-style: italic;
+}
+.section-light .maison-precision { color: var(--ivory-dim); }
+
+/* Deux portraits verticaux côte à côte, centrés ensemble : « auto-fill »
+   leur aurait fabriqué une troisième colonne vide. */
+.maison-duo {
+  display: grid; gap: 1.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 56rem; margin-inline: auto; align-items: start;
+}
+.maison-duo .guide-photo { max-width: 26rem; margin-bottom: 0; }
+/* Les deux visuels n'ont pas le même rapport — 0,68 et 0,59. Bridés à
+   la même largeur, ils n'avaient pas la même hauteur et leurs légendes
+   se posaient à deux niveaux différents. On les bride donc à la même
+   HAUTEUR : ils gardent chacun leur cadrage entier, et les deux
+   légendes s'alignent. */
+.maison-duo .guide-photo img {
+  max-height: 34rem; width: auto; max-width: 100%; margin-inline: auto;
+}
+@media (max-width: 780px) {
+  .maison-duo { grid-template-columns: minmax(0, 1fr); max-width: 26rem; }
+  /* Sur un téléphone la colonne est déjà étroite : la contrainte de
+     hauteur rapetisserait l'image pour rien. */
+  .maison-duo .guide-photo img { max-height: none; width: 100%; }
+}
+
 /* Une affiche 9/16 servie sur 40 rem ferait 1140 px de haut : elle
    couperait le guide en deux au lieu de l'aérer. */
 .guide-photo-haute { max-width: 23rem; }
