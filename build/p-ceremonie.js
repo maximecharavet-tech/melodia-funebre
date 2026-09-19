@@ -133,8 +133,8 @@ const COMPARATIF = [
 const musiquePersoObseques = page({
   file: 'musique-personnalisee-obseques.html',
   fil: 'L’arbitrage',
-  title: 'Musique personnalisée pour des obsèques : le comparatif honnête | Melodia Funèbre',
-  desc: "Morceau du commerce ou œuvre écrite pour la personne : ce qui change réellement, point par point — ce que l’assemblée entend, les droits, le coût, le délai, ce qu’il en reste.",
+  title: 'Musique personnalisée pour des obsèques : le comparatif | Melodia Funèbre',
+  desc: "Morceau du commerce ou œuvre écrite pour la personne : ce que l’assemblée entend, les droits, le coût, le délai, et ce qu’il en reste après.",
   h1: 'Un morceau qu’il aimait,<br><em>ou une œuvre pour lui ?</em>',
   situation: "Pour quelqu’un qui hésite entre passer un morceau connu et faire écrire quelque chose.",
   chapeau: "La réponse honnête est : les deux, et la plupart des familles font les deux. Mais si vous devez arbitrer, voici ce qui change réellement d’une solution à l’autre — sans faire semblant que le morceau du commerce serait un mauvais choix, parce qu’il n’en est pas un.",

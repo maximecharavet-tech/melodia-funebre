@@ -824,6 +824,117 @@ try {
   }
 } catch (e) { console.error('  vérification des palettes impossible :', e.message); ok = false; }
 
+/* ─── Ce que Google a la place d'afficher ───
+   Un titre au-delà d'une soixantaine de caractères est coupé dans les
+   résultats, une description au-delà de cent soixante aussi. Quatorze
+   titres dépassaient, dont un à quatre-vingt-onze : le mot-clé passait,
+   mais la moitié de phrase qui donne envie de cliquer était tronquée.
+
+   Le générateur ne remet plus le suffixe « | Melodia Funèbre » que s'il
+   tient, le site déclarant déjà son nom dans ses données structurées.
+   Ce contrôle-ci surveille le reste, et ne regarde que les pages
+   indexées : une console en « noindex » n'a pas de résultat à soigner. */
+{
+  const TITRE_MAX = 62, DESC_MIN = 70, DESC_MAX = 160;
+  const mauvais = [];
+  let vues = 0;
+  for (const f of fs.readdirSync('.').filter((x) => x.endsWith('.html'))) {
+    const src = fs.readFileSync(f, 'utf8');
+    if (/content="noindex/.test(src)) continue;
+    vues++;
+    const t = (src.match(/<title>([^<]*)<\/title>/) || [])[1] || '';
+    const d = (src.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '';
+    if (!t) mauvais.push(f + ' : sans titre');
+    else if (t.length > TITRE_MAX) mauvais.push(f + ' : titre de ' + t.length + ' caractères');
+    if (!d) mauvais.push(f + ' : sans description');
+    else if (d.length > DESC_MAX || d.length < DESC_MIN) {
+      mauvais.push(f + ' : description de ' + d.length + ' caractères');
+    }
+  }
+  if (mauvais.length) {
+    console.error('  TITRES ET DESCRIPTIONS — hors des limites d’affichage :');
+    mauvais.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log('  ok   ' + vues + ' pages indexées, titres sous ' + TITRE_MAX +
+      ' caractères et descriptions entre ' + DESC_MIN + ' et ' + DESC_MAX);
+  }
+}
+
+/* ─── Une image servie bien plus grande qu'elle ne s'affiche ───
+   Deux fois le même défaut, trouvé deux fois à la main : le médaillon
+   du générique était un fichier de 880 px affiché à 164, servi en
+   « fetchpriority=high » sur les soixante et une pages ; l'emblème de
+   l'accueil, un fichier de 1024 px affiché à 370. Quatre-vingts kilos
+   et quatre-vingt-dix-sept kilos, sur le chemin critique, pour des
+   pixels que personne ne voit.
+
+   Un attribut « width » est la promesse de la page : voilà la largeur
+   à laquelle je compte afficher cette image. Un fichier qui dépasse
+   nettement cette promesse est du poids payé pour rien. On tolère le
+   double — un téléphone à deux pixels par point a besoin du double,
+   et c'est la raison d'être de la marge. Au-delà, c'est un oubli.
+
+   Le contrôle ne lit que les images qui déclarent leur largeur : sans
+   déclaration, il n'y a pas de promesse à confronter.
+
+   Et il ne compte que ce qui pèse. Un médaillon de 160 px affiché à
+   30 est bien à cinq fois sa taille, mais le fichier fait quatre
+   kilos : en fabriquer un de 90 px économiserait trois kilos et
+   ajouterait un fichier de plus à tenir à jour. Le seuil de poids
+   garde le contrôle pointé sur ce qu'il a été écrit pour trouver —
+   les quatre-vingts et quatre-vingt-dix-sept kilos du chemin
+   critique — au lieu d'imposer une variante par usage. */
+{
+  const MARGE = 2, POIDS = 20 * 1024;
+  const lire = (f) => {
+    const b = fs.readFileSync(f);
+    if (/\.webp$/i.test(f)) {
+      if (b.toString('latin1', 0, 4) !== 'RIFF') return 0;
+      const bloc = b.toString('latin1', 12, 16);
+      if (bloc === 'VP8X') return (b.readUIntLE(24, 3) & 0xFFFFFF) + 1;
+      if (bloc === 'VP8 ') return b.readUInt16LE(26) & 0x3FFF;
+      if (bloc === 'VP8L') return (b.readUInt32LE(21) & 0x3FFF) + 1;
+      return 0;
+    }
+    let i = 2;
+    while (i < b.length) {
+      if (b[i] !== 0xFF) { i++; continue; }
+      const m = b[i + 1];
+      if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) return b.readUInt16BE(i + 7);
+      i += 2 + b.readUInt16BE(i + 2);
+    }
+    return 0;
+  };
+
+  const trop = new Map();
+  let regardees = 0;
+  const pages = fs.readdirSync('.').filter((x) => x.endsWith('.html'));
+  for (const f of pages) {
+    const src = fs.readFileSync(f, 'utf8');
+    for (const [, balise] of src.matchAll(/<img\s([^>]*)>/g)) {
+      const src2 = (balise.match(/\bsrc="\/?([^"?]+)/) || [])[1];
+      const w = +((balise.match(/\bwidth="(\d+)"/) || [])[1] || 0);
+      if (!src2 || !w || !/\.(webp|jpe?g)$/i.test(src2)) continue;
+      if (!fs.existsSync(src2)) continue;
+      regardees++;
+      const nat = lire(src2);
+      const poids = fs.statSync(src2).size;
+      if (nat > w * MARGE && poids > POIDS) trop.set(src2, { nat, w, poids, page: f });
+    }
+  }
+  if (trop.size) {
+    console.error('  IMAGES TROP GRANDES — plus de ' + MARGE + '× la largeur annoncée :');
+    [...trop.entries()].forEach(([f, x]) => console.error('         ' + f + ' : ' +
+      x.nat + ' px servis, ' + x.w + ' px annoncés (×' + (x.nat / x.w).toFixed(1) + '), ' +
+      Math.round(x.poids / 1024) + ' Ko — ' + x.page));
+    ok = false;
+  } else {
+    console.log('  ok   ' + regardees + ' images mesurées, aucune de plus de ' +
+      Math.round(POIDS / 1024) + ' Ko servie à plus de ' + MARGE + '× sa largeur d’affichage');
+  }
+}
+
 /* Le message de fin doit dire ce qui ne va pas. « Des fichiers
    manquent » sur un écart de tarif envoie chercher au mauvais
    endroit. */

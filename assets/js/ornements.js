@@ -124,8 +124,8 @@
           '<circle class="emb-arc" cx="100" cy="100" r="96"/>' +
         '</svg>' +
         '<div class="emb-rosace" aria-hidden="true">' + rosette('melodia-embleme', { traits: 3 }) + '</div>' +
-        '<img class="emb-logo" src="' + (o.src || '/assets/img/logo-melodia.jpg') + '" ' +
-             'alt="' + (o.alt || '') + '" width="440" height="440" ' +
+        '<img class="emb-logo" src="' + (o.src || '/assets/img/logo-melodia-600.webp') + '" ' +
+             'alt="' + (o.alt || '') + '" width="600" height="600" ' +
              (o.priorite ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"') + '>' +
         '<div class="emb-lueur" aria-hidden="true"></div>' +
       '</div>';

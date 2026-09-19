@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = '2415173e52';
+const VERSION = '3b20a6780b';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -62,19 +62,18 @@ const PRECHARGE = [
   "/404",
   "/assets/img/icons/icon-48.png?v=08368217",
   "/assets/img/icons/icon-180.png?v=77f4ddbf",
-  "/assets/css/style.css?v=f9b6739c",
-  "/assets/img/intro-logo.jpg?v=1a9516a8",
-  "/assets/img/intro-melodia.mp4?v=488159e4",
-  "/assets/img/logo-melodia.jpg?v=c9f03ed0",
-  "/assets/img/maxime.png?v=25ba945d",
-  "/assets/img/hyper-engine.png?v=a1960bfe",
+  "/assets/css/style.css?v=132ba663",
+  "/assets/img/intro-logo-360.webp?v=f1f2e4f6",
+  "/assets/img/logo-melodia-160.webp?v=d5ed7d92",
+  "/assets/img/maxime-128.webp?v=59ad45f3",
+  "/assets/img/hyper-engine-80.webp?v=0f6180f0",
   "/assets/js/content.js?v=b3438db0",
   "/assets/js/main.js?v=72d6b7b0",
   "/assets/js/application.js?v=921dfcdc",
   "/assets/js/rappel.js?v=1840ff2c",
   "/assets/js/courrier.js?v=7feee7d2",
-  "/assets/js/ornements.js?v=608a06ab",
-  "/assets/js/catalogue.js?v=f173c94a",
+  "/assets/js/ornements.js?v=b37cef91",
+  "/assets/js/catalogue.js?v=c664c550",
   "/site.webmanifest",
   "/assets/img/icons/icon-192.png",
   "/assets/img/icons/icon-512.png"

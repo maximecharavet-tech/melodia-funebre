@@ -37,7 +37,7 @@ module.exports = {
       <div class="grid-3">
         <div class="card card-gold card-lift reveal">
           <div class="card-icon">${ICON.note}</div>
-          <h3 class="h-lg">Collaborateur commercial</h3>
+          <h2 class="h-lg">Collaborateur commercial</h2>
           <p>Vous présentez le service aux agences de pompes funèbres de votre région. Pas de porte-à-porte
              au hasard : un annuaire, un script, des hommages réels à faire écouter, et une première
              composition offerte à chaque agence pour qu'elle juge sur pièce.</p>
@@ -45,7 +45,7 @@ module.exports = {
         </div>
         <div class="card card-lift reveal">
           <div class="card-icon">${ICON.pen}</div>
-          <h3 class="h-lg">Composition</h3>
+          <h2 class="h-lg">Composition</h2>
           <p>Vous écoutez une famille cinq minutes, et vous en tirez un texte qui lui ressemble.
              Il faut de l'oreille, une plume, et surtout du tact : ce que l'on vous confiera
              a été dit une seule fois, souvent en pleurant.</p>
@@ -53,7 +53,7 @@ module.exports = {
         </div>
         <div class="card card-lift reveal">
           <div class="card-icon">${ICON.shield}</div>
-          <h3 class="h-lg">Ce que nous ne demandons pas</h3>
+          <h2 class="h-lg">Ce que nous ne demandons pas</h2>
           <p>Ni diplôme de musique, ni expérience du funéraire, ni investissement d'aucune sorte.
              Nous demandons de la rigueur sur les délais — une cérémonie ne se reporte pas —
              et une manière de parler aux familles.</p>

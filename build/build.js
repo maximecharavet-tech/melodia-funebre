@@ -194,9 +194,36 @@ console.log('  consoles marquées      ' + marquees + ' / ' + CONSOLES.length);
      trouvait plus rien et le service worker partait avec zéro actif —
      un site hors ligne s'ouvrant sans style, c'est-à-dire la panne
      qu'on venait de corriger, déplacée. */
+  /* Un plafond de poids, parce que la coquille n'est pas le site : c'est
+     ce qu'il faut pour l'ouvrir. La moisson ramassait le film du
+     générique — 1 224 Ko — et chaque première visite le téléchargeait
+     en fond, avant même qu'on sache si le visiteur resterait. Sur le
+     téléphone d'une famille qui vient d'apprendre un décès, c'est un
+     mauvais marché : le générique a déjà son médaillon fixe en repli,
+     et le film se met en cache tout seul à la première lecture.
+
+     Le seuil ne vise pas ce fichier-là en particulier : il empêche la
+     prochaine grosse pièce posée sur l'accueil d'entrer sans qu'on
+     l'ait décidé.
+
+     Il ne s'applique qu'aux médias. La feuille de style pèse 263 Ko et
+     doit rester dans la coquille quoi qu'il arrive : une page hors
+     ligne servie sans elle s'ouvre nue, ce qui est précisément la
+     panne que la coquille existe pour éviter. Pareil pour les scripts.
+     Le poids ne décide que du sort des images, des films et des sons,
+     dont l'absence dégrade sans casser. */
+  const PLAFOND = 200 * 1024;
+  const MEDIA = /\.(mp4|webm|mp3|jpe?g|png|webp|gif|avif)$/i;
+  const trop = [];
   const actifs = [...new Set(
     [...accueil.matchAll(/(?:src|href)="(\/assets\/(?:css|js|img)\/[^"]+)"/g)].map((m) => m[1])
-  )].filter((u) => !/config\.js/.test(u));
+  )].filter((u) => !/config\.js/.test(u)).filter((u) => {
+    const f = path.join(RACINE, u.split('?')[0]);
+    if (!MEDIA.test(f) || !fs.existsSync(f) || fs.statSync(f).size <= PLAFOND) return true;
+    trop.push(u.split('?')[0].split('/').pop() + ' (' + Math.round(fs.statSync(f).size / 1024) + ' Ko)');
+    return false;
+  });
+  if (trop.length) console.log('  hors coquille          ' + trop.join(', ') + ' — mis en cache à l’usage');
 
   if (!actifs.length) {
     console.error('  ATTENTION le service worker ne précharge aucun actif — la moisson dans index.html n’a rien trouvé');

@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=f9b6739c">
+<link rel="stylesheet" href="/assets/css/style.css?v=132ba663">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -46,7 +46,13 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="/" class="nav-brand" aria-label="Melodia Funèbre, accueil">
-      <img src="/assets/img/logo-melodia.jpg?v=c9f03ed0" alt="" class="nav-logo" width="40" height="40">
+      <!-- La vignette, pas l'original : le logo carré fait 1024 px et
+           96 Ko, servis ici pour 40. Mesuré sur les 61 pages, les trois
+           vignettes du gabarit — logo, portrait, emblème — coûtaient
+           326 Ko par page ; elles en coûtent 21. Les fichiers pleine
+           taille restent pour les données structurées et les partages,
+           où Google et Facebook les veulent grands. -->
+      <img src="/assets/img/logo-melodia-160.webp?v=d5ed7d92" alt="" class="nav-logo" width="160" height="160">
       <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
     </a>
     <div class="nav-links">
@@ -224,12 +230,12 @@
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <img src="/assets/img/logo-melodia.jpg?v=c9f03ed0" alt="Melodia Funèbre" class="footer-logo" width="52" height="52">
+        <img src="/assets/img/logo-melodia-160.webp?v=d5ed7d92" alt="Melodia Funèbre" class="footer-logo" width="160" height="160" loading="lazy">
         <p class="footer-tag">Maison française de composition musicale personnalisée pour cérémonies funéraires.</p>
         <p class="footer-baseline">Écoute · Respect · Accompagnement<br>Harmonie · Mémoire</p>
       </div>
       <div>
-        <h4>Découvrir</h4>
+        <h2>Découvrir</h2>
         <ul class="footer-links">
           <li><a href="/processus">Le processus</a></li>
           <li><a href="/demos">Écouter les hommages</a></li>
@@ -244,7 +250,7 @@
              donne un lien depuis tout le site, sans encombrer une barre
              de navigation déjà pleine — et sans reproduire le
              débordement du menu mobile. -->
-        <h4>Conseils</h4>
+        <h2>Conseils</h2>
         <ul class="footer-links">
           <li><a href="/musique-obseques">Quelle musique pour un enterrement</a></li>
           <li><a href="/musique-cremation">La musique en crémation</a></li>
@@ -252,7 +258,7 @@
         </ul>
       </div>
       <div>
-        <h4>Professionnels</h4>
+        <h2>Professionnels</h2>
         <ul class="footer-links">
           <li><a href="/professionnels">Pour les pompes funèbres</a></li>
           <li><a href="/professionnels#partenariat">Devenir partenaire</a></li>
@@ -263,7 +269,7 @@
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <h2>Contact</h2>
         <ul class="footer-links">
           <li><a href="mailto:contact@melodia-funebre.fr">contact@melodia-funebre.fr</a></li>
           <li><button type="button" class="lien-rappel" data-rappel>Être rappelé</button></li>
@@ -291,7 +297,7 @@
         <a href="/confidentialite">Confidentialité</a>
       </span>
       <span class="signature">
-        <img src="/assets/img/maxime.png?v=25ba945d" alt="" class="signature-portrait" width="40" height="40" loading="lazy">
+        <img src="/assets/img/maxime-128.webp?v=59ad45f3" alt="" class="signature-portrait" width="128" height="128" loading="lazy">
         <span class="signature-mots">
           <span class="signature-role">Fondateur</span>
           <span class="signature-nom">Maxime Charavet</span>
@@ -303,7 +309,7 @@
          et l'emblème qui ne s'allume qu'au survol. -->
     <div class="propulse">
       <a href="/hyper-ai-engine" class="propulse-lien">
-        <img src="/assets/img/hyper-engine.png?v=a1960bfe" alt="" class="propulse-marque" width="26" height="24" loading="lazy">
+        <img src="/assets/img/hyper-engine-80.webp?v=0f6180f0" alt="" class="propulse-marque" width="80" height="74" loading="lazy">
         <span class="propulse-mots">Propulsé par <b>Hyper A.I Engine</b></span>
       </a>
     </div>
@@ -323,7 +329,7 @@
 <script src="/assets/js/application.js?v=921dfcdc"></script>
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
-<script src="/assets/js/ornements.js?v=608a06ab"></script>
+<script src="/assets/js/ornements.js?v=b37cef91"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->
