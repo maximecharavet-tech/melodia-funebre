@@ -140,17 +140,17 @@ module.exports = {
       <div class="grid-3">
         <div class="card reveal">
           <div class="card-icon">${ICON.shield}</div>
-          <h3 class="h-lg">Le célébrant décide</h3>
+          <h2 class="h-lg">Le célébrant décide</h2>
           <p>Prêtre, pasteur, rabbin, imam, officiant : le texte et l'enregistrement lui sont soumis avant la cérémonie. S'il dit non, il a raison et nous nous retirons.</p>
         </div>
         <div class="card reveal">
           <div class="card-icon">${ICON.pen}</div>
-          <h3 class="h-lg">Les mots viennent de vous</h3>
+          <h2 class="h-lg">Les mots viennent de vous</h2>
           <p>Nous n'inventons rien sur la foi du défunt. Le verset, la prière ou le psaume qui compte, c'est la famille qui le donne — nous l'entourons, nous ne le remplaçons pas.</p>
         </div>
         <div class="card reveal">
           <div class="card-icon">${ICON.heart}</div>
-          <h3 class="h-lg">Savoir dire non</h3>
+          <h2 class="h-lg">Savoir dire non</h2>
           <p>Il y a des rites où la musique n'a pas sa place. Nous le disons avant de vous prendre le moindre euro, plutôt que d'apprendre à une famille le jour même que nous nous étions trompés.</p>
         </div>
       </div>

@@ -64,13 +64,13 @@ module.exports = {
       <div class="grid-2">
         <div class="card reveal">
           <div class="eyebrow" style="margin-bottom:.7rem;">Android</div>
-          <h3>Chrome vous le propose</h3>
+          <h2>Chrome vous le propose</h2>
           <p>Ouvrez le menu du navigateur, puis <b>Installer l'application</b>. Selon la version, Chrome l'offre aussi tout seul en bas de l'écran.</p>
           <button type="button" class="btn btn-outline btn-sm" style="margin-top:1rem;" data-installer>Installer maintenant</button>
         </div>
         <div class="card reveal">
           <div class="eyebrow" style="margin-bottom:.7rem;">iPhone et iPad</div>
-          <h3>Par le bouton Partager</h3>
+          <h2>Par le bouton Partager</h2>
           <p>Apple n'ouvre aucune boîte de dialogue : il faut toucher <b>Partager</b>, puis <b>Sur l'écran d'accueil</b>. Et uniquement depuis <b>Safari</b> — les autres navigateurs n'ont pas accès à cette fonction sur iPhone.</p>
           <button type="button" class="btn btn-outline btn-sm" style="margin-top:1rem;" data-marche-installation>Voir les trois gestes</button>
         </div>

@@ -146,7 +146,11 @@
     '<div class="pupitre">' +
       '<div class="pup-style" data-style></div>' +
       '<div class="pup-mention" data-mention hidden></div>' +
-      '<h3 class="pup-titre" data-titre></h3>' +
+      /* Pas un h3 : ce n'était le titre de rien, c'était vide au repos, et
+       cela faisait sauter un niveau de titre sur deux pages. « aria-live »
+       en fait mieux qu'un titre — le nom de l'œuvre est désormais annoncé
+       à voix haute au moment où la lecture commence. */
+    '<p class="pup-titre" data-titre aria-live="polite"></p>' +
       '<div class="pup-qui" data-qui></div>' +
       '<div class="pup-onde"><canvas data-onde></canvas></div>' +
       '<div class="pup-bas">' +

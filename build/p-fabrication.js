@@ -43,8 +43,8 @@ const SOI_MEME = [
 const creerChanson = page({
   file: 'creer-chanson-pour-defunt.html',
   fil: 'La créer',
-  title: 'Créer une chanson pour un défunt : le faire soi-même ou la faire faire | Melodia Funèbre',
-  desc: "Ce que demande réellement d’écrire, composer, enregistrer et mixer une chanson d’hommage soi-même — étape par étape, temps et coût — et quand il vaut mieux la faire faire.",
+  title: 'Créer une chanson pour un défunt : seul ou accompagné | Melodia Funèbre',
+  desc: "Écrire, composer, enregistrer et mixer une chanson d’hommage soi-même : chaque étape, le temps, le coût, et quand il vaut mieux la faire faire.",
   h1: 'La créer soi-même,<br><em>ou la faire faire.</em>',
   situation: "Pour quelqu’un qui envisage sérieusement de s’en charger lui-même.",
   chapeau: "C’est une belle idée et elle est parfaitement faisable — nous connaissons des familles qui l’ont fait et le résultat valait tous les nôtres. Voici honnêtement ce que ça demande, étape par étape, pour que vous décidiez en connaissance de cause. Si vous repartez d’ici en le faisant vous-même, cette page aura fait son travail.",

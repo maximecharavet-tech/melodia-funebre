@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=f9b6739c">
+<link rel="stylesheet" href="/assets/css/style.css?v=132ba663">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -46,7 +46,13 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="/" class="nav-brand" aria-label="Melodia Funèbre, accueil">
-      <img src="/assets/img/logo-melodia.jpg?v=c9f03ed0" alt="" class="nav-logo" width="40" height="40">
+      <!-- La vignette, pas l'original : le logo carré fait 1024 px et
+           96 Ko, servis ici pour 40. Mesuré sur les 61 pages, les trois
+           vignettes du gabarit — logo, portrait, emblème — coûtaient
+           326 Ko par page ; elles en coûtent 21. Les fichiers pleine
+           taille restent pour les données structurées et les partages,
+           où Google et Facebook les veulent grands. -->
+      <img src="/assets/img/logo-melodia-160.webp?v=d5ed7d92" alt="" class="nav-logo" width="160" height="160">
       <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
     </a>
     <div class="nav-links">
@@ -139,21 +145,21 @@
       <div class="grid-3">
         <div class="card card-gold card-lift reveal">
           <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg></div>
-          <h3 class="h-lg">Être rappelé</h3>
+          <h2 class="h-lg">Être rappelé</h2>
           <p>Le plus rapide, et de loin. Vous laissez vos coordonnées, nous rappelons — sept jours sur sept pour les urgences funéraires.</p>
           <button type="button" class="btn btn-gold btn-block" style="margin-top:1.4rem;" data-rappel>Être rappelé</button>
           <div class="mono" style="margin-top:1rem;text-align:center;">Rappel sous 2 h ouvrées · Urgences 7 j/7</div>
         </div>
         <div class="card card-lift reveal">
           <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></div>
-          <h3 class="h-lg">Par email</h3>
+          <h2 class="h-lg">Par email</h2>
           <p>Pour les demandes détaillées, les devis d'agence ou l'envoi de documents.</p>
           <a href="mailto:contact@melodia-funebre.fr" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Écrire un email</a>
           <div class="mono" style="margin-top:1rem;text-align:center;">Réponse sous 2 h ouvrées</div>
         </div>
         <div class="card card-lift reveal">
           <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.9"/><path d="M16 3.1a4 4 0 010 7.8"/></svg></div>
-          <h3 class="h-lg">Vous êtes une agence</h3>
+          <h2 class="h-lg">Vous êtes une agence</h2>
           <p>Pompes funèbres : découvrez les conditions du partenariat et simulez vos revenus.</p>
           <a href="/professionnels" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Pour les professionnels</a>
           <div class="mono" style="margin-top:1rem;text-align:center;">60 % de marge · 0 € d'investissement</div>
@@ -234,12 +240,12 @@
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <img src="/assets/img/logo-melodia.jpg?v=c9f03ed0" alt="Melodia Funèbre" class="footer-logo" width="52" height="52">
+        <img src="/assets/img/logo-melodia-160.webp?v=d5ed7d92" alt="Melodia Funèbre" class="footer-logo" width="160" height="160" loading="lazy">
         <p class="footer-tag">Maison française de composition musicale personnalisée pour cérémonies funéraires.</p>
         <p class="footer-baseline">Écoute · Respect · Accompagnement<br>Harmonie · Mémoire</p>
       </div>
       <div>
-        <h4>Découvrir</h4>
+        <h2>Découvrir</h2>
         <ul class="footer-links">
           <li><a href="/processus">Le processus</a></li>
           <li><a href="/demos">Écouter les hommages</a></li>
@@ -254,7 +260,7 @@
              donne un lien depuis tout le site, sans encombrer une barre
              de navigation déjà pleine — et sans reproduire le
              débordement du menu mobile. -->
-        <h4>Conseils</h4>
+        <h2>Conseils</h2>
         <ul class="footer-links">
           <li><a href="/musique-obseques">Quelle musique pour un enterrement</a></li>
           <li><a href="/musique-cremation">La musique en crémation</a></li>
@@ -262,7 +268,7 @@
         </ul>
       </div>
       <div>
-        <h4>Professionnels</h4>
+        <h2>Professionnels</h2>
         <ul class="footer-links">
           <li><a href="/professionnels">Pour les pompes funèbres</a></li>
           <li><a href="/professionnels#partenariat">Devenir partenaire</a></li>
@@ -273,7 +279,7 @@
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <h2>Contact</h2>
         <ul class="footer-links">
           <li><a href="mailto:contact@melodia-funebre.fr">contact@melodia-funebre.fr</a></li>
           <li><button type="button" class="lien-rappel" data-rappel>Être rappelé</button></li>
@@ -301,7 +307,7 @@
         <a href="/confidentialite">Confidentialité</a>
       </span>
       <span class="signature">
-        <img src="/assets/img/maxime.png?v=25ba945d" alt="" class="signature-portrait" width="40" height="40" loading="lazy">
+        <img src="/assets/img/maxime-128.webp?v=59ad45f3" alt="" class="signature-portrait" width="128" height="128" loading="lazy">
         <span class="signature-mots">
           <span class="signature-role">Fondateur</span>
           <span class="signature-nom">Maxime Charavet</span>
@@ -313,7 +319,7 @@
          et l'emblème qui ne s'allume qu'au survol. -->
     <div class="propulse">
       <a href="/hyper-ai-engine" class="propulse-lien">
-        <img src="/assets/img/hyper-engine.png?v=a1960bfe" alt="" class="propulse-marque" width="26" height="24" loading="lazy">
+        <img src="/assets/img/hyper-engine-80.webp?v=0f6180f0" alt="" class="propulse-marque" width="80" height="74" loading="lazy">
         <span class="propulse-mots">Propulsé par <b>Hyper A.I Engine</b></span>
       </a>
     </div>
@@ -333,7 +339,7 @@
 <script src="/assets/js/application.js?v=921dfcdc"></script>
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
-<script src="/assets/js/ornements.js?v=608a06ab"></script>
+<script src="/assets/js/ornements.js?v=b37cef91"></script>
 <script>
 /* Le formulaire compose un email pré-rempli : aucun serveur à maintenir,
    et le message part depuis la messagerie du visiteur (traçable pour lui). */

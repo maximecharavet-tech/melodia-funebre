@@ -24,21 +24,21 @@ ${P.urgency()}
       <div class="grid-3">
         <div class="card card-gold card-lift reveal">
           <div class="card-icon">${ICON.phone}</div>
-          <h3 class="h-lg">Être rappelé</h3>
+          <h2 class="h-lg">Être rappelé</h2>
           <p>Le plus rapide, et de loin. Vous laissez vos coordonnées, nous rappelons — sept jours sur sept pour les urgences funéraires.</p>
           <button type="button" class="btn btn-gold btn-block" style="margin-top:1.4rem;" data-rappel>Être rappelé</button>
           <div class="mono" style="margin-top:1rem;text-align:center;">Rappel sous 2 h ouvrées · Urgences 7 j/7</div>
         </div>
         <div class="card card-lift reveal">
           <div class="card-icon">${ICON.pen}</div>
-          <h3 class="h-lg">Par email</h3>
+          <h2 class="h-lg">Par email</h2>
           <p>Pour les demandes détaillées, les devis d'agence ou l'envoi de documents.</p>
           <a href="mailto:${MAIL}" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Écrire un email</a>
           <div class="mono" style="margin-top:1rem;text-align:center;">Réponse sous 2 h ouvrées</div>
         </div>
         <div class="card card-lift reveal">
           <div class="card-icon">${ICON.users}</div>
-          <h3 class="h-lg">Vous êtes une agence</h3>
+          <h2 class="h-lg">Vous êtes une agence</h2>
           <p>Pompes funèbres : découvrez les conditions du partenariat et simulez vos revenus.</p>
           <a href="/professionnels" class="btn btn-outline btn-block" style="margin-top:1.4rem;">Pour les professionnels</a>
           <div class="mono" style="margin-top:1rem;text-align:center;">60 % de marge · 0 € d'investissement</div>

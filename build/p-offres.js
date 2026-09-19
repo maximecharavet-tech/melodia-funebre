@@ -256,7 +256,7 @@ ${optionsBloc}
   <!-- ═══ CONFIRMATION ═══ -->
   <section class="section" id="confirm" style="display:none;">
     <div class="wrap center" style="max-width:620px;">
-      <img src="assets/img/logo-melodia.jpg" alt="" style="height:110px;width:110px;object-fit:cover;border-radius:50%;margin:0 auto 2rem;border:1px solid var(--line-strong);">
+      <img src="assets/img/logo-melodia-360.webp" alt="" style="height:110px;width:110px;object-fit:cover;border-radius:50%;margin:0 auto 2rem;border:1px solid var(--line-strong);">
       <div class="eyebrow" style="justify-content:center;">Commande enregistrée</div>
       <h2 class="h-xl">Nous prenons<br>le <em>relais.</em></h2>
       <p class="lead" style="margin:1.4rem auto .6rem;">Référence <b id="confirm-ref" style="color:var(--or);"></b></p>

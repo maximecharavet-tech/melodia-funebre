@@ -104,6 +104,26 @@ const ICON = {
    sur le 180 de l'icône Apple. Le logo complet reste l'icône de
    l'application (apple-touch-icon et manifeste), où la taille lui rend
    justice. */
+/* ─── Le titre, et la place que Google lui laisse ───
+   Google coupe aux alentours de soixante caractères. Quatorze pages
+   dépassaient, dont une à quatre-vingt-onze : le mot-clé passait, mais
+   le bout de phrase qui donne envie de cliquer était tronqué.
+
+   Le suffixe « | Melodia Funèbre » coûtait dix-huit de ces caractères
+   pour rien : le site déclare déjà son nom dans ses données
+   structurées (WebSite.name), et Google l'affiche au-dessus du titre.
+   On ne le remet donc que s'il tient.
+
+   La règle est ici plutôt que dans chaque page : une page dont on
+   rallonge le titre demain se corrigera toute seule, et personne n'aura
+   à se souvenir de compter. */
+const MARQUE = ' | Melodia Funèbre';
+const LIMITE = 60;
+function titreCourt(titre) {
+  const nu = titre.endsWith(MARQUE) ? titre.slice(0, -MARQUE.length) : titre;
+  return (nu + MARQUE).length <= LIMITE ? nu + MARQUE : nu;
+}
+
 function head(p) {
   /* L'adresse peut être réécrite : « ecouter-x.html » est servi à
      « /ecouter/x », et c'est cette adresse-là qui doit être canonique
@@ -119,7 +139,7 @@ function head(p) {
   return `<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#040407">
-<title>${p.title}</title>
+<title>${titreCourt(p.title)}</title>
 <meta name="description" content="${p.desc}">
 <link rel="canonical" href="${url}">
 ${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta property="og:type" content="${p.ogType || 'website'}">
@@ -171,7 +191,13 @@ function nav(surBandeau) {
 <nav class="nav${surBandeau ? ' at-top' : ''}">
   <div class="nav-inner">
     <a href="/" class="nav-brand" aria-label="Melodia Funèbre, accueil">
-      <img src="assets/img/logo-melodia.jpg" alt="" class="nav-logo" width="40" height="40">
+      <!-- La vignette, pas l'original : le logo carré fait 1024 px et
+           96 Ko, servis ici pour 40. Mesuré sur les 61 pages, les trois
+           vignettes du gabarit — logo, portrait, emblème — coûtaient
+           326 Ko par page ; elles en coûtent 21. Les fichiers pleine
+           taille restent pour les données structurées et les partages,
+           où Google et Facebook les veulent grands. -->
+      <img src="assets/img/logo-melodia-160.webp" alt="" class="nav-logo" width="160" height="160">
       <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
     </a>
     <div class="nav-links">
@@ -201,12 +227,12 @@ function footer() {
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <img src="assets/img/logo-melodia.jpg" alt="Melodia Funèbre" class="footer-logo" width="52" height="52">
+        <img src="assets/img/logo-melodia-160.webp" alt="Melodia Funèbre" class="footer-logo" width="160" height="160" loading="lazy">
         <p class="footer-tag">Maison française de composition musicale personnalisée pour cérémonies funéraires.</p>
         <p class="footer-baseline">Écoute · Respect · Accompagnement<br>Harmonie · Mémoire</p>
       </div>
       <div>
-        <h4>Découvrir</h4>
+        <h2>Découvrir</h2>
         <ul class="footer-links">
           <li><a href="/processus">Le processus</a></li>
           <li><a href="/demos">Écouter les hommages</a></li>
@@ -221,7 +247,7 @@ function footer() {
              donne un lien depuis tout le site, sans encombrer une barre
              de navigation déjà pleine — et sans reproduire le
              débordement du menu mobile. -->
-        <h4>Conseils</h4>
+        <h2>Conseils</h2>
         <ul class="footer-links">
           <li><a href="/musique-obseques">Quelle musique pour un enterrement</a></li>
           <li><a href="/musique-cremation">La musique en crémation</a></li>
@@ -229,7 +255,7 @@ function footer() {
         </ul>
       </div>
       <div>
-        <h4>Professionnels</h4>
+        <h2>Professionnels</h2>
         <ul class="footer-links">
           <li><a href="/professionnels">Pour les pompes funèbres</a></li>
           <li><a href="/professionnels#partenariat">Devenir partenaire</a></li>
@@ -240,7 +266,7 @@ function footer() {
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <h2>Contact</h2>
         <ul class="footer-links">
           <li><a href="mailto:${MAIL}">${MAIL}</a></li>
           <li><button type="button" class="lien-rappel" data-rappel>Être rappelé</button></li>
@@ -268,7 +294,7 @@ function footer() {
         <a href="/confidentialite">Confidentialité</a>
       </span>
       <span class="signature">
-        <img src="assets/img/maxime.png" alt="" class="signature-portrait" width="40" height="40" loading="lazy">
+        <img src="assets/img/maxime-128.webp" alt="" class="signature-portrait" width="128" height="128" loading="lazy">
         <span class="signature-mots">
           <span class="signature-role">Fondateur</span>
           <span class="signature-nom">Maxime Charavet</span>
@@ -280,7 +306,7 @@ function footer() {
          et l'emblème qui ne s'allume qu'au survol. -->
     <div class="propulse">
       <a href="/hyper-ai-engine" class="propulse-lien">
-        <img src="assets/img/hyper-engine.png" alt="" class="propulse-marque" width="26" height="24" loading="lazy">
+        <img src="assets/img/hyper-engine-80.webp" alt="" class="propulse-marque" width="80" height="74" loading="lazy">
         <span class="propulse-mots">Propulsé par <b>Hyper A.I Engine</b></span>
       </a>
     </div>
@@ -325,7 +351,7 @@ function intro() {
         <circle class="an-trace" cx="100" cy="100" r="96"/>
         <circle class="an-arc" cx="100" cy="100" r="86"/>
       </svg>
-      <img src="assets/img/intro-logo.jpg" alt="Melodia Funèbre" class="intro-logo" width="440" height="440" fetchpriority="high">
+      <img src="assets/img/intro-logo-360.webp" alt="Melodia Funèbre" class="intro-logo" width="360" height="360" fetchpriority="high">
     </div>
     <!-- L'animation du logo. Elle se superpose au médaillon dessiné en CSS
          quand elle est prête : le seuil s'affiche à l'instant, la vidéo
