@@ -29,6 +29,22 @@
 
 const DOSSIER = 'assets/img/campagne/';
 
+/* TROIS FICHIERS POUR UNE MÊME AFFICHE, ET POURQUOI
+
+   « fichier » est la pièce d'origine, celle que le kit fait
+   télécharger : c'est elle qu'on envoie à un imprimeur, et un JPEG
+   s'ouvre partout.
+
+   « web » et « leger » sont les deux versions servies DANS les pages.
+   La distinction n'est pas cosmétique : sur un téléphone à double
+   densité — c'est-à-dire à peu près tous — le navigateur allait
+   chercher le JPEG d'origine, 208 Ko pour un bloc de 362 pixels de
+   large. En WebP, la même image à la même taille en fait 108. Une
+   famille qui lit une page depuis une salle d'attente paie la
+   différence.
+
+   Sans « web », la page retombe sur « fichier ». */
+
 /* Les audiences, nommées une fois. Elles commandent l'étiquette
    affichée sur la vignette et l'ordre du kit. */
 const AUDIENCES = {
@@ -85,6 +101,8 @@ const MEDIAS = [
     id: 'adieux-en-musique',
     type: 'affiche',
     fichier: 'adieux-en-musique.jpg',
+    leger: 'adieux-en-musique-480.webp',
+    web: 'adieux-en-musique-941.webp',
     largeur: 941, hauteur: 1672,
     audience: 'famille',
     titre: 'Des adieux en musique',
@@ -95,6 +113,8 @@ const MEDIAS = [
     id: 'certaines-melodies',
     type: 'affiche',
     fichier: 'certaines-melodies.jpg',
+    leger: 'certaines-melodies-480.webp',
+    web: 'certaines-melodies-941.webp',
     largeur: 941, hauteur: 1672,
     audience: 'famille',
     titre: 'Certaines mélodies ne s’éteignent jamais',
@@ -151,9 +171,61 @@ const MEDIAS = [
     usage: 'Présentation à une communauté, courriel à un officiant, après accord du rabbin.'
   },
   {
+    id: 'emotion-eternelle',
+    type: 'affiche',
+    fichier: 'emotion-eternelle.webp',
+    leger: 'emotion-eternelle-480.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'pro',
+    titre: 'Offrez plus qu’une émotion éternelle',
+    legende: 'Elle figurait depuis des semaines dans la liste des pièces annoncées et jamais reçues. La plaque gravée au soleil couchant, cinq raisons de proposer le service, et les cinq sortes d’établissement à qui il s’adresse.',
+    usage: 'Salon professionnel, rendez-vous de présentation, courriel de prospection.'
+  },
+  {
+    id: 'plaque-et-telephone',
+    type: 'affiche',
+    fichier: 'plaque-et-telephone.webp',
+    leger: 'plaque-et-telephone-480.webp',
+    largeur: 941, hauteur: 1672,
+    audience: 'famille',
+    titre: 'Plus qu’un souvenir, une mélodie éternelle',
+    legende: 'La seule affiche qui montre le geste complet : la plaque, le téléphone, et ce qu’on entend une fois le QR scanné. Elle explique le service sans une ligne de mode d’emploi.',
+    usage: 'Page du QR mémorial, vitrine d’agence, réseaux sociaux.'
+  },
+  {
+    id: 'salon-tourne-disque',
+    type: 'affiche',
+    fichier: 'salon-tourne-disque.webp',
+    leger: 'salon-tourne-disque-480.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'famille',
+    /* Le pendant masculin de « dernier-message », qui montre une dame.
+       Les deux portent le même titre à un mot près et tiennent la même
+       page « De son vivant » : c'est voulu, on ne s'adresse pas à un
+       homme de quatre-vingts ans avec l'image d'une femme de
+       quatre-vingts ans, et réciproquement. Les proposer côte à côte
+       laisse le choix à qui diffuse. */
+    titre: 'Un dernier message en musique',
+    legende: 'Un homme seul dans son salon, sa vie qui remonte en photographies le long d’une portée, un tourne-disque. Elle s’adresse à qui compose de son vivant, pas à une famille en deuil.',
+    usage: 'Page « De son vivant », présentoir en maison de retraite, courrier de prévoyance.'
+  },
+  {
+    id: 'chaque-vie-sa-melodie',
+    type: 'affiche',
+    fichier: 'chaque-vie-sa-melodie.webp',
+    leger: 'chaque-vie-sa-melodie-480.webp',
+    largeur: 941, hauteur: 1672,
+    audience: 'mixte',
+    titre: 'Parce que chaque vie mérite sa mélodie',
+    legende: 'La plus dépouillée de toutes : une pianiste, une baie ouverte, rien à vendre. C’est celle qui passe partout, y compris là où une plaque gravée serait déplacée.',
+    usage: 'Première prise de contact, réseaux sociaux, écran d’accueil en agence.'
+  },
+  {
     id: 'souvenirs-ukulele',
     type: 'affiche',
     fichier: 'souvenirs-ukulele.jpg',
+    leger: 'souvenirs-ukulele-480.webp',
+    web: 'souvenirs-ukulele-941.webp',
     largeur: 941, hauteur: 1672,
     audience: 'famille',
     titre: 'Des mélodies qui restent',
@@ -169,7 +241,6 @@ const MEDIAS = [
 const ATTENDUS = [
   ['Un service additionnel qui vous démarque', 'pro'],
   ['Ensemble, donnons une voix aux souvenirs', 'pro'],
-  ['Offrez plus qu’un hommage, offrez une émotion éternelle', 'pro'],
   ['Des mélodies qui restent, au-delà du temps (Antilles)', 'famille'],
   ['La musique pour l’éternité', 'famille']
 ];

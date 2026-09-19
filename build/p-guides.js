@@ -350,6 +350,9 @@ const guide2 = guide({
         <p>Aucune famille, à notre connaissance, ne reçoit de facture de la SACEM après des obsèques. Si l'on vous a laissé entendre le contraire, c'est une confusion avec les règles applicables aux mariages et aux fêtes privées, où l'organisateur est parfois l'assujetti.</p>
         <div class="guide-avis">Nous ne sommes pas juristes et cette page n'est pas un avis de droit. Pour votre cérémonie précise, la personne à interroger est votre conseiller funéraire : c'est lui qui connaît le contrat du lieu retenu, et la question lui prend dix secondes.</div>
       </div>
+${P.afficheCampagne('souvenirs-ukulele',
+  'Quelqu\u2019un jouant d\u2019un instrument \u00e0 cordes lors d\u2019un hommage priv\u00e9',
+  'Une \u0153uvre \u00e9crite pour lui ne pose pas la question du tout : elle n\u2019est d\u00e9clar\u00e9e nulle part, parce qu\u2019elle n\u2019existait pas avant.')}
     </div>
   </section>
 
@@ -443,6 +446,9 @@ const guide3 = guide({
         <p>Un crématorium enchaîne les cérémonies sur des créneaux, en général de trente à quarante-cinq minutes, salle comprise. C'est la contrainte que les familles découvrent le plus tard, et celle qui coûte le plus cher émotionnellement : une cérémonie construite pour une heure se retrouve compressée, et c'est presque toujours la musique qu'on sacrifie en premier.</p>
         <p><strong>Demandez la durée exacte de votre créneau dès le premier rendez-vous</strong>, et construisez la cérémonie à l'intérieur. Trois morceaux de trois minutes, c'est neuf minutes sur trente-cinq : c'est tenable. Cinq morceaux, ce ne l'est pas.</p>
       </div>
+${P.afficheCampagne('adieux-en-musique',
+  'Une assembl\u00e9e recueillie pendant une c\u00e9r\u00e9monie, \u00e9clair\u00e9e \u00e0 la bougie',
+  'Neuf minutes sur trente-cinq. C\u2019est peu, et c\u2019est pourtant tout ce dont on se souviendra de la salle.')}
     </div>
   </section>
 
@@ -538,6 +544,9 @@ const guide4 = guide({
         <p>Faire écrire une chanson répond à un autre besoin. Non pas « quel morceau lui ressemble », mais « comment raconter cette vie-là ». Un morceau existant parle de quelqu'un d'autre ; une chanson composée parle de lui, avec son métier, ses habitudes, son prénom.</p>
         <p><strong>Ce n'est pas l'un contre l'autre.</strong> Beaucoup de familles passent un morceau qu'il aimait à l'entrée, et l'œuvre composée au recueillement.</p>
       </div>
+${P.afficheCampagne('certaines-melodies',
+  'Une composition musicale \u00e9voqu\u00e9e par une port\u00e9e dor\u00e9e et des photographies de famille',
+  'Les deux chemins se rejoignent souvent dans la m\u00eame c\u00e9r\u00e9monie : le sien \u00e0 l\u2019entr\u00e9e, le v\u00f4tre au recueillement.')}
     </div>
   </section>
 
@@ -670,6 +679,9 @@ ${P.chaineQR()}
         <p>La musique change tout, en revanche. Un texte se lit en silence ; un morceau se partage. C'est la différence entre consulter une page et vivre un moment.</p>
         <p><a href="/exemple">Voir à quoi ressemble une page hommage</a> — exemple complet, sans inscription.</p>
       </div>
+${P.afficheCampagne('plaque-et-telephone',
+  'Une femme devant une s\u00e9pulture, son t\u00e9l\u00e9phone \u00e0 la main : l\u2019\u00e9cran joue l\u2019hommage musical que le QR code de la plaque vient d\u2019ouvrir',
+  'Le geste entier, en une image : la plaque, le t\u00e9l\u00e9phone, et la musique qui repart. C\u2019est la seule chose que le carr\u00e9 noir et blanc sert \u00e0 faire.')}
     </div>
   </section>`,
   questions: [

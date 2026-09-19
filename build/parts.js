@@ -626,4 +626,40 @@ ${pieces.map(pieceMedia).join('\n')}
       </div>`;
 }
 
-module.exports = { pieceMedia, galerieMedias, partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldVivants, jsonldProcessus, jsonldFil };
+/* ─── Une affiche verticale dans le fil d'une page ───
+   Le motif vivait dans p-guides.js, où il ne servait qu'aux guides.
+   Quarante-sept pages sur soixante et une n'avaient aucune image —
+   un mur de texte que personne ne descend jusqu'au bout — et la
+   solution était déjà écrite, rangée au mauvais endroit.
+
+   Les affiches sont au format 2/3 ou 9/16, c'est-à-dire très hautes.
+   Servies à la largeur du texte, elles feraient plus de mille pixels
+   de haut et couperaient la lecture au lieu de la respirer : d'où la
+   largeur bridée à 23 rem, portée par « guide-photo-haute ».
+
+   Deux largeurs sont servies : 480 pixels couvre l'affichage courant,
+   le fichier pleine taille couvre le même écran en double densité.
+   Sans cela on expédierait 180 Ko pour un bloc de 368 pixels de large.
+
+   La légende ne redit pas l'image : elle prolonge le paragraphe qui
+   la précède. Une légende qui décrit ce qu'on voit déjà ne sert à
+   rien — et pour un lecteur d'écran, la répétition est du bruit. */
+function afficheCampagne(id, alt, legende) {
+  const M = require('./medias.js');
+  const m = M.parId(id);
+  if (!m) throw new Error('affiche inconnue : ' + id);
+  if (!m.leger) throw new Error('l\u2019affiche « ' + id + ' » n\u2019a pas de version l\u00e9g\u00e8re');
+  /* « web » d'abord : c'est la version pensée pour l'écran. Sans
+     elle, un téléphone à double densité réclame l'original. */
+  const plein = M.DOSSIER + (m.web || m.fichier);
+  return `      <figure class="guide-photo guide-photo-haute reveal">
+        <img src="${plein}"
+             srcset="${M.DOSSIER + m.leger} 480w, ${plein} ${m.largeur}w"
+             sizes="(max-width: 700px) 84vw, 368px"
+             width="${m.largeur}" height="${m.hauteur}" loading="lazy" decoding="async"
+             alt="${esc(alt)}">
+        <figcaption>${legende}</figcaption>
+      </figure>`;
+}
+
+module.exports = { pieceMedia, galerieMedias, afficheCampagne, partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldVivants, jsonldProcessus, jsonldFil };

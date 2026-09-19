@@ -165,6 +165,81 @@ function jsonld(p) {
   ];
 }
 
+/* ─── Une affiche au milieu du texte ───
+   Ces treize pages répondent à une question tapée dans Google. Elles
+   sont longues par nécessité — une réponse courte ne répond pas — et
+   n'avaient aucune image : neuf cents mots de gris sur noir, que
+   personne ne descend jusqu'au bout.
+
+   L'affiche est choisie PAGE PAR PAGE, jamais tirée au sort ni prise
+   à tour de rôle. Deux raisons. D'abord parce qu'une image qui ne
+   parle pas du paragraphe qu'elle interrompt est pire que pas
+   d'image. Ensuite parce que trois affiches de la médiathèque sont
+   inutilisables ici : « une-vie-en-musique », « dernier-message » et
+   « salon-tourne-disque » s'adressent à quelqu'un qui compose DE SON
+   VIVANT. Les poser devant une famille qui vient de perdre un proche
+   serait une faute, pas une maladresse. Les affiches professionnelles
+   sont écartées pour la même raison, en sens inverse.
+
+   Il reste cinq affiches pour treize pages : certaines reviennent.
+   C'est assumé — on ne lit pas les treize à la suite — et préférable
+   à une image mal placée pour éviter une répétition que personne ne
+   verra. */
+const AFFICHES = {
+  'chanson-pour-obseques':            ['adieux-en-musique',
+    'La c\u00e9r\u00e9monie a lieu dans trois jours, et c\u2019est encore tenable.'],
+  'musique-personnalisee-obseques':   ['certaines-melodies',
+    'Un morceau du commerce parle de quelqu\u2019un d\u2019autre. C\u2019est l\u00e0 toute la question.'],
+  'hommage-musical-obseques':         ['chaque-vie-sa-melodie',
+    'Ce qu\u2019on annonce \u00e0 l\u2019assembl\u00e9e tient en une phrase : une pi\u00e8ce \u00e9crite pour lui.'],
+  'musique-pour-hommage-funeraire':   ['souvenirs-ukulele',
+    'Toutes les occasions ne sont pas une c\u00e9r\u00e9monie. Certaines tiennent dans un salon.'],
+  'chanson-hommage-defunt':           ['certaines-melodies',
+    'Une chanson d\u2019hommage ne se juge pas \u00e0 la technique, mais \u00e0 ce qu\u2019elle fait \u00e0 la pi\u00e8ce.'],
+  'chanson-personnalisee-defunt':     ['souvenirs-ukulele',
+    'Personnalis\u00e9e veut dire : \u00e9crite \u00e0 partir de ce que vous seul savez de lui.'],
+  'chanson-funeraire-personnalisee':  ['adieux-en-musique',
+    'Le ton juste n\u2019est ni le pathos ni la gaiet\u00e9 forc\u00e9e. C\u2019est le sien.'],
+  'chanson-dernier-hommage':          ['chaque-vie-sa-melodie',
+    'Le dernier hommage est le seul qu\u2019on ne pourra pas recommencer.'],
+  'creer-chanson-pour-defunt':        ['souvenirs-ukulele',
+    'Cr\u00e9er commence par raconter. Le reste est notre travail, pas le v\u00f4tre.'],
+  'composer-chanson-pour-defunt':     ['chaque-vie-sa-melodie',
+    'Composer, ici, veut dire \u00e9crire une \u0153uvre qui n\u2019existait pas avant lui.'],
+  'musique-personnalisee-defunt':     ['certaines-melodies',
+    'Le registre se choisit \u00e0 l\u2019entretien, sur ce qu\u2019il \u00e9coutait vraiment.'],
+  'hommage-musical-defunt':           ['plaque-et-telephone',
+    'Un hommage musical ne s\u2019arr\u00eate pas \u00e0 la c\u00e9r\u00e9monie : il reste \u00e9coutable apr\u00e8s.'],
+  'dernier-hommage-musical':          ['plaque-et-telephone',
+    'Ce qu\u2019il en reste, des ann\u00e9es plus tard, tient dans un carr\u00e9 grav\u00e9 sur une plaque.']
+};
+
+/* Le texte de remplacement décrit CE QU'ON VOIT, une fois par affiche
+   et pas une fois par page : la même image ne change pas de contenu
+   selon l'endroit où elle est posée. C'est la légende qui s'adapte,
+   pas l'alternative. */
+const ALT = {
+  'adieux-en-musique':      'Une assembl\u00e9e recueillie pendant une c\u00e9r\u00e9monie, \u00e9clair\u00e9e \u00e0 la bougie',
+  'certaines-melodies':     'Une composition musicale \u00e9voqu\u00e9e par une port\u00e9e dor\u00e9e et des photographies de famille',
+  'souvenirs-ukulele':      'Quelqu\u2019un jouant d\u2019un instrument \u00e0 cordes lors d\u2019un hommage priv\u00e9',
+  'chaque-vie-sa-melodie':  'Une pianiste de dos devant un piano \u00e0 queue, face \u00e0 une baie ouverte sur la mer au soleil couchant',
+  'plaque-et-telephone':    'Une femme devant une s\u00e9pulture, son t\u00e9l\u00e9phone \u00e0 la main : l\u2019\u00e9cran joue l\u2019hommage que le QR code de la plaque vient d\u2019ouvrir'
+};
+
+/* L'affiche se glisse après la PREMIÈRE section du corps, pas à la
+   fin : posée en bas, elle n'interromprait plus rien et n'aurait
+   aucun effet sur le mur de texte qu'elle est censée ouvrir. */
+function avecAffiche(p) {
+  const choix = AFFICHES[p.file.replace('.html', '')];
+  if (!choix) return p.corps;
+  const fig = P.afficheCampagne(choix[0], ALT[choix[0]], choix[1]);
+  const coupe = p.corps.indexOf('</section>');
+  if (coupe < 0) return p.corps + '\n' + fig;
+  const fin = coupe + '</section>'.length;
+  return p.corps.slice(0, fin) + '\n' + fig + p.corps.slice(fin);
+}
+
+
 /* La situation du lecteur, annoncée d'entrée. C'est ce qui distingue
    réellement ces treize pages les unes des autres : même sujet,
    lecteurs différents, donc réponses différentes. */
@@ -184,7 +259,7 @@ function page(p) {
 ${sommaire(p.corps)}
     </div>
   </section>
-${p.corps}
+${avecAffiche(p)}
 ${questions(p.questions)}
 ${proposition(p.proposition, p.bouton)}
 ${voisines(p.voisines)}
