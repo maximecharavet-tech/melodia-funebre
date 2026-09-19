@@ -296,6 +296,9 @@ ${affiche('celebrer-une-vie',
         <p><strong>Si c'est une crémation</strong>, l'organisation du crématorium ajoute une contrainte de durée et un moment très particulier, celui de la disparition du cercueil. Nous en parlons dans <a href="/musique-cremation">le guide sur la musique en crémation</a>.</p>
         <p><strong>Et sur les droits d'auteur</strong>, la question revient toujours : <a href="/musique-sacem-obseques">a-t-on le droit de diffuser une chanson du commerce à des obsèques</a> ? Réponse courte : oui, presque toujours, et ce n'est en général pas à la famille de s'en occuper.</p>
       </div>
+${P.filmCampagne('ame-des-souvenirs',
+  'Un pianiste jouant dans une composition cubiste d\u2019or et d\u2019ardoise ; une colombe passe, la lumi\u00e8re tourne sur les facettes.',
+  'Quinze secondes, sans commandes et sans son : une affiche qui bouge, au bout d\u2019un guide qu\u2019on vient de lire en entier.')}
     </div>
   </section>`,
   questions: [

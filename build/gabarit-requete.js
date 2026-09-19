@@ -181,50 +181,65 @@ function jsonld(p) {
    serait une faute, pas une maladresse. Les affiches professionnelles
    sont écartées pour la même raison, en sens inverse.
 
-   Il reste cinq affiches pour treize pages : certaines reviennent.
-   C'est assumé — on ne lit pas les treize à la suite — et préférable
-   à une image mal placée pour éviter une répétition que personne ne
-   verra. */
+   La médiathèque comptait cinq affiches utilisables ici, et certaines
+   revenaient trois fois. Elle en compte vingt : les treize pages ont
+   désormais chacune la sienne, et aucune ne se répète. */
 const AFFICHES = {
-  'chanson-pour-obseques':            ['adieux-en-musique',
-    'La c\u00e9r\u00e9monie a lieu dans trois jours, et c\u2019est encore tenable.'],
+  'chanson-pour-obseques':            ['souvenirs-en-harmonie',
+    'La c\u00e9r\u00e9monie a lieu dans trois jours. C\u2019est court, et c\u2019est encore tenable.'],
   'musique-personnalisee-obseques':   ['certaines-melodies',
     'Un morceau du commerce parle de quelqu\u2019un d\u2019autre. C\u2019est l\u00e0 toute la question.'],
-  'hommage-musical-obseques':         ['chaque-vie-sa-melodie',
-    'Ce qu\u2019on annonce \u00e0 l\u2019assembl\u00e9e tient en une phrase : une pi\u00e8ce \u00e9crite pour lui.'],
+  'hommage-musical-obseques':         ['duo-au-piano',
+    'Ce qu\u2019on annonce \u00e0 l\u2019assembl\u00e9e tient en une phrase, et voil\u00e0 \u00e0 quoi cela ressemble.'],
   'musique-pour-hommage-funeraire':   ['souvenirs-ukulele',
     'Toutes les occasions ne sont pas une c\u00e9r\u00e9monie. Certaines tiennent dans un salon.'],
-  'chanson-hommage-defunt':           ['certaines-melodies',
+  'chanson-hommage-defunt':           ['belle-note-finale',
     'Une chanson d\u2019hommage ne se juge pas \u00e0 la technique, mais \u00e0 ce qu\u2019elle fait \u00e0 la pi\u00e8ce.'],
-  'chanson-personnalisee-defunt':     ['souvenirs-ukulele',
-    'Personnalis\u00e9e veut dire : \u00e9crite \u00e0 partir de ce que vous seul savez de lui.'],
-  'chanson-funeraire-personnalisee':  ['adieux-en-musique',
+  'chanson-personnalisee-defunt':     ['racines-antillaises',
+    'Personnalis\u00e9e veut dire : dans SA langue et dans SA musique, zouk ou gwoka compris.'],
+  'chanson-funeraire-personnalisee':  ['ce-que-les-mots',
     'Le ton juste n\u2019est ni le pathos ni la gaiet\u00e9 forc\u00e9e. C\u2019est le sien.'],
-  'chanson-dernier-hommage':          ['chaque-vie-sa-melodie',
+  'chanson-dernier-hommage':          ['adieux-en-musique',
     'Le dernier hommage est le seul qu\u2019on ne pourra pas recommencer.'],
-  'creer-chanson-pour-defunt':        ['souvenirs-ukulele',
+  'creer-chanson-pour-defunt':        ['memoire-autrement',
     'Cr\u00e9er commence par raconter. Le reste est notre travail, pas le v\u00f4tre.'],
   'composer-chanson-pour-defunt':     ['chaque-vie-sa-melodie',
     'Composer, ici, veut dire \u00e9crire une \u0153uvre qui n\u2019existait pas avant lui.'],
-  'musique-personnalisee-defunt':     ['certaines-melodies',
+  'musique-personnalisee-defunt':     ['melodie-pour-toujours',
     'Le registre se choisit \u00e0 l\u2019entretien, sur ce qu\u2019il \u00e9coutait vraiment.'],
-  'hommage-musical-defunt':           ['plaque-et-telephone',
-    'Un hommage musical ne s\u2019arr\u00eate pas \u00e0 la c\u00e9r\u00e9monie : il reste \u00e9coutable apr\u00e8s.'],
+  /* « melodies-generations » porte un avertissement dans la
+     médiathèque : elle montre des musiciens qui jouent, et ne doit
+     jamais être présentée comme un enterrement. Cette page-ci parle
+     précisément des FORMES que prend un hommage en dehors de la mise
+     en terre — c'est la seule des treize où elle est à sa place, et
+     la légende le dit. */
+  'hommage-musical-defunt':           ['melodies-generations',
+    'Un hommage musical n\u2019est pas la mise en terre : c\u2019est la veill\u00e9e, l\u2019anniversaire, le d\u00e9voilement d\u2019une st\u00e8le.'],
   'dernier-hommage-musical':          ['plaque-et-telephone',
     'Ce qu\u2019il en reste, des ann\u00e9es plus tard, tient dans un carr\u00e9 grav\u00e9 sur une plaque.']
 };
+
 
 /* Le texte de remplacement décrit CE QU'ON VOIT, une fois par affiche
    et pas une fois par page : la même image ne change pas de contenu
    selon l'endroit où elle est posée. C'est la légende qui s'adapte,
    pas l'alternative. */
 const ALT = {
-  'adieux-en-musique':      'Une assembl\u00e9e recueillie pendant une c\u00e9r\u00e9monie, \u00e9clair\u00e9e \u00e0 la bougie',
+  'adieux-en-musique':      'Une femme en noir, une rose \u00e0 la main, devant une s\u00e9pulture fleurie au soleil couchant',
   'certaines-melodies':     'Une composition musicale \u00e9voqu\u00e9e par une port\u00e9e dor\u00e9e et des photographies de famille',
   'souvenirs-ukulele':      'Quelqu\u2019un jouant d\u2019un instrument \u00e0 cordes lors d\u2019un hommage priv\u00e9',
   'chaque-vie-sa-melodie':  'Une pianiste de dos devant un piano \u00e0 queue, face \u00e0 une baie ouverte sur la mer au soleil couchant',
-  'plaque-et-telephone':    'Une femme devant une s\u00e9pulture, son t\u00e9l\u00e9phone \u00e0 la main : l\u2019\u00e9cran joue l\u2019hommage que le QR code de la plaque vient d\u2019ouvrir'
+  'plaque-et-telephone':    'Une femme devant une s\u00e9pulture, son t\u00e9l\u00e9phone \u00e0 la main : l\u2019\u00e9cran joue l\u2019hommage que le QR code de la plaque vient d\u2019ouvrir',
+  'souvenirs-en-harmonie':  'Composition cubiste en or et ardoise : un visage de femme, un piano \u00e0 queue, une partition et un cercueil, \u00e9clair\u00e9s d\u2019une bougie',
+  'duo-au-piano':           'Un pianiste et une chanteuse interpr\u00e9tant ensemble, au bord de l\u2019eau, devant un escalier de pierre',
+  'belle-note-finale':      'Une femme en robe noire tenant une partition, devant un piano \u00e0 queue au soleil couchant',
+  'racines-antillaises':    'Une chanteuse antillaise au micro, accompagn\u00e9e d\u2019un guitariste et d\u2019un joueur de tambour, devant une baie au coucher du soleil ; un portrait encadr\u00e9 et une bougie au premier plan',
+  'ce-que-les-mots':        'Une femme assise au bord de l\u2019eau parmi des bougies, devant un piano \u00e0 queue et une porte ouverte sur un lever de soleil',
+  'memoire-autrement':      'Un visage de profil dessin\u00e9, des photographies de famille qui remontent le long d\u2019une port\u00e9e, et une plaque grav\u00e9e portant un QR code',
+  'melodie-pour-toujours':  'Une pianiste au premier plan ; derri\u00e8re elle, un homme \u00e2g\u00e9 gravit un escalier form\u00e9 de touches de piano vers la lumi\u00e8re',
+  'melodies-generations':   'Des musiciens r\u00e9unis pour un temps de m\u00e9moire, jouant ensemble'
 };
+
 
 /* L'affiche se glisse après la PREMIÈRE section du corps, pas à la
    fin : posée en bas, elle n'interromprait plus rien et n'aurait

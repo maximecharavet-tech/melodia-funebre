@@ -5274,6 +5274,13 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 /* Une affiche 9/16 servie sur 40 rem ferait 1140 px de haut : elle
    couperait le guide en deux au lieu de l'aérer. */
 .guide-photo-haute { max-width: 23rem; }
+/* Un film d'affiche se pose exactement comme une affiche : même
+   largeur, même cadre. Le « display: block » évite le liseré que les
+   navigateurs laissent sous un élément en ligne. */
+.film-campagne {
+  display: block; width: 100%; height: auto;
+  border-radius: 3px; border: 1px solid var(--line-soft);
+}
 @media (max-width: 700px) { .guide-photo-haute { max-width: 84vw; } }
 
 .guide-photo figcaption {

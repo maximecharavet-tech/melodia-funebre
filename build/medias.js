@@ -65,6 +65,7 @@ const MEDIAS = [
        indiscernables : comparés image par image à 484 px de large. */
     leger: 'violoncelliste.webm',
     affiche: 'violoncelliste.jpg',      /* l'image d'attente */
+    afficheLegere: 'violoncelliste-affiche-480.webp',
     largeur: 484, hauteur: 850, duree: 30,
     audience: 'mixte',
     titre: 'La violoncelliste',
@@ -81,11 +82,45 @@ const MEDIAS = [
     fichier: 'atelier.mp4',
     leger: 'atelier.webm',
     affiche: 'atelier.jpg',
+    afficheLegere: 'atelier-affiche-480.webp',
     largeur: 1264, hauteur: 720, duree: 10,
     audience: 'mixte',
     titre: 'L’atelier, dix secondes',
     legende: 'La caméra traverse la salle de composition, puis s’arrête sur deux personnes penchées sur le même écran. Muette : elle se passe partout, y compris sur un écran d’accueil.',
     usage: 'Réseaux sociaux, écran d’accueil en agence, message à un prospect.'
+  },
+  {
+    id: 'ame-des-souvenirs',
+    type: 'video',
+    fichier: 'ame-des-souvenirs.mp4',
+    leger: 'ame-des-souvenirs.webm',
+    affiche: 'ame-des-souvenirs.webp',
+    afficheLegere: 'ame-des-souvenirs-affiche-480.webp',
+    largeur: 484, hauteur: 850, duree: 15,
+    audience: 'mixte',
+    /* Un WebM ET un MP4, le WebM en premier. Mon premier essai — VP9
+       à crf 36 — donnait 1 417 Ko contre 1 219 pour le MP4, et j'en
+       avais conclu trop vite qu'il fallait s'en passer. Le réglage
+       était simplement trop prudent : à crf 42, le WebM tombe à
+       965 Ko pour 37,6 dB par rapport au MP4 servi — plus léger ET
+       meilleur à poids égal. Le MP4 reste en second : c'est lui que
+       lit Safari. */
+    titre: 'La musique donne une âme à nos souvenirs',
+    legende: 'Quinze secondes, format vertical. L’affiche cubiste mise en mouvement : un pianiste, une colombe, la lumière qui tourne sur l’or. Même univers que l’affiche fixe, mais elle retient l’œil dans un fil d’actualité.',
+    usage: 'Instagram, TikTok, WhatsApp, écran d’accueil en agence.'
+  },
+  {
+    id: 'emotions-qui-traversent',
+    type: 'video',
+    fichier: 'emotions-qui-traversent.mp4',
+    leger: 'emotions-qui-traversent.webm',
+    affiche: 'emotions-qui-traversent.webp',
+    afficheLegere: 'emotions-qui-traversent-affiche-480.webp',
+    largeur: 484, hauteur: 850, duree: 22,
+    audience: 'famille',
+    titre: 'Des émotions qui traversent le temps',
+    legende: 'Vingt-deux secondes. Un violoncelliste au bord de l’eau, des bougies, un portrait encadré posé contre la pierre. La plus longue des trois vidéos, et la plus lente : à réserver aux endroits où l’on regarde vraiment.',
+    usage: 'Page de partage, courriel aux familles, écran d’attente en salle.'
   },
   {
     id: 'devenez-partenaire',
@@ -155,6 +190,7 @@ const MEDIAS = [
     id: 'melodies-generations',
     type: 'affiche',
     fichier: 'melodies-generations.webp',
+    leger: 'melodies-generations-480.webp',
     largeur: 1024, hauteur: 1536,
     audience: 'famille',
     /* ATTENTION AVANT DE S'EN SERVIR — cette affiche montre des
@@ -221,6 +257,114 @@ const MEDIAS = [
     usage: 'Première prise de contact, réseaux sociaux, écran d’accueil en agence.'
   },
   {
+    id: 'racines-antillaises',
+    type: 'affiche',
+    fichier: 'racines-antillaises.webp',
+    leger: 'racines-antillaises-480.webp',
+    web: 'racines-antillaises-768.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'famille',
+    /* La seule affiche de la médiathèque qui nomme des genres
+       précis — zouk, gwoka, bèlè. Trois des vingt registres du
+       catalogue, donc trois promesses vérifiables et non un décor. */
+    titre: 'Des mélodies aux couleurs de nos racines',
+    legende: 'Une chanteuse, un très, un tambour, un portrait posé près d’une bougie. Elle répond à une demande que la médiathèque n’avait pas : une famille antillaise ne se reconnaît pas dans un piano à queue au bord d’un lac.',
+    usage: 'Familles antillaises ici et aux Antilles, agences d’outre-mer, réseaux sociaux.'
+  },
+  {
+    id: 'memoire-autrement',
+    type: 'affiche',
+    fichier: 'memoire-autrement.webp',
+    leger: 'memoire-autrement-480.webp',
+    web: 'memoire-autrement-768.webp',
+    largeur: 1024, hauteur: 1536,
+    audience: 'famille',
+    titre: 'Faire vivre la mémoire autrement',
+    legende: 'La plaque gravée et son QR, mais dessinés plutôt que photographiés : le visage, les photographies qui remontent le long d’une portée, la mémoire qui continue. Pour dire le service à qui ne l’a jamais vu.',
+    usage: 'Première prise de contact, réseaux sociaux, présentoir en agence.'
+  },
+  {
+    id: 'souvenirs-en-harmonie',
+    type: 'affiche',
+    fichier: 'souvenirs-en-harmonie.webp',
+    leger: 'souvenirs-en-harmonie-480.webp',
+    web: 'souvenirs-en-harmonie-768.webp',
+    largeur: 941, hauteur: 1672,
+    audience: 'mixte',
+    /* ATTENTION — c'est la seule affiche de la médiathèque où UN
+       CERCUEIL est visible, au premier plan. Elle est juste pour une
+       page qui parle déjà de cérémonie, et déplacée partout où le
+       lecteur n'en est pas encore là — une première visite, un
+       courriel de prospection, une page « de son vivant ». */
+    titre: 'Des souvenirs en harmonie',
+    legende: 'Traitement cubiste, or et ardoise. Un cercueil y figure au premier plan : à réserver aux pages et aux moments où la cérémonie est déjà le sujet.',
+    usage: 'Page de cérémonie, rendez-vous en agence. Pas en première approche.'
+  },
+  {
+    id: 'ce-que-les-mots',
+    type: 'affiche',
+    fichier: 'ce-que-les-mots.webp',
+    leger: 'ce-que-les-mots-480.webp',
+    largeur: 941, hauteur: 1672,
+    audience: 'famille',
+    titre: 'Ce que les mots ne suffisent pas à exprimer',
+    legende: 'La seule qui pose une question au lieu d’affirmer. C’est exactement l’état de quelqu’un qui doit parler à une assemblée dans trois jours et ne sait pas par où commencer.',
+    usage: 'Réseaux sociaux, courrier aux familles, page d’accueil d’une campagne.'
+  },
+  {
+    id: 'melodie-pour-toujours',
+    type: 'affiche',
+    fichier: 'melodie-pour-toujours.webp',
+    leger: 'melodie-pour-toujours-480.webp',
+    largeur: 941, hauteur: 1671,
+    audience: 'famille',
+    /* ATTENTION — un homme âgé monte un escalier de touches de piano
+       vers la lumière. C'est une image d'au-delà, lisible comme telle.
+       Elle parle à qui la partage, et peut heurter qui ne partage pas
+       cette représentation. Jamais sur la page des rites, qui sert des
+       familles de plusieurs confessions. */
+    titre: 'Plus qu’une cérémonie, une mélodie pour toujours',
+    legende: 'Une pianiste, et un escalier de touches qui monte vers la lumière. Image d’au-delà assumée : elle touche qui s’y reconnaît, et n’est pas neutre pour les autres.',
+    usage: 'Cérémonies religieuses ou spirituelles, réseaux sociaux. À éviter en contexte interconfessionnel.'
+  },
+  {
+    id: 'duo-au-piano',
+    type: 'affiche',
+    fichier: 'duo-au-piano.webp',
+    leger: 'duo-au-piano-480.webp',
+    largeur: 941, hauteur: 1672,
+    audience: 'mixte',
+    titre: 'La musique donne une autre dimension au souvenir',
+    legende: 'Deux interprètes, un piano, une voix. C’est la seule qui montre la prestation elle-même plutôt que son effet — utile quand l’interlocuteur demande « concrètement, ça donne quoi ? ».',
+    usage: 'Rendez-vous de présentation, écran d’accueil, réseaux sociaux.'
+  },
+  {
+    id: 'belle-note-finale',
+    type: 'affiche',
+    fichier: 'belle-note-finale.webp',
+    leger: 'belle-note-finale-480.webp',
+    largeur: 941, hauteur: 1672,
+    audience: 'famille',
+    titre: 'Une belle note finale',
+    legende: 'La plus sobre du nouveau lot : une partition tenue à la main, rien d’autre. Elle ne montre ni plaque, ni cercueil, ni escalier — elle passe donc là où les autres ne passent pas.',
+    usage: 'Partout, y compris en première approche et en contexte interconfessionnel.'
+  },
+  {
+    id: 'poignee-de-main',
+    type: 'affiche',
+    fichier: 'poignee-de-main.webp',
+    leger: 'poignee-de-main-480.webp',
+    largeur: 1070, hauteur: 1470,
+    audience: 'pro',
+    /* La seule pièce de la médiathèque qui montre deux professionnels
+       en train de s'entendre, plutôt qu'un service à vendre. C'est
+       aussi la seule au format presque A4, là où toutes les autres
+       sont en 2/3 ou en 9/16. */
+    titre: 'Devenez partenaire agence',
+    legende: 'Un accord qui se conclut dans un hall d’agence. Elle ne décrit aucune prestation : elle s’adresse au directeur qui se demande à qui il confierait ses familles.',
+    usage: 'Salon professionnel, courriel de prospection, première page d’un dossier partenaire.'
+  },
+  {
     id: 'souvenirs-ukulele',
     type: 'affiche',
     fichier: 'souvenirs-ukulele.jpg',
@@ -241,7 +385,6 @@ const MEDIAS = [
 const ATTENDUS = [
   ['Un service additionnel qui vous démarque', 'pro'],
   ['Ensemble, donnons une voix aux souvenirs', 'pro'],
-  ['Des mélodies qui restent, au-delà du temps (Antilles)', 'famille'],
   ['La musique pour l’éternité', 'famille']
 ];
 

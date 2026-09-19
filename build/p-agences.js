@@ -171,6 +171,9 @@ ${P.chaineQR({ clair: false })}
         <div class="step reveal"><div class="step-dot">5</div><div class="step-body"><h3>Vous saisissez le brief, ou vous nous passez le relais</h3><p>Trois minutes depuis votre espace, ou vous nous transmettez le contact et nous menons l'entretien en votre nom.</p><span class="step-time">3 minutes</span></div></div>
         <div class="step reveal"><div class="step-dot">6</div><div class="step-body"><h3>Vous encaissez votre marge</h3><p>Facture récapitulative mensuelle. Vous conservez 60 %, nous facturons les 40 % restants. Aucun minimum, aucun engagement de durée.</p><span class="step-time">Mensuel</span></div></div>
       </div>
+${P.afficheCampagne('poignee-de-main',
+  'Deux professionnels se serrant la main dans le hall d\u2019une agence, sous le logo Melodia Fun\u00e8bre',
+  'Six \u00e9tapes, et rien \u00e0 signer avant la premi\u00e8re \u0153uvre. Le partenariat commence par un accord, pas par un contrat de distribution.')}
     </div>
   </section>
 

@@ -146,6 +146,9 @@ ${registres()}
       <div class="center reveal" style="margin-top:3rem;">
         <a href="/offres" class="btn btn-gold btn-lg">Commander dans ce style</a>
       </div>
+${P.filmCampagne('emotions-qui-traversent',
+  'Un violoncelliste jouant au bord de l\u2019eau au soleil couchant, parmi des bougies ; un portrait encadr\u00e9 est pos\u00e9 contre la pierre.',
+  'Vingt-deux secondes, sans un mot. C\u2019est la seule page o\u00f9 ce film a sa place : ici, on est venu \u00e9couter.')}
     </div>
   </section>
 

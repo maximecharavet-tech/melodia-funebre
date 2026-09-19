@@ -588,13 +588,33 @@ function jsonldFil(titre, chemin) {
 function pieceMedia(m) {
   const src = '/' + MED.DOSSIER + m.fichier;
   const visuel = m.type === 'video'
+    /* L'affiche d'attente d'une vidéo du kit tombait dans le même
+       piège que les vignettes fixes : servie en pleine taille pour un
+       cadre de 261 px. Un « poster » n'accepte pas de « srcset » —
+       c'est un attribut, pas un élément — alors on désigne directement
+       la version légère. Le fichier d'origine reste ce que le kit fait
+       télécharger. */
     ? `<video class="kit-media" controls preload="none" playsinline
-           poster="/${MED.DOSSIER}${m.affiche}" width="${m.largeur}" height="${m.hauteur}">
+           poster="/${MED.DOSSIER}${m.afficheLegere || m.affiche}" width="${m.largeur}" height="${m.hauteur}">
         ${m.leger ? `<source src="/${MED.DOSSIER}${m.leger}" type="video/webm">` : ''}
         <source src="${src}" type="video/mp4">
         Votre navigateur ne sait pas lire cette vidéo — le bouton ci-dessous la télécharge.
       </video>`
+    /* La vignette du kit s'affiche à 261 px dans une grille en
+       « minmax(260px, 1fr) », et servait pourtant le fichier d'origine
+       — 941 ou 1024 px. Un par un c'était discret ; à vingt affiches,
+       la page en téléchargeait plusieurs mégaoctets pour qui descendait
+       jusqu'au kit.
+
+       Le contrôle des images trop grandes ne l'avait pas vu, et c'est
+       instructif : il compare la taille du fichier à l'attribut
+       « width », qui annonce ici 941 en toute honnêteté. C'est la
+       feuille de style qui ramène à 261. Un attribut vrai peut donc
+       masquer un gaspillage réel — seule une mesure dans un vrai
+       navigateur le montre. */
     : `<img class="kit-media" src="${src}" alt="Affiche : ${esc(m.titre)}"
+           ${m.leger ? `srcset="/${MED.DOSSIER}${m.leger} 480w, ${src} ${largeurFichier(path.join(__dirname, '..', MED.DOSSIER, m.fichier)) || m.largeur}w"
+           sizes="(max-width: 700px) 84vw, 280px"` : ''}
            width="${m.largeur}" height="${m.hauteur}" loading="lazy" decoding="async">`;
   const format = m.type === 'video'
     ? `Vidéo · ${m.duree} s · ${m.largeur} × ${m.hauteur}`
@@ -626,6 +646,64 @@ ${pieces.map(pieceMedia).join('\n')}
       </div>`;
 }
 
+/* La largeur réelle d'un fichier, lue dans ses octets. WebP la porte
+   dans le bloc qui suit « RIFF…WEBP », JPEG dans ses marqueurs SOF.
+   Six lignes qui évitent de tenir la même mesure à jour à deux
+   endroits. */
+function largeurFichier(chemin) {
+  let b;
+  try { b = fs.readFileSync(chemin); } catch (e) { return 0; }
+  if (b.toString('latin1', 0, 4) === 'RIFF' && b.toString('latin1', 8, 12) === 'WEBP') {
+    const bloc = b.toString('latin1', 12, 16);
+    if (bloc === 'VP8X') return (b.readUIntLE(24, 3) & 0xFFFFFF) + 1;
+    if (bloc === 'VP8 ') return b.readUInt16LE(26) & 0x3FFF;
+    if (bloc === 'VP8L') return (b.readUInt32LE(21) & 0x3FFF) + 1;
+    return 0;
+  }
+  let i = 2;
+  while (i < b.length) {
+    if (b[i] !== 0xFF) { i++; continue; }
+    const m = b[i + 1];
+    if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) return b.readUInt16BE(i + 7);
+    i += 2 + b.readUInt16BE(i + 2);
+  }
+  return 0;
+}
+
+/* ─── Une affiche ANIMÉE dans le fil d'une page ───
+   Même place et même largeur qu'une affiche fixe, mais un film. Trois
+   précautions, toutes héritées de l'atelier sur la page « Qui sommes-
+   nous » :
+
+   « preload=none » — la page ne télécharge rien tant que le film n'est
+   pas approché. Un visiteur qui ne descend pas jusque-là ne paie pas
+   ses 1 200 Ko.
+
+   « muted loop playsinline » et pas de commandes — c'est une affiche
+   qui bouge, pas une vidéo à regarder. Le son de ces films n'apporte
+   rien et s'imposerait à quelqu'un qui lit au bureau ou au chevet.
+
+   « data-ambiance » — ornements.js le met en marche à l'entrée dans
+   l'écran, l'arrête à la sortie, et ne le lance jamais si le système
+   demande moins d'animations. L'image d'attente montre alors la même
+   scène, immobile. */
+function filmCampagne(id, alt, legende) {
+  const M = require('./medias.js');
+  const m = M.parId(id);
+  if (!m) throw new Error('film inconnu : ' + id);
+  if (m.type !== 'video') throw new Error('« ' + id + ' » n\u2019est pas un film');
+  return `      <figure class="guide-photo guide-photo-haute reveal">
+        <video class="film-campagne" data-ambiance muted loop playsinline preload="none"
+               poster="${M.DOSSIER + m.affiche}"
+               width="${m.largeur}" height="${m.hauteur}"
+               aria-label="${esc(alt)}">
+          ${m.leger ? `<source src="${M.DOSSIER + m.leger}" type="video/webm">` : ''}
+          <source src="${M.DOSSIER + m.fichier}" type="video/mp4">
+        </video>
+        <figcaption>${legende}</figcaption>
+      </figure>`;
+}
+
 /* ─── Une affiche verticale dans le fil d'une page ───
    Le motif vivait dans p-guides.js, où il ne servait qu'aux guides.
    Quarante-sept pages sur soixante et une n'avaient aucune image —
@@ -651,10 +729,18 @@ function afficheCampagne(id, alt, legende) {
   if (!m.leger) throw new Error('l\u2019affiche « ' + id + ' » n\u2019a pas de version l\u00e9g\u00e8re');
   /* « web » d'abord : c'est la version pensée pour l'écran. Sans
      elle, un téléphone à double densité réclame l'original. */
-  const plein = M.DOSSIER + (m.web || m.fichier);
+  const nomPlein = m.web || m.fichier;
+  const plein = M.DOSSIER + nomPlein;
+  /* La largeur du descripteur « w » est LUE dans le fichier, jamais
+     recopiée depuis la fiche. « largeur » décrit la pièce d'origine ;
+     la version d'écran peut être plus petite, et annoncer 1024w pour
+     un fichier de 768 ferait choisir au navigateur une image qu'il
+     croirait deux fois plus fine qu'elle n'est. Une largeur déclarée
+     à deux endroits finit toujours par diverger à l'un des deux. */
+  const largeurPlein = largeurFichier(path.join(__dirname, '..', plein)) || m.largeur;
   return `      <figure class="guide-photo guide-photo-haute reveal">
         <img src="${plein}"
-             srcset="${M.DOSSIER + m.leger} 480w, ${plein} ${m.largeur}w"
+             srcset="${M.DOSSIER + m.leger} 480w, ${plein} ${largeurPlein}w"
              sizes="(max-width: 700px) 84vw, 368px"
              width="${m.largeur}" height="${m.hauteur}" loading="lazy" decoding="async"
              alt="${esc(alt)}">
@@ -662,4 +748,4 @@ function afficheCampagne(id, alt, legende) {
       </figure>`;
 }
 
-module.exports = { pieceMedia, galerieMedias, afficheCampagne, partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldVivants, jsonldProcessus, jsonldFil };
+module.exports = { pieceMedia, galerieMedias, afficheCampagne, filmCampagne, partage, pricing, faq, scrollHint, testimonials, trustStrip, marquee, oeuvres, vitrineBarre, chaineQR, urgency, esc, jsonldOrg, jsonldFaq, jsonldService, jsonldSite, jsonldCatalogue, jsonldVivants, jsonldProcessus, jsonldFil };
