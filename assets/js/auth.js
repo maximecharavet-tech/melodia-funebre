@@ -11,11 +11,17 @@
   var SB = HAS_SB ? CFG.SUPABASE_URL.replace(/\/+$/, '') : '';
   var SBK = HAS_SB ? CFG.SUPABASE_ANON_KEY : '';
 
-  /* Identifiants maître — mode débutant, prototype local */
+  /* L'identifiant maître reste réservé, mais il n'ouvre plus rien.
+     Un couple identifiant / mot de passe écrit ici était lisible par
+     quiconque affichait le source de la page — et le dépôt est
+     public. Il ne servait qu'au raccourci de démonstration, mort
+     depuis que la base existe : le code ne l'essayait qu'en l'absence
+     de Supabase. Mort, mais pas inoffensif — un config.js vidé par un
+     retour en arrière ou une variable d'environnement manquante
+     l'aurait ranimé, et la console maître se serait ouverte avec deux
+     mots qu'on lit sur GitHub. On garde la réservation du nom, on
+     jette la clé. */
   var MASTER_ID = 'mastermax07';
-  var MASTER_PW = 'mastermax07';
-  /* L'identifiant sert à se connecter, l'adresse à recevoir les réponses */
-  var MASTER_MAIL = 'contact@melodia-funebre.fr';
 
   var LS = {
     get: function (k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } },
@@ -138,8 +144,15 @@
     mode: HAS_SB ? 'supabase' : 'local',
 
     current: function () {
-      var m = LS.get('melodia_master', null);
-      if (m) return { id: 'master', name: 'Maxime Charavet', email: MASTER_MAIL, role: 'master' };
+      /* Plus de drapeau « maître » en mémoire locale. Plus rien ne
+         l'écrivait depuis la suppression du raccourci, mais il était
+         encore lu — et lu AVANT Supabase. Une ligne tapée dans la
+         console du navigateur suffisait donc à se déclarer fondateur.
+         Les données, elles, tiennent au Row Level Security et ne
+         seraient pas venues ; mais c'est exactement le défaut contre
+         lequel met en garde le commentaire ci-dessous, trois lignes
+         plus bas : le rôle ne se lit pas où le navigateur peut
+         l'écrire. */
       if (HAS_SB) {
         var s = LS.get('melodia_session', null);
         if (!s || !s.user) return null;
@@ -229,18 +242,9 @@
 
     async login(identifiant, password) {
       var id = (identifiant || '').trim();
-      /* 1) Raccourci de démonstration.
-         L'identifiant et le mot de passe sont écrits en clair dans ce
-         fichier, donc lisibles par quiconque affiche le source de la
-         page — et ils sont identiques l'un à l'autre. C'était sans
-         conséquence tant que tout vivait dans le navigateur du poste.
-         Dès qu'une vraie base existe, ce raccourci n'a plus lieu
-         d'être : en mode production, seul un compte Supabase ouvre la
-         console, avec un mot de passe que personne ne peut lire. */
-      if (!HAS_SB && id.toLowerCase() === MASTER_ID && password === MASTER_PW) {
-        LS.set('melodia_master', { at: Date.now() });
-        return { id: 'master', name: 'Maxime Charavet', email: MASTER_MAIL, role: 'master' };
-      }
+      /* Il n'y a plus de raccourci. Seul un compte Supabase ouvre la
+         console, avec un mot de passe que personne ne peut lire — y
+         compris celui du fondateur. */
       var email = id.toLowerCase();
       if (HAS_SB) {
         var d = await sb('/auth/v1/token?grant_type=password', { method: 'POST', body: JSON.stringify({ email: email, password: password }) });
