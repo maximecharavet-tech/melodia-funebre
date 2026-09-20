@@ -12,13 +12,6 @@ build/
 scripts/
 .github/
 
-# « Un mot pour toi » vit dans ce dépôt mais n'appartient pas à ce
-# site : c'est une application séparée, déployée sur son propre projet
-# Vercel et sa propre adresse. Sans cette ligne, elle serait aussi
-# servie sous melodia-funebre.fr/un-mot-pour-toi/ — exactement ce
-# qu'on voulait éviter en la sortant du site funéraire.
-un-mot-pour-toi/
-
 # Schéma et guide de la base : ce sont des instructions pour vous,
 # pas des fichiers à servir. Le schéma nomme les tables et les règles
 # de sécurité — inutile de le donner à lire.

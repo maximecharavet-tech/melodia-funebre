@@ -265,6 +265,10 @@
     {
       "source": "/ecouter/:titre",
       "destination": "/ecouter-:titre"
+    },
+    {
+      "source": "/a/:jeton",
+      "destination": "/un-mot-pour-toi/a.html?j=:jeton"
     }
   ]
 }
