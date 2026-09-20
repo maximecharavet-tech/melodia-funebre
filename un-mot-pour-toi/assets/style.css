@@ -1,0 +1,404 @@
+/* ═══════════════════════════════════════════════════════════════
+   UN MOT POUR TOI — la feuille de style
+
+   L'IDÉE VISUELLE : DE L'ENCRE SUR DU PAPIER
+
+   Ce site remplace une signature au stylo sur une carte de départ.
+   Tout part de là : un fond de papier légèrement chaud, une encre
+   bleu-noir, et un seul accent — le bleu d'un stylo plume. Pas d'or,
+   pas de dégradés, pas de cartes flottantes : une carte de départ
+   est un objet plat qu'on pose sur un bureau et que quinze personnes
+   signent l'une après l'autre.
+
+   DEUX THÈMES, ET TROIS ÉTATS
+
+   Le visiteur peut avoir choisi clair, sombre, ou n'avoir rien
+   choisi du tout — et le troisième cas est le plus courant. Les
+   couleurs sont donc déclarées en entier sur « :root », redéfinies
+   sous « prefers-color-scheme: dark » (protégé pour qu'un choix
+   explicite de clair l'emporte), puis redéfinies encore sous
+   l'attribut. Aucune couleur ne vit uniquement dans un de ces blocs.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --papier:      #f4f1ea;
+  --papier-creux:#eae5db;
+  --encre:       #1d2328;
+  --encre-douce: #4a5159;
+  --muet:        #6d6a63;
+  --accent:      #2f5580;
+  --accent-vif:  #24446a;
+  --trait:       #d9d2c6;
+  --trait-net:   #bdb4a4;
+  --alerte:      #9a3b2f;
+  --ff-titre: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --ff-texte: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ff-mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --rayon: 4px;
+  --ombre: 0 1px 2px rgba(29, 35, 40, .06), 0 8px 24px -12px rgba(29, 35, 40, .18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papier:      #15191d;
+    --papier-creux:#1d2228;
+    --encre:       #e8e4da;
+    --encre-douce: #bdb7ab;
+    --muet:        #8d887e;
+    --accent:      #86b0dc;
+    --accent-vif:  #a6c7ea;
+    --trait:       #2b3138;
+    --trait-net:   #3d444c;
+    --alerte:      #e08878;
+    --ombre: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .7);
+  }
+}
+:root[data-theme="dark"] {
+  --papier:      #15191d;
+  --papier-creux:#1d2228;
+  --encre:       #e8e4da;
+  --encre-douce: #bdb7ab;
+  --muet:        #8d887e;
+  --accent:      #86b0dc;
+  --accent-vif:  #a6c7ea;
+  --trait:       #2b3138;
+  --trait-net:   #3d444c;
+  --alerte:      #e08878;
+  --ombre: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .7);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  /* Le fond est posé explicitement : sans cela la page emprunte
+     celui de son hôte et se retrouve à écrire de l'encre claire sur
+     du papier clair. */
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--ff-texte);
+  font-size: 1.02rem;
+  line-height: 1.65;
+  /* Le grain du papier : deux dégradés très pâles, qui ne coûtent
+     aucun fichier et se voient à peine — c'est le but. */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(47, 85, 128, .045), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 90% 100%, rgba(154, 122, 76, .05), transparent 65%);
+  background-attachment: fixed;
+  min-height: 100dvh;
+}
+
+.enveloppe { max-width: 40rem; margin: 0 auto; padding: 2.4rem 1rem 5rem; }
+@media (min-width: 640px) { .enveloppe { padding: 3.6rem 1.5rem 6rem; } }
+
+/* ─── L'en-tête ─── */
+.entete { margin-bottom: 2.6rem; }
+.sur-titre {
+  font-family: var(--ff-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.7rem;
+}
+h1 {
+  font-family: var(--ff-titre);
+  font-variation-settings: 'SOFT' 20, 'WONK' 1, 'opsz' 40;
+  font-weight: 600;
+  font-size: clamp(2rem, 6vw, 2.85rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0 0 0.9rem;
+}
+.chapeau {
+  color: var(--encre-douce);
+  max-width: 34rem;
+  margin: 0;
+  font-size: 1.04rem;
+}
+
+/* ─── Le formulaire, présenté comme une carte qu'on remplit ─── */
+.carte {
+  background: var(--papier-creux);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  padding: 1.6rem 1.2rem;
+  box-shadow: var(--ombre);
+}
+@media (min-width: 640px) { .carte { padding: 2rem 1.8rem; } }
+
+.champ { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.5rem; }
+.champ:last-child { margin-bottom: 0; }
+
+label, .legende {
+  font-family: var(--ff-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muet);
+}
+.aide { font-size: 0.88rem; color: var(--muet); margin: 0.1rem 0 0; line-height: 1.5; }
+
+input[type="text"], textarea {
+  font-family: inherit;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--encre);
+  background: var(--papier);
+  border: 1px solid var(--trait-net);
+  border-radius: var(--rayon);
+  padding: 0.7rem 0.8rem;
+  width: 100%;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+textarea { resize: vertical; min-height: 7.5rem; }
+input[type="text"]:focus-visible, textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+::placeholder { color: var(--muet); opacity: .75; }
+
+/* ─── Le choix du type de message ───
+   Quatre pastilles plutôt qu'une liste déroulante : sur un téléphone,
+   on les vise du pouce, et on voit les quatre possibilités d'un coup
+   sans avoir à ouvrir quoi que ce soit. */
+.formes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.55rem; }
+@media (min-width: 520px) { .formes { grid-template-columns: repeat(4, 1fr); } }
+
+.forme {
+  appearance: none;
+  font-family: var(--ff-texte);
+  font-size: 0.93rem;
+  color: var(--encre-douce);
+  background: var(--papier);
+  border: 1px solid var(--trait-net);
+  border-radius: var(--rayon);
+  padding: 0.85rem 0.4rem;
+  min-height: 3.6rem;
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+  transition: border-color .16s ease, background .16s ease, color .16s ease;
+}
+.forme svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.forme:hover { border-color: var(--trait-net); background: var(--papier-creux); }
+.forme[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--papier));
+  color: var(--accent-vif);
+  font-weight: 500;
+}
+.forme:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ─── Le bloc d'enregistrement ─── */
+.atelier {
+  margin-top: 1rem;
+  padding: 1.1rem;
+  border: 1px dashed var(--trait-net);
+  border-radius: var(--rayon);
+  background: var(--papier);
+}
+.atelier[hidden] { display: none; }
+.apercu { width: 100%; max-height: 17rem; border-radius: var(--rayon); background: #000; display: block; }
+.apercu[hidden] { display: none; }
+img.apercu { object-fit: contain; background: var(--papier-creux); }
+audio.apercu { max-height: none; height: 3rem; background: transparent; }
+
+.minuterie {
+  font-family: var(--ff-mono);
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  margin: 0.8rem 0 0.2rem;
+  color: var(--encre);
+}
+.minuterie small { display: block; font-size: 0.74rem; letter-spacing: 0.14em; color: var(--muet); text-transform: uppercase; margin-top: 0.2rem; }
+.point-rouge { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--alerte); margin-right: 0.45rem; vertical-align: middle; }
+@media (prefers-reduced-motion: no-preference) {
+  .enregistre .point-rouge { animation: battre 1.4s ease-in-out infinite; }
+}
+@keyframes battre { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+/* ─── Les boutons ─── */
+.boutons { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+.btn {
+  appearance: none;
+  font-family: var(--ff-texte);
+  font-size: 0.97rem;
+  font-weight: 500;
+  border-radius: var(--rayon);
+  padding: 0.75rem 1.2rem;
+  min-height: 2.9rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+  text-decoration: none;
+  transition: background .16s ease, border-color .16s ease, color .16s ease;
+}
+.btn-plein { background: var(--accent-vif); color: #fff; }
+.btn-plein:hover { background: var(--accent); }
+:root[data-theme="dark"] .btn-plein,
+.btn-plein { color: #fff; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .btn-plein { background: var(--accent); color: #10161c; }
+  :root:not([data-theme="light"]) .btn-plein:hover { background: var(--accent-vif); }
+}
+:root[data-theme="dark"] .btn-plein { background: var(--accent); color: #10161c; }
+:root[data-theme="dark"] .btn-plein:hover { background: var(--accent-vif); }
+
+.btn-creux { background: transparent; border-color: var(--trait-net); color: var(--encre); }
+.btn-creux:hover { border-color: var(--encre-douce); background: var(--papier-creux); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn-large { width: 100%; font-size: 1.05rem; min-height: 3.3rem; }
+
+/* ─── Les messages d'état ─── */
+.mot-detat {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--rayon);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  border: 1px solid var(--trait-net);
+  background: var(--papier);
+}
+.mot-detat[hidden] { display: none; }
+.mot-detat.echec { border-color: var(--alerte); color: var(--alerte); }
+
+.progression {
+  height: 5px; border-radius: 3px; background: var(--trait);
+  overflow: hidden; margin-top: 0.9rem;
+}
+.progression[hidden] { display: none; }
+.progression i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .2s ease; }
+
+/* ─── Le résultat : le QR ─── */
+.resultat { margin-top: 2rem; }
+.resultat[hidden] { display: none; }
+
+.cadre-qr {
+  background: #fff;
+  border: 1px solid var(--trait-net);
+  border-radius: var(--rayon);
+  padding: 1rem;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--ombre);
+}
+.cadre-qr canvas, .cadre-qr img { width: 100%; max-width: 17rem; height: auto; display: block; image-rendering: pixelated; }
+
+.adresse {
+  font-family: var(--ff-mono);
+  font-size: 0.82rem;
+  word-break: break-all;
+  color: var(--encre-douce);
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  padding: 0.6rem 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.garde {
+  margin-top: 1.4rem;
+  padding: 1rem 1.1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--papier-creux);
+  border-radius: 0 var(--rayon) var(--rayon) 0;
+  font-size: 0.93rem;
+}
+.garde p { margin: 0 0 0.5rem; }
+.garde p:last-child { margin-bottom: 0; }
+
+/* ─── La page que le QR ouvre ─── */
+.lettre {
+  background: var(--papier-creux);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 1.8rem 1.3rem;
+}
+@media (min-width: 640px) { .lettre { padding: 2.6rem 2.4rem; } }
+
+.de-la-part {
+  font-family: var(--ff-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muet);
+  margin: 0 0 0.4rem;
+}
+.signataire {
+  font-family: var(--ff-titre);
+  font-variation-settings: 'SOFT' 40, 'WONK' 1, 'opsz' 36;
+  font-weight: 600;
+  font-size: clamp(1.7rem, 5.5vw, 2.3rem);
+  line-height: 1.15;
+  margin: 0 0 1.4rem;
+}
+.destinataire { color: var(--muet); font-size: 0.94rem; }
+
+.le-mot {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  margin: 1.4rem 0 0;
+  max-width: 36rem;
+}
+.le-mot::first-letter { }
+
+.media { margin-top: 1.6rem; }
+.media video, .media img {
+  width: 100%; height: auto; display: block;
+  border-radius: var(--rayon); border: 1px solid var(--trait);
+  background: #000;
+}
+.media img { background: var(--papier); }
+.media audio { width: 100%; margin-top: 0.4rem; }
+
+.filet {
+  border: 0;
+  border-top: 1px solid var(--trait);
+  margin: 2rem 0 1.2rem;
+}
+.pied {
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--muet);
+  margin-top: 2.4rem;
+  line-height: 1.7;
+}
+.pied a { color: var(--accent); }
+
+a { color: var(--accent-vif); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) a { color: var(--accent); } }
+:root[data-theme="dark"] a { color: var(--accent); }
+
+.retrait-lien {
+  background: none; border: 0; padding: 0;
+  font: inherit; font-size: 0.88rem;
+  color: var(--muet); text-decoration: underline;
+  cursor: pointer; min-height: 24px;
+}
+.retrait-lien:hover { color: var(--alerte); }
+
+.squelette {
+  height: 1rem; border-radius: 3px;
+  background: linear-gradient(90deg, var(--trait) 0%, var(--papier-creux) 50%, var(--trait) 100%);
+  background-size: 200% 100%;
+  margin-bottom: 0.7rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .squelette { animation: glisser 1.4s linear infinite; }
+}
+@keyframes glisser { to { background-position: -200% 0; } }
+
+.visuellement-cache {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
