@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
+  "_pourquoi_pas_de_cleanUrls": "Avec cleanUrls, Vercel rend « a.html » adressable comme « /a » et la forme avec extension cesse d'exister. La réécriture ci-dessous, qui vise « /a.html », tombait alors dans le vide : toutes les pages ouvertes par un QR code auraient répondu 404. Sans cleanUrls, le fichier garde son nom littéral et la réécriture aboutit. Ce site n'a que deux pages, dont une servie par réécriture : il n'avait rien à gagner à cette option.",
   "trailingSlash": false,
   "rewrites": [
     { "source": "/a/:jeton", "destination": "/a.html" }
