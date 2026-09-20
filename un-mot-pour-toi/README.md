@@ -79,6 +79,25 @@ vraiment : quelqu'un, un téléphone, une carte imprimée.
 deux encodeurs peuvent choisir des masques différents et produire deux
 codes également valides.)*
 
+## Pourquoi `vercel.json` ne contient ni `cleanUrls` ni `trailingSlash`
+
+Les deux y étaient, et la racine répondait 404 : `cleanUrls` renvoie
+`/index.html` vers `/`, `trailingSlash: false` renvoie `/` vers la chaîne
+vide, et la page d'accueil se perdait entre les deux.
+
+`cleanUrls` cassait par ailleurs les pages de QR, indépendamment :
+il rend `a.html` adressable comme `/a` et **fait disparaître la forme
+avec extension**, si bien que la réécriture `/a/<jeton>` → `/a.html`
+visait un fichier qui n'existait plus. Chaque code scanné aurait
+répondu 404.
+
+Ce site a deux pages, dont une servie par réécriture. Il n'avait rien
+à gagner à ces deux options, et tout à y perdre.
+
+*(À noter : Vercel refuse toute clé inconnue dans `vercel.json` — on
+n'y met donc pas de commentaire, même déguisé en clé. Les explications
+vont ici.)*
+
 ## Poser la base
 
 Le contenu de `supabase.sql` a été appliqué au projet Supabase. Pour le

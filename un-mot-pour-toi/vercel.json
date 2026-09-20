@@ -1,32 +1,57 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "_pourquoi_pas_de_cleanUrls": "Avec cleanUrls, Vercel rend « a.html » adressable comme « /a » et la forme avec extension cesse d'exister. La réécriture ci-dessous, qui vise « /a.html », tombait alors dans le vide : toutes les pages ouvertes par un QR code auraient répondu 404. Sans cleanUrls, le fichier garde son nom littéral et la réécriture aboutit. Ce site n'a que deux pages, dont une servie par réécriture : il n'avait rien à gagner à cette option.",
-  "trailingSlash": false,
   "rewrites": [
-    { "source": "/a/:jeton", "destination": "/a.html" }
+    {
+      "source": "/a/:jeton",
+      "destination": "/a.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "no-referrer" },
-        { "key": "Permissions-Policy", "value": "geolocation=(), payment=(), interest-cohort=()" },
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), payment=(), interest-cohort=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
       ]
     },
     {
       "source": "/a/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
       ]
     },
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
       ]
     }
   ]
