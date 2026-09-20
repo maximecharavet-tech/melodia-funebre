@@ -268,7 +268,7 @@
     },
     {
       "source": "/a/:jeton",
-      "destination": "/un-mot-pour-toi/a.html?j=:jeton"
+      "destination": "/un-mot-pour-toi/a?j=:jeton"
     }
   ]
 }
