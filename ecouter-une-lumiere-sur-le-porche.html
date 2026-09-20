@@ -34,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=132ba663">
+<link rel="stylesheet" href="/assets/css/style.css?v=93979dd8">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -89,6 +89,76 @@
 
   <article class="section ec-page" style="padding-top:8rem;">
     <div class="wrap wrap-tight">
+<svg class="ins-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ins-or" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff6dc"/><stop offset=".11" stop-color="#e6cd85"/>
+<stop offset=".27" stop-color="#ab8a3e"/><stop offset=".42" stop-color="#6b5525"/>
+<stop offset=".57" stop-color="#c7a64b"/><stop offset=".71" stop-color="#f2dfa8"/>
+<stop offset=".86" stop-color="#9b7e37"/><stop offset="1" stop-color="#4b3c1b"/></linearGradient>
+<linearGradient id="ins-orh" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#fffaec"/><stop offset=".17" stop-color="#eed898"/>
+<stop offset=".37" stop-color="#b19040"/><stop offset=".54" stop-color="#78602a"/>
+<stop offset=".71" stop-color="#dcc06c"/><stop offset=".87" stop-color="#f6e6b6"/>
+<stop offset="1" stop-color="#877030"/></linearGradient>
+<linearGradient id="ins-ombre" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#312817"/><stop offset=".5" stop-color="#171308"/>
+<stop offset="1" stop-color="#0a0905"/></linearGradient>
+<linearGradient id="ins-bois" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#b58447"/><stop offset=".22" stop-color="#7a5a29"/>
+<stop offset=".5" stop-color="#412f13"/><stop offset=".78" stop-color="#83612d"/>
+<stop offset="1" stop-color="#2a1d0b"/></linearGradient>
+<linearGradient id="ins-nacre" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fffdf6"/><stop offset=".38" stop-color="#eae3d0"/>
+<stop offset=".72" stop-color="#c2baa3"/><stop offset="1" stop-color="#8f8874"/></linearGradient>
+<radialGradient id="ins-lueur"><stop offset="0" stop-color="rgba(224,186,104,.34)"/>
+<stop offset=".42" stop-color="rgba(201,168,76,.13)"/>
+<stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<radialGradient id="ins-sol"><stop offset="0" stop-color="rgba(232,204,140,.42)"/>
+<stop offset=".6" stop-color="rgba(201,168,76,.12)"/>
+<stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<linearGradient id="ins-fondu" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity=".5"/>
+<stop offset=".45" stop-color="#fff" stop-opacity=".12"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<mask id="ins-reflet" maskUnits="userSpaceOnUse" x="0" y="179" width="180" height="23">
+<rect x="0" y="179" width="180" height="23" fill="url(#ins-fondu)"/></mask>
+<!-- L'ORFÈVRERIE.
+
+     Un dégradé, si riche soit-il, reste plat : il colore une surface,
+     il ne lui donne pas d'arête. Ce filtre, lui, en fabrique une.
+
+     Il prend la silhouette du dessin, la floute pour en faire une
+     carte de hauteur, y fait tomber une lumière rasante, et ne garde
+     l'éclat obtenu qu'à l'intérieur du tracé. Résultat : chaque bord
+     reçoit son biseau, chaque corde son filet de lumière — le même
+     relief qu'un objet massif tourné vers une fenêtre.
+
+     Puis l'objet rayonne : une copie floutée, teintée d'or, posée
+     DERRIÈRE lui. C'est ce halo rapproché qui fait la différence
+     entre « doré » et « en or ».
+
+     Tout est calculé par le navigateur, à chaque affichage. Aucune
+     image, aucun octet de plus. -->
+<filter id="ins-orfevre" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="bosse"/>
+<feSpecularLighting in="bosse" surfaceScale="1.8" specularConstant="0.42" specularExponent="32"
+lighting-color="#fff7e2" result="eclat"><feDistantLight azimuth="238" elevation="56"/></feSpecularLighting>
+<feComposite in="eclat" in2="SourceAlpha" operator="in" result="eclatDedans"/>
+<feComposite in="SourceGraphic" in2="eclatDedans" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="metal"/>
+<feGaussianBlur in="SourceAlpha" stdDeviation="5" result="aura"/>
+<feColorMatrix in="aura" type="matrix" result="auraOr"
+values="0 0 0 0 0.86  0 0 0 0 0.70  0 0 0 0 0.32  0 0 0 0.2 0"/>
+<feMerge><feMergeNode in="auraOr"/><feMergeNode in="metal"/></feMerge>
+</filter>
+<linearGradient id="ins-ivoire" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fdf3dd"/><stop offset=".4" stop-color="#e8d7b2"/>
+<stop offset=".75" stop-color="#c0a878"/><stop offset="1" stop-color="#8e7a50"/></linearGradient>
+<clipPath id="ins-rond"><circle cx="90" cy="90" r="64"/></clipPath>
+<clipPath id="ins-grille"><rect x="32" y="66" width="116" height="74" rx="3"/></clipPath>
+<clipPath id="ins-capsule"><rect x="70" y="28" width="40" height="62" rx="20"/></clipPath>
+<clipPath id="ins-capsule2"><rect x="66" y="22" width="48" height="72" rx="24"/></clipPath>
+<clipPath id="ins-globe"><circle cx="90" cy="90" r="44"/></clipPath>
+</defs></svg>
 
       <nav class="ec-fil" aria-label="Fil d'Ariane">
         <a href="/demos">Nos réalisations</a>
@@ -119,6 +189,13 @@
         <p>Un vieux garage en bois où dormaient les outils et les années, chaque rayure sur le métal portant le secret d’un été. Sarah l’attendait sous le porche, au bord de la rivière ; sont venus trois enfants, puis sept petits-enfants courant dans la poussière. Une americana qui passe du français à l’anglais sans prévenir, comme on passe d’une génération à l’autre : guitare aux doigts, pedal steel, fiddle et contrebasse, avec un chœur d’enfants pour la fin.</p>
         <div class="ec-mots"><span class="mono">Les mots de la famille</span><span class="ec-mot">patient</span><span class="ec-mot">bâtisseur</span><span class="ec-mot">fidèle</span></div>
       </section>
+
+      <figure class="ec-registre reveal">
+        <div class="reg-cadre"><svg class="reg-art" viewBox="-14 -12 208 226" aria-hidden="true" focusable="false"><circle class="reg-halo" cx="90" cy="88" r="84" fill="url(#ins-lueur)"/><ellipse class="reg-sol" cx="90" cy="180" rx="56" ry="6" fill="url(#ins-sol)"/><g filter="url(#ins-orfevre)"><g class="reg-objet" id="ins-o41"><path d="M96 96L150 28l16 12-54 68z" fill="url(#ins-bois)" stroke="#1d1709" stroke-width="1.8"/><path d="M102.5 87.8L118.5 99.8" stroke="#c9a84c" stroke-opacity=".45" stroke-width="1"/><path d="M110.3 78L126.3 90" stroke="#c9a84c" stroke-opacity=".45" stroke-width="1"/><path d="M118.1 68.1L134.1 80.1" stroke="#c9a84c" stroke-opacity=".45" stroke-width="1"/><path d="M126 58.3L142 70.3" stroke="#c9a84c" stroke-opacity=".45" stroke-width="1"/><path d="M133.8 48.4L149.8 60.4" stroke="#c9a84c" stroke-opacity=".45" stroke-width="1"/><path d="M141.6 38.5L157.6 50.5" stroke="#c9a84c" stroke-opacity=".45" stroke-width="1"/><path d="M148 30L164 8l16 12-16 22z" fill="url(#ins-or)" stroke="#1d1709" stroke-width="1.4"/><circle cx="155" cy="17" r="2.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-opacity=".6" stroke-width=".7"/><circle cx="163" cy="11" r="2.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-opacity=".6" stroke-width=".7"/><circle cx="169" cy="25" r="2.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-opacity=".6" stroke-width=".7"/><circle cx="177" cy="19" r="2.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-opacity=".6" stroke-width=".7"/><circle cx="72" cy="118" r="44" fill="url(#ins-or)" stroke="#1d1709" stroke-width="2.2"/><rect x="70.4" y="75.5" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(0 72 79)"/><rect x="82.5" y="77.4" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(18 84.1 80.9)"/><rect x="93.3" y="82.9" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(36 94.9 86.4)"/><rect x="102" y="91.6" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(54 103.6 95.1)"/><rect x="107.5" y="102.4" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(72 109.1 105.9)"/><rect x="109.4" y="114.5" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(90 111 118)"/><rect x="107.5" y="126.6" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(108 109.1 130.1)"/><rect x="102" y="137.4" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(126 103.6 140.9)"/><rect x="93.3" y="146.1" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(144 94.9 149.6)"/><rect x="82.5" y="151.6" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(162 84.1 155.1)"/><rect x="70.4" y="153.5" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(180 72 157)"/><rect x="58.3" y="151.6" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(198 59.9 155.1)"/><rect x="47.5" y="146.1" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(216 49.1 149.6)"/><rect x="38.8" y="137.4" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(234 40.4 140.9)"/><rect x="33.3" y="126.6" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(252 34.9 130.1)"/><rect x="31.4" y="114.5" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(270 33 118)"/><rect x="33.3" y="102.4" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(288 34.9 105.9)"/><rect x="38.8" y="91.6" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(306 40.4 95.1)"/><rect x="47.5" y="82.9" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(324 49.1 86.4)"/><rect x="58.3" y="77.4" width="3.2" height="7" rx="1.4" fill="#8d7436" stroke="#1d1709" stroke-opacity=".5" stroke-width=".6" transform="rotate(342 59.9 80.9)"/><circle cx="72" cy="118" r="35" fill="url(#ins-ivoire)" stroke="#1d1709" stroke-width="1.6"/><circle cx="72" cy="118" r="30" fill="none" stroke="#1d1709" stroke-opacity=".18" stroke-width="1"/><path d="M68 128L136.4 44.4" stroke="#efdfb0" stroke-opacity=".6" stroke-width=".9"/><path d="M71.4 130.8L139.8 47.2" stroke="#efdfb0" stroke-opacity=".6" stroke-width=".9"/><path d="M74.8 133.6L143.2 50" stroke="#efdfb0" stroke-opacity=".6" stroke-width=".9"/><path d="M78.2 136.4L146.6 52.8" stroke="#efdfb0" stroke-opacity=".6" stroke-width=".9"/><path d="M60 126h26l-3 8H63z" fill="#191308" stroke="#1d1709" stroke-width=".8"/><path d="M60 146h22l-4 16H64z" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="120" cy="76" r="3" fill="url(#ins-orh)" stroke="#1d1709" stroke-opacity=".6" stroke-width=".8"/><path d="M70 130L119 78" stroke="#efdfb0" stroke-opacity=".5" stroke-width=".9"/><path d="M38 100a44 44 0 0 1 24-26"  fill="none" stroke="#f6e7bd" stroke-opacity=".38" stroke-width="1.2" stroke-linecap="round"/></g></g><g class="reg-reflet" mask="url(#ins-reflet)"><use href="#ins-o41" transform="matrix(1 0 0 -1 0 358)"/></g></svg></div>
+        <figcaption>
+          <span class="ec-reg-nom">Country americana</span><span class="ec-reg-mots">Rugueux &middot; Tendre</span>
+        </figcaption>
+      </figure>
 
       <section class="ec-vers reveal">
         <h2 class="ec-h2">Un extrait des paroles</h2>

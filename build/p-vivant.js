@@ -413,13 +413,13 @@ ${P.pricing()}
     <div class="wrap">
       <div class="center reveal" style="margin-bottom:2.8rem;">
         <div class="eyebrow">À imprimer, à faire suivre</div>
-        <h2 class="h-lg">Deux affiches,<br><em>pour en parler avant.</em></h2>
+        <h2 class="h-lg">Trois affiches,<br><em>pour en parler avant.</em></h2>
         <p class="lead" style="margin:1.4rem auto 0;max-width:46rem;">
           Pour un panneau d'affichage, un présentoir d'accueil, ou simplement pour
           envoyer l'idée à quelqu'un de la famille. Libres d'usage.
         </p>
       </div>
-${P.galerieMedias(['une-vie-en-musique', 'dernier-message'], 'kit-duo')}
+${P.galerieMedias(['une-vie-en-musique', 'dernier-message', 'salon-tourne-disque'], 'kit-duo')}
       <p class="center reveal kit-note">Ces fichiers font 1024 pixels de large : c'est net à l'écran et jusqu'au format A5 environ. Pour une impression A4 ou plus grande, demandez-nous la haute définition : <button type="button" class="lien-rappel" data-rappel>être rappelé</button>.</p>
     </div>
   </section>

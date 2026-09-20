@@ -125,6 +125,9 @@ ${P.urgency()}
         <div class="card card-lift reveal"><div class="card-icon">${ICON.lock}</div><h3 class="h-lg">Vos confidences protégées</h3><p>Ce que vous nous racontez sert à composer, rien d'autre. Aucune diffusion, aucune revente, aucune publication sans votre accord écrit.</p></div>
         <div class="card card-lift reveal"><div class="card-icon">${ICON.note}</div><h3 class="h-lg">Une relecture humaine</h3><p>Chaque hommage est écouté en entier par la maison avant l'envoi. Ce contrôle n'est jamais sauté, même dans l'urgence.</p></div>
       </div>
+${P.afficheCampagne('chaque-vie-sa-melodie',
+  'Une pianiste de dos devant un piano \u00e0 queue, face \u00e0 une baie ouverte sur la mer au soleil couchant',
+  'Au bout de ces six engagements, il y a quelqu\u2019un qui joue. C\u2019est tout ce que la maison fabrique : une pi\u00e8ce \u00e9crite pour une seule personne.')}
     </div>
   </section>
 

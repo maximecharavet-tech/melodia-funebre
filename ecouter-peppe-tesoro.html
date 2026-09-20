@@ -34,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=132ba663">
+<link rel="stylesheet" href="/assets/css/style.css?v=93979dd8">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -89,6 +89,76 @@
 
   <article class="section ec-page" style="padding-top:8rem;">
     <div class="wrap wrap-tight">
+<svg class="ins-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ins-or" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff6dc"/><stop offset=".11" stop-color="#e6cd85"/>
+<stop offset=".27" stop-color="#ab8a3e"/><stop offset=".42" stop-color="#6b5525"/>
+<stop offset=".57" stop-color="#c7a64b"/><stop offset=".71" stop-color="#f2dfa8"/>
+<stop offset=".86" stop-color="#9b7e37"/><stop offset="1" stop-color="#4b3c1b"/></linearGradient>
+<linearGradient id="ins-orh" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#fffaec"/><stop offset=".17" stop-color="#eed898"/>
+<stop offset=".37" stop-color="#b19040"/><stop offset=".54" stop-color="#78602a"/>
+<stop offset=".71" stop-color="#dcc06c"/><stop offset=".87" stop-color="#f6e6b6"/>
+<stop offset="1" stop-color="#877030"/></linearGradient>
+<linearGradient id="ins-ombre" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#312817"/><stop offset=".5" stop-color="#171308"/>
+<stop offset="1" stop-color="#0a0905"/></linearGradient>
+<linearGradient id="ins-bois" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#b58447"/><stop offset=".22" stop-color="#7a5a29"/>
+<stop offset=".5" stop-color="#412f13"/><stop offset=".78" stop-color="#83612d"/>
+<stop offset="1" stop-color="#2a1d0b"/></linearGradient>
+<linearGradient id="ins-nacre" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fffdf6"/><stop offset=".38" stop-color="#eae3d0"/>
+<stop offset=".72" stop-color="#c2baa3"/><stop offset="1" stop-color="#8f8874"/></linearGradient>
+<radialGradient id="ins-lueur"><stop offset="0" stop-color="rgba(224,186,104,.34)"/>
+<stop offset=".42" stop-color="rgba(201,168,76,.13)"/>
+<stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<radialGradient id="ins-sol"><stop offset="0" stop-color="rgba(232,204,140,.42)"/>
+<stop offset=".6" stop-color="rgba(201,168,76,.12)"/>
+<stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<linearGradient id="ins-fondu" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity=".5"/>
+<stop offset=".45" stop-color="#fff" stop-opacity=".12"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<mask id="ins-reflet" maskUnits="userSpaceOnUse" x="0" y="179" width="180" height="23">
+<rect x="0" y="179" width="180" height="23" fill="url(#ins-fondu)"/></mask>
+<!-- L'ORFÈVRERIE.
+
+     Un dégradé, si riche soit-il, reste plat : il colore une surface,
+     il ne lui donne pas d'arête. Ce filtre, lui, en fabrique une.
+
+     Il prend la silhouette du dessin, la floute pour en faire une
+     carte de hauteur, y fait tomber une lumière rasante, et ne garde
+     l'éclat obtenu qu'à l'intérieur du tracé. Résultat : chaque bord
+     reçoit son biseau, chaque corde son filet de lumière — le même
+     relief qu'un objet massif tourné vers une fenêtre.
+
+     Puis l'objet rayonne : une copie floutée, teintée d'or, posée
+     DERRIÈRE lui. C'est ce halo rapproché qui fait la différence
+     entre « doré » et « en or ».
+
+     Tout est calculé par le navigateur, à chaque affichage. Aucune
+     image, aucun octet de plus. -->
+<filter id="ins-orfevre" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="bosse"/>
+<feSpecularLighting in="bosse" surfaceScale="1.8" specularConstant="0.42" specularExponent="32"
+lighting-color="#fff7e2" result="eclat"><feDistantLight azimuth="238" elevation="56"/></feSpecularLighting>
+<feComposite in="eclat" in2="SourceAlpha" operator="in" result="eclatDedans"/>
+<feComposite in="SourceGraphic" in2="eclatDedans" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="metal"/>
+<feGaussianBlur in="SourceAlpha" stdDeviation="5" result="aura"/>
+<feColorMatrix in="aura" type="matrix" result="auraOr"
+values="0 0 0 0 0.86  0 0 0 0 0.70  0 0 0 0 0.32  0 0 0 0.2 0"/>
+<feMerge><feMergeNode in="auraOr"/><feMergeNode in="metal"/></feMerge>
+</filter>
+<linearGradient id="ins-ivoire" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fdf3dd"/><stop offset=".4" stop-color="#e8d7b2"/>
+<stop offset=".75" stop-color="#c0a878"/><stop offset="1" stop-color="#8e7a50"/></linearGradient>
+<clipPath id="ins-rond"><circle cx="90" cy="90" r="64"/></clipPath>
+<clipPath id="ins-grille"><rect x="32" y="66" width="116" height="74" rx="3"/></clipPath>
+<clipPath id="ins-capsule"><rect x="70" y="28" width="40" height="62" rx="20"/></clipPath>
+<clipPath id="ins-capsule2"><rect x="66" y="22" width="48" height="72" rx="24"/></clipPath>
+<clipPath id="ins-globe"><circle cx="90" cy="90" r="44"/></clipPath>
+</defs></svg>
 
       <nav class="ec-fil" aria-label="Fil d'Ariane">
         <a href="/demos">Nos réalisations</a>
@@ -119,6 +189,13 @@
         <p>Il avait quitté le Sud pour l&#39;usine et gardé le Sud dans l&#39;assiette. Il n&#39;a jamais dit « je t&#39;aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu&#39;il n&#39;a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.</p>
         <div class="ec-mots"><span class="mono">Les mots de la famille</span><span class="ec-mot">taiseux</span><span class="ec-mot">nourricier</span><span class="ec-mot">fidèle</span></div>
       </section>
+
+      <figure class="ec-registre reveal">
+        <div class="reg-cadre"><svg class="reg-art" viewBox="-14 -12 208 226" aria-hidden="true" focusable="false"><circle class="reg-halo" cx="90" cy="88" r="84" fill="url(#ins-lueur)"/><ellipse class="reg-sol" cx="90" cy="180" rx="56" ry="6" fill="url(#ins-sol)"/><g filter="url(#ins-orfevre)"><g class="reg-objet" id="ins-o36"><circle cx="90" cy="90" r="44" fill="#221b10" stroke="url(#ins-or)" stroke-width="2.6"/><g clip-path="url(#ins-globe)"><path d="M52 66c11-9 24-7 30 2 7 10 3 19-8 21-13 3-30-13-22-23zM72 104c9-11 22-9 26 2 5 13-4 24-15 23-11-1-17-15-11-25zM106 58c13-4 24 4 22 15-2 10-15 14-22 7-6-7-6-20 0-22zM110 110c11-6 22 2 22 13 0 12-13 19-21 11-7-6-8-20-1-24z" fill="url(#ins-orh)" fill-opacity=".85"/><path d="M52 68c16 9 60 9 76 0M52 112c16-9 60-9 76 0" fill="none" stroke="url(#ins-or)" stroke-opacity=".45" stroke-width="1.2"/><ellipse cx="90" cy="90" rx="15" ry="44" fill="none" stroke="url(#ins-or)" stroke-opacity=".4" stroke-width="1.2"/><ellipse cx="90" cy="90" rx="31" ry="44" fill="none" stroke="url(#ins-or)" stroke-opacity=".3" stroke-width="1.2"/><path d="M46 90h88" fill="none" stroke="#e3c977" stroke-opacity=".7" stroke-width="1.8"/><path d="M60 56a44 44 0 0 0-14 34" fill="none" stroke="#f6e7bd" stroke-opacity=".25" stroke-width="7"/></g><ellipse cx="90" cy="90" rx="58" ry="21" fill="none" stroke="url(#ins-or)" stroke-width="4.4" transform="rotate(-22 90 90)"/><ellipse cx="90" cy="90" rx="58" ry="21" fill="none" stroke="#1d1709" stroke-opacity=".35" stroke-width="1" transform="rotate(-22 90 90)"/><path d="M48 114c4 17 21 28 42 28s38-11 42-28" fill="none" stroke="url(#ins-or)" stroke-width="4.4" stroke-linecap="round"/><path d="M85 140h10v20h-10z" fill="url(#ins-or)" stroke="#1d1709" stroke-width="1"/><path d="M62 174h56l-9-14H71z" fill="url(#ins-or)" stroke="#1d1709" stroke-width="1.4"/><path d="M58 74a44 44 0 0 1 24-26"  fill="none" stroke="#f6e7bd" stroke-opacity=".38" stroke-width="1.2" stroke-linecap="round"/></g></g><g class="reg-reflet" mask="url(#ins-reflet)"><use href="#ins-o36" transform="matrix(1 0 0 -1 0 358)"/></g></svg></div>
+        <figcaption>
+          <span class="ec-reg-nom">Musique du monde</span><span class="ec-reg-mots">Voyageur &middot; Métissé</span>
+        </figcaption>
+      </figure>
 
       <section class="ec-vers reveal">
         <h2 class="ec-h2">Un extrait des paroles</h2>

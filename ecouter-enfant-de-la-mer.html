@@ -34,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=132ba663">
+<link rel="stylesheet" href="/assets/css/style.css?v=93979dd8">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -89,6 +89,76 @@
 
   <article class="section ec-page" style="padding-top:8rem;">
     <div class="wrap wrap-tight">
+<svg class="ins-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="ins-or" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff6dc"/><stop offset=".11" stop-color="#e6cd85"/>
+<stop offset=".27" stop-color="#ab8a3e"/><stop offset=".42" stop-color="#6b5525"/>
+<stop offset=".57" stop-color="#c7a64b"/><stop offset=".71" stop-color="#f2dfa8"/>
+<stop offset=".86" stop-color="#9b7e37"/><stop offset="1" stop-color="#4b3c1b"/></linearGradient>
+<linearGradient id="ins-orh" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#fffaec"/><stop offset=".17" stop-color="#eed898"/>
+<stop offset=".37" stop-color="#b19040"/><stop offset=".54" stop-color="#78602a"/>
+<stop offset=".71" stop-color="#dcc06c"/><stop offset=".87" stop-color="#f6e6b6"/>
+<stop offset="1" stop-color="#877030"/></linearGradient>
+<linearGradient id="ins-ombre" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#312817"/><stop offset=".5" stop-color="#171308"/>
+<stop offset="1" stop-color="#0a0905"/></linearGradient>
+<linearGradient id="ins-bois" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#b58447"/><stop offset=".22" stop-color="#7a5a29"/>
+<stop offset=".5" stop-color="#412f13"/><stop offset=".78" stop-color="#83612d"/>
+<stop offset="1" stop-color="#2a1d0b"/></linearGradient>
+<linearGradient id="ins-nacre" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fffdf6"/><stop offset=".38" stop-color="#eae3d0"/>
+<stop offset=".72" stop-color="#c2baa3"/><stop offset="1" stop-color="#8f8874"/></linearGradient>
+<radialGradient id="ins-lueur"><stop offset="0" stop-color="rgba(224,186,104,.34)"/>
+<stop offset=".42" stop-color="rgba(201,168,76,.13)"/>
+<stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<radialGradient id="ins-sol"><stop offset="0" stop-color="rgba(232,204,140,.42)"/>
+<stop offset=".6" stop-color="rgba(201,168,76,.12)"/>
+<stop offset="1" stop-color="rgba(201,168,76,0)"/></radialGradient>
+<linearGradient id="ins-fondu" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity=".5"/>
+<stop offset=".45" stop-color="#fff" stop-opacity=".12"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<mask id="ins-reflet" maskUnits="userSpaceOnUse" x="0" y="179" width="180" height="23">
+<rect x="0" y="179" width="180" height="23" fill="url(#ins-fondu)"/></mask>
+<!-- L'ORFÈVRERIE.
+
+     Un dégradé, si riche soit-il, reste plat : il colore une surface,
+     il ne lui donne pas d'arête. Ce filtre, lui, en fabrique une.
+
+     Il prend la silhouette du dessin, la floute pour en faire une
+     carte de hauteur, y fait tomber une lumière rasante, et ne garde
+     l'éclat obtenu qu'à l'intérieur du tracé. Résultat : chaque bord
+     reçoit son biseau, chaque corde son filet de lumière — le même
+     relief qu'un objet massif tourné vers une fenêtre.
+
+     Puis l'objet rayonne : une copie floutée, teintée d'or, posée
+     DERRIÈRE lui. C'est ce halo rapproché qui fait la différence
+     entre « doré » et « en or ».
+
+     Tout est calculé par le navigateur, à chaque affichage. Aucune
+     image, aucun octet de plus. -->
+<filter id="ins-orfevre" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="bosse"/>
+<feSpecularLighting in="bosse" surfaceScale="1.8" specularConstant="0.42" specularExponent="32"
+lighting-color="#fff7e2" result="eclat"><feDistantLight azimuth="238" elevation="56"/></feSpecularLighting>
+<feComposite in="eclat" in2="SourceAlpha" operator="in" result="eclatDedans"/>
+<feComposite in="SourceGraphic" in2="eclatDedans" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="metal"/>
+<feGaussianBlur in="SourceAlpha" stdDeviation="5" result="aura"/>
+<feColorMatrix in="aura" type="matrix" result="auraOr"
+values="0 0 0 0 0.86  0 0 0 0 0.70  0 0 0 0 0.32  0 0 0 0.2 0"/>
+<feMerge><feMergeNode in="auraOr"/><feMergeNode in="metal"/></feMerge>
+</filter>
+<linearGradient id="ins-ivoire" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fdf3dd"/><stop offset=".4" stop-color="#e8d7b2"/>
+<stop offset=".75" stop-color="#c0a878"/><stop offset="1" stop-color="#8e7a50"/></linearGradient>
+<clipPath id="ins-rond"><circle cx="90" cy="90" r="64"/></clipPath>
+<clipPath id="ins-grille"><rect x="32" y="66" width="116" height="74" rx="3"/></clipPath>
+<clipPath id="ins-capsule"><rect x="70" y="28" width="40" height="62" rx="20"/></clipPath>
+<clipPath id="ins-capsule2"><rect x="66" y="22" width="48" height="72" rx="24"/></clipPath>
+<clipPath id="ins-globe"><circle cx="90" cy="90" r="44"/></clipPath>
+</defs></svg>
 
       <nav class="ec-fil" aria-label="Fil d'Ariane">
         <a href="/demos">Nos réalisations</a>
@@ -119,6 +189,13 @@
         <p>Né un matin de 1948 à Fort-de-France, entre la mer et les cannes. Son père ramenait les poissons volants, sa mère les histoires d&#39;avant. À dix ans il tenait déjà le tambou et faisait lever tout le quartier. Il connaissait les poissons, les étoiles et les rivières. Il a épousé Yolande ; ils ont eu quatre enfants, deux garçons et deux filles, et la maison n&#39;a jamais manqué de rires ni de musique. Le soir, devant la case, il racontait les légendes aux petits. Quand la maladie est venue, il a demandé qu&#39;on joue du bélé : il a dansé une dernière fois, et il a souri. Tambou bélé, ti-bwa, chacha et guitare ; les couplets en français, un passage en créole.</p>
         <div class="ec-mots"><span class="mono">Les mots de la famille</span><span class="ec-mot">rythmé</span><span class="ec-mot">conteur</span><span class="ec-mot">joyeux</span></div>
       </section>
+
+      <figure class="ec-registre reveal">
+        <div class="reg-cadre"><svg class="reg-art" viewBox="-14 -12 208 226" aria-hidden="true" focusable="false"><circle class="reg-halo" cx="90" cy="88" r="84" fill="url(#ins-lueur)"/><ellipse class="reg-sol" cx="90" cy="180" rx="56" ry="6" fill="url(#ins-sol)"/><g filter="url(#ins-orfevre)"><g class="reg-objet" id="ins-o34"><path d="M50 64h80l-13 94c-1 8-11 13-27 13s-26-5-27-13z" fill="url(#ins-bois)" stroke="#1d1709" stroke-width="2"/><path d="M62 68l-9 88M90 68v92M118 68l9 88"  fill="none" stroke="#1d1709" stroke-opacity=".45" stroke-width="1" stroke-linecap="round"/><path d="M51 78c9 5 23 7 39 7s30-2 39-7" fill="none" stroke="url(#ins-or)" stroke-width="3.2"/><path d="M53 78L57.5 128L62 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M61.6 78L66.1 128L70.6 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M70.2 78L74.7 128L79.2 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M78.8 78L83.3 128L87.8 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M87.4 78L91.9 128L96.4 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M96 78L100.5 128L105 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M104.6 78L109.1 128L113.6 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M113.2 78L117.7 128L122.2 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M121.8 78L126.3 128L130.8 78" fill="none" stroke="#d3b45e" stroke-opacity=".9" stroke-width="1.7" stroke-linejoin="round"/><path d="M56 126c8 4 21 6 34 6s26-2 34-6" fill="none" stroke="url(#ins-or)" stroke-width="3.2"/><ellipse cx="90" cy="64" rx="41" ry="15" fill="url(#ins-ivoire)" stroke="#1d1709" stroke-width="1.8"/><ellipse cx="90" cy="64" rx="31" ry="10.5" fill="none" stroke="#1d1709" stroke-opacity=".2" stroke-width="1"/><ellipse cx="90" cy="64" rx="43" ry="16" fill="none" stroke="url(#ins-or)" stroke-width="3.6"/><path d="M60 55c8-3 19-5 30-5"  fill="none" stroke="#f6e7bd" stroke-opacity=".38" stroke-width="1.2" stroke-linecap="round"/></g></g><g class="reg-reflet" mask="url(#ins-reflet)"><use href="#ins-o34" transform="matrix(1 0 0 -1 0 358)"/></g></svg></div>
+        <figcaption>
+          <span class="ec-reg-nom">Bélé antillais</span><span class="ec-reg-mots">Vivant &middot; Enraciné</span>
+        </figcaption>
+      </figure>
 
       <section class="ec-vers reveal">
         <h2 class="ec-h2">Un extrait des paroles</h2>

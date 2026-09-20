@@ -278,6 +278,9 @@ ${t.non.map((x) => `              <li>${x}</li>`).join('\n')}
         <h2>Une fois le rite respecté, il reste à choisir</h2>
         <p>Savoir ce que la tradition permet ne dit pas quel morceau passer. Si c'est là que vous en êtes, nous avons écrit un <a href="/musique-obseques">guide sur le choix de la musique aux obsèques</a> : combien de morceaux, à quel moment, et ce qu'il faut vérifier avant le jour. Pour une crémation, les contraintes sont différentes et nous les détaillons <a href="/musique-cremation">à part</a> ; et sur la question des <a href="/musique-sacem-obseques">droits d'auteur</a>, la réponse est plus simple qu'on ne le croit.</p>
       </div>
+${P.afficheCampagne('belle-note-finale',
+  'Une femme en robe noire tenant une partition, devant un piano \u00e0 queue au soleil couchant',
+  'La seule affiche de la maison qui ne montre ni plaque grav\u00e9e, ni cercueil, ni au-del\u00e0. Sur une page qui sert des familles de plusieurs confessions, c\u2019est la condition pour en poser une.')}
     </div>
   </section>
 

@@ -5274,12 +5274,25 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 /* Une affiche 9/16 servie sur 40 rem ferait 1140 px de haut : elle
    couperait le guide en deux au lieu de l'aérer. */
 .guide-photo-haute { max-width: 23rem; }
+/* Un film d'affiche se pose exactement comme une affiche : même
+   largeur, même cadre. Le « display: block » évite le liseré que les
+   navigateurs laissent sous un élément en ligne. */
+.film-campagne {
+  display: block; width: 100%; height: auto;
+  border-radius: 3px; border: 1px solid var(--line-soft);
+}
 @media (max-width: 700px) { .guide-photo-haute { max-width: 84vw; } }
 
 .guide-photo figcaption {
   font-size: 0.84rem; line-height: 1.6; color: var(--ash);
   text-align: center; max-width: 34rem;
 }
+/* La légende sur fond ivoire. Depuis que le motif d'affiche est
+   partagé par tous les gabarits, il tombe aussi dans les sections
+   claires — et « --ash » y descend sous le seuil lisible. Le contrôle
+   des palettes l'a refusé avant la mise en ligne, ce pour quoi il a
+   été écrit. */
+.section-light .guide-photo figcaption { color: var(--or-deep); }
 
 /* ═══════════════════════════════════════════════════════════════
    LA PAGE D'UNE ŒUVRE, ET SON PARTAGE
@@ -5335,6 +5348,34 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .ec-recit, .ec-vers, .ec-appel, .ec-voisines { margin-top: 3.2rem; }
 .ec-recit p, .ec-appel p { color: var(--bone); line-height: 1.9; max-width: 64ch; }
+
+/* ─── Le registre, dessiné ───
+   Le même objet que dans le catalogue, mais seul au milieu d'une page
+   plutôt qu'en grille de vingt. On le bride donc à 15 rem : à pleine
+   largeur, un piano à queue de six cents pixels de haut couperait la
+   page en deux entre le récit et les paroles, ce qui est l'inverse du
+   service rendu. */
+.ec-registre {
+  margin: 3.4rem auto; max-width: 15rem;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+.ec-registre .reg-cadre {
+  width: 100%; border-radius: 3px; border: 1px solid var(--line-soft);
+}
+.ec-registre figcaption {
+  display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+  text-align: center;
+}
+.ec-reg-nom {
+  font-family: var(--ff-d); font-size: 1.02rem; letter-spacing: 0.04em;
+  color: var(--paper);
+}
+.ec-reg-mots {
+  /* 0,807 rem et pas 0,74 : le contrôle des tailles a refusé 11,8 px.
+     Ce site est lu par des gens de soixante-dix ans et plus. */
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--or-patina);
+}
 
 .ec-mots { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.4rem; }
 .ec-mots .mono {

@@ -85,6 +85,9 @@ ${P.urgency()}
       <div class="reveal">
 ${P.faq([FAQ[0], FAQ[1], FAQ[3], FAQ[6]])}
       </div>
+${P.afficheCampagne('duo-au-piano',
+  'Un pianiste et une chanteuse interpr\u00e9tant ensemble, au bord de l\u2019eau, devant un escalier de pierre',
+  'Au bout d\u2019un formulaire de contact, il y a deux personnes qui jouent. C\u2019est ce que vous commandez.')}
     </div>
   </section>
 

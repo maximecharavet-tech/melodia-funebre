@@ -18,6 +18,16 @@
 const { ICON, SITE } = require('./gen.js');
 const { TRACKS } = require('./data.js');
 const P = require('./parts.js');
+/* Les vingt illustrations de registre existaient déjà, dessinées pour
+   le catalogue, et ne servaient qu'à lui. Les pages d'écoute —
+   vingt et une — n'avaient, elles, aucune image : un titre, un
+   lecteur audio, trois blocs de texte. Chacune reçoit donc le dessin
+   de SON registre : un piano à queue pour « Piano classique », un
+   banjo pour « Country americana ». Vingt et une pages illustrées,
+   toutes différentes, et pas un octet d'image — c'est du vectoriel.
+   « mots » est renommé à l'import : le gabarit a déjà une variable de
+   ce nom, qui porte les mots de la famille. */
+const { illustration, mots: motsRegistre, DEFS } = require('./instruments.js');
 
 const esc = (s) => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -43,6 +53,7 @@ function corps(t, slug, voisines) {
   return `
   <article class="section ec-page" style="padding-top:8rem;">
     <div class="wrap wrap-tight">
+${DEFS}
 
       <nav class="ec-fil" aria-label="Fil d'Ariane">
         <a href="/demos">Nos réalisations</a>
@@ -76,6 +87,16 @@ function corps(t, slug, voisines) {
         ${mots.length ? `<div class="ec-mots"><span class="mono">Les mots de la famille</span>${
           mots.map((m) => `<span class="ec-mot">${esc(m)}</span>`).join('')}</div>` : ''}
       </section>
+
+      <figure class="ec-registre reveal">
+        <div class="reg-cadre">${illustration(t.style)}</div>
+        <figcaption>
+          <span class="ec-reg-nom">${esc(t.style)}</span>${(() => {
+            const m = motsRegistre(t.style);
+            return m ? `<span class="ec-reg-mots">${esc(m[0])} &middot; ${esc(m[1])}</span>` : '';
+          })()}
+        </figcaption>
+      </figure>
 
       ${t.lyrics ? `<section class="ec-vers reveal">
         <h2 class="ec-h2">Un extrait des paroles</h2>
