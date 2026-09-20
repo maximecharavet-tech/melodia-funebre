@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15191d" media="(prefers-color-scheme: dark)">
+<title>Un mot pour toi</title>
+<meta name="description" content="Déposez un mot, une photo, un message audio ou une vidéo. Vous repartez avec un QR code à coller sur la carte de départ.">
+<!-- Cette page n'a rien à faire dans un moteur de recherche : on y
+     arrive par le lien qu'on vous a transmis, et par lui seul. -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%232f5580'/%3E%3Cpath d='M9 11h14M9 16h14M9 21h8' stroke='%23f4f1ea' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Public+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<main class="enveloppe">
+
+  <header class="entete">
+    <p class="sur-titre">Carte de départ</p>
+    <h1>Un mot pour toi.</h1>
+    <p class="chapeau">
+      Au lieu de signer la carte, laissez un vrai message : quelques lignes,
+      une photo, votre voix, ou une courte vidéo. Vous repartez avec un QR code
+      à coller à la place de votre signature. La personne qui part pourra
+      l&rsquo;ouvrir autant de fois qu&rsquo;elle voudra, des années plus tard.
+    </p>
+  </header>
+
+  <form class="carte" id="formulaire" novalidate>
+
+    <div class="champ">
+      <label for="auteur">Vous êtes</label>
+      <input type="text" id="auteur" name="auteur" maxlength="80" required
+             autocomplete="given-name" placeholder="Prénom, ou prénom et nom">
+      <p class="aide">C&rsquo;est ce qui s&rsquo;affichera en haut de votre message.</p>
+    </div>
+
+    <div class="champ">
+      <label for="pour">Pour qui</label>
+      <input type="text" id="pour" name="pour" maxlength="80"
+             placeholder="Le prénom de la personne qui part">
+      <p class="aide">Facultatif.</p>
+    </div>
+
+    <div class="champ">
+      <label for="mot">Votre mot</label>
+      <textarea id="mot" name="mot" maxlength="2000" rows="6"
+                placeholder="Ce que vous auriez écrit sur la carte, mais en plus long si vous voulez."></textarea>
+      <p class="aide"><span id="compteur">0</span> / 2000 caractères.</p>
+    </div>
+
+    <div class="champ">
+      <span class="legende" id="legende-formes">Ajouter, si vous voulez</span>
+      <div class="formes" role="group" aria-labelledby="legende-formes">
+        <button type="button" class="forme" data-forme="texte" aria-pressed="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h9" stroke-linecap="round"/></svg>
+          Rien de plus
+        </button>
+        <button type="button" class="forme" data-forme="photo" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>
+          Une photo
+        </button>
+        <button type="button" class="forme" data-forme="audio" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg>
+          Ma voix
+        </button>
+        <button type="button" class="forme" data-forme="video" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 11l5-3v8l-5-3z" stroke-linejoin="round"/></svg>
+          Une vidéo
+        </button>
+      </div>
+
+      <div class="atelier" id="atelier" hidden>
+        <video class="apercu" id="apercu-video" playsinline hidden></video>
+        <img class="apercu" id="apercu-photo" alt="" hidden>
+        <audio class="apercu" id="apercu-audio" controls hidden></audio>
+
+        <p class="minuterie" id="minuterie" hidden>
+          <span class="point-rouge" aria-hidden="true"></span><span id="chrono">0:00</span>
+          <small id="chrono-note">Enregistrement</small>
+        </p>
+
+        <div class="boutons" id="boutons-atelier"></div>
+        <p class="aide" id="aide-atelier"></p>
+        <input type="file" id="fichier" hidden accept="">
+      </div>
+    </div>
+
+    <div class="progression" id="progression" hidden><i id="barre"></i></div>
+    <p class="mot-detat" id="etat" hidden role="status"></p>
+
+    <div class="boutons" style="margin-top:1.6rem;">
+      <button type="submit" class="btn btn-plein btn-large" id="envoyer">
+        Créer mon QR code
+      </button>
+    </div>
+  </form>
+
+  <section class="resultat" id="resultat" hidden aria-live="polite">
+    <h2 class="signataire" style="margin-bottom:.8rem;">Voilà votre QR code.</h2>
+    <p class="chapeau" style="margin-bottom:1.2rem;">
+      Téléchargez-le, imprimez-le, et collez-le sur la carte à la place de votre signature.
+    </p>
+
+    <div class="cadre-qr" id="cadre-qr"></div>
+
+    <div class="boutons">
+      <button type="button" class="btn btn-plein" id="telecharger">Télécharger l&rsquo;image</button>
+      <button type="button" class="btn btn-creux" id="copier">Copier le lien</button>
+      <a class="btn btn-creux" id="ouvrir" href="#" target="_blank" rel="noopener">Ouvrir la page</a>
+    </div>
+
+    <p class="adresse" id="adresse"></p>
+
+    <div class="garde">
+      <p><strong>Gardez ce lien-ci de côté</strong>, c&rsquo;est le seul moyen de retirer
+      votre message plus tard. Personne d&rsquo;autre ne l&rsquo;a.</p>
+      <p class="adresse" id="adresse-retrait" style="margin-top:.6rem;"></p>
+    </div>
+
+    <p class="pied">
+      <button type="button" class="retrait-lien" id="recommencer">Déposer un autre message</button>
+    </p>
+  </section>
+
+</main>
+
+<script src="/assets/config.js"></script>
+<script src="/assets/qr.js"></script>
+<script src="/assets/studio.js"></script>
+</body>
+</html>
