@@ -6,10 +6,14 @@
    Le QR part à l'imprimante et finit collé sur une carte qu'on
    offre. Une fois le papier distribué, on ne corrige rien. Le code
    est donc écrit ici, lisible, plutôt que tiré d'un paquet npm de
-   provenance incertaine — et surtout il est VÉRIFIÉ : le script
-   scripts/verifier-qr.mjs compare chaque module produit ici à ceux
-   de « segno », un encodeur Python éprouvé et indépendant. Les deux
-   doivent tomber d'accord sur la totalité de la matrice.
+   provenance incertaine — et surtout il est VÉRIFIÉ EN ÉTANT RELU :
+   scripts/verifier-qr.mjs dessine dix-sept codes, les passe au
+   décodeur d'OpenCV, et exige que chacun rende exactement le texte de
+   départ.
+
+   Comparer la matrice à celle d'un autre encodeur ne prouverait rien :
+   deux encodeurs peuvent choisir des masques différents et produire
+   deux codes également valides. Le seul juge est le lecteur.
 
    CE QU'IL SAIT FAIRE, ET CE QU'IL NE SAIT PAS
 
@@ -86,9 +90,9 @@
      Pour chaque version en correction M : nombre total d'octets de
      correction, puis la répartition en blocs. Recopier ces nombres
      est la seule façon de les avoir : ils ne se déduisent d'aucune
-     formule. C'est aussi pourquoi la vérification contre segno n'est
-     pas un luxe — une ligne fausse ici donne un QR qui ne se lit
-     pas, sans que rien ne le signale. */
+     formule. C'est aussi pourquoi la relecture n'est pas un luxe —
+     une ligne fausse ici donne un QR parfaitement régulier à l'œil
+     et que pourtant aucun téléphone ne décode. */
   var VERSIONS = {
     /*      octets de correction par bloc, [groupe1: blocs, données], [groupe2: blocs, données] */
     1:  { ec: 10, blocs: [[1, 16]] },
@@ -103,8 +107,8 @@
        octets de données, ce qui avec 5×22 de correction fait les 292
        de la version 9. Avec trois blocs de 37 on tombait à 219
        octets de données — vingt-sept de trop, et un QR illisible.
-       C'est exactement le genre d'erreur que la comparaison à segno
-       existe pour attraper. */
+       C'est exactement le genre d'erreur que la relecture existe pour
+       attraper. */
     9:  { ec: 22, blocs: [[3, 36], [2, 37]] },
     10: { ec: 26, blocs: [[4, 43], [1, 44]] }
   };
