@@ -402,3 +402,42 @@ a { color: var(--accent-vif); text-decoration-thickness: 1px; text-underline-off
   padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+
+/* ─── L'affiche de la personne qui s'en va ───
+   Elle est le premier élément de la page : c'est elle qui dit à qui
+   on écrit, avant même le titre. On la laisse à sa taille naturelle
+   plutôt que de la recadrer — c'est une affiche, elle a été composée
+   entière, et la rogner couperait une moitié des blagues. */
+.affiche {
+  margin: 0 0 2rem;
+  padding: 0;
+  border-radius: var(--rayon);
+  overflow: hidden;
+  border: 1px solid var(--trait);
+  box-shadow: var(--ombre);
+  background: var(--papier-creux);
+}
+.affiche[hidden] { display: none; }
+.affiche img { width: 100%; height: auto; display: block; }
+.affiche figcaption {
+  font-family: var(--ff-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--muet);
+  text-align: center;
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid var(--trait);
+}
+
+/* ─── La carte collective ───
+   Un peu plus large que le studio : on y empile quinze messages, et
+   une colonne trop étroite transforme la lecture en défilement sans
+   fin. On reste sous les 65 caractères pour le texte lui-même, c'est
+   la boîte qui s'élargit, pas la ligne. */
+.enveloppe-large { max-width: 46rem; }
+
+.lettre-carte { margin-bottom: 1.4rem; }
+.lettre-carte:last-child { margin-bottom: 0; }
+.lettre-carte .signataire { font-size: clamp(1.3rem, 4vw, 1.7rem); margin-bottom: 0.2rem; }
+.lettre-carte .le-mot { font-size: 1.04rem; margin-top: 0.9rem; }
+.lettre-carte .filet { margin: 1.4rem 0 0.7rem; }

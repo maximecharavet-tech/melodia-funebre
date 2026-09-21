@@ -37,6 +37,7 @@
   };
 
   var forme = 'texte';
+  var campagne = null;      /* la personne qui s'en va, si l'adresse la nomme */
   var blob = null;          /* le fichier prêt à être déposé */
   var blobMime = '';
   var flux = null;          /* le flux caméra/micro en cours */
@@ -456,7 +457,8 @@
         p_mot: mot.value.trim(),
         p_media_type: blob ? forme : 'texte',
         p_media_url: adresseMedia,
-        p_media_mime: blob ? blobMime : null
+        p_media_mime: blob ? blobMime : null,
+        p_campagne: campagne ? campagne.slug : null
       });
     }).then(function (lignes) {
       var ligne = Array.isArray(lignes) ? lignes[0] : lignes;
@@ -494,6 +496,18 @@
     $('adresse').textContent = adresse;
     $('adresse-retrait').textContent = retrait;
     $('ouvrir').href = adresse;
+
+    /* Sur une page de départ, le QR individuel n'est pas la fin de
+       l'histoire : le message rejoint la carte collective. On le dit,
+       sinon on croit avoir fabriqué un objet isolé. */
+    if (campagne) {
+      var suite = document.createElement('p');
+      suite.className = 'aide';
+      suite.style.marginTop = '.9rem';
+      suite.textContent = 'Votre message rejoint la carte de ' + campagne.nom +
+        '. Elle les découvrira tous ensemble.';
+      $('adresse').parentNode.insertBefore(suite, $('adresse').nextSibling);
+    }
 
     document.getElementById('formulaire').hidden = true;
     resultat.hidden = false;
@@ -535,6 +549,88 @@
   $('recommencer').addEventListener('click', function () {
     location.reload();
   });
+
+  /* ─── La personne qui s'en va ───
+
+     L'adresse « /pour/chloe » amène ici avec « ?p=chloe ». Le nom, le
+     texte et l'affiche ne sont PAS écrits dans cette page : ils
+     viennent de la base, ce qui permet d'ajouter un collègue sans
+     toucher une ligne de code — et garantit qu'on ne déposera jamais
+     sur une campagne qui n'existe pas, puisque c'est la base qui
+     tranche, à l'aller comme au retour. */
+
+  function nomDeCampagne() {
+    /* Attention au piège : « /pour/chloe » est une RÉÉCRITURE. Vercel
+       sert bien cette page avec « ?p=chloe », mais côté serveur
+       seulement — le navigateur, lui, reste sur « /pour/chloe » et
+       « location.search » est vide. Lire le paramètre ne suffit donc
+       pas : il faut aussi savoir lire le chemin.
+
+       Et seulement sous « /pour/ » : pris n'importe où, le dernier
+       morceau de « /un-mot-pour-toi » serait « un-mot-pour-toi », qui
+       a la forme d'un slug et ferait chercher une campagne de ce nom
+       sur le studio générique. */
+    var p = new URLSearchParams(location.search).get('p');
+    if (!p) {
+      var m = location.pathname.match(/^\/pour\/([^\/]+)\/?$/);
+      if (m) { try { p = decodeURIComponent(m[1]); } catch (e) { p = m[1]; } }
+    }
+    if (!p) return '';
+    p = p.trim().toLowerCase();
+    return /^[a-z0-9-]{2,40}$/.test(p) ? p : '';
+  }
+
+  function installerCampagne(c) {
+    campagne = c;
+    document.title = 'Un mot pour ' + c.nom;
+
+    $('sur-titre').textContent = c.sous_titre || 'Carte de départ';
+    $('titre').textContent = 'Un mot pour ' + c.nom + '.';
+    if (c.intro) $('chapeau').textContent = c.intro;
+
+    if (c.affiche) {
+      var img = $('affiche-image');
+      /* Deux largeurs : la petite suffit sur un téléphone, la grande
+         sert au zoom et aux écrans denses. L'affiche est le seul
+         fichier lourd de la page, autant ne pas l'imposer en 4G. */
+      img.src = c.affiche + '-640.webp';
+      img.srcset = c.affiche + '-640.webp 640w, ' + c.affiche + '-1024.webp 1024w';
+      img.sizes = '(min-width: 640px) 36rem, calc(100vw - 2rem)';
+      img.alt = c.affiche_alt || ('Affiche de départ de ' + c.nom);
+      img.addEventListener('error', function () {
+        /* Une affiche manquante ne doit pas laisser un cadre vide en
+           haut de page : on retire le bloc et le reste fonctionne. */
+        $('affiche').hidden = true;
+      });
+      $('affiche-legende').textContent = c.messages === 1
+        ? 'Un message déposé pour l’instant.'
+        : (c.messages > 1 ? c.messages + ' messages déposés pour l’instant.'
+                          : 'Soyez le premier à lui laisser un mot.');
+      $('affiche').hidden = false;
+    }
+
+    /* « Pour qui » est déjà répondu : on le remplit et on le ferme,
+       plutôt que de demander à quinze personnes de retaper le même
+       prénom — et d'en avoir quinze orthographes sur la carte. */
+    var pour = $('pour');
+    pour.value = c.nom;
+    pour.readOnly = true;
+    pour.tabIndex = -1;
+    pour.setAttribute('aria-readonly', 'true');
+    $('aide-pour').textContent = 'C’est elle qui part. Rien à remplir ici.';
+  }
+
+  var slug = nomDeCampagne();
+  if (slug) {
+    appelerFonction('campagne', { s: slug }).then(function (lignes) {
+      var c = Array.isArray(lignes) ? lignes[0] : lignes;
+      if (c && c.slug) installerCampagne(c);
+      else dire('Cette page de départ n’existe pas, ou elle est close. ' +
+                'Vérifiez le lien qu’on vous a transmis.', true);
+    }).catch(function () {
+      dire('La page n’a pas pu être chargée. Réessayez dans un instant.', true);
+    });
+  }
 
   /* On coupe caméra et micro si la page est quittée : une pastille
      d'enregistrement qui reste allumée après coup est inquiétante,
