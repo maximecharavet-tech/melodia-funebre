@@ -20,15 +20,23 @@
 <main class="enveloppe">
 
   <header class="entete">
-    <p class="sur-titre">Carte de départ</p>
-    <h1>Un mot pour toi.</h1>
-    <p class="chapeau">
+    <p class="sur-titre" id="sur-titre">Carte de départ</p>
+    <h1 id="titre">Un mot pour toi.</h1>
+    <p class="chapeau" id="chapeau">
       Au lieu de signer la carte, laissez un vrai message : quelques lignes,
       une photo, votre voix, ou une courte vidéo. Vous repartez avec un QR code
       à coller à la place de votre signature. La personne qui part pourra
       l&rsquo;ouvrir autant de fois qu&rsquo;elle voudra, des années plus tard.
     </p>
   </header>
+
+  <!-- L'affiche de la personne qui s'en va. Vide par défaut : ce bloc
+       ne se remplit que si l'adresse porte une campagne (/pour/chloe),
+       et le studio générique reste exactement ce qu'il était. -->
+  <figure class="affiche" id="affiche" hidden>
+    <img id="affiche-image" alt="" decoding="async">
+    <figcaption id="affiche-legende"></figcaption>
+  </figure>
 
   <form class="carte" id="formulaire" novalidate>
 
@@ -40,10 +48,10 @@
     </div>
 
     <div class="champ">
-      <label for="pour">Pour qui</label>
+      <label for="pour" id="etiquette-pour">Pour qui</label>
       <input type="text" id="pour" name="pour" maxlength="80"
              placeholder="Le prénom de la personne qui part">
-      <p class="aide">Facultatif.</p>
+      <p class="aide" id="aide-pour">Facultatif.</p>
     </div>
 
     <div class="champ">

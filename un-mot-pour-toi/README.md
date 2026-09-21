@@ -114,3 +114,67 @@ les trois fonctions, l'espace de fichiers et ses règles.
 - **La durée de vie.** Rien n'expire aujourd'hui. Si le projet Vercel ou
   le projet Supabase disparaît, **tous les QR déjà imprimés cessent de
   fonctionner** — et le papier, lui, est chez les gens.
+
+---
+
+## Les pages de départ (campagnes)
+
+Une carte de départ n'est pas un message isolé : quinze personnes
+signent la même carte, et celle qui part la reçoit entière. D'où
+**deux adresses par personne**, et pas une seule.
+
+| Adresse | Qui l'ouvre | Ce qu'elle montre |
+|---|---|---|
+| `/pour/<prénom>` | les collègues | le formulaire de dépôt, son affiche en tête |
+| `/carte/<jeton>` | celle qui part | tous les messages, dans l'ordre de dépôt |
+| `/a/<jeton>` | qui scanne un QR individuel | un seul message |
+
+### Pourquoi la carte a son propre jeton secret
+
+L'adresse de dépôt est faite pour être devinée : elle est imprimée sur
+une affiche, on la tape, on la dit à voix haute. Si la carte collective
+s'ouvrait par ce même mot, n'importe qui tapant `/carte/chloe` lirait
+les quinze messages avant l'intéressée — et gâcherait la surprise que
+toute l'affaire cherche à faire.
+
+Le jeton de carte est donc tiré au hasard, séparé, et **ne sort jamais
+de la fonction `campagne()`** que consulte la page de dépôt : ses
+colonnes sont nommées une par une exprès, pour qu'un `select *` ne le
+fasse pas fuiter le jour où l'on ajoute une colonne sans y penser.
+
+### Le piège de la réécriture, qui a coûté un tour
+
+`/pour/chloe` est une **réécriture Vercel**. Le serveur sert bien la
+page avec `?p=chloe`, mais côté serveur seulement : le navigateur,
+lui, reste sur `/pour/chloe` et `location.search` est **vide**. Lire
+le paramètre ne suffit donc pas — il faut lire le chemin. Et
+uniquement sous `/pour/`, sinon le dernier morceau de
+`/un-mot-pour-toi` vaut `un-mot-pour-toi`, qui a la forme d'un slug et
+ferait chercher une campagne de ce nom sur le studio générique.
+
+### Ajouter un collègue
+
+Rien à coder. Deux gestes :
+
+1. Poser l'affiche dans `un-mot-pour-toi/affiches/` en deux largeurs,
+   `<nom>-640.webp` et `<nom>-1024.webp` — les deux noms doivent
+   exister, le `srcset` les annonce tous les deux.
+2. Une ligne en base :
+
+```sql
+insert into public.campagnes (slug, nom, sous_titre, intro, affiche, affiche_alt)
+values ('prenom', 'Prénom', 'son surnom', 'le texte d’accueil',
+        '/un-mot-pour-toi/affiches/prenom', 'description de l’affiche')
+returning slug, jeton_carte;   -- le jeton rendu ici est l'adresse de la carte
+```
+
+Le jeton de carte est tiré par `jeton_neuf()`, une fonction `volatile`.
+Écrite en sous-requête, l'expression était évaluée **une seule fois**
+et les deux campagnes recevaient le même jeton — ce que la contrainte
+d'unicité a arrêté net, et qui serait passé inaperçu sans elle.
+
+### Ce qui reste hors campagne
+
+`/un-mot-pour-toi/` seul est toujours le studio générique : pas
+d'affiche, « pour qui » libre, et les messages déposés là
+n'apparaissent sur aucune carte collective.

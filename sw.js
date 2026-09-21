@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = 'c4d01fb677';
+const VERSION = '98038e8e70';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -82,13 +82,18 @@ const PRECHARGE = [
 /* Jamais de cache. Les consoles et l'espace des familles montrent des
    données qui changent ; les pages mémoriales peuvent être retirées
    d'un instant à l'autre par la famille. */
+/* « /pour/ » et « /carte/ » s'ajoutent pour la même raison que
+   « /a/ » : une carte de départ se remplit pendant plusieurs jours.
+   Servie depuis le cache, elle montrerait à celle qui part les trois
+   premiers messages et jamais les douze suivants — sans que personne
+   ne comprenne pourquoi. */
 /* « /a/ » et « /un-mot-pour-toi/ » rejoignent la liste : ce sont les
    mots d'adieu, qu'on peut retirer à tout moment. Un message effacé
    doit disparaître tout de suite, pas au prochain vidage de cache —
    exactement la raison pour laquelle les pages mémoriales y figurent
    déjà. Et le studio ne doit pas servir une version gardée de côté
    à quelqu'un qui vient déposer son mot. */
-const JAMAIS = /\/(api|rest|auth)\/|supabase\.co|\/m\/|\/a\/|un-mot-pour-toi|hommage\.html|dashboard-|espace\.html|compte\.html|config\.js/;
+const JAMAIS = /\/(api|rest|auth|pour|carte)\/|supabase\.co|\/m\/|\/a\/|un-mot-pour-toi|hommage\.html|dashboard-|espace\.html|compte\.html|config\.js/;
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {

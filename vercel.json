@@ -269,6 +269,14 @@
     {
       "source": "/a/:jeton",
       "destination": "/un-mot-pour-toi/a?j=:jeton"
+    },
+    {
+      "source": "/pour/:qui",
+      "destination": "/un-mot-pour-toi?p=:qui"
+    },
+    {
+      "source": "/carte/:jeton",
+      "destination": "/un-mot-pour-toi/carte?c=:jeton"
     }
   ]
 }
