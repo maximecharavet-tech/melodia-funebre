@@ -32,7 +32,7 @@
 .hom-attente { text-align: center; color: var(--bone); padding: 4rem 0; }
 .hom-sceau { display: block; width: 46px; height: 46px; margin: 0 auto 1rem; color: var(--or-patina); opacity: 0.6; }
 .hom-sceau svg { width: 100%; height: 100%; }
-.hom-attente p { font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.26em; text-transform: uppercase; }
+.hom-attente p { font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* ─── La carte ─── */
 .hom-carte {
@@ -79,7 +79,7 @@
 .hom-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .hom-sur {
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.32em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or-patina); margin: 0 0 0.7rem;
 }
 .hom-nom {
@@ -89,7 +89,7 @@
   text-wrap: balance;
 }
 .hom-dates {
-  font-family: var(--ff-m); font-size: 0.76rem; letter-spacing: 0.2em;
+  font-family: var(--ff-m); font-size: 0.84rem; letter-spacing: 0.12em;
   color: var(--bone); margin: 0.75rem 0 0;
 }
 
@@ -135,7 +135,7 @@
 
 .hom-temps {
   display: flex; align-items: center; gap: 0.8rem;
-  font-family: var(--ff-m); font-size: 0.68rem; color: var(--bone);
+  font-family: var(--ff-m); font-size: 0.8rem; color: var(--bone);
   font-variant-numeric: tabular-nums;
 }
 /* La barre est haute de vingt-deux pixels alors que le trait n'en fait
@@ -171,7 +171,7 @@
 .hom-piste-n {
   flex: none; width: 26px; height: 26px; display: grid; place-items: center;
   border: 1px solid var(--line-soft); border-radius: 50%;
-  font-family: var(--ff-m); font-size: 0.6rem; color: var(--or-patina);
+  font-family: var(--ff-m); font-size: 0.8rem; color: var(--or-patina);
 }
 .hom-piste.actif .hom-piste-n { border-color: var(--or); color: var(--or); }
 
@@ -189,7 +189,7 @@
 }
 .hom-partage .btn { min-height: 50px; }
 .hom-partage-dit {
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--green);
 }
 
@@ -220,10 +220,10 @@
 .hom-marque img { border-radius: 50%; }
 .hom-marque b { font-family: var(--ff-d); font-size: 1rem; color: var(--paper); font-weight: 400; display: block; line-height: 1.1; }
 .hom-marque em {
-  font-family: var(--ff-m); font-style: normal; font-size: 0.46rem;
-  letter-spacing: 0.26em; text-transform: uppercase; color: var(--or-patina);
+  font-family: var(--ff-m); font-style: normal; font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--or-patina);
 }
-.hom-mention { margin: 0; font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dust); }
+.hom-mention { margin: 0; font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); }
 .hom-mention a { color: var(--dust); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -241,7 +241,7 @@
 }
 .hom-demo-pastille {
   display: inline-block; margin-bottom: 0.55rem;
-  font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.26em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or);
   border: 1px solid var(--line-strong); border-radius: 999px;
   padding: 0.25rem 0.7rem;
@@ -249,7 +249,7 @@
 .hom-demo p { margin: 0; font-size: 0.88rem; line-height: 1.6; color: var(--bone); }
 .hom-demo-cta {
   display: inline-block; margin-top: 0.75rem;
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or-bright);
   text-underline-offset: 4px;
 }
@@ -283,7 +283,7 @@
 .hom-paroles > summary, .hom-qr > summary {
   cursor: pointer; list-style: none; min-height: 48px;
   display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.2em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or-patina);
   -webkit-tap-highlight-color: transparent;
 }
@@ -325,7 +325,7 @@
   background: var(--ink-3);
 }
 .hom-galerie figcaption {
-  margin-top: 0.4rem; font-size: 0.76rem; color: var(--ash);
+  margin-top: 0.4rem; font-size: 0.84rem; color: var(--ash);
   line-height: 1.45; text-align: center;
 }
 @media (min-width: 520px) { .hom-galerie { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

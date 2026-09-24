@@ -210,10 +210,20 @@
     });
 
     return '<div class="kpi-grid">' +
-        kpi(aFaire.length, 'À faire aujourd\'hui', retard.length ? retard.length + ' en retard' : 'À jour', aFaire.length ? 'var(--or)' : null) +
-        kpi(total, 'Fiches au portefeuille', sansSuite.length ? sansSuite.length + ' sans prochaine action' : 'Toutes planifiées') +
-        kpi(partenaires, 'Partenaires signés', taux + ' % du portefeuille', 'var(--green)') +
-        kpi(actes.mail + actes.appel, 'Actions sur 30 jours', actes.mail + ' courriels · ' + actes.appel + ' appels') +
+        /* Le chiffre de résultat porte l'or, comme le chiffre d'affaires
+           chez le maître et la marge chez le partenaire. */
+        kpi({ phare:true, l:'Partenaires signés', v:partenaires, f:taux + ' % du portefeuille',
+              etat: partenaires ? 'calme' : '' }) +
+        kpi({ l:'À faire aujourd\'hui', v:aFaire.length,
+              f: retard.length ? pluriel(retard.length, 'en retard', 'en retard')
+                               : aFaire.length ? 'Rien en retard' : 'À jour',
+              etat: retard.length ? 'alerte' : aFaire.length ? 'attention' : 'calme' }) +
+        kpi({ l:'Fiches au portefeuille', v:total,
+              f: sansSuite.length ? pluriel(sansSuite.length, 'sans suite prévue', 'sans suite prévue')
+                                  : total ? 'Toutes planifiées' : 'Portefeuille vide',
+              etat: sansSuite.length ? 'attention' : total ? 'calme' : '' }) +
+        kpi({ l:'Actions sur 30 jours', v:actes.mail + actes.appel,
+              f: actes.mail + ' courriels · ' + actes.appel + ' appels' }) +
       '</div>' +
 
       (aFaire.length ? '<div class="panel" style="margin-top:1.4rem;">' +
@@ -268,9 +278,23 @@
       '</div>';
   }
 
-  function kpi(v, l, f, couleur) {
-    return '<div class="kpi"><div class="kpi-value"' + (couleur ? ' style="color:' + couleur + ';"' : '') + '>' + v + '</div>' +
-      '<div class="kpi-label">' + l + '</div>' + (f ? '<div class="kpi-foot">' + f + '</div>' : '') + '</div>';
+  /* Même tuile que les consoles maître et partenaire, dans le même
+     ordre : libellé, puis chiffre, puis état. Celle-ci les posait dans
+     l'ordre inverse — chiffre d'abord — et les trois consoles ne se
+     lisaient pas pareil alors qu'elles montrent la même chose.
+
+     La couleur quitte aussi le chiffre. Colorer le nombre dit « ce
+     nombre est bon » ; c'est l'ÉTAT qu'il faut qualifier, pas la
+     quantité. L'or reste au seul chiffre de résultat. */
+  function kpi(o) {
+    return '<div class="kpi' + (o.phare ? ' kpi-phare' : '') + (o.etat ? ' kpi-' + o.etat : '') + '">' +
+      '<div class="kpi-label">' + o.l + '</div>' +
+      '<div class="kpi-value">' + o.v + (o.u ? '<span class="u">' + o.u + '</span>' : '') + '</div>' +
+      (o.f ? '<div class="kpi-foot">' + o.f + '</div>' : '') + '</div>';
+  }
+
+  function pluriel(n, singulier, plurielMot) {
+    return n + ' ' + (n > 1 ? plurielMot : singulier);
   }
 
   function ligneCourte(p) {

@@ -102,8 +102,8 @@
 }
 .sv-c-etat {
   font-family: var(--ff-m);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ash);
   border: 1px solid var(--line-soft);
@@ -155,7 +155,7 @@
   padding: 0.55rem 0.7rem; background: var(--ink);
 }
 .sv-adresse code {
-  font-family: var(--ff-m); font-size: 0.72rem; color: var(--bone);
+  font-family: var(--ff-m); font-size: 0.82rem; color: var(--bone);
   overflow-wrap: anywhere; min-width: 0; flex: 1 1 12ch;
 }
 
@@ -187,7 +187,7 @@
 
 .sv-etat {
   font-family: var(--ff-m);
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   letter-spacing: 0.06em;
   line-height: 1.8;
   color: var(--ash);
@@ -234,7 +234,7 @@
 .pho-champs { min-width: 0; display: grid; gap: 0.3rem; }
 .pho-legende-lbl {
   font-family: var(--ff-m);
-  font-size: 0.58rem;
+  font-size: 0.8rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--dust);
@@ -261,7 +261,7 @@
 .pho-choisir { cursor: pointer; }
 .pho-reste {
   font-family: var(--ff-m);
-  font-size: 0.62rem;
+  font-size: 0.8rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--dust);

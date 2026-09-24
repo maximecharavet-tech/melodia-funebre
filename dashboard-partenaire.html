@@ -11,10 +11,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/style.css?v=93979dd8">
-<link rel="stylesheet" href="/assets/css/dashboard.css?v=27188ac8">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=8c703a8a">
 <link rel="stylesheet" href="/assets/css/relief.css?v=68839a50">
-<link rel="stylesheet" href="/assets/css/mobile.css?v=9f45e378">
-<link rel="stylesheet" href="/assets/css/souvenir.css?v=cc7e58c3">
+<link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
+<link rel="stylesheet" href="/assets/css/souvenir.css?v=3653a8f8">
 </head>
 <body>
 <div class="dash">
@@ -180,14 +180,52 @@ function timeline(status) {
   }).join('') + '</div>';
 }
 
+/* Les mêmes services que la console maître : le partenaire a besoin de
+   savoir quand, lui aussi — c'est la première chose que la famille lui
+   demande au téléphone. */
+function pluriel(n, singulier, plurielMot) {
+  return n + ' ' + (n > 1 ? plurielMot : singulier);
+}
+function joursAvant(o) {
+  if (!o || !o.echeance) return null;
+  var reste = new Date(o.echeance).getTime() - Date.now();
+  if (isNaN(reste)) return null;
+  return Math.ceil(reste / 86400000);
+}
+function estEnRetard(o) {
+  var j = joursAvant(o);
+  return o.status !== 'livree' && j !== null && j < 0;
+}
+function echeanceDe(o) {
+  if (o.status === 'livree') return null;
+  var j = joursAvant(o);
+  if (j === null) return null;
+  if (j < 0)   return { t: 'En retard de ' + pluriel(-j, 'jour', 'jours'), c: 'retard' };
+  if (j === 0) return { t: 'Livraison aujourd\'hui', c: 'retard' };
+  if (j <= 2)  return { t: 'Livraison dans ' + pluriel(j, 'jour', 'jours'), c: 'proche' };
+  return { t: 'Livraison dans ' + pluriel(j, 'jour', 'jours'), c: '' };
+}
+function fait(l, v) {
+  return '<div><div class="o-fait-l">' + l + '</div>' +
+    '<div class="o-fait-v">' + (v ? esc(v) : '<span style="color:var(--ash);">—</span>') + '</div></div>';
+}
+function tuile(o) {
+  return '<div class="kpi' + (o.phare ? ' kpi-phare' : '') + (o.etat ? ' kpi-' + o.etat : '') + '">' +
+    '<div class="kpi-label">' + o.l + '</div>' +
+    '<div class="kpi-value">' + o.v + (o.u ? '<span class="u">' + o.u + '</span>' : '') + '</div>' +
+    (o.f ? '<div class="kpi-foot">' + o.f + '</div>' : '') + '</div>';
+}
+
 function orderCard(o) {
   var m = ST[o.status] || { label: o.status, color: '#888' };
-  return '<div class="o-row"><div class="o-head">' +
+  var ech = echeanceDe(o);
+  return '<div class="o-row' + (estEnRetard(o) ? ' o-presse' : '') + '"><div class="o-head">' +
     '<div><div class="o-name">Hommage à ' + esc(o.defunt) + (o.urgence ? ' ⚡' : '') + '</div>' +
-    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' · ' + eur(o.price) + ' · marge ' + eur(marge(o.price)) + '</div></div>' +
-    '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span></div>' +
+    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' · ' + eur(o.price) + ' · marge ' + eur(marge(o.price)) + '</div>' +
+    (ech ? '<div class="o-quand ' + ech.c + '">' + ech.t + '</div>' : '') + '</div>' +
+    '<span class="pill pill-etat" style="color:' + m.color + ';">' + m.label + '</span></div>' +
     timeline(o.status) +
-    '<div class="o-brief">Style : ' + esc(o.style || '—') + ' · ' + esc(o.traits || '—') + (o.metier ? ' · ' + esc(o.metier) : '') + '</div>' +
+    '<div class="o-faits">' + fait('Style', o.style) + fait('Traits', o.traits) + fait('Métier', o.metier) + '</div>' +
     (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + (/^local:/.test(o.audio_url)
        ? '<span class="pill" style="color:var(--amber); border-color:rgba(251,191,36,.35);">Fichier sur l\'appareil du fondateur</span>'
        : /\.(mp3|m4a|wav|ogg|flac)(\?|#|$)/i.test(o.audio_url)    ? '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio>'    : '<a class="btn btn-outline btn-sm" href="' + esc(o.audio_url) + '" target="_blank" rel="noopener">Ouvrir l\'hommage</a>') + '</div>' : '') +
@@ -203,11 +241,18 @@ function vAccueil() {
     ? '<div class="gr-duo">' + window.MelodiaPartenaireGraphes.revenus(ORDERS) +
       window.MelodiaPartenaireGraphes.avancement(ORDERS, FLOW, ST) + '</div>'
     : '';
+  var enRetard = encours.filter(estEnRetard).length;
   return '<div class="kpi-grid">' +
-    '<div class="kpi"><div class="kpi-label">Commandes</div><div class="kpi-value">' + ORDERS.length + '</div><div class="kpi-foot">Depuis l\'ouverture</div></div>' +
-    '<div class="kpi"><div class="kpi-label">Hommages livrés</div><div class="kpi-value">' + livrees + '</div><div class="kpi-foot">Familles accompagnées</div></div>' +
-    '<div class="kpi"><div class="kpi-label">Votre marge</div><div class="kpi-value">' + margeTotale + '<span class="u"> €</span></div><div class="kpi-foot">' + tauxAgence() + ' % du volume</div></div>' +
-    '<div class="kpi"><div class="kpi-label">En cours</div><div class="kpi-value">' + encours.length + '</div><div class="kpi-foot">Compositions actives</div></div>' +
+    /* Le chiffre de tête d'un partenaire n'est pas le volume : c'est ce
+       qu'il gagne. C'est lui qui porte l'or. */
+    tuile({ phare:true, l:'Votre marge', v:margeTotale, u:' €', f:tauxAgence() + ' % du volume' }) +
+    tuile({ l:'Commandes', v:ORDERS.length, f:'Depuis l\'ouverture' }) +
+    tuile({ l:'Hommages livrés', v:livrees, f:pluriel(livrees, 'famille', 'familles'),
+            etat: livrees ? 'calme' : '' }) +
+    tuile({ l:'En cours', v:encours.length,
+            f: enRetard ? pluriel(enRetard, 'en retard', 'en retard')
+                        : encours.length ? 'Dans les temps' : 'Rien en cours',
+            etat: enRetard ? 'alerte' : encours.length ? 'calme' : '' }) +
     '</div>' +
     graphes +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Compositions <em>en cours</em></div><div class="panel-sub">Suivi en temps réel</div></div>' +

@@ -61,7 +61,7 @@
   }
   .mob-o-ico { font-size: 1.05rem; line-height: 1; }
   .mob-o-nom {
-    font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.1em;
+    font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.1em;
     text-transform: uppercase; line-height: 1.1;
     max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
@@ -79,7 +79,7 @@
     min-width: 16px; height: 16px; padding: 0 4px;
     display: grid; place-items: center;
     background: var(--or); color: #0b0b11; border-radius: 9px;
-    font-family: var(--ff-m); font-size: 0.52rem; font-weight: 500;
+    font-family: var(--ff-m); font-size: 0.78rem; font-weight: 500;
   }
 
   /* ─── Le voile ─── */
@@ -119,7 +119,7 @@
     border-bottom: 1px solid var(--line-soft);
   }
   .mob-apps-sur {
-    font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.28em;
+    font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
     text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.35rem;
   }
   .mob-apps-titre {
@@ -141,7 +141,7 @@
     overscroll-behavior: contain;
   }
   .mob-groupe {
-    font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.28em;
+    font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
     text-transform: uppercase; color: var(--dust);
     padding: 1.25rem 0.3rem 0.7rem;
   }
@@ -183,11 +183,11 @@
     min-width: 17px; height: 17px; padding: 0 4px;
     display: grid; place-items: center;
     background: var(--or); color: #0b0b11; border-radius: 9px;
-    font-family: var(--ff-m); font-size: 0.52rem; font-weight: 500;
+    font-family: var(--ff-m); font-size: 0.78rem; font-weight: 500;
     border: 2px solid var(--ink-2);
   }
   .mob-app-nom {
-    font-size: 0.68rem; line-height: 1.25; text-align: center;
+    font-size: 0.8rem; line-height: 1.25; text-align: center;
     /* Deux lignes, puis l'ellipse : « Atelier de composition » tient,
        et aucune tuile ne pousse ses voisines. */
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
