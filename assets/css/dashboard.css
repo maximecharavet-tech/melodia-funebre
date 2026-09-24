@@ -529,7 +529,11 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .pil-kpi-v {
   font-family: var(--ff-d); font-size: 2.3rem; font-weight: 300;
   line-height: 1; margin: 0.85rem 0 0.4rem;
-  font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+  /* Pas de « tabular-nums » sur un grand nombre isolé : les chiffres
+     de largeur égale creusent des trous — « 121 » paraît espacé. Les
+     chiffres tabulaires ne servent que là où des nombres s'alignent
+     en colonne, c'est-à-dire dans les tableaux. */
+  overflow-wrap: anywhere;
 }
 .pil-kpi-f {
   font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.09em;
