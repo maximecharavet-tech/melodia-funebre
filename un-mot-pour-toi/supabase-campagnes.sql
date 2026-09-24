@@ -189,3 +189,29 @@ grant execute on function public.campagne(text) to anon, authenticated;
 grant execute on function public.carte(text)    to anon, authenticated;
 grant execute on function public.deposer_adieu(text, text, text, text, text, text, text)
   to anon, authenticated;
+
+
+-- ═══════════════════════════════════════════════════════════════
+-- LE TABLEAU DE LA CONSOLE
+--
+-- Onze messages et dix-sept lectures dormaient en base sans qu'aucun
+-- écran ne les montre. On n'ouvre pas la table pour autant : on ajoute
+-- une porte étroite, avec deux verrous.
+--
+-- VERROU 1 — IL FAUT ÊTRE CONNECTÉ ET ÊTRE LE FONDATEUR. La fonction
+-- lit l'adresse dans le jeton et exige qu'elle porte le rôle « master »
+-- ou « owner ». Éprouvé : le rôle « anon » se voit refuser l'exécution
+-- même ; un compte connecté inconnu reçoit zéro ligne ; Julie, qui est
+-- commerciale, reçoit zéro ligne elle aussi.
+--
+-- VERROU 2 — ELLE NE REND QUE DES COMPTES. Aucun texte de message,
+-- aucun nom d'auteur, aucune adresse de fichier. Même si le premier
+-- verrou cédait, il n'y aurait rien à lire.
+--
+-- Un piège au passage : les paramètres de sortie « vues », « nom »,
+-- « messages » portent le nom de colonnes de la table. Dans la branche
+-- écrite sans alias, PostgreSQL ne pouvait pas trancher — « column
+-- reference vues is ambiguous ». Les verrous fonctionnaient ; seul
+-- l'appelant légitime recevait une erreur. Tout est qualifié désormais.
+-- ═══════════════════════════════════════════════════════════════
+-- Voir la migration « adieux_tableau_colonnes_qualifiees ».

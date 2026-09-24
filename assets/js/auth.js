@@ -667,6 +667,20 @@
       return true;
     },
 
+    /** Appelle une fonction de la base avec la session en cours.
+        Passe par « sb() », donc profite du renouvellement anticipé du
+        jeton : une console ouverte depuis une heure ne se voit pas
+        refuser sa requête au moment où elle en a besoin.
+        Rend [] hors Supabase, pour que l'appelant n'ait pas à savoir
+        dans quel mode il tourne. */
+    async rpc(nom, corps) {
+      if (!HAS_SB) return [];
+      return sb('/rest/v1/rpc/' + nom, {
+        method: 'POST',
+        body: JSON.stringify(corps || {})
+      });
+    },
+
     async partners() {
       if (HAS_SB) return [];
       var users = LS.get('melodia_users', {});
