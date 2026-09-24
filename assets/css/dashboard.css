@@ -22,7 +22,9 @@
 .side-item {
   display: flex; align-items: center; gap: 0.8rem; width: 100%; text-align: left;
   padding: 0.8rem 0.7rem; color: var(--ash); font-size: 0.85rem; font-weight: 300;
-  transition: all 0.3s var(--ease); position: relative; border-left: 2px solid transparent;
+  transition: color var(--t-tap) var(--ease-out), background-color var(--t-tap) var(--ease-out),
+              border-left-color var(--t-tap) var(--ease-out);
+  position: relative; border-left: 2px solid transparent;
 }
 .side-item:hover { color: var(--paper); background: rgba(255,255,255,0.02); }
 .side-item.active { color: var(--or-bright); border-left-color: var(--or); background: rgba(201,168,76,0.05); }
@@ -117,7 +119,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .own-tab {
   font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
   padding: .6rem 1rem; border-radius: 100px; color: var(--ash);
-  border: 1px solid transparent; transition: all .2s;
+  border: 1px solid transparent;
+  transition: color var(--t-tap) var(--ease-out), background-color var(--t-tap) var(--ease-out), border-color var(--t-tap) var(--ease-out);
 }
 .own-tab:hover { color: var(--paper); background: rgba(255,255,255,.04); }
 .own-tab.active { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
@@ -175,7 +178,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .own-acts { display: flex; gap: .25rem; flex: none; }
 .own-mini {
   width: 28px; height: 28px; border-radius: 4px; display: grid; place-items: center;
-  border: 1px solid var(--line-soft); color: var(--ash); font-size: .8rem; transition: all .18s;
+  border: 1px solid var(--line-soft); color: var(--ash); font-size: .8rem;
+  transition: color var(--t-tap) var(--ease-out), background-color var(--t-tap) var(--ease-out), border-color var(--t-tap) var(--ease-out);
 }
 .own-mini:hover:not([disabled]) { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
 .own-mini[disabled] { opacity: .25; cursor: not-allowed; }
@@ -350,7 +354,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .obj-q:hover { color: var(--or-bright); }
 .obj-q.ouvert { color: var(--or); }
-.obj-q svg { flex: none; width: 17px; height: 17px; color: var(--or-patina); transition: transform var(--t-mid) var(--ease); }
+.obj-q svg { flex: none; width: 17px; height: 17px; color: var(--or-patina); transition: transform var(--t-tap) var(--ease-out); }
 .obj-q.ouvert svg { transform: rotate(180deg); }
 .obj-r { padding: 0 0 1.2rem; animation: objOuvre 0.3s var(--ease-out); }
 @keyframes objOuvre { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
@@ -1365,7 +1369,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 /* Colonne flexible, pied poussé en bas : un pied qui passe à la ligne
    ne doit pas décaler la ligne de base des trois autres tuiles. */
 .kpi {
-  position: relative; transition: border-color var(--t-mid);
+  position: relative; transition: border-color var(--t-tap) var(--ease-out);
   display: flex; flex-direction: column;
 }
 .kpi .kpi-value { margin-bottom: auto; }
@@ -1421,7 +1425,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
    maintenant » — et il n'y en a presque jamais plus d'une.
    ═══════════════════════════════════════════════════════════════ */
 
-.o-row { transition: border-color var(--t-mid); }
+.o-row { transition: border-color var(--t-tap) var(--ease-out); }
 .o-row:hover { border-color: var(--line-strong); }
 .o-row.o-presse { border-color: rgba(248, 113, 113, 0.38); }
 
@@ -1482,4 +1486,83 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .tl { flex-wrap: nowrap; gap: 0; }
   .tl-lab { display: none; }
   .tl-s { min-width: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LE MOUVEMENT DES CONSOLES
+
+   Trois manques, mesurés avant d'être corrigés.
+
+   1. AUCUN RETOUR AU CLIC. Pas une seule règle « :active » dans
+      cette feuille. Un bouton qui ne bouge pas sous le doigt laisse
+      croire qu'il n'a pas pris — et l'on clique deux fois. Le retour
+      doit être le plus court de toute l'interface : il ne raconte
+      rien, il accuse réception.
+
+   2. AUCUN GARDE « hover: hover ». Vingt-deux règles de survol,
+      aucune protégée. Sur une tablette, toucher un élément de
+      navigation le laisse allumé jusqu'au prochain toucher ailleurs :
+      deux lignes paraissent sélectionnées en même temps. Le survol
+      n'appartient qu'aux appareils qui en ont un.
+
+   3. UN SEUL « focus-visible ». Une console se conduit au clavier
+      dès qu'on y travaille vraiment. Sans anneau visible, on ne sait
+      plus où l'on est après trois tabulations.
+
+   Les durées, enfin : le survol passe de 300-450 ms à 150. À 450 ms
+   la couleur finit de changer après le départ de la souris.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Le retour au clic ─── */
+.dash .btn,
+.dash .side-item,
+.dash .forme {
+  transition: color var(--t-tap) var(--ease-out),
+              background-color var(--t-tap) var(--ease-out),
+              border-color var(--t-tap) var(--ease-out),
+              transform var(--t-press) var(--ease-out);
+}
+/* Un enfoncement à peine visible, et très court : l'écart doit se
+   sentir plus qu'il ne se voit. Seule « transform » est animée — elle
+   ne provoque ni recalcul de mise en page ni repeinte. */
+.dash .btn:active,
+.dash .side-item:active,
+.dash .o-row .pill-etat:active { transform: scale(0.985); }
+.dash .btn-sm:active { transform: scale(0.97); }
+
+/* ─── 2. Le survol n'existe que là où il existe ─── */
+@media (hover: none) {
+  .dash .side-item:hover { color: var(--ash); background: transparent; }
+  .dash .side-item.active:hover { color: var(--or-bright); background: rgba(201, 168, 76, 0.05); }
+  .dash .o-row:hover { border-color: var(--line-soft); }
+  .dash .o-row.o-presse:hover { border-color: rgba(248, 113, 113, 0.38); }
+  .dash .kpi:hover { border-color: inherit; }
+  .dash .tbl tr:hover td { color: inherit; }
+}
+
+/* ─── 3. Où suis-je au clavier ─── */
+.dash .btn:focus-visible,
+.dash .side-item:focus-visible,
+.dash input:focus-visible,
+.dash select:focus-visible,
+.dash textarea:focus-visible,
+.dash [tabindex]:focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* L'anneau ne doit jamais être rogné par le cadre de la barre. */
+.dash .side-item:focus-visible { outline-offset: -2px; }
+
+/* ─── Et rien de tout cela pour qui a demandé moins de mouvement ─── */
+@media (prefers-reduced-motion: reduce) {
+  .dash .btn,
+  .dash .side-item,
+  .dash .forme,
+  .dash .o-row,
+  .dash .kpi { transition-duration: 0.01ms !important; }
+  .dash .btn:active,
+  .dash .side-item:active,
+  .dash .btn-sm:active,
+  .dash .o-row .pill-etat:active { transform: none; }
 }

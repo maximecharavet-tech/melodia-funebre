@@ -83,6 +83,20 @@
   /* ─── Motion ─── */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* ─── L'échelle du mouvement ───
+     Trois durées existaient : 0,22 / 0,45 / 0,9 s. Il en manquait une,
+     la plus courte, et c'est la plus employée : le retour d'un survol
+     ou d'un clic. À 0,45 s la couleur d'un élément survolé finit de
+     changer après que la souris est repartie — l'interface paraît
+     traîner alors qu'elle ne fait rien de lourd.
+
+     --t-tap sert à tout ce qui répond au doigt ou à la souris.
+     --ease-in sert aux SORTIES : une chose qui s'en va accélère, elle
+     ne décélère pas. Les deux courbes d'entrée, déjà présentes, sont
+     de vraies ease-out et n'avaient rien à corriger. */
+  --t-tap: 0.15s;
+  --t-press: 0.09s;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --t-fast: 0.22s;
   --t-mid: 0.45s;
   --t-slow: 0.9s;
