@@ -10,11 +10,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=93979dd8">
-<link rel="stylesheet" href="/assets/css/dashboard.css?v=27188ac8">
-<link rel="stylesheet" href="/assets/css/relief.css?v=68839a50">
-<link rel="stylesheet" href="/assets/css/mobile.css?v=9f45e378">
-<link rel="stylesheet" href="/assets/css/souvenir.css?v=cc7e58c3">
+<link rel="stylesheet" href="/assets/css/style.css?v=e88a0915">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=8c8410bd">
+<link rel="stylesheet" href="/assets/css/relief.css?v=3d4a9fe9">
+<link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
+<link rel="stylesheet" href="/assets/css/souvenir.css?v=3653a8f8">
 </head>
 <body>
 <div class="dash">
@@ -225,17 +225,28 @@ function orderCard(o) {
   var m = ST[o.status] || { label:o.status, color:'#888' };
   var i = FLOW.indexOf(o.status);
   var next = i < FLOW.length - 1 ? FLOW[i+1] : null;
-  return '<div class="o-row"><div class="o-head">' +
+  var ech = echeanceDe(o);
+  /* L'or plein est réservé à ce qui presse. Sur une liste ordinaire il
+     n'y en a aucun, et c'est voulu : quand il apparaît, il se voit. */
+  var presse = !!(o.urgence || (ech && ech.c === 'retard'));
+  return '<div class="o-row' + (presse ? ' o-presse' : '') + '"><div class="o-head">' +
     '<div><div class="o-name">Hommage à ' + esc(o.defunt) + (o.urgence ? ' ⚡' : '') + '</div>' +
-    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' ' + eur(o.price) + ' · ' + mentionPaiement(o) + ' · ' + esc(o.agence || o.user_name) + '</div></div>' +
+    '<div class="o-meta">' + esc(o.ref) + ' · ' + esc(o.offer) + ' ' + eur(o.price) + ' · ' + mentionPaiement(o) + ' · ' + esc(o.agence || o.user_name) + '</div>' +
+    (ech ? '<div class="o-quand ' + ech.c + '">' + ech.t + '</div>' : '') + '</div>' +
     '<div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">' +
-    '<span class="pill" style="color:' + m.color + '; border-color:' + m.color + '55;">' + m.label + '</span>' +
-    (next ? '<button class="btn btn-gold btn-sm" onclick="advance(\'' + o.ref + '\',\'' + next + '\')">→ ' + ST[next].label + '</button>' : '') +
+    '<span class="pill pill-etat" style="color:' + m.color + ';">' + m.label + '</span>' +
+    (next ? '<button class="btn ' + (presse ? 'btn-gold' : 'btn-outline') + ' btn-sm" onclick="advance(\'' + o.ref + '\',\'' + next + '\')">→ ' + ST[next].label + '</button>' : '') +
     '<button class="btn btn-outline btn-sm" onclick="loadBrief(\'' + esc(o.ref) + '\')">Composer</button>' +
     '</div></div>' + timeline(o.status) +
-    '<div class="o-brief"><b style="color:var(--bone);">Brief —</b> Style : ' + esc(o.style || '—') + ' · Traits : ' + esc(o.traits || '—') + ' · Métier : ' + esc(o.metier || '—') + ' · Habitude : ' + esc(o.habitude || '—') +
-    (o.anecdote ? '<br><b style="color:var(--bone);">Anecdote —</b> ' + esc(o.anecdote) : '') +
-    '<br><b style="color:var(--bone);">Contact —</b> ' + esc(o.user_name) + ' · ' + esc(o.user_email) + '</div>' +
+    /* Le brief en colonnes : chaque champ sous son étiquette. En une
+       seule phrase courante, retrouver le métier demandait de relire
+       la ligne entière. */
+    '<div class="o-faits">' +
+    fait('Style', o.style) + fait('Traits', o.traits) +
+    fait('Métier', o.metier) + fait('Habitude', o.habitude) +
+    fait('Contact', [o.user_name, o.user_email].filter(Boolean).join(' · ')) +
+    (o.anecdote ? fait('Anecdote', o.anecdote) : '') +
+    '</div>' +
     (o.audio_url ? '<div style="margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--line-soft);">' + '<div class="mono" style="margin-bottom:.5rem; color:var(--or-patina);">Hommage attaché' + (o.audio_title ? ' — ' + esc(o.audio_title) : '') + '</div>' + (/^local:/.test(o.audio_url)
        ? '<span class="pill" style="color:var(--amber); border-color:rgba(251,191,36,.35);">Fichier sur l\'appareil du fondateur</span>'
        : /\.(mp3|m4a|wav|ogg|flac)(\?|#|$)/i.test(o.audio_url)    ? '<audio controls preload="none" style="width:100%;" src="' + esc(o.audio_url) + '"></audio>'    : '<a class="btn btn-outline btn-sm" href="' + esc(o.audio_url) + '" target="_blank" rel="noopener">Ouvrir l\'hommage</a>') + '</div>' : '') +
@@ -439,16 +450,69 @@ async function essaiCourriel() {
 }
 
 /* ═══ VUES ═══ */
+
+/* « 1 urgence(s) » : la parenthèse est une facilité de programmeur que
+   personne n'écrit à la main. On accorde. */
+function pluriel(n, singulier, plurielMot) {
+  return n + ' ' + (n > 1 ? plurielMot : singulier);
+}
+
+/* L'échéance décide de l'ordre de la journée. Elle était en base et
+   nulle part à l'écran. */
+function joursAvant(o) {
+  if (!o || !o.echeance) return null;
+  var reste = new Date(o.echeance).getTime() - Date.now();
+  if (isNaN(reste)) return null;
+  return Math.ceil(reste / 86400000);
+}
+function estEnRetard(o) {
+  var j = joursAvant(o);
+  return o.status !== 'livree' && j !== null && j < 0;
+}
+function echeanceDe(o) {
+  if (o.status === 'livree') return null;
+  var j = joursAvant(o);
+  if (j === null) return null;
+  if (j < 0)   return { t: 'En retard de ' + pluriel(-j, 'jour', 'jours'), c: 'retard' };
+  if (j === 0) return { t: 'Échéance aujourd\'hui', c: 'retard' };
+  if (j <= 2)  return { t: 'Échéance dans ' + pluriel(j, 'jour', 'jours'), c: 'proche' };
+  return { t: 'Échéance dans ' + pluriel(j, 'jour', 'jours'), c: '' };
+}
+
+function fait(l, v) {
+  return '<div><div class="o-fait-l">' + l + '</div>' +
+    '<div class="o-fait-v">' + (v ? esc(v) : '<span style="color:var(--ash);">—</span>') + '</div></div>';
+}
+
+function tuile(o) {
+  return '<div class="kpi' + (o.phare ? ' kpi-phare' : '') + (o.etat ? ' kpi-' + o.etat : '') + '">' +
+    '<div class="kpi-label">' + o.l + '</div>' +
+    '<div class="kpi-value">' + o.v + (o.u ? '<span class="u">' + o.u + '</span>' : '') + '</div>' +
+    (o.f ? '<div class="kpi-foot">' + o.f + '</div>' : '') + '</div>';
+}
+
 function vAccueil() {
   var ca = ORDERS.reduce(function(s,o){return s+(o.price||0);},0);
   var livrees = ORDERS.filter(function(o){return o.status==='livree';}).length;
   var encours = ORDERS.filter(function(o){return o.status!=='livree';});
   var urgentes = ORDERS.filter(function(o){return o.urgence && o.status!=='livree';}).length;
+  var enRetard = encours.filter(estEnRetard).length;
   return '<div class="kpi-grid">' +
-    '<div class="kpi"><div class="kpi-label">Chiffre d\'affaires</div><div class="kpi-value">' + ca + '<span class="u"> €</span></div><div class="kpi-foot">Toutes commandes</div></div>' +
-    '<div class="kpi"><div class="kpi-label">Hommages livrés</div><div class="kpi-value">' + livrees + '</div><div class="kpi-foot">Familles accompagnées</div></div>' +
-    '<div class="kpi"><div class="kpi-label">En production</div><div class="kpi-value">' + encours.length + '</div><div class="kpi-foot">' + urgentes + ' urgence(s)</div></div>' +
-    '<div class="kpi"><div class="kpi-label">Partenaires</div><div class="kpi-value">' + PARTNERS.length + '</div><div class="kpi-foot">Agences inscrites</div></div>' +
+    /* Le chiffre de tête porte l'or. Un seul, sinon l'or ne désigne rien. */
+    tuile({ phare:true, l:'Chiffre d\'affaires', v:ca, u:' €', f:'Toutes commandes' }) +
+    tuile({ l:'Hommages livrés', v:livrees, f:pluriel(livrees, 'famille', 'familles'),
+            etat: livrees ? 'calme' : '' }) +
+    /* L'urgence cesse d'être une note de bas de tuile : elle devient
+       le sujet de la tuile, et la tuile change de teinte. */
+    tuile({ l:'En production', v:encours.length,
+            f: enRetard ? pluriel(enRetard, 'en retard', 'en retard')
+              : urgentes ? pluriel(urgentes, 'urgence', 'urgences')
+              : encours.length ? 'Toutes dans les temps' : 'Rien en cours',
+            etat: enRetard ? 'alerte' : urgentes ? 'attention' : encours.length ? 'calme' : '' }) +
+    tuile({ l:'Partenaires', v:PARTNERS.length,
+            f: PARTNERS.length ? pluriel(PARTNERS.length, 'agence', 'agences')
+                               : 'Aucune inscrite',
+            etat: PARTNERS.length ? 'calme' : 'attention' }) +
     '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">À <em>traiter</em></div><div class="panel-sub">Commandes en attente d\'action</div></div>' +
     '<button class="btn btn-outline btn-sm" onclick="go(\'commandes\')">Tout voir</button></div>' +

@@ -29,16 +29,35 @@
   transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
 }
 
+/* « --presse » compose l'enfoncement du clic AVEC l'inclinaison.
+   Sans cette variable, les deux se disputent la même propriété :
+   « transform » n'appartient qu'à une règle à la fois, et celle du
+   relief — chargée après la feuille des consoles — gagnait toujours.
+   Résultat, les tuiles et les éléments de menu ne répondaient pas au
+   doigt, alors que les boutons ordinaires, eux, répondaient. Un
+   retour au clic qui marche sur la moitié des cibles est pire que pas
+   de retour du tout : on croit que l'élément est mort. */
 [data-relief] {
   position: relative;
   transform-style: preserve-3d;
-  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--presse, 1));
   transition: transform 0.55s var(--ease), border-color 0.35s, box-shadow 0.55s var(--ease);
+}
+/* L'appui doit suivre le doigt, pas le retour lent de l'inclinaison. */
+[data-relief]:active { --presse: 0.985; transition-duration: 0.09s, 0.35s, 0.55s; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-relief]:active { --presse: 1; }
 }
 [data-relief].rel-tenu {
   /* Sous la main, la carte suit sans retard ; c'est au relâchement que
      le retour doit être lent. */
   transition: transform 0.09s linear, border-color 0.35s, box-shadow 0.55s var(--ease);
+  /* Note : cette durée de 0,55 s au relâchement N'EST PAS un survol
+     trop lent, c'est le retour d'une inclinaison tenue — une chose
+     qui revient de loin met plus longtemps qu'une couleur qui change.
+     Un premier contrôle l'a signalée comme un défaut ; elle n'en est
+     pas un, et la distinction vaut d'être écrite ici. */
   border-color: var(--line-strong);
   box-shadow: 0 22px 45px -18px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(201, 168, 76, 0.08);
 }
@@ -87,14 +106,14 @@
 .side { perspective: 900px; perspective-origin: 0% 50%; }
 .side-item[data-relief] {
   transform-origin: left center;
-  transition: transform 0.4s var(--ease), color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  transition: transform 0.4s var(--ease), color var(--t-tap), background var(--t-tap), border-color var(--t-tap);
 }
-.side-item[data-relief].rel-tenu { transform: translateZ(16px) rotateY(var(--ry, 0deg)); }
-.side-item[data-relief].active { transform: translateZ(9px); }
+.side-item[data-relief].rel-tenu { transform: translateZ(16px) rotateY(var(--ry, 0deg)) scale(var(--presse, 1)); }
+.side-item[data-relief].active { transform: translateZ(9px) scale(var(--presse, 1)); }
 .side-item[data-relief]::after, .esp-onglet[data-relief]::after { display: none; }
 .esp-onglet[data-relief] {
   transform-origin: center bottom;
-  transition: transform 0.4s var(--ease), color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  transition: transform 0.4s var(--ease), color var(--t-tap), background var(--t-tap), border-color var(--t-tap);
 }
 .esp-onglet[data-relief].rel-tenu { transform: perspective(1200px) translateZ(12px) rotateX(var(--rx, 0deg)); }
 .esp-onglet[data-relief].actif { transform: perspective(1200px) translateZ(7px); }

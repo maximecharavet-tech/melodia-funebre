@@ -403,15 +403,26 @@ try {
    à 7 px sans que rien ne le signale. */
 {
   const PLANCHER = 0.78;
-  const css = fs.readFileSync('assets/css/style.css', 'utf8');
+  /* TOUTES les feuilles, pas seulement style.css.
+     Ce contrôle ne lisait que la feuille publique. Pendant ce temps
+     dashboard.css comptait 81 déclarations sous le plancher, jusqu'à
+     7 px, et mobile.css six autres — dans les consoles, c'est-à-dire
+     dans l'outil que l'équipe regarde huit heures par jour. Le garde-fou
+     existait, il gardait la mauvaise porte. */
+  const FEUILLES = fs.readdirSync('assets/css')
+    .filter((f) => f.endsWith('.css'))
+    .map((f) => 'assets/css/' + f);
   const trop = [];
-  const re = /font-size:\s*(0?\.\d+)rem/g;
-  let m;
-  while ((m = re.exec(css))) {
-    const v = parseFloat('0' + m[1].replace(/^0/, ''));
-    if (v < PLANCHER - 0.001) {
-      const ligne = css.slice(0, m.index).split('\n').length;
-      trop.push(`ligne ${ligne} : ${m[0]} (${(v * 16).toFixed(1)} px)`);
+  for (const feuille of FEUILLES) {
+    const css = fs.readFileSync(feuille, 'utf8');
+    const re = /font-size:\s*(0?\.\d+)rem/g;
+    let m;
+    while ((m = re.exec(css))) {
+      const v = parseFloat('0' + m[1].replace(/^0/, ''));
+      if (v < PLANCHER - 0.001) {
+        const ligne = css.slice(0, m.index).split('\n').length;
+        trop.push(`${feuille}:${ligne} : ${m[0]} (${(v * 16).toFixed(1)} px)`);
+      }
     }
   }
   if (trop.length) {
@@ -420,7 +431,7 @@ try {
     if (trop.length > 8) console.error(`         … et ${trop.length - 8} autres`);
     ok = false;
   } else {
-    console.log(`  ok   aucune taille de texte sous ${(PLANCHER * 16).toFixed(1)} px dans la feuille`);
+    console.log(`  ok   aucune taille sous ${(PLANCHER * 16).toFixed(1)} px, sur ${FEUILLES.length} feuilles`);
   }
 }
 

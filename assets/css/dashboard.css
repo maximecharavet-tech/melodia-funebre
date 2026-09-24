@@ -9,48 +9,58 @@
 .side-brand { display: flex; align-items: center; gap: 0.7rem; padding-bottom: 1.6rem; border-bottom: 1px solid var(--line-soft); margin-bottom: 1.2rem; }
 .side-brand img { height: 42px; }
 .side-brand .n { font-family: var(--ff-d); font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.1; }
-.side-brand .s { display: block; font-family: var(--ff-m); font-size: 0.44rem; letter-spacing: 0.26em; color: var(--or-patina); margin-top: 3px; }
-.side-label { font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--dust); padding: 1.2rem 0.6rem 0.5rem; }
+/* « Console commerciale » ne tient plus sur une ligne depuis que la
+   taille est passée au plancher de lisibilité. On resserre le crénage
+   au strict nécessaire plutôt que de rapetisser : le sous-titre de
+   l'enseigne reste lisible, et la ligne tient. */
+.side-brand .s {
+  display: block; font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.04em; color: var(--or-patina); margin-top: 3px;
+  white-space: nowrap;
+}
+.side-label { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); padding: 1.2rem 0.6rem 0.5rem; }
 .side-item {
   display: flex; align-items: center; gap: 0.8rem; width: 100%; text-align: left;
   padding: 0.8rem 0.7rem; color: var(--ash); font-size: 0.85rem; font-weight: 300;
-  transition: all 0.3s var(--ease); position: relative; border-left: 2px solid transparent;
+  transition: color var(--t-tap) var(--ease-out), background-color var(--t-tap) var(--ease-out),
+              border-left-color var(--t-tap) var(--ease-out);
+  position: relative; border-left: 2px solid transparent;
 }
 .side-item:hover { color: var(--paper); background: rgba(255,255,255,0.02); }
 .side-item.active { color: var(--or-bright); border-left-color: var(--or); background: rgba(201,168,76,0.05); }
 .side-item .ico { width: 17px; height: 17px; flex-shrink: 0; }
-.side-badge { margin-left: auto; font-family: var(--ff-m); font-size: 0.55rem; color: var(--or); border: 1px solid var(--line); padding: 0 6px; }
+.side-badge { margin-left: auto; font-family: var(--ff-m); font-size: 0.78rem; color: var(--or); border: 1px solid var(--line); padding: 0 6px; }
 .side-foot { margin-top: auto; padding-top: 1.2rem; border-top: 1px solid var(--line-soft); }
 .side-user { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; }
 .side-avatar { width: 36px; height: 36px; border: 1px solid var(--line-strong); border-radius: 50%; display: grid; place-items: center; font-family: var(--ff-d); font-size: 1rem; color: var(--or); flex-shrink: 0; }
 .side-uname { font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.side-urole { font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--or-patina); }
+.side-urole { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--or-patina); }
 
 .dash-main { padding: 2rem clamp(1.2rem, 3vw, 2.6rem) 4rem; min-width: 0; }
 .dash-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; margin-bottom: 2.4rem; flex-wrap: wrap; }
 .dash-title { font-family: var(--ff-d); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 300; letter-spacing: 0.02em; }
 .dash-title em { font-style: italic; color: var(--or); }
-.dash-eyebrow { font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.5rem; }
+.dash-eyebrow { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--or-patina); margin-bottom: 0.5rem; }
 
 .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-bottom: 1.6rem; }
 .kpi { border: 1px solid var(--line-soft); background: var(--surface); padding: 1.5rem; }
-.kpi-label { font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ash); }
+.kpi-label { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); }
 .kpi-value { font-family: var(--ff-d); font-size: 2.4rem; color: var(--paper); line-height: 1; margin: 0.9rem 0 0.4rem; font-weight: 300; }
 .kpi-value .u { font-size: 1.1rem; color: var(--ash); }
-.kpi-foot { font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.1em; color: var(--or-patina); }
+.kpi-foot { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--or-patina); }
 
 .panel { border: 1px solid var(--line-soft); background: var(--surface); padding: 1.8rem; margin-bottom: 1.4rem; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .panel-title { font-family: var(--ff-d); font-size: 1.35rem; font-weight: 300; letter-spacing: 0.03em; }
 .panel-title em { font-style: italic; color: var(--or); }
-.panel-sub { font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); margin-top: 4px; }
+.panel-sub { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); margin-top: 4px; }
 
 .o-row { border: 1px solid var(--line-soft); padding: 1.2rem 1.3rem; margin-bottom: 0.8rem; background: var(--ink-2); }
 .o-head { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center; }
 .o-name { font-family: var(--ff-d); font-size: 1.2rem; letter-spacing: 0.03em; color: var(--paper); }
-.o-meta { font-family: var(--ff-m); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--ash); margin-top: 4px; text-transform: uppercase; }
+.o-meta { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--ash); margin-top: 4px; text-transform: uppercase; }
 .o-brief { font-size: 0.85rem; color: var(--ash); margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--line-soft); line-height: 1.75; }
-.pill { font-family: var(--ff-m); font-size: 0.53rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.35rem 0.8rem; border: 1px solid; white-space: nowrap; }
+.pill { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.35rem 0.8rem; border: 1px solid; white-space: nowrap; }
 /* Enseigne à plusieurs agences : la décision se prend au siège */
 .pill-reseau { display: inline-block; vertical-align: middle; margin-left: 0.5rem; color: var(--or-patina); border-color: rgba(197, 164, 106, 0.32); }
 
@@ -61,17 +71,17 @@
 .tl-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--ink-3); border: 1px solid var(--line); margin: 0 auto 0.6rem; position: relative; z-index: 1; }
 .tl-s.done .tl-dot { background: var(--or); border-color: var(--or); }
 .tl-s.now .tl-dot { background: var(--cyan); border-color: var(--cyan); }
-.tl-lab { font-family: var(--ff-m); font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); }
+.tl-lab { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); }
 .tl-s.done .tl-lab, .tl-s.now .tl-lab { color: var(--bone); }
 
 .tbl { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-.tbl th { font-family: var(--ff-m); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust); text-align: left; padding: 0.8rem 0.6rem; border-bottom: 1px solid var(--line-soft); font-weight: 400; }
+.tbl th { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); text-align: left; padding: 0.8rem 0.6rem; border-bottom: 1px solid var(--line-soft); font-weight: 400; }
 .tbl td { padding: 0.9rem 0.6rem; border-bottom: 1px solid var(--line-soft); color: var(--bone); }
 .tbl tr:hover td { color: var(--paper); }
 
 .lyrics-box { background: var(--ink-2); border: 1px solid var(--line-soft); border-left: 2px solid var(--or-deep); padding: 1.4rem; font-family: var(--ff-d); font-size: 1.08rem; line-height: 1.8; color: var(--bone); white-space: pre-wrap; min-height: 150px; }
-.lyrics-box .ph { font-family: var(--ff-m); font-size: 0.7rem; color: var(--dust); letter-spacing: 0.08em; }
-.status-live { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan); }
+.lyrics-box .ph { font-family: var(--ff-m); font-size: 0.82rem; color: var(--dust); letter-spacing: 0.08em; }
+.status-live { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); }
 .status-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: blink 1.4s infinite; }
 @keyframes blink { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
 
@@ -107,14 +117,15 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .own-tabs { display: flex; gap: .3rem; flex-wrap: wrap; }
 .own-tab {
-  font-family: var(--ff-m); font-size: .55rem; letter-spacing: .16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
   padding: .6rem 1rem; border-radius: 100px; color: var(--ash);
-  border: 1px solid transparent; transition: all .2s;
+  border: 1px solid transparent;
+  transition: color var(--t-tap) var(--ease-out), background-color var(--t-tap) var(--ease-out), border-color var(--t-tap) var(--ease-out);
 }
 .own-tab:hover { color: var(--paper); background: rgba(255,255,255,.04); }
 .own-tab.active { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
 .own-state {
-  font-family: var(--ff-m); font-size: .55rem; letter-spacing: .14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--ash); display: flex; align-items: center; gap: .5rem; white-space: nowrap;
 }
 .own-dot {
@@ -167,7 +178,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .own-acts { display: flex; gap: .25rem; flex: none; }
 .own-mini {
   width: 28px; height: 28px; border-radius: 4px; display: grid; place-items: center;
-  border: 1px solid var(--line-soft); color: var(--ash); font-size: .8rem; transition: all .18s;
+  border: 1px solid var(--line-soft); color: var(--ash); font-size: .8rem;
+  transition: color var(--t-tap) var(--ease-out), background-color var(--t-tap) var(--ease-out), border-color var(--t-tap) var(--ease-out);
 }
 .own-mini:hover:not([disabled]) { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
 .own-mini[disabled] { opacity: .25; cursor: not-allowed; }
@@ -214,7 +226,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   transition: width .2s ease;
 }
 .depot-pct {
-  font-family: var(--ff-m); font-size: .6rem; color: var(--or); flex: none; min-width: 3.2em; text-align: right;
+  font-family: var(--ff-m); font-size: 0.8rem; color: var(--or); flex: none; min-width: 3.2em; text-align: right;
 }
 
 /* ═══ Console commerciale ═══ */
@@ -226,10 +238,10 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .pl-seg:hover { transform: translateY(-2px); }
 .pl-n { font-family: var(--ff-d); font-size: 1.7rem; line-height: 1; }
 .pl-l {
-  font-family: var(--ff-m); font-size: .46rem; letter-spacing: .12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: .12em; text-transform: uppercase;
   color: var(--ash); margin-top: .5rem; line-height: 1.4;
 }
-.pl-p { font-family: var(--ff-m); font-size: .5rem; color: var(--dust); margin-top: .3rem; }
+.pl-p { font-family: var(--ff-m); font-size: 0.78rem; color: var(--dust); margin-top: .3rem; }
 
 .fiche-detail {
   border-top: 1px solid var(--line-soft); margin-top: .8rem; padding-top: .2rem;
@@ -293,7 +305,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 
 /* ─── Objet d'un modèle ─── */
 .modele-objet {
-  font-family: var(--ff-m); font-size: 0.72rem; letter-spacing: 0.06em;
+  font-family: var(--ff-m); font-size: 0.82rem; letter-spacing: 0.06em;
   color: var(--or-patina); background: var(--or-soft);
   padding: 0.6rem 0.85rem; margin: 0 0 0.9rem;
   border-left: 2px solid var(--or-patina);
@@ -306,14 +318,14 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .etape-num {
   flex: none; width: 26px; height: 26px; border-radius: 50%;
   display: grid; place-items: center;
-  font-family: var(--ff-m); font-size: 0.66rem;
+  font-family: var(--ff-m); font-size: 0.8rem;
   color: var(--or); border: 1px solid var(--line-strong); background: var(--or-soft);
 }
 .etape-titre {
   font-family: var(--ff-d); font-size: 1.24rem; color: var(--paper);
 }
 .etape-duree {
-  margin-left: auto; font-family: var(--ff-m); font-size: 0.6rem;
+  margin-left: auto; font-family: var(--ff-m); font-size: 0.8rem;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
 }
 .etape-dire {
@@ -342,7 +354,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .obj-q:hover { color: var(--or-bright); }
 .obj-q.ouvert { color: var(--or); }
-.obj-q svg { flex: none; width: 17px; height: 17px; color: var(--or-patina); transition: transform var(--t-mid) var(--ease); }
+.obj-q svg { flex: none; width: 17px; height: 17px; color: var(--or-patina); transition: transform var(--t-tap) var(--ease-out); }
 .obj-q.ouvert svg { transform: rotate(180deg); }
 .obj-r { padding: 0 0 1.2rem; animation: objOuvre 0.3s var(--ease-out); }
 @keyframes objOuvre { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
@@ -395,14 +407,14 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .report {
   flex: none; white-space: nowrap; cursor: pointer;
   padding: 0.4rem 0.7rem;
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.08em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--ash);
   background: transparent; border: 1px solid var(--line-soft);
   transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
 }
 .report:hover { color: var(--or); border-color: var(--line-strong); background: var(--or-soft); }
 @media (max-width: 720px) {
-  .report { min-height: 38px; padding: 0.5rem 0.75rem; font-size: 0.62rem; }
+  .report { min-height: 38px; padding: 0.5rem 0.75rem; font-size: 0.8rem; }
 }
 
 /* Le sous-titre d'un panneau est du mono capitalisé très espacé : c'est
@@ -427,8 +439,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .trad-nom { font-family: var(--ff-d); font-size: 1.35rem; color: var(--paper); }
 .trad-bloc { margin-bottom: 0.9rem; }
 .trad-label {
-  display: block; font-family: var(--ff-m); font-size: 0.54rem;
-  letter-spacing: 0.18em; text-transform: uppercase;
+  display: block; font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--green); margin-bottom: 0.4rem;
 }
 .trad-eviter .trad-label { color: var(--red); }
@@ -442,7 +454,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   font-size: 0.86rem; color: var(--ash); line-height: 1.7;
 }
 .trad-cible .mono {
-  font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase;
+  font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--dust); display: block; margin-bottom: 0.25rem;
 }
 
@@ -460,17 +472,17 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   /* Étiquettes et surtitres */
   .side-label, .side-urole, .dash-eyebrow, .panel-sub,
   .kpi-label, .kpi-foot, .o-meta, .tl-lab, .status-live {
-    font-size: 0.73rem; letter-spacing: 0.1em;
+    font-size: 0.82rem; letter-spacing: 0.1em;
   }
-  .side-brand .s { font-size: 0.66rem; letter-spacing: 0.16em; }
-  .side-badge { font-size: 0.72rem; }
-  .pill { font-size: 0.72rem; letter-spacing: 0.08em; padding: 0.4rem 0.75rem; }
-  .report { font-size: 0.73rem; letter-spacing: 0.06em; min-height: 44px; }
+  .side-brand .s { font-size: 0.8rem; letter-spacing: 0.04em; }
+  .side-badge { font-size: 0.82rem; }
+  .pill { font-size: 0.82rem; letter-spacing: 0.08em; padding: 0.4rem 0.75rem; }
+  .report { font-size: 0.82rem; letter-spacing: 0.06em; min-height: 44px; }
   .o-contact { font-size: 0.9rem; }
   .panel-note, .cible-pourquoi { font-size: 0.95rem; }
 
   /* Tableaux : l'entête en mono capitale devenait un liseré gris */
-  .tbl th { font-size: 0.72rem; letter-spacing: 0.09em; padding: 0.7rem 0.5rem; }
+  .tbl th { font-size: 0.82rem; letter-spacing: 0.09em; padding: 0.7rem 0.5rem; }
   .tbl td { padding: 0.7rem 0.5rem; }
 
   /* Un tableau de console a plus de colonnes qu'un téléphone n'a de
@@ -511,7 +523,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   padding: 1.4rem 1.5rem; min-width: 0;
 }
 .pil-kpi-l {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.22em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--ash);
 }
 .pil-kpi-v {
@@ -520,7 +532,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
 }
 .pil-kpi-f {
-  font-family: var(--ff-m); font-size: 0.56rem; letter-spacing: 0.09em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.09em;
   color: var(--or-patina); line-height: 1.5;
 }
 
@@ -572,7 +584,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .reg-section { margin-top: 1.4rem; }
 .reg-section:first-child { margin-top: 0; }
 .reg-section h3 {
-  font-family: var(--ff-m); font-size: 0.54rem; letter-spacing: 0.26em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or-patina); font-weight: 500;
   padding-bottom: 0.6rem; border-bottom: 1px solid var(--line-soft);
 }
@@ -605,14 +617,14 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .reg-nombre .field-input { -moz-appearance: textfield; appearance: textfield; }
 .reg-unite {
   position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%);
-  font-family: var(--ff-m); font-size: 0.7rem; letter-spacing: 0.08em;
+  font-family: var(--ff-m); font-size: 0.82rem; letter-spacing: 0.08em;
   color: var(--or-patina); pointer-events: none;
 }
 .reg-unite:empty { display: none; }
 
 .reg-retablir {
   align-self: flex-start; margin-top: 0.15rem;
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.11em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.11em;
   text-transform: uppercase; color: var(--or-patina);
   border-bottom: 1px solid transparent; transition: color var(--t-fast), border-color var(--t-fast);
 }
@@ -630,8 +642,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .reg-bascule input { margin-top: 0.28rem; flex: none; accent-color: var(--or); width: 16px; height: 16px; }
 .reg-corps { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
 .reg-etat {
-  flex: none; font-family: var(--ff-m); font-size: 0.55rem;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--dust);
+  flex: none; font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
   padding-top: 0.15rem;
 }
 .reg-bascule input:checked ~ .reg-etat { color: var(--green); }
@@ -651,22 +663,22 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 @media (max-width: 720px) {
   .pil-kpis { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
   .pil-kpi { padding: 1rem 1.1rem; }
-  .pil-kpi-l { font-size: 0.72rem; letter-spacing: 0.1em; }
+  .pil-kpi-l { font-size: 0.82rem; letter-spacing: 0.1em; }
   .pil-kpi-v { font-size: 1.75rem; }
-  .pil-kpi-f { font-size: 0.7rem; letter-spacing: 0.05em; }
+  .pil-kpi-f { font-size: 0.82rem; letter-spacing: 0.05em; }
   .pil-alerte { min-height: 44px; padding: 0.85rem 0.9rem; gap: 0.7rem; }
   .pil-txt b { font-size: 0.95rem; }
   .pil-txt em { font-size: 0.88rem; }
   .pil-aide { font-size: 0.92rem !important; }
 
   .reg-liste { max-width: none; }
-  .reg-section h3 { font-size: 0.72rem; letter-spacing: 0.13em; }
+  .reg-section h3 { font-size: 0.82rem; letter-spacing: 0.13em; }
   .reg-section p, .reg-aide { font-size: 0.9rem; }
   .reg-titre { font-size: 0.98rem; }
-  .reg-retablir { font-size: 0.74rem; letter-spacing: 0.06em; min-height: 44px; display: inline-flex; align-items: center; }
+  .reg-retablir { font-size: 0.82rem; letter-spacing: 0.06em; min-height: 44px; display: inline-flex; align-items: center; }
   .reg-unite { font-size: 0.8rem; }
   .reg-bascule { min-height: 44px; }
-  .reg-etat { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .reg-etat { font-size: 0.82rem; letter-spacing: 0.08em; }
   /* Sur un écran court, un pied collant mange la moitié de la vue :
      il redescend en fin de page et se lit d'un seul tenant. */
   .reg-pied {
@@ -702,8 +714,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .eq-force::after {
   content: attr(data-mot);
   position: absolute; right: 0; top: 7px;
-  font-family: var(--ff-m); font-size: 0.55rem;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+  font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash);
 }
 
 /* Les identifiants affichés une seule fois après la création : ils
@@ -718,7 +730,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 @media (max-width: 720px) {
   .eq-pw-ligne { flex-wrap: wrap; }
   .eq-pw-ligne .btn { width: 100%; min-height: 44px; }
-  .eq-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .eq-force::after { font-size: 0.82rem; letter-spacing: 0.06em; }
   .eq-code { font-size: 0.92rem; }
   /* Trois actions par ligne débordent sur un téléphone */
   .tbl .own-mini { min-height: 38px; margin-bottom: 3px; }
@@ -759,7 +771,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 
 .bo-bloc { margin-bottom: 1.3rem; }
 .bo-bloc-t {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or-patina);
   padding-bottom: 0.5rem; border-bottom: 1px solid var(--line-soft);
   margin-bottom: 0.7rem;
@@ -780,7 +792,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .bo-v.copie { border-color: rgba(74, 222, 128, 0.45); color: var(--green); }
 .bo-v.copie svg { color: var(--green); }
 .bo-v.rate { border-color: rgba(248, 113, 113, 0.45); color: var(--red); }
-.bo-aide { font-size: 0.76rem; color: var(--dust); line-height: 1.5; margin-top: 0.3rem; }
+.bo-aide { font-size: 0.84rem; color: var(--dust); line-height: 1.5; margin-top: 0.3rem; }
 
 .bo-webmail { width: 100%; margin-top: 0.4rem; }
 .bo-secours { font-size: 0.8rem; color: var(--ash); line-height: 1.6; margin-top: 0.7rem; }
@@ -816,7 +828,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .bo-liste li::before {
   counter-increment: bo; content: counter(bo);
-  font-family: var(--ff-m); font-size: 0.7rem; color: var(--or-patina); padding-top: 0.15rem;
+  font-family: var(--ff-m); font-size: 0.82rem; color: var(--or-patina); padding-top: 0.15rem;
 }
 .bo-liste b { display: block; color: var(--paper); font-weight: 400; font-size: 0.92rem; }
 .bo-liste span { display: block; color: var(--ash); font-size: 0.88rem; line-height: 1.7; margin-top: 0.2rem; }
@@ -839,7 +851,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .bo-v { min-height: 44px; font-size: 0.92rem; }
   .bo-l { font-size: 0.86rem; }
   .bo-aide { font-size: 0.84rem; }
-  .bo-bloc-t { font-size: 0.72rem; letter-spacing: 0.12em; }
+  .bo-bloc-t { font-size: 0.82rem; letter-spacing: 0.12em; }
   .bo-liste span, .bo-intro { font-size: 0.95rem; }
   .bo-signature { font-size: 0.9rem; }
 }
@@ -867,7 +879,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .mod-carte.active { border-color: var(--or); background: var(--or-soft); }
 @media (prefers-reduced-motion: reduce) { .mod-carte:hover { transform: none; } }
 .mod-style {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.18em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or-patina);
 }
 .mod-titre { font-family: var(--ff-d); font-size: 1.05rem; color: var(--paper); line-height: 1.25; }
@@ -881,7 +893,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   border: 1px solid var(--line-soft); background: var(--ink-2); border-radius: var(--radius);
 }
 .mod-etiq {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.2em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or-patina); flex: none;
 }
 .mod-objet { flex: 1; min-width: 0; color: var(--paper); font-size: 0.92rem; overflow-wrap: anywhere; }
@@ -891,7 +903,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   font-family: inherit; width: 100%;
 }
 .mod-compte {
-  font-family: var(--ff-m); font-size: 0.58rem; letter-spacing: 0.1em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.1em;
   color: var(--dust); margin-top: 0.4rem;
 }
 .mod-compte.alerte { color: var(--amber); letter-spacing: 0.04em; }
@@ -908,7 +920,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .mod-seq-l > b {
   flex: none; min-width: 74px; font-family: var(--ff-m);
-  font-size: 0.62rem; letter-spacing: 0.1em; color: var(--or-patina); padding-top: 0.2rem;
+  font-size: 0.8rem; letter-spacing: 0.1em; color: var(--or-patina); padding-top: 0.2rem;
 }
 .mod-seq-l > span { min-width: 0; }
 .mod-seq-l b { color: var(--paper); font-weight: 400; }
@@ -921,10 +933,10 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .mod-titre { font-size: 1.1rem; }
   .mod-qui, .mod-pour { font-size: 0.88rem; }
   .mod-objet { font-size: 0.95rem; }
-  .mod-etiq { font-size: 0.7rem; letter-spacing: 0.1em; }
-  .mod-compte { font-size: 0.74rem; letter-spacing: 0.04em; }
+  .mod-etiq { font-size: 0.82rem; letter-spacing: 0.1em; }
+  .mod-compte { font-size: 0.82rem; letter-spacing: 0.04em; }
   .mod-actions .btn { flex: 1 1 100%; min-height: 44px; justify-content: center; }
-  .mod-seq-l > b { font-size: 0.74rem; min-width: 66px; }
+  .mod-seq-l > b { font-size: 0.82rem; min-width: 66px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -944,7 +956,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 
 .gr-legende {
   display: flex; gap: 1.1rem; flex-wrap: wrap;
-  font-family: var(--ff-m); font-size: 0.58rem;
+  font-family: var(--ff-m); font-size: 0.8rem;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash);
 }
 .gr-legende span { display: inline-flex; align-items: center; gap: 0.4rem; }
@@ -967,7 +979,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .gr-bulle {
   position: absolute; top: 2px; transform: translateX(-50%);
   padding: 0.45rem 0.7rem; white-space: nowrap; pointer-events: none;
-  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.04em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.04em;
   color: var(--paper); background: var(--surface-3);
   border: 1px solid var(--line-strong); border-radius: var(--radius);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); z-index: 3;
@@ -975,7 +987,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 
 .gr-axe {
   display: flex; justify-content: space-between; margin-top: 0.5rem;
-  font-family: var(--ff-m); font-size: 0.54rem;
+  font-family: var(--ff-m); font-size: 0.78rem;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);
 }
 .gr-vide { color: var(--ash); font-size: 0.9rem; line-height: 1.8; margin-top: 1rem; max-width: 52ch; }
@@ -984,8 +996,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
    dessin — lecteur d'écran, impression, ou simple préférence. */
 .gr-table { width: 100%; border-collapse: collapse; margin-top: 1.2rem; }
 .gr-table caption {
-  text-align: left; font-family: var(--ff-m); font-size: 0.52rem;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--or-patina);
+  text-align: left; font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--or-patina);
   padding-bottom: 0.5rem;
 }
 .gr-table th, .gr-table td {
@@ -993,7 +1005,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   border-bottom: 1px solid var(--line-soft); color: var(--ash);
 }
 .gr-table th {
-  font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.16em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--dust); font-weight: 400;
 }
 .gr-table td + td, .gr-table th + th { text-align: right; font-variant-numeric: tabular-nums; }
@@ -1006,8 +1018,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   font-weight: 300; color: var(--or); line-height: 1;
 }
 .ent-resume span {
-  font-family: var(--ff-m); font-size: 0.52rem;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+  font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash);
 }
 
 .ent-corps { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.2rem; }
@@ -1044,7 +1056,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .ent-dit { min-width: 0; }
 .ent-conv {
-  font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.08em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.08em;
   color: var(--ash); flex: none; white-space: nowrap;
 }
 /* Une étape qui perd plus de six fiches sur dix est le vrai sujet de
@@ -1065,13 +1077,13 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 @media (max-width: 720px) {
   .gr-toile svg { height: 128px; }
-  .gr-legende { font-size: 0.72rem; letter-spacing: 0.05em; }
-  .gr-axe { font-size: 0.7rem; letter-spacing: 0.06em; }
-  .gr-bulle { font-size: 0.75rem; }
-  .gr-table th { font-size: 0.7rem; letter-spacing: 0.08em; }
+  .gr-legende { font-size: 0.82rem; letter-spacing: 0.05em; }
+  .gr-axe { font-size: 0.82rem; letter-spacing: 0.06em; }
+  .gr-bulle { font-size: 0.84rem; }
+  .gr-table th { font-size: 0.82rem; letter-spacing: 0.08em; }
   .gr-table td { font-size: 0.88rem; }
-  .gr-table caption { font-size: 0.7rem; letter-spacing: 0.12em; }
-  .ent-conv { font-size: 0.74rem; letter-spacing: 0.03em; white-space: normal; }
+  .gr-table caption { font-size: 0.82rem; letter-spacing: 0.12em; }
+  .ent-conv { font-size: 0.82rem; letter-spacing: 0.03em; white-space: normal; }
   .ent-pied { font-size: 0.86rem; }
   .gr-vide { font-size: 0.95rem; }
 }
@@ -1095,8 +1107,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   font-variant-numeric: tabular-nums;
 }
 .pa-mois span {
-  display: block; font-family: var(--ff-m); font-size: 0.54rem;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash);
+  display: block; font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash);
   margin-top: 0.35rem;
 }
 .pa-ecart {
@@ -1149,7 +1161,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 @media (max-width: 720px) {
   .pa-mois b { font-size: 1.75rem; }
-  .pa-mois span { font-size: 0.72rem; letter-spacing: 0.08em; }
+  .pa-mois span { font-size: 0.82rem; letter-spacing: 0.08em; }
   .pa-ecart { font-size: 0.95rem; }
   .gr-note { font-size: 0.9rem; }
 }
@@ -1174,14 +1186,14 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .mdp-force::after {
   content: attr(data-mot); position: absolute; right: 0; top: 7px;
-  font-family: var(--ff-m); font-size: 0.55rem;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash);
+  font-family: var(--ff-m); font-size: 0.78rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash);
 }
 .mdp-bloc .form-msg { margin: 1rem 0; }
 @media (max-width: 720px) {
   .mdp-ligne { flex-wrap: wrap; }
   .mdp-ligne .btn { flex: 1 1 auto; min-height: 44px; justify-content: center; }
-  .mdp-force::after { font-size: 0.72rem; letter-spacing: 0.06em; }
+  .mdp-force::after { font-size: 0.82rem; letter-spacing: 0.06em; }
 }
 
 /* La flèche qui montre le chemin du courrier, d'une adresse à l'autre :
@@ -1203,7 +1215,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   border: 1px solid var(--line-soft); border-radius: var(--radius); min-width: 0;
 }
 .mem-c-nom { font-family: var(--ff-d); font-size: 1.05rem; color: var(--paper); flex: 1; min-width: 0; }
-.mem-c-ref { font-family: var(--ff-m); font-size: 0.55rem; letter-spacing: 0.12em; color: var(--dust); }
+.mem-c-ref { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; color: var(--dust); }
 
 .mem-liste { display: grid; gap: 0.5rem; margin-top: 1.2rem; }
 .mem-item { border: 1px solid var(--line-soft); border-radius: var(--radius); background: var(--ink-2); overflow: hidden; }
@@ -1223,7 +1235,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .mem-pastille.en-ligne { background: var(--green); box-shadow: 0 0 0 3px rgba(74,222,128,0.12); }
 .mem-t-nom { flex: 1; font-family: var(--ff-d); font-size: 1.1rem; color: var(--paper); min-width: 0;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mem-t-etat { font-family: var(--ff-m); font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); }
+.mem-t-etat { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); }
 .mem-corps { padding: 0 0.9rem 1.1rem; }
 
 .mem-colonnes { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 1.6rem; align-items: start; }
@@ -1234,7 +1246,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
    ils cherchent du noir sur du blanc, dans cet ordre. */
 .mem-qr { background: #fff; padding: 10px; border-radius: var(--radius); width: 100%; max-width: 230px; }
 .mem-qr svg { display: block; width: 100%; height: auto; }
-.mem-qr-note { font-size: 0.74rem; color: var(--ash); line-height: 1.55; margin: 0.7rem 0 0; }
+.mem-qr-note { font-size: 0.82rem; color: var(--ash); line-height: 1.55; margin: 0.7rem 0 0; }
 
 .mem-adresse {
   display: flex; align-items: center; gap: 0.5rem; margin-top: 0.9rem;
@@ -1242,7 +1254,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   border: 1px solid var(--line-soft); border-radius: var(--radius); min-width: 0;
 }
 .mem-adresse code {
-  flex: 1; min-width: 0; font-family: var(--ff-m); font-size: 0.66rem;
+  flex: 1; min-width: 0; font-family: var(--ff-m); font-size: 0.8rem;
   color: var(--or-patina); overflow-wrap: anywhere;
 }
 .mem-exports { display: grid; gap: 0.4rem; margin-top: 0.9rem; }
@@ -1262,7 +1274,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .mem-piste-n {
   flex: none; width: 22px; height: 22px; display: grid; place-items: center;
   border: 1px solid var(--line-soft); border-radius: 50%;
-  font-family: var(--ff-m); font-size: 0.55rem; color: var(--or-patina);
+  font-family: var(--ff-m); font-size: 0.78rem; color: var(--or-patina);
 }
 .mem-piste-t { flex: 1; min-width: 0; font-size: 0.9rem; color: var(--bone);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1274,7 +1286,7 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .mem-etat.en-ligne { color: var(--bone); border-left-color: var(--green); }
 .mem-vide { font-size: 0.88rem; color: var(--ash); line-height: 1.6; margin: 0.5rem 0 0; }
-.field-aide { font-size: 0.76rem; color: var(--dust); line-height: 1.55; margin: 0.35rem 0 0; }
+.field-aide { font-size: 0.84rem; color: var(--dust); line-height: 1.55; margin: 0.35rem 0 0; }
 
 /* Ce qui est payé ne se confond pas avec ce qui est à vendre : la
    bordure d'or et le bouton plein disent « on vous doit cette
@@ -1306,14 +1318,14 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 .doc-phare { border-left: 2px solid var(--or); background: var(--or-soft, rgba(201,168,76,.05)); }
 
 .doc-genre {
-  font-family: var(--ff-m); font-size: .55rem; letter-spacing: .16em;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--dust);
 }
 .doc-nom { font-family: var(--ff-d); font-size: 1.12rem; color: var(--ivory); line-height: 1.2; }
 .doc-dit { font-size: .78rem; line-height: 1.6; color: var(--ash); }
 .doc-act {
   margin-top: auto; padding-top: .6rem;
-  font-family: var(--ff-m); font-size: .58rem; letter-spacing: .18em;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--or);
 }
 .doc-act::after { content: ' ↓'; }
@@ -1325,4 +1337,232 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 @media (prefers-reduced-motion: reduce) {
   .doc-carte { transition: none; }
   .doc-carte:hover { transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LES TUILES DE CHIFFRES — RANG ET ÉTAT
+
+   LE DÉFAUT CORRIGÉ ICI
+
+   Quatre tuiles de force identique : même cadre, même graisse, même
+   couleur de chiffre. Rien ne disait laquelle regarder en arrivant.
+   Et le fait le plus urgent de l'écran — « 1 urgence » — était rendu
+   en 9 px gris, sous un chiffre qui parlait d'autre chose.
+
+   TROIS RÈGLES
+
+   1. UN SEUL CHIFFRE DE TÊTE. Le chiffre d'affaires porte le dégradé
+      d'or ; les autres sont en ivoire. L'or ne peut désigner qu'une
+      chose à la fois, sinon il ne désigne rien.
+
+   2. L'ÉTAT SE LIT DANS LA FORME, PAS SEULEMENT DANS LE NOMBRE.
+      Une tuile qui appelle une action prend la teinte de son état sur
+      son cadre et une pastille pleine devant sa mention. Pas de rail
+      latéral : quatre rails côte à côte font un code-barres.
+
+   3. LA COULEUR D'ÉTAT N'EST PAS L'OR. Vert, ambre et rouge disent
+      « ça va / surveille / maintenant ». L'or dit « c'est le chiffre
+      de la maison ». Mélanger les deux revient à n'avoir plus qu'un
+      seul niveau d'alerte.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Colonne flexible, pied poussé en bas : un pied qui passe à la ligne
+   ne doit pas décaler la ligne de base des trois autres tuiles. */
+.kpi {
+  position: relative; transition: border-color var(--t-tap) var(--ease-out);
+  display: flex; flex-direction: column;
+}
+.kpi .kpi-value { margin-bottom: auto; }
+
+/* Le chiffre de tête, et lui seul. */
+.kpi-phare .kpi-value {
+  background: var(--or-grad); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--or);
+}
+.kpi-phare .kpi-value .u {
+  -webkit-text-fill-color: var(--or-patina); color: var(--or-patina);
+}
+
+/* Les états. Le cadre prend la teinte, faiblement : de près on la
+   voit, de loin on voit seulement que cette tuile-là n'est pas comme
+   les autres — ce qui est exactement le message. */
+.kpi-calme     { border-color: rgba(74, 222, 128, 0.22); }
+.kpi-attention { border-color: rgba(251, 191, 36, 0.34); }
+.kpi-alerte    { border-color: rgba(248, 113, 113, 0.42); background: linear-gradient(180deg, rgba(248,113,113,0.045), transparent 60%); }
+
+.kpi-foot { display: flex; align-items: center; gap: 0.42rem; }
+.kpi-foot::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--line-strong); flex: none;
+}
+.kpi-calme     .kpi-foot::before { background: var(--green); }
+.kpi-attention .kpi-foot::before { background: var(--amber); }
+.kpi-alerte    .kpi-foot::before { background: var(--red); }
+.kpi-calme     .kpi-foot { color: var(--green); }
+.kpi-attention .kpi-foot { color: var(--amber); }
+.kpi-alerte    .kpi-foot { color: var(--red); }
+
+/* Une tuile sans état garde sa mention discrète et sa pastille éteinte :
+   la puce reste, sinon les quatre pieds ne s'alignent pas entre eux. */
+
+/* ═══════════════════════════════════════════════════════════════
+   LA CARTE D'UNE COMMANDE
+
+   L'ÉCHÉANCE, QUI MANQUAIT
+
+   La colonne « echeance » existait en base et n'était affichée nulle
+   part. C'est pourtant le seul fait dont on a besoin pour décider par
+   quoi commencer sa journée. Elle est désormais en tête de carte, et
+   elle change de couleur quand elle se rapproche.
+
+   L'OR REDEVIENT UN SIGNAL
+
+   Chaque ligne portait un bouton or plein. Sur cinq commandes, cinq
+   blocs or de force égale : l'œil n'avait plus de point d'entrée, et
+   l'or ne voulait plus rien dire. Le bouton d'avancement est
+   désormais un contour d'or par défaut, et ne devient plein que si la
+   commande est urgente ou en retard. L'or plein signifie « celle-ci,
+   maintenant » — et il n'y en a presque jamais plus d'une.
+   ═══════════════════════════════════════════════════════════════ */
+
+.o-row { transition: border-color var(--t-tap) var(--ease-out); }
+.o-row:hover { border-color: var(--line-strong); }
+.o-row.o-presse { border-color: rgba(248, 113, 113, 0.38); }
+
+.o-quand {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ash);
+  display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.5rem;
+}
+.o-quand::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--line-strong); flex: none;
+}
+.o-quand.proche { color: var(--amber); }
+.o-quand.proche::before { background: var(--amber); }
+.o-quand.retard { color: var(--red); }
+.o-quand.retard::before { background: var(--red); }
+
+/* L'étiquette d'étape est un libellé, pas une commande : fond teinté,
+   cadre effacé. Auparavant son contour la faisait passer pour un
+   bouton, à côté de vrais boutons de même taille. */
+.pill-etat {
+  border-color: transparent !important;
+  background: color-mix(in srgb, currentColor 13%, transparent);
+  font-weight: 500;
+}
+
+/* Le brief tenait sur une seule ligne courante où les quatre champs se
+   confondaient. Chaque champ a désormais son étiquette au-dessus de sa
+   valeur : on lit en colonnes, on ne relit pas la phrase entière pour
+   retrouver le métier. */
+.o-faits {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.9rem 1.4rem; margin-top: 0.9rem; padding-top: 0.9rem;
+  border-top: 1px solid var(--line-soft);
+}
+.o-fait-l {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ash); margin-bottom: 0.2rem;
+}
+.o-fait-v { font-size: 0.92rem; color: var(--bone, var(--paper)); line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA FRISE SOUS TÉLÉPHONE
+
+   Les quatre libellés — « Reçue », « Brief validé », « En composition »,
+   « Livrée » — tenaient côte à côte tant qu'ils étaient en 8 px. Relevés
+   au plancher de lisibilité, ils se chevauchent sous 560 px : « BRIEF
+   VALIDÉ » et « EN COMPOSITION » se marchent dessus et plus rien ne se
+   lit.
+
+   Rapetisser pour les faire tenir reviendrait à défaire exactement ce
+   qu'on vient de réparer. On les retire donc sur écran étroit : les
+   points suffisent à montrer où en est la commande, et l'étiquette
+   d'état, juste au-dessus, nomme déjà l'étape en toutes lettres. Rien
+   n'est perdu — la même information était écrite deux fois.
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 560px) {
+  .tl { flex-wrap: nowrap; gap: 0; }
+  .tl-lab { display: none; }
+  .tl-s { min-width: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LE MOUVEMENT DES CONSOLES
+
+   Trois manques, mesurés avant d'être corrigés.
+
+   1. AUCUN RETOUR AU CLIC. Pas une seule règle « :active » dans
+      cette feuille. Un bouton qui ne bouge pas sous le doigt laisse
+      croire qu'il n'a pas pris — et l'on clique deux fois. Le retour
+      doit être le plus court de toute l'interface : il ne raconte
+      rien, il accuse réception.
+
+   2. AUCUN GARDE « hover: hover ». Vingt-deux règles de survol,
+      aucune protégée. Sur une tablette, toucher un élément de
+      navigation le laisse allumé jusqu'au prochain toucher ailleurs :
+      deux lignes paraissent sélectionnées en même temps. Le survol
+      n'appartient qu'aux appareils qui en ont un.
+
+   3. UN SEUL « focus-visible ». Une console se conduit au clavier
+      dès qu'on y travaille vraiment. Sans anneau visible, on ne sait
+      plus où l'on est après trois tabulations.
+
+   Les durées, enfin : le survol passe de 300-450 ms à 150. À 450 ms
+   la couleur finit de changer après le départ de la souris.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Le retour au clic ─── */
+.dash .btn,
+.dash .side-item,
+.dash .forme {
+  transition: color var(--t-tap) var(--ease-out),
+              background-color var(--t-tap) var(--ease-out),
+              border-color var(--t-tap) var(--ease-out),
+              transform var(--t-press) var(--ease-out);
+}
+/* Un enfoncement à peine visible, et très court : l'écart doit se
+   sentir plus qu'il ne se voit. Seule « transform » est animée — elle
+   ne provoque ni recalcul de mise en page ni repeinte. */
+.dash .btn:active,
+.dash .side-item:active,
+.dash .o-row .pill-etat:active { transform: scale(0.985); }
+.dash .btn-sm:active { transform: scale(0.97); }
+
+/* ─── 2. Le survol n'existe que là où il existe ─── */
+@media (hover: none) {
+  .dash .side-item:hover { color: var(--ash); background: transparent; }
+  .dash .side-item.active:hover { color: var(--or-bright); background: rgba(201, 168, 76, 0.05); }
+  .dash .o-row:hover { border-color: var(--line-soft); }
+  .dash .o-row.o-presse:hover { border-color: rgba(248, 113, 113, 0.38); }
+  .dash .kpi:hover { border-color: inherit; }
+  .dash .tbl tr:hover td { color: inherit; }
+}
+
+/* ─── 3. Où suis-je au clavier ─── */
+.dash .btn:focus-visible,
+.dash .side-item:focus-visible,
+.dash input:focus-visible,
+.dash select:focus-visible,
+.dash textarea:focus-visible,
+.dash [tabindex]:focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* L'anneau ne doit jamais être rogné par le cadre de la barre. */
+.dash .side-item:focus-visible { outline-offset: -2px; }
+
+/* ─── Et rien de tout cela pour qui a demandé moins de mouvement ─── */
+@media (prefers-reduced-motion: reduce) {
+  .dash .btn,
+  .dash .side-item,
+  .dash .forme,
+  .dash .o-row,
+  .dash .kpi { transition-duration: 0.01ms !important; }
+  .dash .btn:active,
+  .dash .side-item:active,
+  .dash .btn-sm:active,
+  .dash .o-row .pill-etat:active { transform: none; }
 }
