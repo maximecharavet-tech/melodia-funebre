@@ -910,10 +910,30 @@
     }
   };
 
-  /* ═══ IA — paroles + direction musicale (Pollinations, sans clé) ═══ */
+  /* ═══ IA — paroles + direction musicale ═══
+     D'abord notre fonction serveur (Mistral, puis OpenAI en secours) ;
+     si elle n'a pas de clé ou ne répond pas — site servi en statique,
+     par exemple —, Pollinations, gratuit et sans clé. */
   window.MelodiaAI = {
     async lyrics(brief) {
-      var p = 'Tu es un parolier français spécialisé dans les hommages funéraires respectueux et émouvants, et un directeur artistique musical.\n\n'
+      try {
+        var s = await fetch('/api/generate-lyrics', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prenom: brief.defunt, traits: brief.traits, metier: brief.metier,
+            habitude: brief.habitude, anecdote: brief.anecdote, style: brief.style
+          })
+        });
+        if (s.ok) {
+          var o1 = await s.json();
+          if (o1 && o1.lyrics) return { title: o1.title, lyrics: o1.lyrics, style_prompt: o1.style_prompt || '', provider: o1.provider };
+        }
+      } catch (e) { /* on passe au secours */ }
+      return this._lyricsPollinations(brief);
+    },
+
+    async _lyricsPollinations(brief) {
+      var p ='Tu es un parolier français spécialisé dans les hommages funéraires respectueux et émouvants, et un directeur artistique musical.\n\n'
         + 'Défunt : ' + brief.defunt + ' · Traits : ' + (brief.traits || '-') + ' · Métier/passion : ' + (brief.metier || '-')
         + ' · Habitude : ' + (brief.habitude || '-') + ' · Anecdote : ' + (brief.anecdote || '-') + ' · Style : ' + (brief.style || 'Chanson française') + '\n\n'
         + 'Réponds UNIQUEMENT en JSON strict sans backticks : {"title":"titre poétique 3-5 mots","lyrics":"[Couplet 1]\\n4 vers\\n\\n[Refrain]\\n4 vers\\n\\n[Couplet 2]\\n4 vers","style_prompt":"description EN ANGLAIS pour Mureka : genre, voix, instruments, tempo BPM, ambiance, 15-25 mots"}\n'
@@ -928,7 +948,28 @@
       var a = raw.indexOf('{'), b = raw.lastIndexOf('}');
       if (a < 0 || b < 0) throw new Error('Réponse illisible — relancez.');
       var o = JSON.parse(raw.slice(a, b + 1));
-      return { title: o.title || ('Hommage à ' + brief.defunt), lyrics: (o.lyrics || '').replace(/\\n/g, '\n'), style_prompt: o.style_prompt || '' };
+      return { title: o.title || ('Hommage à ' + brief.defunt), lyrics: (o.lyrics || '').replace(/\\n/g, '\n'), style_prompt: o.style_prompt || '', provider: 'pollinations' };
+    },
+
+    /* ═══ Visuel d'accompagnement (Pollinations, sans clé) ═══
+       Une image calme, sans personne ni texte : un paysage ou un objet
+       tiré du métier et du style. Le prénom n'est jamais envoyé.
+       Renvoie une URL ; l'image se calcule au premier affichage. */
+    visuel(brief, graine) {
+      var ambiance = {
+        'Chanson française': 'soft golden afternoon light, Parisian nostalgia',
+        'Folk acoustique': 'warm wooden textures, open countryside at dusk',
+        'Classique piano': 'quiet ivory tones, candlelight, stillness',
+        'Jazz doux': 'deep blue evening, warm lamp glow',
+        'Bossa nova': 'gentle seaside breeze, pastel sunset',
+        'Gospel': 'luminous sky, rays of light through clouds'
+      }[brief.style] || 'soft golden light, serene atmosphere';
+      var sujet = (brief.metier || '').trim();
+      var prompt = 'serene memorial artwork, ' + (sujet ? 'evoking ' + sujet + ', ' : '') + ambiance +
+        ', painterly, muted ivory and gold palette, peaceful, dignified, no people, no faces, no text, no letters';
+      var g = graine || Math.floor(Math.random() * 1e6);
+      return 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt) +
+        '?width=1024&height=1024&nologo=true&seed=' + g;
     },
 
     /* ═══ Composition musicale via l'API Mureka ═══
