@@ -53,6 +53,7 @@
      enregistré après le chargement pour ne pas disputer la bande
      passante au premier affichage. */
   var majPrete = null;
+  var majDemandee = false;
   function enregistrer() {
     /* « isSecureContext » est la question exacte : le navigateur y
        répond pour nous, et il compte 127.0.0.1 comme sûr là où une
@@ -75,9 +76,15 @@
       });
     }).catch(function () { /* l'absence d'application n'empêche rien */ });
 
+    /* On ne recharge que si le visiteur l'a demandé. Le travailleur prend
+       la main de lui-même (skipWaiting, clients.claim) : à la première
+       visite, et à chaque version publiée. Recharger à ce moment-là
+       coupait le seuil d'entrée une seconde après son ouverture, chez
+       tout nouveau visiteur — la session le marquant déjà comme vu, il
+       ne revenait pas —, et relançait la page en pleine lecture. */
     var recharge = false;
     navigator.serviceWorker.addEventListener('controllerchange', function () {
-      if (recharge) return;
+      if (recharge || !majDemandee) return;
       recharge = true;
       location.reload();
     });
@@ -94,7 +101,11 @@
       '<button type="button" class="btn btn-gold btn-sm">Mettre à jour</button>' +
       '<button type="button" class="app-maj-plus-tard" aria-label="Plus tard">✕</button>';
     d.querySelector('.btn').addEventListener('click', function () {
-      if (majPrete) majPrete.postMessage('prendre-la-main');
+      majDemandee = true;
+      /* Déjà aux commandes (il n'attend pas qu'on le lui demande) : la
+         version neuve est là, il ne reste qu'à recharger. */
+      if (majPrete && majPrete.state === 'installed') majPrete.postMessage('prendre-la-main');
+      else location.reload();
       d.remove();
     });
     d.querySelector('.app-maj-plus-tard').addEventListener('click', function () { d.remove(); });

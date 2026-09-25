@@ -377,7 +377,7 @@ function intro() {
     <p class="intro-claim">Premier site dédié à la<br><em>musique personnalisée</em> pour funérailles.</p>
     <div class="intro-actions">
       <button class="btn btn-gold btn-lg" id="intro-enter" type="button">Entrer</button>
-      <span class="intro-hint">Ou touchez l'écran pour continuer</span>
+      <span class="intro-hint"><span class="hint-toucher">Ou touchez l'écran pour continuer</span><span class="hint-clic">Ou cliquez n'importe où pour continuer</span></span>
     </div>
   </div>
 </div>`;
