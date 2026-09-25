@@ -16,3 +16,8 @@ scripts/
 # pas des fichiers à servir. Le schéma nomme les tables et les règles
 # de sécurité — inutile de le donner à lire.
 supabase/
+
+# Réglages de Claude Code (extensions, serveur MCP) : outils de
+# développement, rien à servir.
+.claude/
+.mcp.json

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=e88a0915">
+<link rel="stylesheet" href="/assets/css/style.css?v=ecc3f378">
 <link rel="stylesheet" href="/assets/css/dashboard.css?v=87d1f0ef">
 <link rel="stylesheet" href="/assets/css/relief.css?v=3d4a9fe9">
 <link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
@@ -72,7 +72,7 @@
 </div>
 
 <script src="/assets/js/config.js?v=e792fc99"></script>
-<script src="/assets/js/auth.js?v=8b5ea317"></script>
+<script src="/assets/js/auth.js?v=db992d44"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/main.js?v=72d6b7b0"></script>
 <script src="/assets/js/commercial-contenu.js?v=3593a3cb"></script>
@@ -102,7 +102,7 @@ function eur(n){return (n||0).toLocaleString('fr-FR')+' €';}
 function logout(){window.MelodiaAuth.logout();location.href='compte.html';}
 
 var ORDERS = [], PARTNERS = [], FLOW = window.MELODIA_FLOW, ST = window.MELODIA_STATUS;
-var AI = { title:'', lyrics:'', style:'' };
+var AI = { title:'', lyrics:'', style:'', visuel:'' };
 
 /* Rechargement des commandes depuis la base, appelé après une écriture
    faite ailleurs (rattachement d'un hommage par l'atelier) : sans cela,
@@ -743,6 +743,15 @@ function vAtelier() {
     '<div class="field" style="margin-top:1.1rem;"><label class="field-label">Direction musicale (Style of Music)</label>' +
     '<textarea class="field-area" id="at-style-prompt" style="min-height:60px; font-family:var(--ff-m); font-size:0.76rem;" placeholder="french chanson, warm male voice, acoustic guitar, accordion, 72 BPM…"></textarea></div>' +
     '<p style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.12em; color:var(--dust); margin-top:0.9rem; text-align:center;">RELISEZ ET CORRIGEZ AVANT DE COMPOSER</p></div></div></div>' +
+    '<div class="panel" style="margin-top:1.4rem;"><div class="panel-head"><div><div class="panel-title">Un <em>visuel</em> d\'accompagnement</div>' +
+    '<div class="panel-sub">Paysage calme tiré du métier et du style, sans visage ni texte · Pollinations, gratuit</div></div>' +
+    '<button class="btn btn-outline btn-sm" id="at-vis-btn" onclick="genVisuel()">Proposer un visuel</button></div>' +
+    '<div id="at-vis" style="display:none; text-align:center;">' +
+    '<img id="at-vis-img" alt="Visuel d\'accompagnement proposé" style="width:100%; max-width:420px; aspect-ratio:1; object-fit:cover; border-radius:6px; border:1px solid var(--line-strong); background:rgba(201,168,76,.04);">' +
+    '<p id="at-vis-msg" class="form-msg" style="margin-top:.8rem;"></p>' +
+    '<div style="display:flex; gap:.6rem; justify-content:center; margin-top:.8rem;">' +
+    '<button class="btn btn-outline btn-sm" onclick="genVisuel()">Autre version</button>' +
+    '<a class="btn btn-gold btn-sm" id="at-vis-lien" target="_blank" rel="noopener">Ouvrir en grand</a></div></div></div>' +
     '<div id="at-music" style="margin-top:1.4rem;"></div>';
 }
 
@@ -750,6 +759,7 @@ function restoreAtelier() {
   if (AI.lyrics) document.getElementById('at-lyrics').value = AI.lyrics;
   if (AI.style) document.getElementById('at-style-prompt').value = AI.style;
   if (AI.title) document.getElementById('at-title-h').innerHTML = '« <em>' + esc(AI.title) + '</em> »';
+  if (AI.visuel) montrerVisuel(AI.visuel);
   if (window.MelodiaAtelier) window.MelodiaAtelier.mount();
 }
 
@@ -772,13 +782,34 @@ async function genLyrics() {
       anecdote: document.getElementById('at-anecdote').value.trim(),
       style: document.getElementById('at-style').value
     });
-    AI = { title: out.title, lyrics: out.lyrics, style: out.style_prompt };
+    AI = { title: out.title, lyrics: out.lyrics, style: out.style_prompt, visuel: AI.visuel };
     document.getElementById('at-lyrics').value = out.lyrics;
     document.getElementById('at-style-prompt').value = out.style_prompt;
     document.getElementById('at-title-h').innerHTML = '« <em>' + esc(out.title) + '</em> »';
   } catch (err) { msg.className = 'form-msg err'; msg.textContent = err.message; }
   clearInterval(t); st.style.display = 'none';
   btn.disabled = false; btn.textContent = 'Écrire les paroles';
+}
+
+/* Le visuel se calcule chez Pollinations au premier affichage : on
+   montre l'attente, et l'échec, plutôt qu'un cadre vide. */
+function montrerVisuel(url) {
+  var img = document.getElementById('at-vis-img'), msg = document.getElementById('at-vis-msg');
+  document.getElementById('at-vis').style.display = 'block';
+  document.getElementById('at-vis-lien').href = url;
+  msg.className = 'form-msg'; msg.textContent = 'Peinture en cours… (quelques secondes)';
+  img.style.opacity = '.35';
+  img.onload = function () { img.style.opacity = '1'; msg.textContent = ''; };
+  img.onerror = function () { img.style.opacity = '1'; msg.className = 'form-msg err'; msg.textContent = 'Le service d\'images ne répond pas — réessayez dans un instant.'; };
+  img.src = url;
+}
+
+function genVisuel() {
+  AI.visuel = window.MelodiaAI.visuel({
+    metier: document.getElementById('at-metier').value.trim(),
+    style: document.getElementById('at-style').value
+  });
+  montrerVisuel(AI.visuel);
 }
 
 function copyLyrics() {

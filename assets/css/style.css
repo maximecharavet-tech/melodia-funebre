@@ -1575,9 +1575,12 @@ body.intro-open { overflow: hidden; }
   animation: introLogo 1.5s var(--ease-out) 0.45s forwards,
              introHalo 4.5s ease-in-out 2.2s infinite;
 }
+/* Le fond du logo n'est pas noir mais un gris dégradé, plus clair au
+   centre : dans le médaillon noir, il dessinait un carré pâle derrière
+   le monogramme. Un léger contraste le ramène au noir sans toucher l'or. */
 @keyframes introLogo {
-  from { opacity: 0; transform: scale(1.14); filter: blur(6px); }
-  to { opacity: 1; transform: scale(1); filter: blur(0); }
+  from { opacity: 0; transform: scale(1.14); filter: blur(6px) contrast(1.18); }
+  to { opacity: 1; transform: scale(1); filter: blur(0) contrast(1.18); }
 }
 @keyframes introHalo {
   0%, 100% { box-shadow: 0 0 34px rgba(201, 168, 76, 0.13); }
@@ -1698,8 +1701,10 @@ body.intro-open { overflow: hidden; }
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
-    letter-spacing: 0.15em;
   }
+  /* L'interlettrage n'appartient qu'au nom : posé sur toute la liste,
+     il espaçait aussi la phrase d'accroche, qui passait à trois lignes. */
+  .intro-name { letter-spacing: 0.15em; }
   .intro-line { transform: scaleX(1) !important; }
   .intro-wave span { height: 10px; }
   /* L'anneau reste dessiné, il ne se trace simplement pas */
@@ -1709,6 +1714,53 @@ body.intro-open { overflow: hidden; }
   .intro-onde { display: none; }
   /* Le film n'est pas chargé en mouvement réduit ; on le masque aussi */
   .intro-film { display: none; }
+  .intro-logo { filter: contrast(1.18) !important; }
+}
+
+/* ─── Écrans bas ───
+   Le seuil mesurait 760 px de haut : sur un portable de 680 px utiles
+   (1280 × 800, barres du navigateur ôtées), « Entrer » passait sous le
+   bord, et le seuil ne défile pas. Le film suit la hauteur autant que
+   la largeur, et les respirations se resserrent. */
+@media (max-height: 820px) {
+  .intro-visuel { width: clamp(200px, min(54vw, 46vh), 380px); margin-bottom: 1rem; }
+  .intro-scene { width: clamp(140px, min(30vw, 27vh), 210px); height: clamp(140px, min(30vw, 27vh), 210px); }
+  .intro-line { margin-bottom: 1.6rem; }
+  .intro-wave { margin: 1.1rem 0 1.3rem; }
+  .intro-actions { margin-top: 1.8rem; }
+  .intro-hint { margin-top: 0.9rem; }
+}
+
+/* ─── Téléphone à l'horizontale ───
+   390 px de haut pour un seuil qui en demandait 760 : on n'y voyait que
+   le logo, ni la phrase ni le bouton. Deux colonnes, le film à gauche,
+   la parole à droite. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .intro-inner {
+    max-width: 780px;
+    display: grid; grid-template-columns: auto minmax(0, 1fr);
+    column-gap: clamp(1.4rem, 4vw, 3rem); align-items: center;
+    text-align: left;
+  }
+  .intro-line { display: none; }
+  .intro-visuel {
+    grid-column: 1; grid-row: 1 / span 4;
+    width: min(64vh, 300px); margin: 0;
+  }
+  .intro-scene { width: min(48vh, 190px); height: min(48vh, 190px); }
+  .intro-name, .intro-wave, .intro-claim, .intro-actions { grid-column: 2; }
+  .intro-name { text-indent: 0; }
+  .intro-wave { justify-content: flex-start; margin: 0.8rem 0 1rem; }
+  .intro-claim { font-size: clamp(1.1rem, 3.4vh + 0.4rem, 1.5rem); }
+  .intro-actions { margin-top: 1.2rem; }
+  .intro-hint { margin-top: 0.7rem; }
+}
+
+/* « Touchez l'écran » n'a pas de sens sous une souris. */
+.intro-hint .hint-clic { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .intro-hint .hint-toucher { display: none; }
+  .intro-hint .hint-clic { display: inline; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
