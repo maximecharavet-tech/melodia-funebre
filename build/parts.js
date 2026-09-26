@@ -18,7 +18,7 @@ function pricing(mode) {
           <span class="price-tag"${o.tag ? '' : ' style="display:none"'}>${o.tag || ''}</span>
           <div class="price-name">${o.name}</div>
           <div class="price-amount">${o.price}<span>€</span></div>
-          <div class="price-note">TVA non applicable · art. 293 B du CGI</div>
+          <div class="price-note">TVA non applicable<br>art. 293 B du CGI</div>
           <p class="price-desc">${o.desc}</p>
           <ul>
 ${o.feats.map(f => `            <li>${f}</li>`).join('\n')}

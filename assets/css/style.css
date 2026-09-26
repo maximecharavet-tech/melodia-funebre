@@ -165,6 +165,9 @@ ul { list-style: none; }
 .h-hero, .h-xl, .h-lg {
   font-family: var(--ff-d); font-weight: 300; line-height: 1.04;
   letter-spacing: -0.015em; color: var(--paper);
+  /* Des lignes de longueur voisine plutôt qu'un mot seul en dernière
+     ligne (« Offrez une nouvelle / dimension »). */
+  text-wrap: balance;
 }
 .h-hero { font-size: var(--fs-hero); }
 .h-xl { font-size: var(--fs-xl); line-height: 1.08; }
@@ -3568,6 +3571,10 @@ body.a-ecoute { padding-bottom: 5rem; }
 .frise-fleche.prec { left: -6px; }
 .frise-fleche.suiv { right: -6px; }
 @media (max-width: 420px) { .frise-fleche { width: 30px; height: 30px; } }
+/* Le disque reste petit pour ne pas masquer les jetons, mais le doigt
+   vise large : la zone active fait 44 px, la taille qu'une main âgée
+   atteint sans s'y reprendre. */
+.frise-fleche::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; }
 
 .frise-piste {
   display: flex; gap: clamp(.55rem, 2vw, 1rem); overflow-x: auto;
@@ -4328,6 +4335,9 @@ body.a-ecoute { padding-bottom: 5rem; }
   font-family: var(--ff-m); font-size: 0.816rem;
   letter-spacing: 0.15em; text-transform: uppercase; color: var(--or-patina);
 }
+/* Alignés sur la colonne de texte, comme tout ce qui les entoure :
+   centrés, ils flottaient seuls au milieu de la page. */
+.hero-caption .hero-jalons { justify-content: flex-start; }
 .hero-jalons span { position: relative; }
 .hero-jalons span + span::before {
   content: '·'; position: absolute; left: -0.72rem; color: var(--or-deep);
@@ -4341,6 +4351,45 @@ body.a-ecoute { padding-bottom: 5rem; }
   text-decoration-color: var(--or-deep);
 }
 .hero-note-famille a:hover { color: var(--or-bright); }
+
+/* ─── La couverture, au propre ───
+   Le titre courait jusque sous la médaille : « dimension » passait
+   sur l'anneau à 1440 px, sur le médaillon à 1280. Sa colonne s'arrête
+   désormais avant l'emblème — même calcul que celui qui le place :
+   96 % de la largeur, moins sa taille, moins la marge du conteneur. */
+@media (min-width: 1081px) {
+  .hero-caption .h-hero, .hero-caption .lead {
+    max-width: calc(96vw - min(34rem, 40vw) - max((100vw - var(--container)) / 2, 0px) - var(--pad) - 2rem);
+  }
+  .hero-caption .h-hero { font-size: clamp(2.7rem, 5.2vw, 5.4rem); }
+}
+
+/* « Découvrir » est posé au bas de la couverture ; quand l'écran est
+   bas, le texte y descend aussi et les deux se chevauchaient. C'est un
+   ornement : il s'efface plutôt que de gêner. */
+@media (max-height: 820px) { .hero-scroll { display: none; } }
+
+@media (max-width: 480px) {
+  /* Sur téléphone, badge et jalons passaient à la ligne — le badge en
+     pilule sur deux lignes, les jalons avec un point orphelin devant
+     « QR Code ». La taille reste au plancher de lisibilité ; c'est
+     l'interlettrage qui se resserre. */
+  .hero-caption .badge { letter-spacing: 0.04em; padding-inline: 0.7rem; border-radius: 12px; line-height: 1.5; }
+  /* Chaque jalon porte son point : quand la ligne se coupe, le suivant
+     commence comme les autres, au lieu d'un point suspendu dans la marge. */
+  .hero-jalons { letter-spacing: 0.05em; gap: 0.5rem 1rem; }
+  .hero-jalons span::before,
+  .hero-jalons span + span::before {
+    content: '·'; position: static; margin-right: 0.45rem; color: var(--or-deep);
+  }
+}
+
+/* La porte des professionnels flotte en bas d'écran. Sur la couverture,
+   qui propose déjà « Devenir partenaire », elle faisait doublon — et
+   sur téléphone elle recouvrait « Commander un hommage ». Elle attend
+   qu'on ait quitté la couverture. */
+.pro-flottant[data-pro-flottant] { transition: color var(--t-fast), border-color var(--t-fast), transform var(--t-fast) var(--ease), opacity 0.35s var(--ease), visibility 0.35s; }
+.pro-flottant[data-pro-flottant].en-retrait { opacity: 0; visibility: hidden; transform: translateY(10px); }
 
 /* ─── Le bouton du bandeau ─── */
 .nav-cta-pro { white-space: nowrap; }
@@ -5374,7 +5423,7 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
   margin-bottom: 2.4rem;
 }
-.ec-fil a { color: var(--ash); }
+.ec-fil a { color: var(--ash); display: inline-block; padding-block: 0.7rem; margin-block: -0.7rem; }
 .ec-fil a:hover { color: var(--or); }
 
 .ec-tete { text-align: center; }

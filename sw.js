@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = 'a5c62d131d';
+const VERSION = '0f38253a5a';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -62,13 +62,13 @@ const PRECHARGE = [
   "/404",
   "/assets/img/icons/icon-48.png?v=08368217",
   "/assets/img/icons/icon-180.png?v=77f4ddbf",
-  "/assets/css/style.css?v=ecc3f378",
+  "/assets/css/style.css?v=7d117ca6",
   "/assets/img/intro-logo-360.webp?v=f1f2e4f6",
   "/assets/img/logo-melodia-160.webp?v=d5ed7d92",
   "/assets/img/maxime-128.webp?v=59ad45f3",
   "/assets/img/hyper-engine-80.webp?v=0f6180f0",
   "/assets/js/content.js?v=b3438db0",
-  "/assets/js/main.js?v=72d6b7b0",
+  "/assets/js/main.js?v=80855e81",
   "/assets/js/application.js?v=7f9b3448",
   "/assets/js/rappel.js?v=1840ff2c",
   "/assets/js/courrier.js?v=7feee7d2",
