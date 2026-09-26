@@ -160,6 +160,18 @@
        déjà le seuil, et que le bouton reste atteignable à la tabulation. */
   }
 
+  /* ═══ PORTE DES PROFESSIONNELS ═══
+     En retrait tant que la couverture est à l'écran : elle y propose
+     déjà « Devenir partenaire », et sur téléphone le bouton flottant
+     recouvrait le lien des familles. */
+  var porte = $('[data-pro-flottant]');
+  var couverture = $('.hero-video');
+  if (porte && couverture && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (e) {
+      porte.classList.toggle('en-retrait', e[0].isIntersecting);
+    }, { threshold: 0.25 }).observe(couverture);
+  }
+
   /* ═══ NAVIGATION ═══ */
   var nav = $('.nav');
   if (nav) {

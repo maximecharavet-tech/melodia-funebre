@@ -397,6 +397,25 @@ function comblerHommages(html) {
   return html.split('{{HOMMAGES}}').join(enLettres(TRACKS.length));
 }
 
+/* ─── Espaces insécables ───
+   Le texte français collait mal : « vous conservez 60 » en fin de ligne
+   et « % » seul au début de la suivante, sur la page des professionnels.
+   On lie donc, dans le TEXTE seulement — jamais dans une balise, un
+   script ou un style —, un nombre à son unité, les milliers entre eux,
+   et les guillemets français à leur contenu. */
+const NBSP = ' ';
+const UNITES = /(\d)[ \t\u00a0\u202f]+(%|€|h\b|min\b|heures?\b|minutes?\b|jours?\b|ans\b|mois\b|Mo\b|Ko\b|kbps\b|secondes?\b)/g;
+function typographie(html) {
+  return html.replace(/(<(script|style|textarea)\b[\s\S]*?<\/\2>)|(<[^>]*>)|([^<]+)/gi, (m, bloc, _n, balise, texte) => {
+    if (!texte) return m;
+    return texte
+      .replace(UNITES, '$1' + NBSP + '$2')
+      .replace(/(\d)[ \t\u00a0\u202f]+(?=\d{3}\b)/g, '$1' + NBSP)
+      .replace(/«[ \t\u00a0\u202f]+/g, '«' + NBSP)
+      .replace(/[ \t\u00a0\u202f]+»/g, NBSP + '»');
+  });
+}
+
 function page(p) {
   /* content.js d'abord : le catalogue se remonte ensuite autour du contenu publié */
   /* config.js en premier : content.js doit savoir où lire le contenu
@@ -405,7 +424,7 @@ function page(p) {
   const base = ['assets/js/config.js', 'assets/js/content.js', 'assets/js/main.js', 'assets/js/application.js',
                 'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'];
   const scripts = base.concat((p.scripts || []).filter((s) => base.indexOf(s) === -1));
-  return absolu(comblerHommages(empreinterImages(`<!DOCTYPE html>
+  return typographie(absolu(comblerHommages(empreinterImages(`<!DOCTYPE html>
 <html lang="fr">
 <head>
 ${head(p)}
@@ -425,7 +444,7 @@ ${p.inline || ''}
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
-</html>`)));
+</html>`))));
 }
 
 /* ─── Les chemins d'actifs, en absolu ───
