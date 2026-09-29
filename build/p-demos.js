@@ -137,7 +137,7 @@ ${P.oeuvres('hommage')}
       </div>
 ${DEFS}
       <div class="reg-carrousel reveal" data-carrousel>
-        <div class="reg-piste" data-piste role="list" aria-label="Les registres musicaux">
+        <div class="reg-piste" data-piste role="group" aria-label="Les registres musicaux">
 ${registres()}
         </div>
         <div class="reg-jauge"><span data-jauge></span></div>

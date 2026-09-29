@@ -57,7 +57,7 @@ ${TESTIS.map(t => `          <div class="carousel-slide">
         </div>
         <div class="carousel-nav">
           <button class="carousel-arrow carousel-prev" type="button" aria-label="Témoignage précédent">${ICON.arrowL}</button>
-          <div class="carousel-dots" role="tablist"></div>
+          <div class="carousel-dots" role="group" aria-label="Choisir un témoignage"></div>
           <button class="carousel-arrow carousel-next" type="button" aria-label="Témoignage suivant">${ICON.arrowR}</button>
         </div>
       </div>`;

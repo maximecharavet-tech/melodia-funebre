@@ -32,7 +32,12 @@
   --paper: #f2efe8;
   --bone: #c4bba6;
   --ash: #8e8878;
-  --dust: #5d5a51;
+  /* Relevé de #5d5a51 : ce gris tombait à 2,90 sur le fond des sections
+     et 2,97 sur le noir, là où la règle en demande 4,5. Il portait à lui
+     seul soixante des soixante-sept manquements de contraste du site —
+     un jeton, pas soixante éléments. Teinte conservée, les trois canaux
+     montés ensemble ; mesuré à 4,53 et 4,64 sur les deux fonds. */
+  --dust: #7c786c;
 
   /* ─── Ivoire (sections claires) ─── */
   --ivory: #f4f1ea;
@@ -1989,7 +1994,10 @@ body.intro-open { overflow: hidden; }
 .cat-filtre.actif {
   color: var(--ink); background: var(--or); border-color: var(--or);
 }
-.cat-filtre.actif span { color: rgba(4, 4, 7, 0.6); }
+/* 0,6 d'opacité donnait un ratio de 4,05 sur l'or. 0,72 passe à 4,55 —
+   le compteur reste visiblement plus discret que son libellé, ce qui
+   était le but, mais il se lit. */
+.cat-filtre.actif span { color: rgba(4, 4, 7, 0.72); }
 
 /* ─── La fiche ───
 
@@ -5618,3 +5626,18 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
   .chaine-qr { max-width: 220px; margin-inline: auto; }
 }
 @media (prefers-reduced-motion: reduce) { .chaine-maillon { transition-delay: 0s; } }
+
+
+/* Visible des seuls lecteurs d'écran.
+   Un en-tête de colonne vide dans un tableau comparatif fait annoncer
+   « vide » là où il faudrait dire de quoi parle la ligne. On nomme donc
+   la colonne, sans l'afficher : la mise en page, elle, était juste. */
+.hors-vue {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Le repère qui porte le raccourci « Professionnels » ne doit rien
+   changer à sa position : c'est le lien qui flotte, pas son conteneur. */
+.pro-flottant-zone { display: contents; }

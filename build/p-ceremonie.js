@@ -150,7 +150,7 @@ const musiquePersoObseques = page({
       <div class="prose reveal" style="margin-top:2rem;">
         <table>
           <thead>
-            <tr><th scope="col">&nbsp;</th><th scope="col">Un morceau du commerce</th><th scope="col">Une œuvre écrite pour lui</th></tr>
+            <tr><th scope="col"><span class="hors-vue">Ce qui est comparé</span></th><th scope="col">Un morceau du commerce</th><th scope="col">Une œuvre écrite pour lui</th></tr>
           </thead>
           <tbody>
 ${COMPARATIF.map(([q, a, b]) => `            <tr><th scope="row">${q}</th><td>${a}</td><td>${b}</td></tr>`).join('\n')}

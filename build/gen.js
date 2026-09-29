@@ -210,7 +210,7 @@ ${links}
     </button>
   </div>
 </nav>
-<div class="nav-mobile" id="menu-mobile">
+<nav class="nav-mobile" id="menu-mobile" aria-label="Menu principal">
 ${mlinks}
   <a href="/rites">Les rites</a>
   <a href="/contact">Nous écrire</a>
@@ -219,7 +219,7 @@ ${mlinks}
     <a href="/professionnels#partenariat" class="btn btn-gold">Devenir partenaire</a>
     <a href="/offres" class="btn btn-outline">Commander un hommage</a>
   </div>
-</div>`;
+</nav>`;
 }
 
 function footer() {
@@ -328,10 +328,16 @@ function stickyCta() {
    l'un l'autre. Il ne s'affiche pas sur la page qui lui est destinée. */
 function boutonPro(fichier) {
   if (/^(professionnels|compte|espace|404)\./.test(fichier || '')) return '';
-  return `<a href="/professionnels" class="pro-flottant" data-pro-flottant>
+  /* Ce raccourci flotte au-dessus de la page, hors de l'en-tête comme
+     du pied : sans repère propre, un lecteur d'écran qui parcourt la
+     page par ses régions ne le rencontre jamais — il n'appartient à
+     aucune. Un « nav » nommé lui donne sa place dans le plan. */
+  return `<nav class="pro-flottant-zone" aria-label="Accès professionnels">
+  <a href="/professionnels" class="pro-flottant" data-pro-flottant>
   <span class="pro-flottant-ico" aria-hidden="true">◈</span>
   <span class="pro-flottant-mot">Professionnels</span>
-</a>`;
+</a>
+</nav>`;
 }
 
 

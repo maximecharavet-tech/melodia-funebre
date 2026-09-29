@@ -374,7 +374,11 @@
       track.style.transform = 'translateX(-' + (idx * 100) + '%)';
       if (dotsWrap) $$('.carousel-dot', dotsWrap).forEach(function (d, k) {
         d.classList.toggle('active', k === idx);
-        d.setAttribute('aria-selected', k === idx ? 'true' : 'false');
+        /* « aria-selected » n'existe que sur un onglet, une option ou
+           une ligne — pas sur un bouton ordinaire. « aria-current »
+           est le bon mot pour « c'est celui-ci qu'on regarde ». */
+        if (k === idx) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
       });
     };
 
