@@ -198,7 +198,7 @@
     '<div class="frise-titre"><span class="mono" data-frise-titre></span></div>' +
     '<div class="frise-cadre">' +
       '<button type="button" class="frise-fleche prec" data-prec-frise aria-label="Hommages précédents">' + CHEV_G + '</button>' +
-      '<div class="frise-piste" role="tablist" aria-label="Choisir un hommage"></div>' +
+      '<div class="frise-piste" role="group" aria-label="Choisir un hommage"></div>' +
       '<button type="button" class="frise-fleche suiv" data-suiv-frise aria-label="Hommages suivants">' + CHEV_D + '</button>' +
     '</div>';
   var fPiste = frise.querySelector('.frise-piste');
@@ -683,7 +683,11 @@
       b.className = 'pastille';
       b.type = 'button';
       b.dataset.i = String(i);
-      b.setAttribute('role', 'tab');
+      /* Pas de « role=tab » : le motif des onglets promet une
+         navigation aux flèches et un seul arrêt de tabulation, que
+         cette frise n'implémente pas. Annoncer le contrat sans le
+         tenir égare davantage qu'un bouton ordinaire bien nommé.
+         « aria-current » suffit à dire lequel joue. */
       b.setAttribute('aria-current', 'false');
       b.setAttribute('aria-label', 'Écouter ' + esc(o.title || 'cet hommage'));
       b.innerHTML =

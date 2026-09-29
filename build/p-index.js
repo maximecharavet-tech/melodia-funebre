@@ -195,7 +195,7 @@ ${P.scrollHint()}
         <table class="compare">
           <thead>
             <tr>
-              <th scope="col">&nbsp;</th>
+              <th scope="col"><span class="hors-vue">Ce qui est comparé</span></th>
               <th scope="col">Musique du commerce</th>
               <th scope="col">Musicien sur place</th>
               <th scope="col" class="col-hl">Melodia Funèbre</th>

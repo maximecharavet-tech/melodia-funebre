@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=7d117ca6">
+<link rel="stylesheet" href="/assets/css/style.css?v=480c7e1e">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -69,7 +69,7 @@
     </button>
   </div>
 </nav>
-<div class="nav-mobile" id="menu-mobile">
+<nav class="nav-mobile" id="menu-mobile" aria-label="Menu principal">
   <a href="/processus">Comment ça marche</a>
   <a href="/demos">Nos hommages</a>
   <a href="/offres">Pour les familles</a>
@@ -82,7 +82,7 @@
     <a href="/professionnels#partenariat" class="btn btn-gold">Devenir partenaire</a>
     <a href="/offres" class="btn btn-outline">Commander un hommage</a>
   </div>
-</div>
+</nav>
 <main id="main">
 
   <section class="page-head">
@@ -843,7 +843,7 @@ values="0 0 0 0 0.86  0 0 0 0 0.70  0 0 0 0 0.32  0 0 0 0.2 0"/>
 <clipPath id="ins-globe"><circle cx="90" cy="90" r="44"/></clipPath>
 </defs></svg>
       <div class="reg-carrousel reveal" data-carrousel>
-        <div class="reg-piste" data-piste role="list" aria-label="Les registres musicaux">
+        <div class="reg-piste" data-piste role="group" aria-label="Les registres musicaux">
           <a class="reg-carte" href="/ecouter/constantine-dans-ton-coeur">
             <div class="reg-cadre"><svg class="reg-art" viewBox="-14 -12 208 226" aria-hidden="true" focusable="false"><circle class="reg-halo" cx="90" cy="88" r="84" fill="url(#ins-lueur)"/><ellipse class="reg-sol" cx="90" cy="180" rx="56" ry="6" fill="url(#ins-sol)"/><g filter="url(#ins-orfevre)"><g class="reg-objet" id="ins-o1"><path d="M100 8l16 8-7 15-16-8z" fill="#15110a" stroke="#1d1709" stroke-width="1.2"/><rect x="98" y="24" width="15" height="7" rx="2" transform="rotate(26 105 27)" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><path d="M100 32C90 42 86 48 84 58" fill="none" stroke="url(#ins-or)" stroke-width="9" stroke-linecap="round"/><path d="M83 56L74 112" fill="none" stroke="url(#ins-or)" stroke-width="16" stroke-linecap="round"/><path d="M74 112c-4 26 12 42 32 37" fill="none" stroke="url(#ins-or)" stroke-width="16" stroke-linecap="round"/><path d="M106 149c18-5 26-20 22-38l-3-13" fill="none" stroke="url(#ins-or)" stroke-width="15" stroke-linecap="round"/><path d="M123.6 97.6C128 76 134 58 145 44L179 72C165 85 148 98 134.4 106.4Z" fill="url(#ins-or)" stroke="#1d1709" stroke-width="2"/><ellipse cx="162" cy="58" rx="8" ry="23" fill="url(#ins-ombre)" stroke="url(#ins-or)" stroke-width="2.8" transform="rotate(-50 162 58)"/><path d="M129 96c4-18 11-32 20-44M136 101c4-17 10-30 19-41"  fill="none" stroke="#1d1709" stroke-opacity=".45" stroke-width="1" stroke-linecap="round"/><circle cx="89" cy="62" r="4.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="87.2" cy="71" r="4.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="85.4" cy="80" r="4.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="83.6" cy="89" r="4.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="81.8" cy="98" r="4.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="80" cy="107" r="4.4" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="64" cy="76" r="3.6" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="65.5" cy="91" r="3.6" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><circle cx="67" cy="106" r="3.6" fill="url(#ins-orh)" stroke="#1d1709" stroke-width="1"/><path d="M79 60L71 114"  fill="none" stroke="#1d1709" stroke-opacity=".45" stroke-width="1" stroke-linecap="round"/><path d="M92 56l-8 40"  fill="none" stroke="#f6e7bd" stroke-opacity=".38" stroke-width="1.2" stroke-linecap="round"/></g></g><g class="reg-reflet" mask="url(#ins-reflet)"><use href="#ins-o1" transform="matrix(1 0 0 -1 0 358)"/></g></svg></div>
             <div class="reg-corps">
@@ -1194,18 +1194,20 @@ values="0 0 0 0 0.86  0 0 0 0 0.70  0 0 0 0 0.32  0 0 0 0.2 0"/>
   <button type="button" class="btn btn-outline" data-rappel><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg> Être rappelé</button>
   <a href="/offres" class="btn btn-gold">Commander</a>
 </div>
-<a href="/professionnels" class="pro-flottant" data-pro-flottant>
+<nav class="pro-flottant-zone" aria-label="Accès professionnels">
+  <a href="/professionnels" class="pro-flottant" data-pro-flottant>
   <span class="pro-flottant-ico" aria-hidden="true">◈</span>
   <span class="pro-flottant-mot">Professionnels</span>
 </a>
+</nav>
 <script src="/assets/js/config.js?v=e792fc99"></script>
 <script src="/assets/js/content.js?v=b3438db0"></script>
-<script src="/assets/js/main.js?v=80855e81"></script>
+<script src="/assets/js/main.js?v=afb90471"></script>
 <script src="/assets/js/application.js?v=7f9b3448"></script>
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=b37cef91"></script>
-<script src="/assets/js/catalogue.js?v=c664c550"></script>
+<script src="/assets/js/catalogue.js?v=191590d1"></script>
 <script src="/assets/js/registres.js?v=e7bf5603"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.

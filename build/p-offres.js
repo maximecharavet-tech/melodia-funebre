@@ -67,7 +67,7 @@ ${P.pricing('order')}
 ${P.scrollHint()}
       <div class="compare-wrap reveal">
         <table class="compare">
-          <thead><tr><th scope="col">&nbsp;</th><th scope="col">Essentiel<br>149 €</th><th scope="col" class="col-hl">Prestige<br>299 €</th><th scope="col">Mémorial<br>499 €</th></tr></thead>
+          <thead><tr><th scope="col"><span class="hors-vue">Ce qui est comparé</span></th><th scope="col">Essentiel<br>149 €</th><th scope="col" class="col-hl">Prestige<br>299 €</th><th scope="col">Mémorial<br>499 €</th></tr></thead>
           <tbody>
             <tr><th scope="row">Œuvre originale personnalisée</th><td class="yes">✓</td><td class="col-hl yes">✓</td><td class="yes">✓</td></tr>
             <tr><th scope="row">Entretien téléphonique</th><td class="yes">✓</td><td class="col-hl yes">✓</td><td class="yes">✓</td></tr>
