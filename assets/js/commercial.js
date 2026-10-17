@@ -249,11 +249,16 @@
           window.MelodiaProspects.STATUTS.map(function (s) {
             var n = compte(s);
             var pc = total ? Math.round(n / total * 100) : 0;
-            return '<div class="pl-seg" data-aller="' + s + '" style="cursor:pointer;">' +
-              '<div class="pl-n" style="color:' + ST[s].color + ';">' + n + '</div>' +
-              '<div class="pl-l">' + ST[s].label + '</div>' +
-              '<div class="pl-p"><span style="width:' + pc + '%;background:' + ST[s].color + ';"></span></div>' +
-            '</div>';
+            /* Un bouton, et non un bloc : chaque étape ouvre la liste
+               filtrée, elle doit donc s'atteindre au clavier aussi. */
+            return '<button type="button" class="pl-seg' + (n ? '' : ' pl-vide') + '" data-aller="' + s + '" ' +
+              'style="--pl:' + ST[s].color + ';" aria-label="' + ST[s].label + ' : ' + n + ' fiche' + (n > 1 ? 's' : '') +
+              (total ? ', ' + pc + ' %' : '') + '">' +
+              '<span class="pl-n">' + n + '</span>' +
+              '<span class="pl-l">' + ST[s].label + '</span>' +
+              '<span class="pl-p" aria-hidden="true"><span style="width:' + pc + '%;"></span></span>' +
+              '<span class="pl-pc" aria-hidden="true">' + (total ? pc + ' %' : '—') + '</span>' +
+            '</button>';
           }).join('') +
         '</div>' +
       '</div>' +

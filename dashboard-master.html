@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/style.css?v=480c7e1e">
-<link rel="stylesheet" href="/assets/css/dashboard.css?v=87d1f0ef">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=01906835">
 <link rel="stylesheet" href="/assets/css/relief.css?v=3d4a9fe9">
 <link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
 <link rel="stylesheet" href="/assets/css/souvenir.css?v=3653a8f8">
@@ -86,6 +86,8 @@
 <script src="/assets/js/intranet.js?v=4b2436ff"></script>
 <script src="/assets/js/relief.js?v=99c4c9ba"></script>
 <script src="/assets/js/mobile.js?v=43030276"></script>
+<script src="/assets/js/palette.js?v=b599a8c8"></script>
+<script src="/assets/js/maitre-graphes.js?v=05ad7ec7"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
@@ -214,6 +216,7 @@ function go(v) {
   }
   document.getElementById('view').innerHTML = ({ accueil:vAccueil, commandes:vCommandes, atelier:vAtelier, partenaires:vPartenaires, finances:vFinances, prospection:vProspection, proprietaire:vProprietaire, systeme:vSysteme, adieux:vAdieux })[v]();
   if (v === 'atelier') restoreAtelier();
+  if (v === 'accueil' && window.MelodiaMaitreGraphes) window.MelodiaMaitreGraphes.brancher();
   if (v === 'adieux') chargerAdieux();
   if (v === 'proprietaire' && window.MelodiaOwner) window.MelodiaOwner.mount();
   if (v === 'systeme') { majEtatMusique(); majEtatCourriel(); if (window.MelodiaMotDePasse) window.MelodiaMotDePasse.brancher(); }
@@ -495,6 +498,7 @@ function tuile(o) {
   return '<div class="kpi' + (o.phare ? ' kpi-phare' : '') + (o.etat ? ' kpi-' + o.etat : '') + '">' +
     '<div class="kpi-label">' + o.l + '</div>' +
     '<div class="kpi-value">' + o.v + (o.u ? '<span class="u">' + o.u + '</span>' : '') + '</div>' +
+    (o.e ? '<div class="kpi-tendance">' + o.e + '</div>' : '') +
     (o.f ? '<div class="kpi-foot">' + o.f + '</div>' : '') + '</div>';
 }
 
@@ -682,11 +686,18 @@ function vAccueil() {
   if (!ORDERS.length) return vPremierePas();
 
   var enRetard = encours.filter(estEnRetard).length;
+  /* L'écart sur trente jours, quand la période précédente a de quoi
+     comparer — voir maitre-graphes.js. */
+  var G = window.MelodiaMaitreGraphes;
+  var ecartDe = function (mesure) { return G ? G.ecartHtml(G.ecart(ORDERS, mesure)) : ''; };
+  var graphes = G ? G.chiffre(ORDERS) + G.offres(ORDERS) : '';
   return '<div class="kpi-grid">' +
     /* Le chiffre de tête porte l'or. Un seul, sinon l'or ne désigne rien. */
-    tuile({ phare:true, l:'Chiffre d\'affaires', v:ca, u:' €', f:'Toutes commandes' }) +
+    tuile({ phare:true, l:'Chiffre d\'affaires', v:ca.toLocaleString('fr-FR'), u:' €', f:'Toutes commandes',
+            e: ecartDe(function (o) { return o.price || 0; }) }) +
     tuile({ l:'Hommages livrés', v:livrees, f:pluriel(livrees, 'famille', 'familles'),
-            etat: livrees ? 'calme' : '' }) +
+            etat: livrees ? 'calme' : '',
+            e: ecartDe(function (o) { return o.status === 'livree' ? 1 : 0; }) }) +
     /* L'urgence cesse d'être une note de bas de tuile : elle devient
        le sujet de la tuile, et la tuile change de teinte. */
     tuile({ l:'En production', v:encours.length,
@@ -699,6 +710,7 @@ function vAccueil() {
                                : 'Aucune inscrite',
             etat: PARTNERS.length ? 'calme' : 'attention' }) +
     '</div>' +
+    (graphes ? '<div class="gr-duo ma-duo">' + graphes + '</div>' : '') +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">À <em>traiter</em></div><div class="panel-sub">Commandes en attente d\'action</div></div>' +
     '<button class="btn btn-outline btn-sm" onclick="go(\'commandes\')">Tout voir</button></div>' +
     (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune commande en attente.</p>') + '</div>' +
