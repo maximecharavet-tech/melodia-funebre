@@ -1,11 +1,41 @@
 /* ═══ MELODIA — Dashboards (partenaire & master) ═══ */
-.dash { display: grid; grid-template-columns: 258px 1fr; min-height: 100vh; }
+.dash { display: grid; grid-template-columns: 258px 1fr; min-height: 100vh;
+  /* Les chiffres de Cormorant sont « elzéviriens » par défaut : le 1
+     y ressemble à un I capital et le 0 à un o. Sur une page de texte
+     c'est élégant ; dans une console, « I hommage livré » et
+     « O partenaire » se lisaient comme des lettres. Partout ici, les
+     chiffres sont alignés. */
+  font-variant-numeric: lining-nums;
+}
+/* Le gris des mentions secondaires, relevé dans les consoles seulement.
+   À #7c786c il passait 4,5:1 sur le noir de la page, pas sur celui des
+   panneaux (#0b0b11 : 4,44) ni de la palette (#101018 : 4,29) — axe-core
+   le signalait sur les entêtes de tableau et les pieds de fiche. Relevé
+   par calcul au plus petit pas qui franchit le seuil sur les trois fonds
+   (4,97 · 4,80 · 4,55). Le site public, qui a des sections claires où
+   un gris plus pâle perdrait du contraste, garde sa valeur. */
+.dash, .pal-voile { --dust: #848074; }
+/* Un lien dans une phrase ne se distinguait que par l'or, à 1,5:1 du
+   texte voisin : invisible pour qui ne perçoit pas la teinte. */
+.dash p a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+/* Ceux qu'on compare d'une ligne à l'autre ont aussi une chasse fixe :
+   les colonnes de montants s'alignent sur les unités. */
+.kpi-value, .tbl td, .tbl th, .gr-table td, .pa-mois b, .side-badge { font-variant-numeric: lining-nums tabular-nums; }
 
 .side {
   border-right: 1px solid var(--line-soft); background: var(--ink-2);
   padding: 1.8rem 1.2rem; display: flex; flex-direction: column;
-  position: sticky; top: 0; height: 100vh;
+  position: sticky; top: 0; height: 100vh; height: 100dvh;
+  /* La console maître compte vingt entrées : sur un écran de 900 px,
+     « Partenaires », « Finances », « Système » et la déconnexion
+     débordaient sous le panneau, hors d'atteinte puisqu'il ne défile
+     pas avec la page. Le menu défile désormais sur lui-même. */
+  overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: rgba(201,168,76,0.25) transparent;
 }
+.side::-webkit-scrollbar { width: 6px; }
+.side::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.22); border-radius: 3px; }
 .side-brand { display: flex; align-items: center; gap: 0.7rem; padding-bottom: 1.6rem; border-bottom: 1px solid var(--line-soft); margin-bottom: 1.2rem; }
 .side-brand img { height: 42px; }
 .side-brand .n { font-family: var(--ff-d); font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.1; }
@@ -230,18 +260,34 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 
 /* ═══ Console commerciale ═══ */
-.pipeline { display: flex; gap: .4rem; align-items: stretch; }
+/* Sept étapes de même largeur, une bande continue. La bordure était
+   posée sans couleur — donc blanche — et la jauge, stylée comme du
+   texte, ne s'affichait jamais : l'écran ne montrait que des boîtes
+   de tailles inégales. Chaque étape porte maintenant sa part du
+   portefeuille, en barre et en chiffre. */
+.pipeline {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 1px; background: var(--line-soft);
+  border: 1px solid var(--line-soft); border-radius: 8px; overflow: hidden;
+}
 .pl-seg {
-  border: 1px solid; border-radius: 6px; padding: .9rem .5rem; text-align: center;
-  min-width: 0; transition: transform .2s;
+  display: flex; flex-direction: column; align-items: flex-start; gap: .45rem;
+  padding: 1rem .95rem .9rem; min-width: 0; text-align: left;
+  background: var(--surface); border: 0; color: inherit; font: inherit; cursor: pointer;
+  box-shadow: inset 0 2px 0 var(--pl);
+  transition: background .2s;
 }
-.pl-seg:hover { transform: translateY(-2px); }
-.pl-n { font-family: var(--ff-d); font-size: 1.7rem; line-height: 1; }
+.pl-seg:hover, .pl-seg:focus-visible { background: var(--surface-2, #12121a); }
+.pl-seg:focus-visible { outline: 2px solid var(--or); outline-offset: -2px; }
+.pl-n { font-family: var(--ff-d); font-size: 1.9rem; line-height: 1; color: var(--paper); font-variant-numeric: lining-nums tabular-nums; }
+.pl-vide .pl-n { color: var(--dust); }
 .pl-l {
-  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--ash); margin-top: .5rem; line-height: 1.4;
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ash); line-height: 1.35;
 }
-.pl-p { font-family: var(--ff-m); font-size: 0.78rem; color: var(--dust); margin-top: .3rem; }
+.pl-p { display: block; width: 100%; height: 4px; border-radius: 2px; background: rgba(255,255,255,.06); overflow: hidden; margin-top: auto; }
+.pl-p > span { display: block; height: 100%; background: var(--pl); border-radius: 2px; }
+.pl-pc { font-family: var(--ff-m); font-size: 0.78rem; color: var(--dust); font-variant-numeric: tabular-nums; }
 
 .fiche-detail {
   border-top: 1px solid var(--line-soft); margin-top: .8rem; padding-top: .2rem;
@@ -249,12 +295,8 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
 }
 .fiche-detail[hidden] { display: none; }
 
-@media (max-width: 860px) {
-  .pipeline { flex-wrap: wrap; }
-  .pl-seg { flex: 1 1 30% !important; }
-}
 @media (max-width: 560px) {
-  .pl-seg { flex: 1 1 45% !important; }
+  .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pl-n { font-size: 1.4rem; }
 }
 
@@ -1570,3 +1612,108 @@ audio::-webkit-media-controls-panel { background: var(--surface-2, #101018); }
   .dash .btn-sm:active,
   .dash .o-row .pill-etat:active { transform: none; }
 }
+
+/* ═══ VUE GÉNÉRALE DU FONDATEUR — tendances (maitre-graphes.js) ═══ */
+
+/* L'écart sur trente jours, sur sa propre ligne sous la valeur. Il porte une
+   flèche et un signe en plus de sa teinte : la couleur seule ne dit
+   pas le sens à qui ne distingue pas le vert de l'ambre. */
+.kpi-tendance { margin: -0.1rem 0 0.45rem; }
+.kpi-ecart {
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.04em;
+  color: var(--ash); white-space: nowrap;
+}
+.kpi-ecart.haut { color: var(--green); }
+.kpi-ecart.bas { color: var(--amber); }
+.kpi-ecart-sur { color: var(--dust); }
+
+/* Le graphique prend la place qu'il lui faut, la répartition le reste. */
+.ma-duo { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); margin: 0 0 1.6rem; }
+
+.pa-ecart .ma-taux { color: var(--paper); text-align: right; }
+
+.ma-offres { display: flex; flex-direction: column; gap: 1.15rem; margin-top: 1.4rem; }
+.ma-offre { min-width: 0; }
+.ma-o-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.ma-o-nom { font-family: var(--ff-d); font-size: 1.15rem; color: var(--paper); }
+.ma-o-val { font-variant-numeric: lining-nums tabular-nums; color: var(--bone); font-size: 0.92rem; white-space: nowrap; }
+.ma-o-part { font-family: var(--ff-m); font-size: 0.8rem; color: var(--ash); margin-left: 0.35rem; }
+/* Une seule série : une seule teinte, l'or de l'encaissé. La piste
+   montre l'échelle entière pour qu'une barre courte se lise courte. */
+.ma-o-piste { height: 8px; margin-top: 0.5rem; background: rgba(255,255,255,0.045); border-radius: 4px; overflow: hidden; }
+.ma-o-piste span { display: block; height: 100%; background: #a98b34; border-radius: 4px; transition: width 0.6s var(--ease); }
+.ma-o-n { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.08em; color: var(--dust); margin-top: 0.4rem; }
+
+@media (max-width: 1100px) {
+  .ma-duo { grid-template-columns: 1fr; }
+}
+
+/* ═══ PALETTE DE NAVIGATION — ⌘K (palette.js) ═══ */
+.side-recherche {
+  display: flex; align-items: center; gap: 0.6rem; width: 100%;
+  margin: 0 0 0.4rem; padding: 0.6rem 0.75rem; min-height: 42px;
+  border: 1px solid var(--line-soft); border-radius: var(--radius, 4px);
+  background: rgba(255,255,255,0.02); color: var(--ash); cursor: pointer;
+  font: inherit; font-size: 0.85rem; text-align: left;
+  transition: border-color var(--t-fast, .2s), color var(--t-fast, .2s);
+}
+.side-recherche:hover, .side-recherche:focus-visible { border-color: var(--line-strong); color: var(--paper); }
+.side-recherche svg { width: 15px; height: 15px; flex: none; }
+.side-recherche-mot { flex: 1; }
+.side-recherche kbd, .pal kbd {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.04em;
+  padding: 0.05rem 0.4rem; border: 1px solid var(--line); border-radius: 3px;
+  color: var(--dust); background: var(--ink); white-space: nowrap;
+}
+
+html.pal-ouverte { overflow: hidden; }
+.pal-voile {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(2, 2, 5, 0.72);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: min(14vh, 8rem) 1rem 1rem;
+}
+.pal-voile[hidden] { display: none; }
+.pal {
+  width: min(560px, 100%); max-height: min(70vh, 560px);
+  display: flex; flex-direction: column;
+  background: var(--surface-2, #101018); border: 1px solid var(--line-strong);
+  border-radius: 10px; overflow: hidden;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.9), 0 0 0 1px rgba(201,168,76,0.06);
+  animation: pal-venir 0.18s var(--ease, ease) both;
+}
+@keyframes pal-venir { from { opacity: 0; transform: translateY(-6px) scale(0.985); } }
+.pal-tete { display: flex; align-items: center; gap: 0.7rem; padding: 0.9rem 1rem; border-bottom: 1px solid var(--line-soft); color: var(--ash); }
+.pal-tete svg { width: 17px; height: 17px; flex: none; }
+.pal-champ {
+  flex: 1; min-width: 0; background: none; border: 0; outline: 0;
+  color: var(--paper); font: inherit; font-size: 1.02rem;
+}
+.pal-champ::placeholder { color: var(--dust); }
+.pal-liste { list-style: none; margin: 0; padding: 0.4rem; overflow-y: auto; flex: 1; }
+.pal-groupe {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--dust); padding: 0.75rem 0.7rem 0.35rem;
+}
+.pal-ligne {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.62rem 0.7rem;
+  border-radius: 6px; color: var(--bone); cursor: pointer; min-height: 42px;
+}
+.pal-ligne.actif { background: rgba(201,168,76,0.09); color: var(--paper); box-shadow: inset 2px 0 0 var(--or); }
+.pal-ico { width: 18px; text-align: center; color: var(--or-patina); flex: none; }
+.pal-nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pal-badge { font-family: var(--ff-m); font-size: 0.78rem; color: var(--or); border: 1px solid var(--line); padding: 0 6px; font-variant-numeric: tabular-nums; }
+.pal-ici, .pal-g { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dust); }
+.pal-ici { color: var(--or); }
+.pal-rien { padding: 1.4rem 0.8rem; color: var(--ash); font-size: 0.92rem; }
+.pal-pied {
+  display: flex; gap: 1.2rem; padding: 0.6rem 1rem; border-top: 1px solid var(--line-soft);
+  font-size: 0.8rem; color: var(--dust);
+}
+.pal-pied kbd { margin-right: 0.2rem; }
+@media (max-width: 720px) {
+  .pal-voile { padding-top: 1rem; }
+  .pal-pied { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .pal { animation: none; } }
