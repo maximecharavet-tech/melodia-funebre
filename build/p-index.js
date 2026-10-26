@@ -35,19 +35,33 @@ module.exports = {
          familles reste ouverte, en second bouton — la moitié du trafic
          de recherche arrive en cherchant « chanson hommage », et la
          refermer coûterait plus qu'elle ne rapporterait. -->
+    <!-- DEUX PORTES. Le premier écran parlait aux pompes funèbres et
+         renvoyait les familles à une ligne de bas de bloc — or la moitié
+         du trafic arrive en cherchant « chanson hommage ». Chacun trouve
+         désormais sa porte dès l'arrivée, avec son argument et son geste,
+         sans avoir à se reconnaître dans un texte écrit pour l'autre. -->
     <div class="hero-caption">
-      <div class="badge reveal in" style="margin-bottom:1.6rem;">Solution dédiée aux pompes funèbres</div>
-      <h1 class="h-hero reveal in reveal-d1">Offrez une nouvelle dimension<br><em>à l'hommage funéraire.</em></h1>
-      <p class="lead reveal in reveal-d2">Melodia Funèbre crée des hommages musicaux personnalisés à partir de l'histoire, des souvenirs et de la personnalité du défunt. Une expérience émotionnelle que les familles peuvent conserver et partager.</p>
-      <div class="hero-actions reveal in reveal-d3">
-        <a href="/professionnels#partenariat" class="btn btn-gold btn-lg">Devenir partenaire</a>
-        <a href="/exemple" class="btn btn-outline btn-lg">${ICON.note} Découvrir l'expérience</a>
+      <div class="badge reveal in" style="margin-bottom:1.6rem;">Hommage musical personnalisé</div>
+      <h1 class="h-hero reveal in reveal-d1" data-titre-anime>Chaque vie mérite<br><em>sa chanson.</em></h1>
+      <p class="lead reveal in reveal-d2">Une œuvre originale composée à partir de l'histoire, des souvenirs et de la personnalité du défunt. Livrée en 24 heures, diffusée à la cérémonie, gardée pour toujours.</p>
+      <div class="portes reveal in reveal-d3">
+        <a href="/offres" class="porte" data-magnetique>
+          <span class="porte-sur">Je suis une famille</span>
+          <span class="porte-titre">Offrir sa chanson</span>
+          <span class="porte-texte">Pour celui ou celle qu'on a perdu, une musique à son image.</span>
+          <span class="porte-meta">Dès 149 € · livré en 24 h</span>
+          <span class="porte-cta">Commander un hommage <span aria-hidden="true">→</span></span>
+        </a>
+        <a href="/professionnels" class="porte porte-pro" data-magnetique>
+          <span class="porte-sur">Je suis une pompe funèbre</span>
+          <span class="porte-titre">Proposer le service</span>
+          <span class="porte-texte">Un hommage que vos confrères n'offrent pas encore.</span>
+          <span class="porte-meta">60 % pour l'agence · 0 € d'investissement</span>
+          <span class="porte-cta">Devenir partenaire <span aria-hidden="true">→</span></span>
+        </a>
       </div>
-      <p class="reveal in reveal-d4 hero-jalons">
-        <span>Personnalisation</span><span>Page hommage</span><span>QR&nbsp;Code</span>
-      </p>
       <p class="reveal in reveal-d4 note hero-note-famille">
-        Vous êtes une famille ? <a href="/offres">Commander un hommage</a> · dès 149 €, livré en 24 h
+        <a href="/demos">${ICON.note} Écouter un hommage</a> · sans inscription, en trente secondes
       </p>
     </div>
     <div class="hero-scroll" aria-hidden="true">Découvrir</div>
