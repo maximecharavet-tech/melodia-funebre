@@ -138,9 +138,13 @@
                  '</tbody></table>' +
                  '<button class="btn btn-outline" style="margin-top:1.6rem;" onclick="window.MelodiaAuth.logout();location.href=\'compte.html\';">Se déconnecter</button>' +
                '</div>' +
+               (window.MelodiaCampagne ? window.MelodiaCampagne.vueSignature() : '') +
                (window.MelodiaMotDePasse ? window.MelodiaMotDePasse.vue() : '');
              },
-             function () { if (window.MelodiaMotDePasse) window.MelodiaMotDePasse.brancher(); }],
+             function () {
+               if (window.MelodiaCampagne) window.MelodiaCampagne.brancherSignature();
+               if (window.MelodiaMotDePasse) window.MelodiaMotDePasse.brancher();
+             }],
     boite: ['Mon poste', 'Ma <em>boîte mail</em>',
             function () { return window.MelodiaBoite ? window.MelodiaBoite.vue() : '<div class="form-msg err" style="display:block;">Le module n\'a pas été chargé.</div>'; },
             function () { if (window.MelodiaBoite) window.MelodiaBoite.brancher(); }],
@@ -341,6 +345,9 @@
     });
   }
   var ouvrirApres = null;
+  /* Les fiches cochées pour une campagne, par SIRET. Gardées d'une vue
+     à l'autre : on coche dans « À contacter », on ajoute depuis « Relancé ». */
+  var SELECTION = {};
 
   /* ═══════════════════════════════════════════════════════════
      Vue : la file des relances
@@ -612,9 +619,54 @@
           Object.keys(owners).map(function (k) {
             return '<option value="' + esc(k) + '"' + (filtreOwner === k ? ' selected' : '') + '>' + esc(owners[k]) + '</option>';
           }).join('') + '</select></div>' : '') +
+        barreSelection(liste) +
         (liste.length ? liste.map(fiche).join('') :
           '<p style="color:var(--ash);font-size:.9rem;">Aucune fiche dans ce filtre.</p>') +
       '</div>';
+  }
+
+  /* ─── La barre de campagne ───
+     Elle reste collée en haut de la liste pendant qu'on coche : le
+     compte et le bouton sont toujours sous les yeux. */
+  function selectionnees() { return PROSPECTS.filter(function (p) { return SELECTION[p.siret]; }); }
+  function barreSelection(liste) {
+    var n = selectionnees().length;
+    var joignables = liste.filter(function (p) { return p.email && !p.oppose && p.statut !== 'refus'; }).length;
+    return '<div class="sel-barre' + (n ? ' active' : '') + '" role="region" aria-label="Campagne">' +
+      '<span class="sel-n" aria-live="polite">' + (n ? '<b>' + n + '</b> fiche' + (n > 1 ? 's' : '') + ' sélectionnée' + (n > 1 ? 's' : '') : 'Cochez des fiches pour leur écrire à toutes') + '</span>' +
+      '<button class="btn btn-ghost btn-sm" data-sel-tout' + (joignables ? '' : ' disabled') + '>Sélectionner les ' + joignables + ' joignables</button>' +
+      (n ? '<button class="btn btn-ghost btn-sm" data-sel-rien>Tout décocher</button>' : '') +
+      '<button class="btn btn-gold btn-sm" data-campagne' + (n ? '' : ' disabled') + '>✉ Écrire à la sélection</button>' +
+    '</div>';
+  }
+
+  function lancerCampagne() {
+    var choix = selectionnees();
+    if (!choix.length || !window.MelodiaCampagne) return;
+    var tousCulte = choix.every(function (p) { return p.type === 'culte'; });
+    window.MelodiaCampagne.ouvrir({
+      prospects: choix,
+      modeles: tousCulte ? MODELES_CULTE : MODELES,
+      pourCourriel: pourCourriel,
+      apres: apresCampagne
+    });
+  }
+
+  /* Comme apresEnvoi, pour tout un lot : chaque fiche note l'envoi,
+     avance d'étape et reçoit sa relance — puis un seul rafraîchissement. */
+  async function apresCampagne(fiches, m) {
+    var ordre = window.MelodiaProspects.STATUTS;
+    for (var i = 0; i < fiches.length; i++) {
+      var p = fiches[i];
+      noter(p, 'Courriel envoyé', 'Campagne — modèle « ' + m.nom + ' »');
+      p.dernier_contact = new Date().toISOString();
+      if (m.etape && ordre.indexOf(p.statut) < ordre.indexOf(m.etape)) p.statut = m.etape;
+      p.relance_le = dans(m.nom === 'Relance' ? 14 : 7);
+      try { await window.MelodiaProspects.enregistrer(p); } catch (e) {}
+    }
+    SELECTION = {};
+    await charger();
+    go(vueCourante);
   }
 
   /* Raccourcis de recherche : l'annuaire public ne donne pas les
@@ -636,9 +688,13 @@
     var s = ST[p.statut] || ST.nouveau;
     var tard = enRetard(p);
     var ouvert = ouvrirApres === p.siret;
-    return '<div class="o-row" data-fiche="' + esc(p.siret) + '">' +
-      '<div class="o-head">' +
-        '<div style="min-width:0;">' +
+    var coche = vueCourante === 'prospects'
+      ? '<input type="checkbox" class="sel-case" data-sel="' + esc(p.siret) + '"' + (SELECTION[p.siret] ? ' checked' : '') +
+        ' aria-label="Sélectionner ' + esc(p.nom) + ' pour une campagne">'
+      : '';
+    return '<div class="o-row' + (SELECTION[p.siret] && coche ? ' sel' : '') + '" data-fiche="' + esc(p.siret) + '">' +
+      '<div class="o-head">' + coche +
+        '<div style="min-width:0;flex:1;">' +
           '<div class="o-name">' + esc(p.nom) +
             (p.type === 'culte' ? ' <span class="pill pill-culte">Lieu de culte</span>' : '') +
             (p.oppose ? ' <span class="pill" style="color:var(--red);border-color:rgba(248,113,113,.4);">Opposition</span>' : '') + '</div>' +
@@ -743,12 +799,36 @@
     '</div>';
   }
 
+  function brancherBarre() {
+    var tout = document.querySelector('[data-sel-tout]'), rien = document.querySelector('[data-sel-rien]'), go2 = document.querySelector('[data-campagne]');
+    if (tout) tout.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-sel]'), function (c) {
+        var p = trouver(c.dataset.sel);
+        if (p && p.email && !p.oppose && p.statut !== 'refus') SELECTION[p.siret] = 1;
+      });
+      go('prospects');
+    });
+    if (rien) rien.addEventListener('click', function () { SELECTION = {}; go('prospects'); });
+    if (go2) go2.addEventListener('click', lancerCampagne);
+  }
+
   function brancherProspects() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-filtre]'), function (b) {
       b.addEventListener('click', function () { filtreStatut = b.dataset.filtre; go('prospects'); });
     });
     var o = $('pr-owner');
     if (o) o.addEventListener('change', function () { filtreOwner = o.value; go('prospects'); });
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sel]'), function (c) {
+      c.addEventListener('change', function () {
+        if (c.checked) SELECTION[c.dataset.sel] = 1; else delete SELECTION[c.dataset.sel];
+        var row = c.closest('.o-row'); if (row) row.classList.toggle('sel', c.checked);
+        var barre = document.querySelector('.sel-barre');
+        if (barre) barre.outerHTML = barreSelection(Array.prototype.map.call(document.querySelectorAll('[data-sel]'), function (x) { return trouver(x.dataset.sel); }).filter(Boolean));
+        brancherBarre();
+      });
+    });
+    brancherBarre();
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-ouvrir]'), function (b) {
       b.addEventListener('click', function () {
@@ -890,11 +970,15 @@
             '<input class="field-input" id="cp-objet" value="' + esc(m.objet(vue)) + '"></div>' +
           '<div class="field"><label class="field-label">Message</label>' +
             '<textarea class="field-area" id="cp-texte" style="min-height:300px;line-height:1.75;">' + esc(m.texte(vue)) + '</textarea></div>' +
-          '<p class="compo-note">Le message part habillé aux couleurs de la maison, avec le logo et le lien d\'écoute. ' +
+          '<p class="compo-note">Le message part habillé aux couleurs de la maison : bannière, lien d\'écoute et votre carte de visite. ' +
             'La mention légale d\'opposition est ajoutée automatiquement, et les réponses vous reviennent directement.</p>' +
+          '<div class="field"><span class="field-label">Aperçu — tel qu\'il partira</span>' +
+            '<iframe class="cmp-cadre compo-cadre" id="cp-apercu" title="Aperçu du courriel" sandbox=""></iframe></div>' +
         '</div>' +
         '<div class="compo-pied">' +
+          '<span class="cmp-etat" id="cp-etat" role="status"></span>' +
           '<button class="btn btn-ghost btn-sm" data-mailto>Ouvrir dans ma messagerie</button>' +
+          '<button class="btn btn-ghost btn-sm" id="cp-test">M\'envoyer un test</button>' +
           '<button class="btn btn-gold" id="cp-envoyer">Envoyer</button>' +
         '</div>' +
       '</div>';
@@ -929,6 +1013,32 @@
     };
     fond.querySelector('[data-mailto]').addEventListener('click', versMessagerie);
 
+    var charge = function () {
+      return {
+        to: p.email, ref: p.siret, sujet: $('cp-objet').value.trim(), texte: $('cp-texte').value.trim(),
+        titre: m.titre ? m.titre(vue) : '',
+        lienTexte: m.lien && m.lien.texte, lienUrl: m.lien && m.lien.url
+      };
+    };
+    var C = window.MelodiaCampagne;
+    if (C) {
+      var apercu = C.apercuSur($('cp-apercu'));
+      var montrer = function () { apercu(charge()); };
+      $('cp-objet').addEventListener('input', montrer);
+      $('cp-texte').addEventListener('input', montrer);
+      montrer();
+      $('cp-test').addEventListener('click', async function () {
+        var b = this; b.disabled = true;
+        var c = charge();
+        var r = await C.appeler({ mode: 'test', envois: [c], lienTexte: c.lienTexte, lienUrl: c.lienUrl, signature: C.signature() });
+        b.disabled = false;
+        $('cp-etat').textContent = r.ok ? 'Test envoyé dans votre boîte.'
+          : (r.d.code === 'NOT_CONFIGURED' ? 'Envoi direct non branché : utilisez votre messagerie.' : (r.d.error || 'Test impossible.'));
+      });
+    } else {
+      $('cp-test').hidden = true;
+    }
+
     $('cp-envoyer').addEventListener('click', async function () {
       var bouton = $('cp-envoyer');
       bouton.disabled = true;
@@ -936,18 +1046,14 @@
       var objet = $('cp-objet').value.trim();
       var texte = $('cp-texte').value.trim();
       try {
-        var r = await fetch('/api/prospect-mail', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            to: p.email, sujet: objet, texte: texte,
-            titre: m.titre ? m.titre(vue) : '',
-            lienTexte: m.lien && m.lien.texte, lienUrl: m.lien && m.lien.url,
-            expediteurNom: U.name || '', expediteurEmail: U.email || '',
-            expediteurRole: EST_MAITRE ? 'Melodia Funèbre' : 'Melodia Funèbre'
-          })
-        });
-        var d = await r.json().catch(function () { return {}; });
+        /* La session part avec la demande : le serveur n'envoie que pour
+           un collaborateur authentifié, et signe de sa carte de visite. */
+        var c = charge();
+        var rep = window.MelodiaCampagne
+          ? await window.MelodiaCampagne.appeler({ mode: 'envoi', envois: [c], lienTexte: c.lienTexte, lienUrl: c.lienUrl, signature: window.MelodiaCampagne.signature() })
+          : { ok: false, d: { error: 'Module d\'envoi absent.' } };
+        var r = { ok: rep.ok };
+        var d = rep.d || {};
 
         if (r.ok) {
           envoiDirect = true;
