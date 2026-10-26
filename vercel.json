@@ -37,11 +37,6 @@
       "permanent": true
     },
     {
-      "source": "/musique-personnalisee-obseques",
-      "destination": "/chanson-hommage",
-      "permanent": true
-    },
-    {
       "source": "/pompes-funebres",
       "destination": "/professionnels",
       "permanent": true

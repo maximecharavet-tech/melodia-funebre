@@ -191,6 +191,65 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
+  /* ═══ MÉGA-MENU ═══
+     Survol avec un léger délai (on traverse la barre sans tout ouvrir),
+     clic et clavier pour qui n'a pas de souris, Échap et clic au dehors
+     pour refermer. Une seule rubrique ouverte à la fois. */
+  var groupes = $$('[data-groupe]');
+  if (groupes.length) {
+    var ouvert = null, minuterieMenu = null;
+    var fixer = function (g, oui) {
+      if (!g) return;
+      g.classList.toggle('ouvert', oui);
+      var b = $('.nav-ouvre', g);
+      if (b) b.setAttribute('aria-expanded', oui ? 'true' : 'false');
+    };
+    var ouvrirMenu = function (g) {
+      if (ouvert && ouvert !== g) fixer(ouvert, false);
+      ouvert = g; fixer(g, true);
+      if (nav) { nav.classList.add('menu-ouvert'); nav.classList.remove('hidden'); }
+    };
+    var fermerMenu = function () {
+      if (ouvert) fixer(ouvert, false);
+      ouvert = null;
+      if (nav) nav.classList.remove('menu-ouvert');
+    };
+    var survol = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    groupes.forEach(function (g) {
+      var b = $('.nav-ouvre', g);
+      if (b) b.addEventListener('click', function () { if (ouvert === g) fermerMenu(); else ouvrirMenu(g); });
+      if (survol) {
+        g.addEventListener('mouseenter', function () {
+          clearTimeout(minuterieMenu);
+          minuterieMenu = setTimeout(function () { ouvrirMenu(g); }, ouvert ? 0 : 110);
+        });
+        g.addEventListener('mouseleave', function () {
+          clearTimeout(minuterieMenu);
+          minuterieMenu = setTimeout(fermerMenu, 260);
+        });
+      }
+      $$('a', g).forEach(function (a) { a.addEventListener('click', fermerMenu); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && ouvert) {
+        var b = $('.nav-ouvre', ouvert);
+        fermerMenu();
+        if (b) b.focus();
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (ouvert && !ouvert.contains(e.target)) fermerMenu();
+    });
+    /* La barre s'efface au défilement : le panneau part avec elle. */
+    window.addEventListener('scroll', function () { if (ouvert) fermerMenu(); }, { passive: true });
+    /* Le focus qui quitte la rubrique au clavier la referme. */
+    groupes.forEach(function (g) {
+      g.addEventListener('focusout', function (e) {
+        if (ouvert === g && e.relatedTarget && !g.contains(e.relatedTarget)) fermerMenu();
+      });
+    });
+  }
+
   var burger = $('.nav-burger');
   var mob = $('.nav-mobile');
   if (burger && mob) {

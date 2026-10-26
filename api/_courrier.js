@@ -52,6 +52,71 @@ export function valideEmail(s) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim());
 }
 
+/* ─── La carte de visite ───
+   Le démarchage partait signé d'un nom et d'une adresse sur deux
+   lignes grises : rien qui ressemble à une maison. La signature est
+   désormais une carte, sur le modèle de celle de l'équipe — fond nuit,
+   or, logo, nom, fonction, devise, portrait.
+
+   Tout en tableaux et en styles en ligne : c'est le seul HTML qu'Outlook
+   rende fidèlement. Le portrait n'est accepté que s'il est hébergé sur le
+   site (assets/img/) : une adresse d'image fournie par le navigateur
+   pourrait sinon pointer n'importe où, y compris vers un pisteur. */
+const PILIERS = ['Hommage sur mesure', 'Livré en 24 h', 'Sans droits SACEM', '60 % pour l’agence'];
+
+export function photoAutorisee(chemin) {
+  const c = String(chemin || '').trim();
+  return /^\/assets\/img\/[a-z0-9/_-]+\.(jpe?g|png|webp)$/i.test(c) ? SITE + c : '';
+}
+
+export function carteVisite(sig) {
+  const nom = String(sig.nom || 'Melodia Funèbre').trim();
+  const mots = nom.split(/\s+/);
+  const nomFamille = mots.length > 1 ? mots.pop() : '';
+  const prenom = mots.join(' ');
+  const photo = photoAutorisee(sig.photo);
+  const tel = String(sig.tel || '').replace(/[^\d+ .()-]/g, '').slice(0, 24).trim();
+  const or = '#d9b862';
+  const ligne = (contenu) => '<tr><td style="padding:3px 0;font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#ece6d6;">' + contenu + '</td></tr>';
+
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#0b0b11" ' +
+      'style="background:#0b0b11;border:1px solid #6b5a2a;border-radius:6px;">' +
+    '<tr>' +
+      '<td class="mf-carte-g" style="padding:22px 20px 16px 24px;vertical-align:top;">' +
+        '<table role="presentation" cellpadding="0" cellspacing="0"><tr>' +
+          '<td style="vertical-align:middle;"><img src="' + SITE + '/assets/img/logo-melodia.jpg" width="44" height="44" alt="" ' +
+            'style="display:block;border-radius:50%;border:1px solid #6b5a2a;"></td>' +
+          '<td style="vertical-align:middle;padding-left:10px;">' +
+            '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:15px;letter-spacing:3px;color:' + or + ';line-height:1.1;">MELODIA</div>' +
+            '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:11px;letter-spacing:3.5px;color:#e8dcb4;line-height:1.3;">FUNÈBRE</div>' +
+            '<div style="font-family:Helvetica,Arial,sans-serif;font-size:8px;letter-spacing:2px;color:#a89a74;margin-top:2px;">DES HOMMAGES EN MUSIQUE</div>' +
+          '</td></tr></table>' +
+        '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:24px;letter-spacing:1.5px;line-height:1.15;margin-top:16px;text-transform:uppercase;">' +
+          '<span style="color:#f6f2e8;">' + echapper(prenom || nomFamille) + '</span>' +
+          (prenom && nomFamille ? ' <span style="color:' + or + ';">' + echapper(nomFamille) + '</span>' : '') + '</div>' +
+        (sig.role ? '<div style="font-family:Helvetica,Arial,sans-serif;font-size:10.5px;letter-spacing:2.4px;text-transform:uppercase;color:#d8d0bc;margin-top:6px;line-height:1.5;">' + echapper(sig.role) + '</div>' : '') +
+        '<div style="width:110px;height:1px;background:' + or + ';margin:12px 0 10px;font-size:0;line-height:0;">&nbsp;</div>' +
+        '<table role="presentation" cellpadding="0" cellspacing="0">' +
+          (sig.email ? ligne('<span style="color:' + or + ';">&#9993;</span>&nbsp; <a href="mailto:' + echapper(sig.email) + '" style="color:#ece6d6;text-decoration:none;">' + echapper(sig.email) + '</a>') : '') +
+          (tel ? ligne('<span style="color:' + or + ';">&#9742;</span>&nbsp; <a href="tel:' + echapper(tel.replace(/[^\d+]/g, '')) + '" style="color:#ece6d6;text-decoration:none;">' + echapper(tel) + '</a>') : '') +
+          ligne('<span style="color:' + or + ';">&#9670;</span>&nbsp; <a href="' + SITE + '" style="color:#ece6d6;text-decoration:none;">melodia-funebre.fr</a>') +
+        '</table>' +
+        '<div style="font-family:Georgia,\'Times New Roman\',serif;font-style:italic;font-size:17px;color:' + or + ';margin-top:12px;">Des émotions qui rassemblent.</div>' +
+      '</td>' +
+      (photo
+        ? '<td class="mf-carte-d" width="150" style="width:150px;padding:22px 22px 16px 0;vertical-align:middle;text-align:right;">' +
+            '<img src="' + echapper(photo) + '" width="128" height="128" alt="' + echapper(nom) + '" ' +
+            'style="display:inline-block;width:128px;height:128px;border-radius:50%;border:2px solid ' + or + ';object-fit:cover;"></td>'
+        : '') +
+    '</tr>' +
+    '<tr><td colspan="' + (photo ? 2 : 1) + '" style="border-top:1px solid #3a321c;padding:10px 12px;">' +
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>' +
+        PILIERS.map((t, i) => '<td align="center" style="width:25%;padding:4px 6px;font-family:Helvetica,Arial,sans-serif;font-size:9.5px;letter-spacing:1.2px;' +
+          'text-transform:uppercase;color:#d8cfb6;line-height:1.4;' + (i ? 'border-left:1px solid #4a3f22;' : '') + '">' + t + '</td>').join('') +
+      '</tr></table></td></tr>' +
+  '</table>';
+}
+
 /* ─── Gabarit ───
    Fond ivoire et non fond sombre : la charte du site ne survit pas aux
    clients de messagerie, qui inversent les fonds noirs, rognent les
@@ -112,23 +177,39 @@ export function gabarit(o) {
   return `<!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${echapper(o.sujet || 'Melodia Funèbre')}</title></head>
+<title>${echapper(o.sujet || 'Melodia Funèbre')}</title>
+<style>
+@media (max-width:620px){
+  /* Le cadre de 600 px ne rétrécissait pas : en tableaux, max-width est
+     sans effet, et le courriel débordait l'écran d'un téléphone. */
+  .mf-cadre{width:100%!important;}
+}
+@media (max-width:520px){
+  .mf-carte-g,.mf-carte-d{display:block!important;width:100%!important;box-sizing:border-box;}
+  .mf-carte-d{text-align:left!important;padding:0 24px 16px!important;}
+  .mf-sig{padding:6px 12px 22px!important;}
+}
+</style></head>
 <body style="margin:0;padding:0;background:#f4f1ea;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${echapper(o.apercu || '')}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ea;padding:28px 12px;">
 <tr><td align="center">
-  <table role="presentation" width="600" cellpadding="0" cellspacing="0"
+  <table role="presentation" class="mf-cadre" width="600" cellpadding="0" cellspacing="0"
          style="width:600px;max-width:100%;background:#ffffff;border:1px solid #e2ddd0;">
 
     <!-- En-tête -->
-    <tr><td style="padding:30px 34px 22px;text-align:center;background:#0b0b11;">
+    ${o.banniere ? `<tr><td bgcolor="#07070b" style="background:#07070b;padding:0;line-height:0;font-size:0;">
+      <img src="${SITE}/assets/img/courriel/banniere.jpg" width="600" height="180"
+           alt="Melodia Funèbre — Des hommages en musique"
+           style="display:block;width:100%;max-width:600px;height:auto;border:0;color:#d9b862;font-family:Georgia,serif;font-size:20px;line-height:1.4;background:#07070b;">
+    </td></tr>` : `<tr><td style="padding:30px 34px 22px;text-align:center;background:#0b0b11;">
       <img src="${SITE}/assets/img/logo-melodia.jpg" width="66" height="66" alt="Melodia Funèbre"
            style="display:block;margin:0 auto 12px;border-radius:50%;border:1px solid rgba(201,168,76,.4);">
       <div style="font-family:Georgia,'Times New Roman',serif;font-size:21px;color:#f2efe8;letter-spacing:.5px;">Melodia Funèbre</div>
       <div style="font-family:Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:3.4px;text-transform:uppercase;color:#97803c;margin-top:5px;">
         Composition musicale personnalisée
       </div>
-    </td></tr>
+    </td></tr>`}
     <tr><td style="height:3px;background:linear-gradient(90deg,#97803c,#e3c977,#97803c);font-size:0;line-height:0;">&nbsp;</td></tr>
 
     <!-- Corps -->
@@ -140,7 +221,7 @@ export function gabarit(o) {
     </td></tr>
 
     <!-- Signature -->
-    <tr><td style="padding:0 34px 30px;font-family:Helvetica,Arial,sans-serif;">
+    ${o.signature ? `<tr><td class="mf-sig" style="padding:6px 26px 28px;">${carteVisite(o.signature)}</td></tr>` : `<tr><td style="padding:0 34px 30px;font-family:Helvetica,Arial,sans-serif;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
              style="border-top:1px solid #e2ddd0;padding-top:18px;">
         <tr><td style="padding-top:18px;">
@@ -152,7 +233,7 @@ export function gabarit(o) {
           </div>
         </td></tr>
       </table>
-    </td></tr>
+    </td></tr>`}
 
     <!-- Pied -->
     <tr><td style="padding:16px 34px 22px;background:#faf8f3;border-top:1px solid #e2ddd0;
@@ -212,6 +293,43 @@ export async function envoyer(charge) {
       code: coupe ? 'TIMEOUT' : 'FETCH_FAILED',
       error: coupe ? 'Le service d\'envoi n\'a pas répondu.' : 'Envoi impossible : ' + err.message
     };
+  } finally {
+    clearTimeout(minuteur);
+  }
+}
+
+/**
+ * Remet un lot de courriels à Resend en un seul appel (100 au plus).
+ * Renvoie { ok, ids } ou { ok:false, ... } comme envoyer().
+ */
+export async function envoyerLot(charges) {
+  const cle = process.env.RESEND_API_KEY;
+  if (!cle) return { ok: false, status: 503, code: 'NOT_CONFIGURED', error: 'RESEND_API_KEY absente.' };
+  const ctrl = new AbortController();
+  const minuteur = setTimeout(() => ctrl.abort(), TIMEOUT_MS * 2);
+  try {
+    const r = await fetch('https://api.resend.com/emails/batch', {
+      method: 'POST', signal: ctrl.signal,
+      headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' },
+      body: JSON.stringify(charges)
+    });
+    const brut = await r.text();
+    let data; try { data = JSON.parse(brut); } catch (e) { data = null; }
+    if (!r.ok) {
+      return {
+        ok: false,
+        status: r.status === 429 ? 429 : (r.status === 401 || r.status === 403 ? r.status : 502),
+        code: r.status === 401 || r.status === 403 ? 'BAD_KEY' : (r.status === 429 ? 'RATE_LIMIT' : 'SEND_FAILED'),
+        error: 'Le service d\'envoi a répondu ' + r.status + '.',
+        motif: (data && (data.message || data.name)) || brut.slice(0, 300)
+      };
+    }
+    const liste = (data && (data.data || data)) || [];
+    return { ok: true, ids: Array.isArray(liste) ? liste.map((x) => x && x.id) : [] };
+  } catch (err) {
+    const coupe = err.name === 'AbortError';
+    return { ok: false, status: coupe ? 504 : 500, code: coupe ? 'TIMEOUT' : 'FETCH_FAILED',
+             error: coupe ? 'Le service d\'envoi n\'a pas répondu.' : 'Envoi impossible : ' + err.message };
   } finally {
     clearTimeout(minuteur);
   }

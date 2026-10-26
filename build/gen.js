@@ -67,13 +67,92 @@ const SOCIAL = {
    même chose, et chacun doit voir la sienne au premier regard. Les
    pages secondaires — rites, contact, recrutement — descendent au
    pied, où on les cherche quand on en a besoin. */
-const NAVITEMS = [
-  ['/processus', 'Comment ça marche'],
-  ['/demos', 'Nos hommages'],
-  ['/offres', 'Pour les familles'],
-  ['/professionnels', 'Pour les professionnels'],
-  ['/#faq', 'FAQ']
+/* ─── Le plan du site ───
+   Cinquante-trois adresses, et une barre de cinq liens : les guides, les
+   pages « de son vivant » ou « plaque QR » n'étaient atteignables que
+   par le pied de page, et treize pages de fond par presque rien — une à
+   cinq pages du site seulement les citaient.
+
+   Trois univers, chacun avec sa porte : la famille qui cherche, la
+   pompe funèbre qui s'informe, et la maison elle-même. « Écouter »
+   reste seul, en lien direct : c'est l'argument qui convainc le plus
+   vite, il ne doit pas être rangé dans un sous-menu. */
+const MENU = [
+  { id: 'familles', label: 'Familles', colonnes: [
+    { titre: 'Commander', liens: [
+      ['/offres', 'Offres & tarifs', 'Trois formules, livrées en 24 h'],
+      ['/processus', 'Comment ça marche', 'Du premier appel à la cérémonie'],
+      ['/demos', 'Écouter les hommages', 'Des œuvres réelles, composées pour de vraies familles'],
+      ['/de-son-vivant', 'De son vivant', 'Offrir la chanson d’une vie'],
+      ['/qr-code-memorial', 'La plaque QR mémorial', 'La page souvenir, sur la tombe']] },
+    { titre: 'La chanson d’hommage', liens: [
+      ['/chanson-hommage', 'Tout savoir', 'Ce qu’elle est, ce qu’elle coûte'],
+      ['/chanson-personnalisee-defunt', 'Ce que nous vous demandons'],
+      ['/composer-chanson-pour-defunt', 'Comment elle se compose'],
+      ['/chanson-pour-obseques', 'Le jour de la cérémonie'],
+      ['/dernier-hommage-musical', 'Ce qu’il en reste après']] },
+    { titre: 'Guides', liens: [
+      ['/musique-obseques', 'Quelle musique pour un enterrement'],
+      ['/musique-cremation', 'La musique en crémation'],
+      ['/musique-sacem-obseques', 'Droits d’auteur et obsèques'],
+      ['/rites', 'L’hommage selon le rite']] }],
+    vedette: { href: '/demos', sur: 'À écouter', titre: 'Le roi de la route', texte: 'Bernard, 69 ans, chauffeur routier. Personne n’attendait du funk.' } },
+  { id: 'pros', label: 'Professionnels', colonnes: [
+    { titre: 'Pompes funèbres', liens: [
+      ['/professionnels', 'La solution pour votre agence', '60 % reversés, aucun investissement'],
+      ['/professionnels#partenariat', 'Devenir partenaire', 'Premier hommage offert'],
+      ['/professionnels#calculateur', 'Simuler mes revenus', 'Selon votre volume d’obsèques'],
+      ['/compte', 'Connexion partenaire', 'Votre espace et vos commandes']] },
+    { titre: 'L’équipe', liens: [
+      ['/rejoindre', 'Nous rejoindre', 'Commerciaux, compositeurs'],
+      ['/contact', 'Prendre rendez-vous', 'Une démonstration de vingt minutes']] }],
+    vedette: { href: '/professionnels#calculateur', sur: 'Pour votre agence', titre: '179 € nets', texte: 'par hommage Prestige vendu. Sans stock, sans charge technique.' } },
+  { href: '/demos', label: 'Écouter' },
+  { id: 'maison', label: 'La maison', colonnes: [
+    { titre: 'Melodia Funèbre', liens: [
+      ['/qui-sommes-nous', 'Qui sommes-nous', 'Une maison française'],
+      ['/hyper-ai-engine', 'Hyper A.I Engine', 'Ce qui compose avec nous'],
+      ['/application', 'L’application', 'Melodia dans votre poche'],
+      ['/#faq', 'Questions fréquentes'],
+      ['/contact', 'Nous écrire']] }] }
 ];
+
+/* Les treize pages de fond, toutes, dans le pied de chaque page : c'est
+   ce qui leur donne un lien depuis tout le site. */
+const GUIDES_CHANSON = [
+  ['/chanson-hommage-defunt', 'Chanson hommage pour un défunt'],
+  ['/chanson-personnalisee-defunt', 'Chanson personnalisée pour un défunt'],
+  ['/chanson-pour-obseques', 'Chanson pour des obsèques'],
+  ['/chanson-funeraire-personnalisee', 'Chanson funéraire personnalisée'],
+  ['/creer-chanson-pour-defunt', 'Créer une chanson pour un défunt'],
+  ['/composer-chanson-pour-defunt', 'Composer une chanson pour un défunt'],
+  ['/chanson-dernier-hommage', 'Une chanson comme dernier hommage'],
+  ['/hommage-musical-defunt', 'Hommage musical à un défunt'],
+  ['/hommage-musical-obseques', 'Hommage musical pendant les obsèques'],
+  ['/dernier-hommage-musical', 'Dernier hommage musical'],
+  ['/musique-personnalisee-obseques', 'Musique personnalisée pour des obsèques'],
+  ['/musique-personnalisee-defunt', 'Musique personnalisée pour un défunt'],
+  ['/musique-pour-hommage-funeraire', 'Musique pour un hommage funéraire']
+];
+
+const CHEVRON = '<svg class="nav-chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>';
+
+function megaPanneau(g) {
+  const cols = g.colonnes.map((c) => `<div class="mm-col">
+          <p class="mm-titre">${c.titre}</p>
+          <ul>${c.liens.map(([h, t, d]) => `<li><a class="mm-lien" href="${h}"><span class="mm-t">${t}</span>${d ? `<span class="mm-d">${d}</span>` : ''}</a></li>`).join('')}</ul>
+        </div>`).join('');
+  const v = g.vedette ? `<a class="mm-vedette" href="${g.vedette.href}">
+          <span class="mm-v-sur">${g.vedette.sur}</span>
+          <span class="mm-v-onde" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          <span class="mm-v-titre">${g.vedette.titre}</span>
+          <span class="mm-v-texte">${g.vedette.texte}</span>
+          <span class="mm-v-fleche" aria-hidden="true">→</span>
+        </a>` : '';
+  return `<div class="mega" id="mm-${g.id}">
+      <div class="mega-inner">${cols}${v}</div>
+    </div>`;
+}
 
 const ICON = {
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
@@ -172,6 +251,8 @@ ${p.metas || ''}
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
 .reveal,.oeuvre{opacity:1!important;transform:none!important}
+/* Sans script, le méga-menu s'ouvre au survol. */
+.nav-groupe:hover .mega{opacity:1!important;visibility:visible!important;transform:none!important;clip-path:none!important}.nav-groupe:hover .mega li,.nav-groupe:hover .mm-titre{opacity:1!important;transform:none!important}
 </style></noscript>
 ${p.jsonld ? '<script type="application/ld+json">' + JSON.stringify(p.jsonld) + '</script>' : ''}${p.intro ? `
 <script>/* Avant le premier rendu : le seuil ne se rejoue pas dans la même session. */
@@ -184,8 +265,20 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
    rien à laisser voir : le texte défilait sous le logo, illisible.
    La classe n'est donc posée que là où elle a un sens. */
 function nav(surBandeau) {
-  const links = NAVITEMS.map(([h, l]) => `      <a href="${h}">${l}</a>`).join('\n');
-  const mlinks = NAVITEMS.map(([h, l]) => `  <a href="${h}">${l}</a>`).join('\n');
+  const links = MENU.map((g) => g.href
+    ? `      <a href="${g.href}" class="nav-direct">${g.label}</a>`
+    : `      <div class="nav-groupe" data-groupe>
+        <button type="button" class="nav-ouvre" aria-expanded="false" aria-controls="mm-${g.id}">${g.label}${CHEVRON}</button>
+        ${megaPanneau(g)}
+      </div>`).join('\n');
+  /* Sur téléphone, des accordéons natifs : ils s'ouvrent au doigt et au
+     clavier sans une ligne de script, et le menu tient dans l'écran. */
+  const mlinks = MENU.map((g) => g.href
+    ? `  <a href="${g.href}" class="nm-direct">${g.label}</a>`
+    : `  <details class="nm-groupe">
+    <summary>${g.label}${CHEVRON}</summary>
+    <div class="nm-corps">${g.colonnes.map((c) => `<p class="mm-titre">${c.titre}</p>${c.liens.map(([h, t]) => `<a href="${h}">${t}</a>`).join('')}`).join('')}</div>
+  </details>`).join('\n');
   return `<a class="skip-link" href="#main">Aller au contenu</a>
 <div class="grain" aria-hidden="true"></div>
 <nav class="nav${surBandeau ? ' at-top' : ''}">
@@ -202,8 +295,8 @@ function nav(surBandeau) {
     </a>
     <div class="nav-links">
 ${links}
-      <a href="/professionnels#partenariat" class="nav-cta nav-cta-pro">Devenir partenaire</a>
       <a href="/compte" class="nav-compte">Mon compte</a>
+      <a href="/offres" class="nav-cta">Commander</a>
     </div>
     <button class="nav-burger" aria-label="Ouvrir le menu" aria-controls="menu-mobile">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -212,9 +305,7 @@ ${links}
 </nav>
 <nav class="nav-mobile" id="menu-mobile" aria-label="Menu principal">
 ${mlinks}
-  <a href="/rites">Les rites</a>
-  <a href="/contact">Nous écrire</a>
-  <a href="/compte">Mon compte</a>
+  <a href="/compte" class="nm-direct">Mon compte</a>
   <div class="nav-mobile-cta">
     <a href="/professionnels#partenariat" class="btn btn-gold">Devenir partenaire</a>
     <a href="/offres" class="btn btn-outline">Commander un hommage</a>
@@ -286,6 +377,10 @@ function footer() {
         </ul>
       </div>
     </div>
+    <nav class="footer-index" aria-label="Tous nos guides sur la chanson d’hommage">
+      <h2>La chanson d’hommage, question par question</h2>
+      <ul>${GUIDES_CHANSON.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul>
+    </nav>
     <div class="footer-bottom">
       <span>© <span data-year>2026</span> Melodia Funèbre — Tous droits réservés</span>
       <span class="footer-legal">
@@ -433,7 +528,7 @@ function page(p) {
      publié avant de chercher à le lire. Il ne contient que l'adresse du
      projet et la clé publique, celle qui est faite pour être lue. */
   const base = ['assets/js/config.js', 'assets/js/content.js', 'assets/js/main.js', 'assets/js/application.js',
-                'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js'];
+                'assets/js/rappel.js', 'assets/js/courrier.js', 'assets/js/ornements.js', 'assets/js/motion.js'];
   const scripts = base.concat((p.scripts || []).filter((s) => base.indexOf(s) === -1));
   return typographie(absolu(comblerHommages(empreinterImages(`<!DOCTYPE html>
 <html lang="fr">

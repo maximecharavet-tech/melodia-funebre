@@ -4366,7 +4366,7 @@ body.a-ecoute { padding-bottom: 5rem; }
    désormais avant l'emblème — même calcul que celui qui le place :
    96 % de la largeur, moins sa taille, moins la marge du conteneur. */
 @media (min-width: 1081px) {
-  .hero-caption .h-hero, .hero-caption .lead {
+  .hero-caption .h-hero, .hero-caption .lead, .hero-caption .portes {
     max-width: calc(96vw - min(34rem, 40vw) - max((100vw - var(--container)) / 2, 0px) - var(--pad) - 2rem);
   }
   .hero-caption .h-hero { font-size: clamp(2.7rem, 5.2vw, 5.4rem); }
@@ -4375,7 +4375,7 @@ body.a-ecoute { padding-bottom: 5rem; }
 /* « Découvrir » est posé au bas de la couverture ; quand l'écran est
    bas, le texte y descend aussi et les deux se chevauchaient. C'est un
    ornement : il s'efface plutôt que de gêner. */
-@media (max-height: 820px) { .hero-scroll { display: none; } }
+@media (max-height: 980px) { .hero-scroll { display: none; } }
 
 @media (max-width: 480px) {
   /* Sur téléphone, badge et jalons passaient à la ligne — le badge en
@@ -5742,3 +5742,255 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 /* Le repère qui porte le raccourci « Professionnels » ne doit rien
    changer à sa position : c'est le lien qui flotte, pas son conteneur. */
 .pro-flottant-zone { display: contents; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MÉGA-MENU — trois univers (gen.js : MENU)
+   Un panneau pleine largeur sous la barre, en verre sombre filet d'or.
+   Les liens entrent en cascade, la carte vedette porte une onde qui
+   bat : le menu est déjà une vitrine.
+   ═══════════════════════════════════════════════════════════════ */
+.nav-groupe { position: static; }
+.nav-ouvre {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font: inherit; font-size: 0.85rem; font-weight: 300; color: var(--bone);
+  background: none; border: 0; padding: 0.3rem 0; cursor: pointer;
+  transition: color var(--t-fast);
+}
+.nav-ouvre:hover, .nav-groupe.ouvert .nav-ouvre { color: var(--paper); }
+.nav-chev { width: 11px; height: 11px; transition: transform 0.35s var(--ease); }
+.nav-groupe.ouvert .nav-chev { transform: rotate(180deg); }
+.nav-direct { font-weight: 400 !important; color: var(--or) !important; }
+
+.nav.menu-ouvert { background: rgba(4, 4, 7, 0.97); border-color: var(--line); }
+.mega {
+  position: absolute; left: 0; right: 0; top: 100%;
+  /* Opaque : à 97 %, le titre de la page transparaissait sous les liens. */
+  background: linear-gradient(180deg, #09090e, #060609);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2); backdrop-filter: blur(22px) saturate(1.2);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.28);
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+  opacity: 0; visibility: hidden; transform: translateY(-10px);
+  transition: opacity 0.32s var(--ease), transform 0.42s var(--ease-out), visibility 0s linear 0.42s;
+  clip-path: inset(0 0 100% 0);
+}
+.mega::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--or), transparent);
+  transform: scaleX(0); transition: transform 0.7s var(--ease-out);
+}
+.nav-groupe.ouvert .mega {
+  opacity: 1; visibility: visible; transform: none; clip-path: inset(0 0 0 0);
+  transition: opacity 0.32s var(--ease), transform 0.42s var(--ease-out), clip-path 0.5s var(--ease-out), visibility 0s;
+}
+.nav-groupe.ouvert .mega::before { transform: scaleX(1); }
+.mega-inner {
+  max-width: var(--container); margin: 0 auto; padding: 2.2rem var(--pad) 2.4rem;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1.4rem 2rem;
+}
+.mega-inner:has(.mm-vedette) { grid-template-columns: repeat(var(--mm-cols, 3), minmax(0, 1fr)) minmax(240px, 300px); }
+#mm-pros .mega-inner { --mm-cols: 2; }
+.mm-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; }
+.mm-titre {
+  font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--or-patina); margin: 0 0 0.8rem 0.7rem;
+}
+.nav-links .mega a { padding: 0; font-size: inherit; }
+.nav-links .mega a::after { display: none; }
+.mm-lien {
+  display: flex !important; flex-direction: column; gap: 0.1rem;
+  padding: 0.55rem 0.7rem !important; border-radius: 8px;
+  transition: background 0.25s, transform 0.25s var(--ease);
+}
+.mm-lien:hover, .mm-lien:focus-visible { background: rgba(201, 168, 76, 0.07); transform: translateX(4px); }
+.mm-t { font-size: 0.95rem; color: var(--paper); font-weight: 400; }
+.mm-d { font-size: 0.82rem; color: var(--ash); line-height: 1.4; }
+.mm-lien:hover .mm-t { color: var(--or-bright); }
+/* La cascade : chaque ligne arrive un battement après la précédente */
+.mega li, .mm-titre { opacity: 0; transform: translateY(8px); transition: opacity 0.4s var(--ease), transform 0.5s var(--ease-out); }
+.nav-groupe.ouvert .mega li, .nav-groupe.ouvert .mm-titre { opacity: 1; transform: none; }
+.mega li:nth-child(1) { transition-delay: 0.06s; } .mega li:nth-child(2) { transition-delay: 0.1s; }
+.mega li:nth-child(3) { transition-delay: 0.14s; } .mega li:nth-child(4) { transition-delay: 0.18s; }
+.mega li:nth-child(5) { transition-delay: 0.22s; }
+
+.mm-vedette {
+  align-self: start;
+  position: relative; display: flex !important; flex-direction: column; gap: 0.5rem;
+  padding: 1.4rem 1.4rem 1.3rem !important; border-radius: 12px; overflow: hidden;
+  background:
+    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(201, 168, 76, 0.22), transparent 60%),
+    linear-gradient(160deg, #15130d, #0b0b11);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s, border-color 0.3s;
+}
+.mm-vedette:hover { transform: translateY(-3px); border-color: var(--or); box-shadow: 0 24px 50px -24px rgba(201, 168, 76, 0.55); }
+.mm-v-sur { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--or); }
+.mm-v-titre { font-family: var(--ff-d); font-size: 1.7rem; line-height: 1.1; color: var(--paper); }
+.mm-v-texte { font-size: 0.86rem; color: var(--bone); line-height: 1.5; }
+.mm-v-fleche { position: absolute; right: 1.2rem; bottom: 1rem; color: var(--or); font-size: 1.2rem; transition: transform 0.3s var(--ease); }
+.mm-vedette:hover .mm-v-fleche { transform: translateX(5px); }
+.mm-v-onde { display: flex; align-items: flex-end; gap: 3px; height: 26px; margin: 0.2rem 0 0.1rem; }
+.mm-v-onde i { width: 3px; height: 30%; border-radius: 2px; background: linear-gradient(180deg, var(--or-bright), var(--or-deep)); animation: mmOnde 1.4s ease-in-out infinite; }
+.mm-v-onde i:nth-child(2) { animation-delay: .15s; } .mm-v-onde i:nth-child(3) { animation-delay: .35s; }
+.mm-v-onde i:nth-child(4) { animation-delay: .05s; } .mm-v-onde i:nth-child(5) { animation-delay: .45s; }
+.mm-v-onde i:nth-child(6) { animation-delay: .25s; } .mm-v-onde i:nth-child(7) { animation-delay: .55s; }
+@keyframes mmOnde { 0%, 100% { height: 25%; } 50% { height: 100%; } }
+
+@media (max-width: 1120px) and (min-width: 861px) {
+  .nav-links { gap: 1.3rem; }
+  .mega-inner:has(.mm-vedette) { grid-template-columns: repeat(var(--mm-cols, 3), minmax(0, 1fr)); }
+  .mm-vedette { display: none !important; }
+}
+
+/* Menu mobile : accordéons natifs */
+.nm-groupe { border-bottom: 1px solid var(--line-soft); flex: none; }
+.nm-groupe summary {
+  list-style: none; display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--ff-d); font-size: 1.6rem; color: var(--bone); padding: 0.75rem 0; cursor: pointer;
+}
+.nm-groupe summary::-webkit-details-marker { display: none; }
+.nm-groupe summary .nav-chev { width: 16px; height: 16px; color: var(--or); }
+.nm-groupe[open] summary { color: var(--or); }
+.nm-groupe[open] summary .nav-chev { transform: rotate(180deg); }
+.nm-corps { display: flex; flex-direction: column; padding: 0 0 1rem 0.2rem; animation: nmOuvre 0.35s var(--ease-out); }
+.nm-corps .mm-titre { margin: 0.9rem 0 0.3rem; opacity: 1; transform: none; }
+.nav-mobile .nm-corps a { font-family: var(--ff-b, inherit); font-size: 1.02rem; padding: 0.55rem 0; border-bottom: 0; color: var(--bone); }
+.nav-mobile .nm-direct { color: var(--or); }
+@keyframes nmOuvre { from { opacity: 0; transform: translateY(-6px); } }
+
+/* Pied de page : l'index des guides */
+.footer-index { margin: 2.6rem 0 0; padding: 2rem 0 0; border-top: 1px solid var(--line-soft); }
+.footer-index h2 { font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--or-patina); margin-bottom: 1rem; }
+.footer-index ul { list-style: none; margin: 0; padding: 0; columns: 3 220px; column-gap: 2rem; }
+.footer-index li { break-inside: avoid; margin-bottom: 0.45rem; }
+.footer-index a { font-size: 0.86rem; color: var(--ash); transition: color var(--t-fast); }
+.footer-index a:hover { color: var(--or); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mega, .mega::before, .mega li, .mm-titre, .mm-lien, .mm-vedette, .nav-chev { transition: none !important; }
+  .mm-v-onde i, .nm-corps { animation: none !important; }
+  .mega { clip-path: none; }
+}
+
+/* ═══ ACCUEIL — les deux portes ═══
+   Deux cartes jumelles, chacune avec son public, son argument et son
+   geste. Au survol, un filet d'or fait le tour de la carte et la flèche
+   avance : on sent qu'on entre. */
+.portes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 2.2rem; }
+.porte {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: 0.45rem;
+  padding: 1.4rem 1.4rem 1.25rem; border-radius: 14px;
+  background: linear-gradient(160deg, rgba(22, 20, 14, 0.82), rgba(10, 10, 16, 0.82));
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  color: var(--bone); text-decoration: none;
+  transition: transform 0.5s var(--ease-out), border-color 0.4s, box-shadow 0.5s;
+}
+.porte::before {
+  content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from var(--porte-angle, 0deg), transparent 0 70%, var(--or-bright) 80%, transparent 90%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity 0.4s;
+}
+.porte:hover, .porte:focus-visible { transform: translateY(-4px); border-color: rgba(201, 168, 76, 0.55); box-shadow: 0 30px 60px -30px rgba(201, 168, 76, 0.45); }
+.porte:hover::before, .porte:focus-visible::before { opacity: 1; animation: porteTour 2.6s linear infinite; }
+@property --porte-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes porteTour { to { --porte-angle: 360deg; } }
+.porte-sur { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--or); }
+.porte-titre { font-family: var(--ff-d); font-size: clamp(1.45rem, 2vw, 1.75rem); line-height: 1.1; color: var(--paper); }
+.porte-texte { font-size: 0.92rem; line-height: 1.55; color: var(--bone); }
+.porte-meta { font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.06em; color: var(--ash); margin-top: 0.2rem; }
+.porte-cta {
+  margin-top: auto; padding-top: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--ff-m); font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--or-bright);
+}
+.porte-cta span { transition: transform 0.35s var(--ease); }
+.porte:hover .porte-cta span { transform: translateX(6px); }
+.porte:not(.porte-pro) { background: linear-gradient(160deg, rgba(48, 39, 16, 0.85), rgba(14, 12, 9, 0.85)); }
+.hero-note-famille a { display: inline-flex; align-items: center; gap: 0.4rem; }
+.hero-note-famille a svg { width: 14px; height: 14px; }
+@media (max-width: 640px) {
+  .portes { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .porte, .porte-cta span { transition: none; }
+  .porte:hover, .porte:focus-visible { transform: none; }
+  .porte:hover::before { animation: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTION — le mouvement du site public (motion.js)
+   Tout ce bloc est réservé à qui n'a pas demandé à réduire les
+   animations : sous « reduce », le site est immobile et complet.
+   ═══════════════════════════════════════════════════════════════ */
+.poussiere { position: absolute; inset: 0; z-index: 2; pointer-events: none; mix-blend-mode: screen; }
+.progression {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200; pointer-events: none;
+  transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--or-deep), var(--or-bright), #fff3c4);
+  box-shadow: 0 0 12px rgba(232, 201, 120, 0.6);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ─── Transitions entre les pages ───
+     La barre de navigation ne bouge pas ; la page sortante recule et
+     se floute, la nouvelle monte dans la lumière. */
+  @view-transition { navigation: auto; }
+  .nav { view-transition-name: barre-principale; }
+  ::view-transition-old(root) { animation: vtSortie 0.42s cubic-bezier(.4, 0, .2, 1) both; }
+  ::view-transition-new(root) { animation: vtEntree 0.7s cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes vtSortie { to { opacity: 0; transform: scale(0.97); filter: blur(6px); } }
+  @keyframes vtEntree { from { opacity: 0; transform: translateY(28px) scale(1.01); filter: blur(4px); } }
+
+  /* ─── Le titre d'accueil, mot à mot ─── */
+  .titre-anime .mot {
+    display: inline-block; opacity: 0; translate: 0 0.45em; filter: blur(10px);
+    transition: opacity 0.9s var(--ease), translate 1.1s var(--ease-out), filter 1s var(--ease);
+    transition-delay: calc(var(--i) * 85ms + 0.2s);
+  }
+  .titre-anime.parti .mot { opacity: 1; translate: 0 0; filter: none; }
+  /* Le dégradé d'or ne traverse pas les mots découpés : chacun porte le sien. */
+  .h-hero em .mot {
+    background: var(--or-grad); -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; padding-right: 0.04em;
+  }
+
+  /* ─── La lumière sous la pointe, sur les portes ─── */
+  .porte.magnetique::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+    background: radial-gradient(circle 220px at var(--mx, 50%) var(--my, 50%), rgba(232, 201, 120, 0.16), transparent 70%);
+    opacity: 0; transition: opacity 0.35s;
+  }
+  .porte.magnetique:hover::after { opacity: 1; }
+  .magnetique { transition: translate 0.25s var(--ease-out), transform 0.5s var(--ease-out), border-color 0.4s, box-shadow 0.5s; }
+
+  /* ─── Animations liées au défilement ─── */
+  @supports (animation-timeline: scroll()) {
+    .progression { animation: mProgres linear both; animation-timeline: scroll(root); }
+    @keyframes mProgres { to { transform: scaleX(1); } }
+
+    /* L'emblème descend plus lentement que la page et se retourne à
+       peine : c'est la profondeur. */
+    .hero-embleme { animation: mParallaxe linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+    @keyframes mParallaxe { to { translate: 0 20vh; scale: 0.9; rotate: 6deg; } }
+
+    /* Le premier écran s'estompe en sortant par le haut, pas avant :
+       on lit les portes tant qu'elles sont à l'écran. */
+    .hero-caption { animation: mEstompe linear both; animation-timeline: view(); animation-range: exit 30% exit 100%; }
+    @keyframes mEstompe { to { opacity: 0; translate: 0 -6vh; filter: blur(6px); } }
+
+    /* Les titres de section se dévoilent en montant. */
+    .section .h-xl, .section .h-lg {
+      animation: mDevoile linear both; animation-timeline: view(); animation-range: entry 5% cover 28%;
+    }
+    @keyframes mDevoile {
+      from { opacity: 0; translate: 0 34px; clip-path: inset(0 0 100% 0); }
+      to { opacity: 1; translate: 0 0; clip-path: inset(0 0 -20% 0); }
+    }
+
+    /* Les cartes des hommages glissent de biais à l'entrée. */
+    .oeuvre { animation: mGlisse linear both; animation-timeline: view(); animation-range: entry 0% cover 25%; }
+    @keyframes mGlisse { from { translate: 0 40px; rotate: -1.2deg; } to { translate: 0 0; rotate: 0deg; } }
+  }
+}
