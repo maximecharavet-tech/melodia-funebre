@@ -226,16 +226,41 @@ ${fiches}
 
 /* Bandeau de la vitrine : ce qu'elle contient, et l'écoute intégrale.
    Le compte et les filtres sont remplis par catalogue.js d'après le
-   contenu publié — ils suivent donc les ajouts faits en console. */
+   contenu publié — ils suivent donc les ajouts faits en console.
+
+   Ils sont aussi écrits ici, d'après le même contenu publié, et à
+   l'identique de ce que produira catalogue.js. La barre de filtres
+   arrivait vide et masquée, puis le script y posait trois rangées de
+   boutons : le catalogue sautait d'autant vers le bas (0,49 de
+   décalage cumulé mesuré). Rendue d'avance, elle ne bouge plus. */
+function oeuvresPubliees() {
+  try {
+    const d = (require('../assets/data/content.json').demos || [])
+      .filter((o) => o && (o.audio || o.file) && o.visible !== false);
+    if (d.length) return d;
+  } catch (e) { /* repli sur le catalogue du dépôt */ }
+  return TRACKS;
+}
+function filtresVitrine() {
+  const O = oeuvresPubliees();
+  const styles = [];
+  O.forEach((o) => { if (o.style && styles.indexOf(o.style) === -1) styles.push(o.style); });
+  if (styles.length < 2) return '';
+  const n = (st) => O.filter((o) => !st || o.style === st).length;
+  return `<button type="button" class="cat-filtre actif" data-filtre="" aria-pressed="true">Tout <span>${O.length}</span></button>` +
+    styles.map((st) => `<button type="button" class="cat-filtre" data-filtre="${st.replace(/"/g, '&quot;')}" aria-pressed="false">${st} <span>${n(st)}</span></button>`).join('');
+}
 function vitrineBarre() {
+  const filtres = filtresVitrine();
+  const total = oeuvresPubliees().length;
   return `      <div class="cat-barre reveal">
-        <p class="cat-compte"><span data-catalogue-libelle>${TRACKS.filter((t) => (t.categorie || 'hommage') === 'hommage').length} hommages</span> composés à ce jour</p>
+        <p class="cat-compte"><span data-catalogue-libelle>${total} ${total > 1 ? 'hommages' : 'hommage'}</span> composés à ce jour</p>
         <button type="button" class="btn btn-gold" data-tout-ecouter>
           <span class="cat-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
           <span data-libelle>Tout écouter</span>
         </button>
       </div>
-      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical" hidden></div>`;
+      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical"${filtres ? '' : ' hidden'}>${filtres}</div>`;
 }
 
 /* ═══ LA CHAÎNE DU SOUVENIR ═══

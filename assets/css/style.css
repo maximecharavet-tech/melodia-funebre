@@ -1,3 +1,40 @@
+/* ═══ POLICES — hébergées sur le site ═══
+   Elles venaient de Google Fonts : deux connexions de plus avant le
+   premier affichage (0,9 s mesurées sur mobile), et l'adresse IP de
+   chaque visiteur transmise à Google — ce qu'un tribunal allemand a
+   jugé contraire au RGPD en 2022. Mêmes fichiers, servis d'ici.
+   Polices sous licence SIL Open Font License (assets/fonts/LICENCE.txt). */
+/* Polices de secours calibrées : le temps que les vraies arrivent, le
+   texte s'affiche dans une police système retaillée aux mêmes mesures
+   (largeur moyenne, hauteur, profondeur — méthode Capsize/Fontaine,
+   calculée sur Times New Roman, Arial et Courier New). Sans cela, le
+   remplacement déplaçait la mise en page : 0,66 de décalage cumulé
+   mesuré sur l'accueil. */
+@font-face{font-family:'Cormorant Repli';font-style:normal;src:local('Times New Roman'),local('Times'),local('Liberation Serif');size-adjust:96.5%;ascent-override:95.75%;descent-override:29.74%;line-gap-override:0%}
+@font-face{font-family:'Cormorant Repli';font-style:italic;src:local('Times New Roman Italic'),local('Times-Italic'),local('Liberation Serif Italic');size-adjust:86.13%;ascent-override:107.28%;descent-override:33.32%;line-gap-override:0%}
+@font-face{font-family:'Jost Repli';src:local('Arial'),local('Helvetica'),local('Liberation Sans');size-adjust:96.31%;ascent-override:111.1%;descent-override:38.94%;line-gap-override:0%}
+@font-face{font-family:'JetBrains Repli';src:local('Courier New'),local('Courier'),local('Liberation Mono');size-adjust:99.98%;ascent-override:102.02%;descent-override:30.01%;line-gap-override:0%}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300;font-display:swap;src:url(/assets/fonts/cormorant-garamond-italic-latin-ext-f3bda5.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300;font-display:swap;src:url(/assets/fonts/cormorant-garamond-italic-latin-4db21d.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(/assets/fonts/cormorant-garamond-italic-latin-ext-f3bda5.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(/assets/fonts/cormorant-garamond-italic-latin-4db21d.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300;font-display:swap;src:url(/assets/fonts/cormorant-garamond-normal-latin-ext-26a769.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300;font-display:swap;src:url(/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/cormorant-garamond-normal-latin-ext-26a769.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-ext-c8b23d.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-0a7197.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-ext-c8b23d.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-0a7197.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Jost';font-style:normal;font-weight:200;font-display:swap;src:url(/assets/fonts/jost-normal-latin-ext-1bb29f.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Jost';font-style:normal;font-weight:200;font-display:swap;src:url(/assets/fonts/jost-normal-latin-b58a58.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Jost';font-style:normal;font-weight:300;font-display:swap;src:url(/assets/fonts/jost-normal-latin-ext-1bb29f.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Jost';font-style:normal;font-weight:300;font-display:swap;src:url(/assets/fonts/jost-normal-latin-b58a58.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Jost';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/jost-normal-latin-ext-1bb29f.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Jost';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/jost-normal-latin-b58a58.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Jost';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/jost-normal-latin-ext-1bb29f.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Jost';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/jost-normal-latin-b58a58.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+
 /* ═══════════════════════════════════════════════════════════════
    MELODIA FUNÈBRE — Design System v4 « Maison »
    Encre profonde · or patiné · ivoire · retenue éditoriale
@@ -63,9 +100,9 @@
   --red: #f87171;
 
   /* ─── Typographie ─── */
-  --ff-d: 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
-  --ff-b: 'Jost', 'Fraunces', system-ui, -apple-system, sans-serif;
-  --ff-m: 'JetBrains Mono', ui-monospace, monospace;
+  --ff-d: 'Cormorant Garamond', 'Cormorant Repli', Georgia, serif;
+  --ff-b: 'Jost', 'Jost Repli', system-ui, -apple-system, sans-serif;
+  --ff-m: 'JetBrains Mono', 'JetBrains Repli', ui-monospace, monospace;
 
   --fs-hero: clamp(2.7rem, 7.2vw, 6rem);
   --fs-xl: clamp(2rem, 4.6vw, 3.6rem);
@@ -4454,7 +4491,9 @@ body.a-ecoute { padding-bottom: 5rem; }
   .pro-flottant-mot { font-size: 0.789rem; letter-spacing: 0.14em; }
 }
 @media (max-width: 420px) {
-  .pro-flottant-mot { display: none; }
+  /* Masqué à l'œil, pas au lecteur d'écran : en display:none, le lien
+     n'avait plus de nom du tout. */
+  .pro-flottant-mot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
   .pro-flottant { padding: 0; width: 46px; height: 46px; justify-content: center; }
   .pro-flottant-ico { font-size: 1rem; }
 }
@@ -5984,9 +6023,12 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
     .section .h-xl, .section .h-lg {
       animation: mDevoile linear both; animation-timeline: view(); animation-range: entry 5% cover 28%;
     }
+    /* Le masque seul, sans jouer sur l'opacité : à mi-course, un titre
+       semi-transparent tombait à 1,5:1 de contraste. Ce qui est visible
+       l'est toujours à pleine encre. */
     @keyframes mDevoile {
-      from { opacity: 0; translate: 0 34px; clip-path: inset(0 0 100% 0); }
-      to { opacity: 1; translate: 0 0; clip-path: inset(0 0 -20% 0); }
+      from { translate: 0 34px; clip-path: inset(0 0 100% 0); }
+      to { translate: 0 0; clip-path: inset(0 0 -20% 0); }
     }
 
     /* Les cartes des hommages glissent de biais à l'entrée. */
@@ -5994,3 +6036,9 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
     @keyframes mGlisse { from { translate: 0 40px; rotate: -1.2deg; } to { translate: 0 0; rotate: 0deg; } }
   }
 }
+
+/* Lu par les lecteurs d'écran, invisible à l'œil. Son parent doit
+   être positionné : dans la frise défilante, un texte absolu sans repère
+   s'échappait du conteneur et élargissait la page de 1 200 px. */
+.pastille { position: relative; }
+.lu-seul { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }

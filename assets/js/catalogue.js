@@ -352,7 +352,7 @@
       if (etiq) etiq.textContent = reg.partage;
       if (o.page) {
         lien.setAttribute('href', o.page);
-        lien.setAttribute('aria-label', 'Page de « ' + (o.title || 'cet hommage') + ' », à partager');
+        lien.setAttribute('aria-label', (etiq ? etiq.textContent : 'Partager') + ' : « ' + (o.title || 'cet hommage') + ' »');
         part.hidden = false;
       } else {
         part.hidden = true;
@@ -689,9 +689,12 @@
          tenir égare davantage qu'un bouton ordinaire bien nommé.
          « aria-current » suffit à dire lequel joue. */
       b.setAttribute('aria-current', 'false');
-      b.setAttribute('aria-label', 'Écouter ' + esc(o.title || 'cet hommage'));
+      /* Le nom accessible reprend le texte visible (prénom, style) au lieu
+         de le remplacer : une commande vocale « Bernard » doit trouver le
+         bouton où l'on lit « Bernard ». Le titre est ajouté, lu seulement. */
       b.innerHTML =
-        '<span class="jet">' +
+        '<span class="lu-seul">Écouter « ' + esc(o.title || 'cet hommage') + ' », </span>' +
+        '<span class="jet" aria-hidden="true">' +
           (ORN ? ORN.sceau(o.who || o.title || o.id, { traits: 2 }) : '') +
           (o.photo ? '<img src="' + esc(o.photo) + '" alt="" loading="lazy" decoding="async">' : '') +
           '<span class="jet-ini">' + esc(initiale(o)) + '</span>' +
@@ -701,7 +704,7 @@
           '</svg>' +
           '<span class="jet-signe">' + JETON_SIGNE + '</span>' +
         '</span>' +
-        '<span class="past-nom">' + esc(String(o.who || o.title || '').split(',')[0]) + '</span>' +
+        '<span class="past-nom">' + esc(String(o.who || o.title || '').split(',')[0]) + '</span> ' +
         '<span class="past-style">' + esc(o.style || '') + '</span>';
       b.addEventListener('click', function () {
         /* Toucher un visage, c'est vouloir l'entendre */

@@ -243,9 +243,8 @@ ${p.metas || ''}
 <meta name="apple-mobile-web-app-title" content="Melodia">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${versionne('assets/css/style.css')}">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
@@ -291,7 +290,7 @@ function nav(surBandeau) {
            taille restent pour les données structurées et les partages,
            où Google et Facebook les veulent grands. -->
       <img src="assets/img/logo-melodia-160.webp" alt="" class="nav-logo" width="160" height="160">
-      <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
+      <span><span class="nav-name">Melodia</span> <span class="nav-sub">Funèbre</span></span>
     </a>
     <div class="nav-links">
 ${links}

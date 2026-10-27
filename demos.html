@@ -29,10 +29,9 @@
 <meta name="apple-mobile-web-app-title" content="Melodia">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=358c5af8">
+<link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/style.css?v=aa8861a7">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -55,7 +54,7 @@
            taille restent pour les données structurées et les partages,
            où Google et Facebook les veulent grands. -->
       <img src="/assets/img/logo-melodia-160.webp?v=d5ed7d92" alt="" class="nav-logo" width="160" height="160">
-      <span><span class="nav-name">Melodia</span><span class="nav-sub">Funèbre</span></span>
+      <span><span class="nav-name">Melodia</span> <span class="nav-sub">Funèbre</span></span>
     </a>
     <div class="nav-links">
       <div class="nav-groupe" data-groupe>
@@ -148,13 +147,13 @@
   <section class="section-sm" style="padding-top:2.4rem;">
     <div class="wrap">
       <div class="cat-barre reveal">
-        <p class="cat-compte"><span data-catalogue-libelle>20 hommages</span> composés à ce jour</p>
+        <p class="cat-compte"><span data-catalogue-libelle>21 hommages</span> composés à ce jour</p>
         <button type="button" class="btn btn-gold" data-tout-ecouter>
           <span class="cat-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
           <span data-libelle>Tout écouter</span>
         </button>
       </div>
-      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical" hidden></div>
+      <div class="cat-filtres" data-catalogue-filtres role="group" aria-label="Filtrer par registre musical"><button type="button" class="cat-filtre actif" data-filtre="" aria-pressed="true">Tout <span>21</span></button><button type="button" class="cat-filtre" data-filtre="Soul jazz" aria-pressed="false">Soul jazz <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Piano classique" aria-pressed="false">Piano classique <span>2</span></button><button type="button" class="cat-filtre" data-filtre="Musette" aria-pressed="false">Musette <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Ballade rock" aria-pressed="false">Ballade rock <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Funk" aria-pressed="false">Funk <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Rock" aria-pressed="false">Rock <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Reggae" aria-pressed="false">Reggae <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Folk acoustique" aria-pressed="false">Folk acoustique <span>2</span></button><button type="button" class="cat-filtre" data-filtre="Gospel" aria-pressed="false">Gospel <span>2</span></button><button type="button" class="cat-filtre" data-filtre="Polyphonie corse" aria-pressed="false">Polyphonie corse <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Celtique" aria-pressed="false">Celtique <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Bélé antillais" aria-pressed="false">Bélé antillais <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Klezmer" aria-pressed="false">Klezmer <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Musique du monde" aria-pressed="false">Musique du monde <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Chanson française" aria-pressed="false">Chanson française <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Bossa nova" aria-pressed="false">Bossa nova <span>1</span></button><button type="button" class="cat-filtre" data-filtre="R&B" aria-pressed="false">R&B <span>1</span></button><button type="button" class="cat-filtre" data-filtre="Country americana" aria-pressed="false">Country americana <span>1</span></button></div>
       <div class="catalogue" data-catalogue>
         <article class="oeuvre reveal" data-oeuvre="0" data-style="Soul jazz">
           <div class="oeuvre-haut">
@@ -1264,7 +1263,7 @@ values="0 0 0 0 0.86  0 0 0 0 0.70  0 0 0 0 0.32  0 0 0 0.2 0"/>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=b37cef91"></script>
 <script src="/assets/js/motion.js?v=59d24715"></script>
-<script src="/assets/js/catalogue.js?v=191590d1"></script>
+<script src="/assets/js/catalogue.js?v=937566dc"></script>
 <script src="/assets/js/registres.js?v=e7bf5603"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
