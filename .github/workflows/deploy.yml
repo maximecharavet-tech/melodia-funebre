@@ -18,15 +18,25 @@ jobs:
 
       - name: Vérifier le HTML (balises équilibrées)
         run: |
-          for f in index.html processus.html demos.html rites.html offres.html agences.html contact.html compte.html dashboard-partenaire.html dashboard-master.html mentions-legales.html cgv.html confidentialite.html 404.html; do
-            python3 -c "
-          c = open('$f', encoding='utf-8').read()
-          assert c.count('<!DOCTYPE') == 1, 'DOCTYPE'
-          assert c.count('</html>') == 1, 'html close'
-          assert c.count('<body') == c.count('</body>'), 'body'
-          print('✓ $f')
-          " || exit 1
-          done
+          python3 - <<'PY'
+          import glob, sys
+          files = sorted(glob.glob('*.html'))
+          if not files:
+              sys.exit('Aucun fichier HTML trouvé')
+          bad = 0
+          for f in files:
+              c = open(f, encoding='utf-8').read()
+              errs = []
+              if c.count('<!DOCTYPE') != 1: errs.append('DOCTYPE')
+              if c.count('</html>') != 1: errs.append('html close')
+              if c.count('<body') != c.count('</body>'): errs.append('body')
+              if errs:
+                  bad += 1
+                  print(f'✗ {f}: ' + ', '.join(errs))
+              else:
+                  print(f'✓ {f}')
+          sys.exit(1 if bad else 0)
+          PY
 
   deploy:
     name: Déploiement Vercel
