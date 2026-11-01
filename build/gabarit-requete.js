@@ -148,7 +148,7 @@ function jsonld(p) {
       /* Aucune « dateModified » : figée dans le code, elle mentirait
          dès la première retouche, et les moteurs s'en servent pour
          juger la fraîcheur. La date de publication, elle, reste vraie. */
-      datePublished: '2026-09-17'
+      datePublished: p.datePublished || '2026-09-17'
     },
     P.jsonldOrg,
     {

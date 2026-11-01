@@ -87,10 +87,10 @@ const MENU = [
       ['/qr-code-memorial', 'La plaque QR mémorial', 'La page souvenir, sur la tombe']] },
     { titre: 'La chanson d’hommage', liens: [
       ['/chanson-hommage', 'Tout savoir', 'Ce qu’elle est, ce qu’elle coûte'],
-      ['/chanson-personnalisee-defunt', 'Ce que nous vous demandons'],
-      ['/composer-chanson-pour-defunt', 'Comment elle se compose'],
-      ['/chanson-pour-obseques', 'Le jour de la cérémonie'],
-      ['/dernier-hommage-musical', 'Ce qu’il en reste après']] },
+      ['/chanson-pour-maman-decedee', 'Pour une maman'],
+      ['/chanson-pour-papa-decede', 'Pour un papa'],
+      ['/musique-obseques-instrumentale', 'Sans paroles : l’instrumental'],
+      ['/musique-ceremonie-civile', 'Pour une cérémonie civile']] },
     { titre: 'Guides', liens: [
       ['/musique-obseques', 'Quelle musique pour un enterrement'],
       ['/musique-cremation', 'La musique en crémation'],
@@ -117,22 +117,21 @@ const MENU = [
       ['/contact', 'Nous écrire']] }] }
 ];
 
-/* Les treize pages de fond, toutes, dans le pied de chaque page : c'est
-   ce qui leur donne un lien depuis tout le site. */
+/* Les pages piliers et les pages de situation, dans le pied de chaque
+   page : c'est ce qui leur donne un lien depuis tout le site. Les
+   treize anciennes pages de requête ont été fusionnées dans leur
+   pilier (voir redirections.js) — on ne les liste plus. */
 const GUIDES_CHANSON = [
-  ['/chanson-hommage-defunt', 'Chanson hommage pour un défunt'],
-  ['/chanson-personnalisee-defunt', 'Chanson personnalisée pour un défunt'],
-  ['/chanson-pour-obseques', 'Chanson pour des obsèques'],
-  ['/chanson-funeraire-personnalisee', 'Chanson funéraire personnalisée'],
-  ['/creer-chanson-pour-defunt', 'Créer une chanson pour un défunt'],
-  ['/composer-chanson-pour-defunt', 'Composer une chanson pour un défunt'],
-  ['/chanson-dernier-hommage', 'Une chanson comme dernier hommage'],
-  ['/hommage-musical-defunt', 'Hommage musical à un défunt'],
-  ['/hommage-musical-obseques', 'Hommage musical pendant les obsèques'],
-  ['/dernier-hommage-musical', 'Dernier hommage musical'],
-  ['/musique-personnalisee-obseques', 'Musique personnalisée pour des obsèques'],
-  ['/musique-personnalisee-defunt', 'Musique personnalisée pour un défunt'],
-  ['/musique-pour-hommage-funeraire', 'Musique pour un hommage funéraire']
+  ['/chanson-hommage', 'Chanson d’hommage pour un défunt'],
+  ['/musique-obseques', 'Quelle musique pour un enterrement'],
+  ['/processus', 'Comment se compose un hommage musical'],
+  ['/chanson-pour-maman-decedee', 'Chanson pour maman décédée'],
+  ['/chanson-pour-papa-decede', 'Chanson pour papa décédé'],
+  ['/musique-obseques-instrumentale', 'Musique d’obsèques sans paroles'],
+  ['/musique-ceremonie-civile', 'Musique pour une cérémonie civile'],
+  ['/musique-cremation', 'La musique en crémation'],
+  ['/musique-sacem-obseques', 'Droits d’auteur et obsèques'],
+  ['/rites', 'Musique funéraire selon le rite']
 ];
 
 const CHEVRON = '<svg class="nav-chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>';
@@ -339,6 +338,7 @@ function footer() {
              débordement du menu mobile. -->
         <h2>Conseils</h2>
         <ul class="footer-links">
+          <li><a href="/chanson-hommage">La chanson d’hommage</a></li>
           <li><a href="/musique-obseques">Quelle musique pour un enterrement</a></li>
           <li><a href="/musique-cremation">La musique en crémation</a></li>
           <li><a href="/musique-sacem-obseques">Droits d'auteur et obsèques</a></li>

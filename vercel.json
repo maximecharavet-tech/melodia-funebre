@@ -12,6 +12,82 @@
   },
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.melodia-funebre.fr"
+        }
+      ],
+      "destination": "https://melodia-funebre.fr/$1",
+      "permanent": true
+    },
+    {
+      "source": "/chanson-hommage-defunt",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/chanson-personnalisee-defunt",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/chanson-funeraire-personnalisee",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/musique-personnalisee-defunt",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/hommage-musical-defunt",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/chanson-dernier-hommage",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/dernier-hommage-musical",
+      "destination": "/chanson-hommage",
+      "permanent": true
+    },
+    {
+      "source": "/creer-chanson-pour-defunt",
+      "destination": "/processus",
+      "permanent": true
+    },
+    {
+      "source": "/composer-chanson-pour-defunt",
+      "destination": "/processus",
+      "permanent": true
+    },
+    {
+      "source": "/chanson-pour-obseques",
+      "destination": "/musique-obseques",
+      "permanent": true
+    },
+    {
+      "source": "/hommage-musical-obseques",
+      "destination": "/musique-obseques",
+      "permanent": true
+    },
+    {
+      "source": "/musique-personnalisee-obseques",
+      "destination": "/musique-obseques",
+      "permanent": true
+    },
+    {
+      "source": "/musique-pour-hommage-funeraire",
+      "destination": "/musique-obseques",
+      "permanent": true
+    },
+    {
       "source": "/chanson-pour-defunt",
       "destination": "/chanson-hommage",
       "permanent": true

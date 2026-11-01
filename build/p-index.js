@@ -342,6 +342,7 @@ ${P.faq(null, true)}
           <p>A-t-on le droit de passer cette chanson ? Qui déclare quoi, à l'église, au crématorium — et les deux cas où cela vous concerne vraiment.</p>
         </a>
       </div>
+      <p class="reveal" style="text-align:center;margin-top:2rem;color:var(--bone);">Et aussi : <a href="/chanson-hommage">la chanson d’hommage, tout savoir</a> · <a href="/chanson-pour-maman-decedee">une chanson pour maman</a> · <a href="/chanson-pour-papa-decede">une chanson pour papa</a> · <a href="/musique-obseques-instrumentale">une musique sans paroles</a> · <a href="/musique-ceremonie-civile">une cérémonie civile</a></p>
     </div>
   </section>
 
