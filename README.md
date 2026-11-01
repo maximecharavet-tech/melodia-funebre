@@ -16,7 +16,7 @@ melodia-funebre/
 ├── processus.html      Chronologie en 7 étapes, les 5 questions, engagements
 ├── demos.html          Écoute des 3 hommages + « du brief à la chanson »
 ├── offres.html         Tarifs, comparatif détaillé et tunnel de commande en 6 étapes
-├── agences.html        Espace B2B + simulateur de revenus partenaire
+├── professionnels.html Espace B2B + simulateur de revenus partenaire
 ├── contact.html        Contact, urgences, formulaire
 ├── compte.html         Connexion / inscription (familles et agences)
 ├── dashboard-master.html      Console de pilotage (KPIs + Atelier IA)
