@@ -477,7 +477,7 @@ try {
    exige « headline » sur un Article, et son absence ne se voit pas. */
 {
   const modules = ['../build/p-chansons.js', '../build/p-fabrication.js',
-                   '../build/p-ceremonie.js', '../build/p-memoire.js'];
+                   '../build/p-ceremonie.js', '../build/p-memoire.js', '../build/p-situations.js'];
   const nus = [].concat(...modules.map((m) => require(m)))
     .filter((p) => {
       const art = (p.jsonld || []).find((x) => x['@type'] === 'Article');
@@ -512,7 +512,8 @@ try {
    très en dessous de ce que produirait un gabarit rempli. */
 {
   const modules = ['../build/p-chansons.js', '../build/p-fabrication.js',
-                   '../build/p-ceremonie.js', '../build/p-memoire.js'];
+                   '../build/p-ceremonie.js', '../build/p-memoire.js',
+                   '../build/p-situations.js'];
   const requetes = [].concat(...modules.map((m) => require(m)));
   const SEUIL = 0.12;
 

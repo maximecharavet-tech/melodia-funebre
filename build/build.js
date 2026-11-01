@@ -63,7 +63,9 @@ if (fs.existsSync(fichierContenu)) {
 }
 
 /* ─── Génération ─── */
-const { page } = require('./gen.js');
+const { page: pageBrute } = require('./gen.js');
+const { fusionnee, liensVersPiliers } = require('./redirections.js');
+const page = (p) => liensVersPiliers(pageBrute(p));
 const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-vivant', 'p-agences', 'p-maison', 'p-hyper', 'p-rejoindre', 'p-contact', 'p-application', 'p-compte', 'p-404'];
 
 let total = 0;
@@ -80,8 +82,16 @@ for (const m of pages) {
    qu'elles se ressemblent. */
 for (const module of ['./p-legal.js', './p-guides.js',
                       './p-chansons.js', './p-fabrication.js',
-                      './p-ceremonie.js', './p-memoire.js']) {
+                      './p-ceremonie.js', './p-memoire.js',
+                      './p-situations.js']) {
   for (const p of require(module)) {
+    /* Fusionnée dans un pilier : redirigée en 301, plus générée, et
+       l'ancien fichier effacé pour qu'il ne serve plus rien. */
+    if (fusionnee(p)) {
+      const ancien = path.join(RACINE, p.file);
+      if (fs.existsSync(ancien)) { fs.unlinkSync(ancien); console.log('  fusionnée, retirée    ' + p.file); }
+      continue;
+    }
     const html = page(p);
     fs.writeFileSync(path.join(RACINE, p.file), html);
     total += html.length;
@@ -272,23 +282,14 @@ const PLAN = [
   ['musique-cremation.html', '0.8', 'monthly'],
   ['chanson-hommage.html', '0.9', 'monthly'],
   ['qr-code-memorial.html', '0.9', 'monthly'],
-  /* Les treize pages de requête. Priorité 0,8 : elles visent
-     l'acquisition, mais restent en dessous des pages qui portent
-     l'offre elle-même. Le nom du fichier suffit à donner l'adresse,
-     « cleanUrls » retirant l'extension. */
-  ['chanson-hommage-defunt.html', '0.8', 'monthly'],
-  ['chanson-personnalisee-defunt.html', '0.8', 'monthly'],
-  ['chanson-pour-obseques.html', '0.8', 'monthly'],
-  ['chanson-funeraire-personnalisee.html', '0.8', 'monthly'],
-  ['musique-personnalisee-obseques.html', '0.8', 'monthly'],
-  ['musique-personnalisee-defunt.html', '0.8', 'monthly'],
-  ['creer-chanson-pour-defunt.html', '0.8', 'monthly'],
-  ['composer-chanson-pour-defunt.html', '0.8', 'monthly'],
-  ['hommage-musical-defunt.html', '0.8', 'monthly'],
-  ['hommage-musical-obseques.html', '0.8', 'monthly'],
-  ['musique-pour-hommage-funeraire.html', '0.8', 'monthly'],
-  ['chanson-dernier-hommage.html', '0.8', 'monthly'],
-  ['dernier-hommage-musical.html', '0.8', 'monthly'],
+  /* Les pages de requête fusionnées dans un pilier (voir
+     redirections.js) ne figurent plus ici : une adresse redirigée n'a
+     rien à faire dans un plan du site. Restent les pages qui répondent
+     à une situation précise, qu'aucun pilier ne couvre. */
+  ['chanson-pour-maman-decedee.html', '0.8', 'monthly'],
+  ['chanson-pour-papa-decede.html', '0.8', 'monthly'],
+  ['musique-obseques-instrumentale.html', '0.8', 'monthly'],
+  ['musique-ceremonie-civile.html', '0.8', 'monthly'],
   ['rejoindre.html', '0.8', 'monthly'],
   ['contact.html', '0.7', 'yearly'],
   ['application.html', '0.6', 'monthly'],

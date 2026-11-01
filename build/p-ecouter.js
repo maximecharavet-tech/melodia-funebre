@@ -40,7 +40,11 @@ const { limace, adresses } = require('./adresses.js');
    coupure au milieu du nom de la maison fait négligé. */
 function titre(t) {
   const complet = `${t.title} — hommage musical | Melodia Funèbre`;
-  return complet.length <= 62 ? complet : `${t.title} | Melodia Funèbre`;
+  /* 60 caractères au plus, marque comprise quand elle tient : au-delà,
+     Google tronque le titre dans ses résultats. */
+  if (complet.length <= 60) return complet;
+  const court = `${t.title} | Melodia Funèbre`;
+  return court.length <= 60 ? court : t.title;
 }
 
 /* La durée n'est pas connue à la génération : elle est lue par le
