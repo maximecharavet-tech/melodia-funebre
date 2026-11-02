@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Melodia Funèbre — Brochure professionnels</title>
+<!-- Brochure A4 pour les pompes funèbres, jointe aux e-mails de prospection.
+     Source unique : les textes et chiffres de /professionnels et /offres.
+     Rendu en PDF par  node brochure/pdf.js  → brochure/melodia-funebre-brochure-pro.pdf -->
+<style>
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 400;src:url(../assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2) format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300 400;src:url(../assets/fonts/cormorant-garamond-italic-latin-4db21d.woff2) format('woff2')}
+@font-face{font-family:'Jost';font-weight:300 600;src:url(../assets/fonts/jost-normal-latin-b58a58.woff2) format('woff2')}
+@page{size:A4;margin:0}
+:root{--ink:#040407;--surface:#0b0b11;--surface-2:#101018;--or:#c9a84c;--or-bright:#e3c977;--or-deep:#6b5828;--line:rgba(201,168,76,.22);--ivory:#f4f1ea;--ivory-ink:#17150f;--ivory-soft:#55503f;--bone:#c4bba6;--silver:#d8d8dc}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--ink)}
+body{font-family:'Jost',Arial,sans-serif;font-weight:300;color:var(--silver);font-size:10.5pt;line-height:1.55;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;position:relative;overflow:hidden;page-break-after:always;background:var(--ink)}
+.page:last-child{page-break-after:auto}
+.pad{padding:18mm 17mm}
+.serif{font-family:'Cormorant Garamond',Georgia,serif}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;color:var(--ivory);line-height:1.05}
+h2{font-size:33pt;margin-top:3mm}
+h2 em,h1 em{font-style:italic;color:var(--or-bright)}
+h3{font-size:15pt;font-weight:400;margin-bottom:1.5mm}
+.eyebrow{font-size:7.5pt;letter-spacing:.32em;text-transform:uppercase;color:var(--or);font-weight:500}
+.lead{font-size:11.5pt;color:var(--bone);margin-top:5mm;max-width:150mm}
+.or{color:var(--or-bright)}
+.filet{height:1px;background:linear-gradient(90deg,transparent,var(--or),transparent);margin:7mm 0}
+.folio{position:absolute;bottom:9mm;left:17mm;right:17mm;display:flex;justify-content:space-between;font-size:7pt;letter-spacing:.24em;text-transform:uppercase;color:#8e8878}
+.folio b{color:var(--or);font-weight:500}
+.clair{background:var(--ivory);color:var(--ivory-soft)}
+.clair h2,.clair h3{color:var(--ivory-ink)}
+.clair h2 em{color:var(--or-deep)}
+.clair .eyebrow{color:var(--or-deep)}
+.clair .lead{color:var(--ivory-soft)}
+.clair .folio{color:#8a8473}
+.clair .folio b{color:var(--or-deep)}
+
+/* ── Couverture ── */
+.cover-img{position:absolute;left:0;right:0;top:32mm;width:100%;height:160mm;object-fit:cover;object-position:50% 22%}
+.cover-voile{position:absolute;left:0;right:0;top:31mm;height:162mm;background:linear-gradient(180deg,#040407 0%,rgba(4,4,7,0) 12%,rgba(4,4,7,0) 62%,#040407 100%)}
+.cover-haut{position:absolute;top:13mm;left:0;right:0;text-align:center}
+.cover-haut .marque{font-family:'Cormorant Garamond',serif;font-size:13pt;letter-spacing:.42em;color:var(--or-bright);text-transform:uppercase}
+.cover-bas{position:absolute;left:17mm;right:17mm;bottom:22mm}
+.cover-bas h1{font-size:38pt}
+.cover-bas .lead{font-size:12.5pt;color:var(--silver)}
+.chiffres{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:8mm}
+.chiffres div{padding:4.5mm 0;text-align:center;border-left:1px solid var(--line)}
+.chiffres div:first-child{border-left:0}
+.chiffres b{display:block;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:27pt;color:var(--or-bright);line-height:1}
+.chiffres span{font-size:7pt;letter-spacing:.22em;text-transform:uppercase;color:var(--bone)}
+
+/* ── Étapes / cartes ── */
+.duo{display:grid;grid-template-columns:1fr 66mm;gap:10mm;margin-top:9mm;align-items:start}
+.photo{width:100%;border-radius:3mm;border:1px solid var(--line);object-fit:cover;display:block}
+.etapes{list-style:none;counter-reset:e}
+.etapes li{position:relative;padding:0 0 5.5mm 15mm;counter-increment:e}
+.etapes li::before{content:counter(e,decimal-leading-zero);position:absolute;left:0;top:-1mm;font-family:'Cormorant Garamond',serif;font-size:20pt;color:var(--or)}
+.etapes p,.carte p{font-size:9.5pt}
+.cartes{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:9mm}
+.carte{border:1px solid rgba(10,8,4,.12);border-radius:3mm;padding:5.5mm 6mm;background:#fbf9f4}
+.carte .ico{font-family:'Cormorant Garamond',serif;font-size:17pt;color:var(--or-deep);line-height:1;margin-bottom:2mm}
+.bande{margin-top:8mm;display:grid;grid-template-columns:repeat(3,1fr);gap:5mm}
+.bande div{border-top:2px solid var(--or-deep);padding-top:3mm;font-size:9pt}
+.bande b{display:block;color:var(--ivory-ink);font-weight:500;font-size:10pt;margin-bottom:1mm}
+
+/* ── Offres ── */
+.offres{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:9mm}
+.offre{border:1px solid var(--line);border-radius:3mm;padding:6mm 5.5mm;background:var(--surface);position:relative}
+.offre.vedette{border-color:var(--or);background:linear-gradient(180deg,#14120c,var(--surface))}
+.offre .tag{position:absolute;top:-3mm;left:50%;transform:translateX(-50%);background:var(--or);color:var(--ink);font-size:6.5pt;letter-spacing:.2em;text-transform:uppercase;padding:1mm 3mm;border-radius:5mm;font-weight:600;white-space:nowrap}
+.offre h3{font-size:17pt}
+.prix{font-family:'Cormorant Garamond',serif;font-size:34pt;color:var(--or-bright);line-height:1;margin:2mm 0 1mm}
+.prix small{font-size:13pt}
+.net{font-size:8.5pt;color:var(--or);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:2mm 0;margin:3mm 0}
+.offre ul{list-style:none;font-size:8.6pt}
+.offre li{padding:.9mm 0 .9mm 4mm;position:relative}
+.offre li::before{content:'';position:absolute;left:0;top:2.6mm;width:1.6mm;height:1px;background:var(--or)}
+.simu{margin-top:8mm;border:1px solid var(--line);border-radius:3mm;display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;background:var(--surface-2)}
+.simu>div{padding:5mm;border-left:1px solid var(--line)}
+.simu>div:first-child{border-left:0}
+.simu b{display:block;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:24pt;color:var(--or-bright);line-height:1.05}
+.simu span{font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--bone)}
+.note{font-size:7.5pt;color:#8e8878;margin-top:2.5mm}
+
+/* ── QR ── */
+.qr-bloc{display:grid;grid-template-columns:1fr 1fr;gap:9mm;margin-top:9mm;align-items:center}
+.qr-essai{display:flex;gap:6mm;align-items:center;margin-top:7mm;border:1px solid var(--line);border-radius:3mm;padding:5mm;background:var(--surface)}
+.qr-essai .qr{width:32mm;height:32mm;flex:none;background:var(--ivory);padding:2mm;border-radius:2mm}
+.qr-essai .qr svg{width:100%;height:100%;display:block}
+
+/* ── Partenariat ── */
+.frise{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:5mm 8mm;margin-top:9mm;counter-reset:f}
+.frise li{counter-increment:f;padding-left:12mm;position:relative}
+.frise li::before{content:counter(f);position:absolute;left:0;top:0;width:8mm;height:8mm;border:1px solid var(--or-deep);border-radius:50%;display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-size:13pt;color:var(--or-deep)}
+.frise b{display:block;color:var(--ivory-ink);font-weight:500;font-size:10pt}
+.frise p{font-size:9pt}
+.frise i{font-style:normal;font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:var(--or-deep)}
+.faq{margin-top:8mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 8mm}
+.faq b{color:var(--ivory-ink);font-weight:500;font-size:9.5pt;display:block}
+.faq p{font-size:8.8pt}
+
+/* ── Dos ── */
+.dos-img{position:absolute;left:0;right:0;top:0;height:150mm;width:100%;object-fit:cover;object-position:50% 25%}
+.dos-voile{position:absolute;left:0;right:0;top:0;height:152mm;background:linear-gradient(180deg,rgba(4,4,7,.35),rgba(4,4,7,.1) 50%,#040407)}
+.dos-txt{position:absolute;left:17mm;right:17mm;top:136mm;text-align:center}
+.offert{display:inline-block;margin-top:6mm;border:1px solid var(--or);border-radius:20mm;padding:3mm 8mm;color:var(--or-bright);font-size:10pt;letter-spacing:.06em}
+.contacts{display:grid;grid-template-columns:repeat(3,1fr);margin-top:10mm;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.contacts div{padding:5mm 3mm;border-left:1px solid var(--line)}
+.contacts div:first-child{border-left:0}
+.contacts span{display:block;font-size:7pt;letter-spacing:.24em;text-transform:uppercase;color:var(--or);margin-bottom:1.5mm}
+.contacts b{font-weight:400;color:var(--ivory);font-size:9pt;white-space:nowrap}
+.dos-logo{width:30mm;margin:9mm auto 0;display:block;opacity:.95}
+.mentions{font-size:7pt;color:#8e8878;margin-top:5mm}
+</style>
+</head>
+<body>
+
+<!-- 1 · COUVERTURE -->
+<section class="page">
+  <img class="cover-img" src="../assets/img/plaque-qr-1100.jpg" alt="">
+  <div class="cover-voile"></div>
+  <div class="cover-haut"><div class="marque">Melodia Funèbre</div><div class="eyebrow" style="margin-top:2mm;color:var(--bone)">Des hommages en musique</div></div>
+  <div class="cover-bas">
+    <div class="eyebrow">Pour les pompes funèbres</div>
+    <h1 style="margin-top:4mm">Une nouvelle expérience d’hommage<br><em>pour les familles que vous accompagnez.</em></h1>
+    <p class="lead">Une œuvre musicale composée pour leur défunt, à partir de ce qu’elles racontent de lui. Livrée en vingt-quatre heures, diffusée en cérémonie, prolongée par une page de souvenir et son QR code. Vous présentez, nous faisons tout le reste.</p>
+    <div class="chiffres">
+      <div><b>60 %</b><span>Marge agence</span></div>
+      <div><b>0 €</b><span>Investissement</span></div>
+      <div><b>24 h</b><span>Livraison</span></div>
+      <div><b>5 min</b><span>Brief famille</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · CE QUE VIT LA FAMILLE -->
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Ce que vit la famille</div>
+    <h2>Quatre étapes,<br><em>et rien à porter.</em></h2>
+    <p class="lead">Aux obsèques, la musique n’a presque jamais connu le défunt. Ici, la salle entend son prénom, son métier, ses manies : une chanson écrite pour lui, et pour personne d’autre.</p>
+    <div class="duo">
+      <ol class="etapes">
+        <li><h3>La famille raconte son histoire</h3><p>Un entretien de cinq minutes, au téléphone ou dans vos bureaux. Son prénom, trois traits de caractère, son métier, une habitude. Rien de plus.</p></li>
+        <li><h3>Melodia Funèbre crée l’hommage</h3><p>Paroles écrites pour elle seule, musique composée dans le style choisi. Livré en vingt-quatre heures, révisé jusqu’à ce que la famille s’y reconnaisse.</p></li>
+        <li><h3>Elle reçoit sa mélodie et sa page hommage</h3><p>Le fichier à garder, et une page en ligne avec le portrait, les dates, les paroles et le lecteur. À partager avec ceux qui n’ont pas pu venir.</p></li>
+        <li><h3>Le QR code permet de retrouver l’hommage</h3><p>Gravé sur une plaque que votre agence réalise. On le scanne sur le lieu de repos, et la musique se met à jouer, là, devant elle.</p></li>
+      </ol>
+      <img class="photo" src="../assets/img/campagne/chaque-vie-sa-melodie.webp" style="height:150mm;object-position:62% 50%" alt="">
+    </div>
+  </div>
+  <div class="folio"><span><b>Melodia Funèbre</b> · Des hommages en musique</span><span>02</span></div>
+</section>
+
+<!-- 3 · POURQUOI PROPOSER -->
+<section class="page clair">
+  <div class="pad">
+    <div class="eyebrow">L’intérêt pour votre agence</div>
+    <h2>Pourquoi proposer<br><em>Melodia Funèbre ?</em></h2>
+    <p class="lead">Trois agences se partagent souvent la même ville et le même catalogue. Celle qui fait entendre une chanson écrite pour le défunt devient celle qu’on recommande à la sortie.</p>
+    <div class="cartes">
+      <div class="carte"><div class="ico">♪</div><h3>Une expérience mémorable</h3><p>Transformez un hommage en souvenir musical durable. La famille repart avec une œuvre, pas avec un souvenir qui s’efface.</p></div>
+      <div class="carte"><div class="ico">◈</div><h3>Un service différenciant</h3><p>Proposez une expérience que les autres agences ne proposent pas. Nous limitons volontairement le nombre de partenaires par bassin de population.</p></div>
+      <div class="carte"><div class="ico">✧</div><h3>Simple pour vos équipes</h3><p>Aucune production musicale à gérer. Un brief de cinq minutes, ou un simple contact transmis, et nous nous occupons du reste.</p></div>
+      <div class="carte"><div class="ico">✎</div><h3>Une solution personnalisée</h3><p>Chaque hommage est créé autour de l’histoire du défunt : son métier, ses gestes, ses habitudes, ce que sa famille raconte de lui.</p></div>
+      <div class="carte"><div class="ico">◷</div><h3>Un souvenir qui reste</h3><p>La famille conserve la musique et retrouve l’hommage dans le temps. Un anniversaire, une Toussaint : l’œuvre est toujours là.</p></div>
+      <div class="carte"><div class="ico">▦</div><h3>Une expérience digitale</h3><p>Un espace partenaire pour saisir le brief en trois minutes, suivre l’avancement et faire écouter le catalogue en rendez-vous.</p></div>
+    </div>
+    <div class="bande">
+      <div><b>Aucun travail de production</b>Entretien, écriture, composition, mixage, relecture humaine, livraison : tout est de notre côté.</div>
+      <div><b>Aucun risque commercial</b>Si la famille refuse l’œuvre malgré nos reprises, elle n’est pas facturée — et votre agence n’avance rien.</div>
+      <div><b>Zéro droit SACEM</b>Œuvres originales, droits d’usage à vie : diffusion libre en cérémonie et en ligne.</div>
+    </div>
+  </div>
+  <div class="folio"><span><b>Melodia Funèbre</b> · Des hommages en musique</span><span>03</span></div>
+</section>
+
+<!-- 4 · OFFRES ET MARGE -->
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Offres et rémunération</div>
+    <h2>Trois offres,<br><em>60 % pour votre agence.</em></h2>
+    <p class="lead">Vous conservez 60 % du montant payé par la famille. Aucun investissement, aucun stock, aucun abonnement, aucun minimum. Facture récapitulative mensuelle.</p>
+    <div class="offres">
+      <div class="offre">
+        <h3>Essentiel</h3><div class="prix">149<small> €</small></div>
+        <div class="net">Votre marge : <b>89,40 €</b></div>
+        <ul><li>Œuvre originale de 2 à 3 min</li><li>Entretien de 5 minutes</li><li>Paroles biographiques uniques</li><li>Livraison sous 24 h</li><li>MP3 320 kbps, droits à vie</li></ul>
+      </div>
+      <div class="offre vedette"><span class="tag">Le plus choisi</span>
+        <h3>Prestige</h3><div class="prix">299<small> €</small></div>
+        <div class="net">Votre marge : <b>179,40 €</b></div>
+        <ul><li>Tout Essentiel</li><li>Deux versions au choix</li><li>Une révision offerte</li><li>Version instrumentale seule</li><li>Paroles imprimables, WAV sur demande</li></ul>
+      </div>
+      <div class="offre">
+        <h3>Mémorial</h3><div class="prix">499<small> €</small></div>
+        <div class="net">Votre marge : <b>299,40 €</b></div>
+        <ul><li>Tout Prestige</li><li>Mini-album de trois titres</li><li>Révisions illimitées</li><li>Livret souvenir imprimé</li><li>Urgence 6 h incluse, accompagnement du fondateur</li></ul>
+      </div>
+    </div>
+    <div class="simu">
+      <div><span>Exemple d’agence</span><b>20 obsèques</b><span>par mois · offre Prestige</span></div>
+      <div><span>Hommages</span><b>5</b><span>par mois</span></div>
+      <div><span>Marge nette</span><b>897 €</b><span>par mois</span></div>
+      <div><span>Marge nette</span><b>10 764 €</b><span>par an</span></div>
+    </div>
+    <img class="photo" src="../assets/img/campagne/duo-au-piano.webp" style="height:52mm;margin-top:7mm;object-position:50% 62%" alt="">
+    <p class="note">Estimation indicative : une famille sur quatre retient l’hommage lorsqu’il lui est présenté. Ne constitue pas un engagement contractuel. Simulez votre activité sur melodia-funebre.fr/professionnels. Prix payés par la famille, TVA non applicable (art. 293 B du CGI).</p>
+  </div>
+  <div class="folio"><span><b>Melodia Funèbre</b> · Des hommages en musique</span><span>04</span></div>
+</section>
+
+<!-- 5 · LE CODE MÉMORIEL -->
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Le code mémoriel</div>
+    <h2>L’hommage ne s’arrête pas<br><em>à la cérémonie.</em></h2>
+    <p class="lead">Un QR code permet à la famille de retrouver la musique, les souvenirs et la page hommage — des années plus tard.</p>
+    <div class="qr-bloc">
+      <ol class="etapes">
+        <li><h3>La plaque</h3><p>Gravée par votre marbrier, ou simplement posée. Le code tient dans quatre centimètres.</p></li>
+        <li><h3>Le QR code</h3><p>Scanné avec l’appareil photo du téléphone. Aucune application à installer.</p></li>
+        <li><h3>La page de souvenir</h3><p>Son nom, ses dates, les mots de la famille et jusqu’à cinq photos.</p></li>
+        <li><h3>Sa musique</h3><p>L’œuvre se lance. Celle qui a été écrite pour lui, et pour personne d’autre.</p></li>
+      </ol>
+      <img class="photo" src="../assets/img/campagne/plaque-et-telephone.webp" style="height:128mm;object-position:20% 66%" alt="">
+    </div>
+    <div class="qr-essai">
+      <div class="qr" id="qr"></div>
+      <div>
+        <div class="eyebrow">Essayez maintenant</div>
+        <h3 style="margin-top:2mm">Scannez ce code avec votre téléphone.</h3>
+        <p style="font-size:9.5pt">Vous arriverez sur une vraie page de souvenir, telle qu’une famille la publie. Aucune application, aucun compte : l’appareil photo suffit.<br><span class="or">melodia-funebre.fr/m/demo</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span><b>Melodia Funèbre</b> · Des hommages en musique</span><span>05</span></div>
+</section>
+
+<!-- 6 · LE PARTENARIAT -->
+<section class="page clair">
+  <div class="pad">
+    <div class="eyebrow">Le partenariat</div>
+    <h2>Vingt minutes<br><em>pour démarrer.</em></h2>
+    <p class="lead">Six étapes, et rien à signer avant la première œuvre. Le partenariat commence par un accord, pas par un contrat de distribution.</p>
+    <ol class="frise">
+      <li><b>Vous créez votre compte partenaire</b><p>Trois minutes, aucune pièce justificative à ce stade.</p><i>3 minutes</i></li>
+      <li><b>Vous recevez le kit de présentation</b><p>Une plaquette pour les familles, un argumentaire court et les hommages de démonstration.</p><i>Immédiat</i></li>
+      <li><b>Votre première œuvre est offerte</b><p>Sur la prochaine famille qui la demande : vous présentez un hommage réel, pas une promesse.</p><i>24 heures</i></li>
+      <li><b>Vous présentez, la famille décide</b><p>« Nous pouvons faire composer une chanson originale pour lui, livrée avant la cérémonie. » Puis vous faites écouter.</p><i>30 secondes</i></li>
+      <li><b>Vous saisissez le brief, ou vous nous passez le relais</b><p>Depuis votre espace, ou nous menons l’entretien en votre nom.</p><i>3 minutes</i></li>
+      <li><b>Vous encaissez votre marge</b><p>Vous conservez 60 %, nous facturons les 40 % restants. Sans minimum ni engagement de durée.</p><i>Mensuel</i></li>
+    </ol>
+    <div class="filet" style="background:linear-gradient(90deg,transparent,#6b5828,transparent)"></div>
+    <div class="faq">
+      <div><b>Qui parle à la famille ?</b><p>Vous restez son interlocuteur. Vous saisissez le brief, ou nous menons l’entretien de cinq minutes à votre place.</p></div>
+      <div><b>Et si la famille n’est pas satisfaite ?</b><p>Nous reprenons la composition à nos frais. Le risque commercial est intégralement de notre côté.</p></div>
+      <div><b>Faut-il avancer de l’argent ?</b><p>Non. Vous ne payez que sur les hommages effectivement commandés par vos familles.</p></div>
+      <div><b>Une exclusivité territoriale ?</b><p>Le nombre d’agences par bassin est limité. Demandez la disponibilité de votre secteur.</p></div>
+    </div>
+  </div>
+  <div class="folio"><span><b>Melodia Funèbre</b> · Des hommages en musique</span><span>06</span></div>
+</section>
+
+<!-- 7 · DOS -->
+<section class="page">
+  <img class="dos-img" src="../assets/img/campagne/certaines-melodies.jpg" alt="">
+  <div class="dos-voile"></div>
+  <div class="dos-txt">
+    <div class="eyebrow">Prochaine étape</div>
+    <h2 style="font-size:36pt">Parlons de<br><em>votre agence.</em></h2>
+    <p class="lead" style="margin:5mm auto 0;max-width:140mm">Demandez une démonstration : vous écoutez de vraies œuvres, vous voyez l’espace partenaire, et vous décidez ensuite.</p>
+    <div class="offert">Votre première composition est offerte</div>
+    <div class="contacts">
+      <div><span>Écrire</span><b>contact@melodia-funebre.fr</b></div>
+      <div><span>Découvrir</span><b>melodia-funebre.fr/professionnels</b></div>
+      <div><span>Écouter</span><b>melodia-funebre.fr/demos</b></div>
+    </div>
+    <img class="dos-logo" src="../assets/img/logo-melodia-600.webp" alt="Melodia Funèbre">
+    <p class="mentions">Melodia Funèbre · Maison française de composition d’hommages musicaux · Des voix pour ceux qui restent</p>
+  </div>
+</section>
+
+<script src="../assets/js/qr.js"></script>
+<script>
+  document.getElementById('qr').innerHTML = window.MelodiaQR.svg('https://melodia-funebre.fr/m/demo', { niveau: 'M', encre: '#0b0b11', fond: '#f4f1ea', marge: 1, titre: 'Page de souvenir de démonstration' });
+</script>
+</body>
+</html>
