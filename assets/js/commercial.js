@@ -173,6 +173,7 @@
     profil: ['Mon poste', 'Mon <em>profil</em>', vueEsp('profil'), brEsp('profil')],
     julie: ['La maison', 'Julie <em>Serve</em>', vueEsp('julie'), brEsp('julie')],
     mails: ['Courriers', 'Mails <em>tout faits</em>', vueEsp('mails'), brEsp('mails')],
+    pret: ['Courriers', 'Mail <em>prêt à envoyer</em>', vueEsp('pret'), brEsp('pret')],
     posts: ['Réseaux', 'Publications <em>prêtes</em>', vueEsp('posts'), brEsp('posts')],
     kit: ['Ressources', 'Kit <em>média</em>', vueEsp('kit'), function () {}],
     ecoute: ['Le fonds', 'Écouter les <em>exemples</em>', vueEsp('ecoute'), brEsp('ecoute')],
@@ -204,6 +205,30 @@
     };
   }
 
+  function vueHash() {
+    return (location.hash || '').replace(/^#/, '').split('?')[0];
+  }
+
+  function ouvrirPret(siret, modele) {
+    var p = siret ? PROSPECTS.filter(function (x) { return x.siret === siret; })[0] : null;
+    if (window.MelodiaEspace && window.MelodiaEspace.prefillPret) {
+      window.MelodiaEspace.prefillPret({
+        siret: siret || '',
+        id: modele || 'seq-1',
+        vars: p ? { dirigeant: p.dirigeant || '', agence: p.nom || '', ville: p.ville || '' } : {},
+        dest: (p && p.email) || ''
+      });
+    }
+    var q = '';
+    if (siret) q = '?siret=' + encodeURIComponent(siret);
+    if (modele) q += (q ? '&' : '?') + 'modele=' + encodeURIComponent(modele);
+    if (history.replaceState) {
+      try { history.replaceState(null, '', '#pret' + q); } catch (e) {}
+    }
+    go('pret');
+  }
+  window.ouvrirPret = ouvrirPret;
+
   function go(v) {
     vueCourante = v;
     var def = VUES[v] || VUES.accueil;
@@ -221,7 +246,7 @@
   }
   window.go = go;
   window.addEventListener('hashchange', function () {
-    var h = (location.hash || '').replace(/^#/, '');
+    var h = vueHash();
     if (VUES[h] && h !== vueCourante) go(h);
   });
 
@@ -358,6 +383,7 @@
         '</div>' +
         '<div style="display:flex;gap:.5rem;align-items:center;">' +
           '<span class="pill" style="color:' + s.color + ';border-color:' + s.color + '55;">' + s.label + '</span>' +
+          (p.email && !p.oppose ? '<button class="btn btn-outline btn-sm" type="button" data-pret-mail="' + esc(p.siret) + '">Mail prêt</button>' : '') +
           '<button class="own-mini" data-aller-fiche="' + esc(p.siret) + '" title="Ouvrir la fiche">→</button>' +
         '</div>' +
       '</div>' +
@@ -378,6 +404,11 @@
         filtreStatut = '';
         ouvrirApres = b.dataset.allerFiche;
         go('prospects');
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-pret-mail]'), function (b) {
+      b.addEventListener('click', function () {
+        ouvrirPret(b.getAttribute('data-pret-mail'), b.getAttribute('data-pret-modele') || undefined);
       });
     });
   }
@@ -852,15 +883,22 @@
           :
           '<div style="border-top:1px solid var(--line-soft);padding-top:1rem;">' +
             '<div class="field-label" style="margin-bottom:.6rem;">Écrire à cette agence</div>' +
-            '<div style="display:flex;gap:.5rem;flex-wrap:wrap;">' +
-              (function () {
-                var jeu = modelesDe(p);
-                var premier = Object.keys(jeu)[0];
-                return Object.keys(jeu).map(function (m) {
-                  return '<button class="btn btn-' + (m === premier ? 'gold' : 'outline') + ' btn-sm" data-mail="' + m + '" data-siret="' + esc(p.siret) + '">' +
-                    esc(jeu[m].nom) + '</button>';
-                }).join('');
-              })() +
+            (function () {
+              var seq = window.MelodiaMails && window.MelodiaMails.prochaineSequence(p);
+              var seqHtml = seq ? '<p style="font-size:.88rem;color:var(--bone);margin:0 0 .7rem;">Prochain : Séquence ' + seq.num +
+                ' — le ' + joli(seq.le) + ' · <button type="button" class="btn btn-ghost btn-sm" data-pret-mail="' + esc(p.siret) + '" data-pret-modele="' + esc(seq.id) + '">Préparer</button></p>' : '';
+              return seqHtml +
+                '<div style="display:flex;gap:.5rem;flex-wrap:wrap;">' +
+                '<button class="btn btn-gold btn-sm" type="button" data-pret-mail="' + esc(p.siret) + '">Mail prêt à envoyer</button>';
+            })() +
+            (function () {
+              var jeu = modelesDe(p);
+              var premier = Object.keys(jeu)[0];
+              return Object.keys(jeu).map(function (m) {
+                return '<button class="btn btn-' + (m === premier ? 'outline' : 'ghost') + ' btn-sm" data-mail="' + m + '" data-siret="' + esc(p.siret) + '">' +
+                  esc(jeu[m].nom) + '</button>';
+              }).join('');
+            })() +
             '</div>' +
           '</div>') +
 
@@ -1760,7 +1798,7 @@
       });
     }
     await charger();
-    var demarrage = (location.hash || '').replace(/^#/, '');
+    var demarrage = vueHash();
     go(VUES[demarrage] ? demarrage : 'accueil');
     /* Le compteur de messages non lus doit vivre dès l'ouverture :
        sans cela, on ne sait qu'on a du courrier qu'en cliquant dessus. */

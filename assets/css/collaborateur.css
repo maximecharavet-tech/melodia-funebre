@@ -135,8 +135,39 @@
 }
 
 /* ─── Mails ─── */
-.col-mails { display: grid; gap: 1rem; }
-.col-filtres { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.7rem; }
+  .col-mails { display: grid; gap: 1rem; }
+  .col-pret-entete { margin-bottom: 1rem; }
+  .col-pret-objectif { font-family: var(--ff-m); font-size: 0.88rem; color: var(--bone); margin: 0 0 0.5rem; }
+  .col-pret-obj-l { margin-left: 0.5rem; font-weight: 400; }
+  .col-pret-obj-i { width: 3.2rem; display: inline-block; padding: 0.2rem 0.4rem; margin-left: 0.35rem; }
+  .col-pret-layout { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-bottom: 0.8rem; }
+  .col-opt { font-size: 0.82rem; color: var(--dust); font-weight: 400; }
+  .col-pret-hist { margin-top: 1.2rem; border-top: 1px solid var(--line-soft); padding-top: 0.8rem; }
+  .col-pret-hist ul { list-style: none; margin: 0.4rem 0 0; padding: 0; display: grid; gap: 0.35rem; }
+
+  .col-kanban {
+    display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 1fr);
+    gap: 0.6rem; overflow-x: auto; padding-bottom: 0.5rem; margin-top: 0.8rem;
+  }
+  .col-kanban-col { min-width: 0; border: 1px solid var(--line-soft); background: var(--ink-2); }
+  .col-kanban-t {
+    margin: 0; padding: 0.55rem 0.65rem; font-family: var(--ff-m); font-size: 0.78rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper);
+    display: flex; justify-content: space-between; gap: 0.5rem;
+  }
+  .col-kanban-zone { min-height: 120px; padding: 0.45rem; display: grid; gap: 0.45rem; }
+  .col-kanban-carte {
+    padding: 0.65rem 0.7rem; background: var(--surface); border: 1px solid var(--line-soft);
+    cursor: grab; font-size: 0.88rem; color: var(--paper);
+  }
+  .col-kanban-carte strong { display: block; font-weight: 400; font-family: var(--ff-d); font-size: 1.05rem; }
+  .col-kanban-carte span { display: block; color: var(--bone); font-size: 0.82rem; }
+  .col-kanban-carte em { display: block; font-style: normal; font-size: 0.78rem; color: var(--or-patina); margin-top: 0.25rem; }
+  .col-kanban-carte em.est-retard, .col-kanban-carte.est-retard { border-color: rgba(248, 113, 113, 0.45); }
+  .col-kanban-carte.est-retard em.est-retard { color: var(--red); }
+  .col-kanban-sel { margin-top: 0.45rem; font-size: 0.78rem; padding: 0.25rem; }
+
+  .col-filtres { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.7rem; }
 .col-filtre, .col-lien-btn {
   min-height: 44px; padding: 0.4rem 0.75rem; cursor: pointer;
   background: transparent; color: var(--bone); border: 1px solid var(--line);
@@ -237,6 +268,7 @@
   .col-lien-ligne .field-input { flex: 1; min-width: 16rem; }
   .col-badges { grid-template-columns: 1fr 1fr; }
   .col-mails { grid-template-columns: minmax(240px, 320px) 1fr; align-items: start; }
+  .col-pret.col-mails { grid-template-columns: minmax(220px, 280px) 1fr; }
   .col-modeles { max-height: 70vh; overflow: auto; }
   .col-pipes { grid-template-columns: repeat(4, 1fr); }
   .col-sim { grid-template-columns: 1fr 1fr; }
