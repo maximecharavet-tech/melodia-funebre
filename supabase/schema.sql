@@ -1,8 +1,20 @@
 -- ═══════════════════════════════════════════════════════════════
 -- MELODIA FUNÈBRE — schéma Supabase
 --
--- À coller tel quel dans Supabase → SQL Editor → New query → Run.
--- Le script est idempotent : le relancer ne casse rien.
+-- NE PAS coller ce fichier sur le projet live partagé
+-- (awvgmkoozerfggdvvubi). D'autres produits y vivent dans public,
+-- notamment toutes les tables quant_*. Les déplacer de schéma
+-- casserait ces produits : ce dépôt ne le fait pas, et ne touche
+-- pas à leurs lignes. L'isolation resterait une opération à part,
+-- décidée avec chaque produit.
+--
+-- Le live n'est plus ce fichier. Les fonctions d'accès sont dans le
+-- schéma « app » (est_maison, est_master, mon_role, mon_agence),
+-- pas dans public. Pour rapprocher un projet déjà en service, appliquer
+-- supabase/migrations/ dans l'ordre des noms, et rien d'autre.
+--
+-- Ce script reste la fondation d'un projet Melodia seul. Il est
+-- idempotent : le relancer ne casse pas les tables qu'il crée.
 --
 -- ⚠ CE FICHIER NE COUVRE QUE LA FONDATION (5 septembre 2026).
 -- Tout ce qui a été ajouté ensuite vit dans les migrations du projet,
@@ -58,9 +70,12 @@ create or replace function public.mon_role() returns text
   select role from public.roles where email = auth.jwt() ->> 'email';
 $$;
 
+-- Sur le live, l'équivalent est app.est_maison() et ne comprend
+-- plus le rôle commercial (migration 20261102_01). Ici, pour un
+-- projet neuf, la fonction publique suit la même règle.
 create or replace function public.est_maison() returns boolean
   language sql stable security definer set search_path = public as $$
-  select coalesce(public.mon_role() in ('master', 'commercial'), false);
+  select coalesce(public.mon_role() in ('master', 'atelier'), false);
 $$;
 
 create or replace function public.est_master() returns boolean
@@ -109,7 +124,18 @@ alter table public.orders enable row level security;
 -- le navigateur.
 drop policy if exists "toute famille peut commander" on public.orders;
 create policy "toute famille peut commander" on public.orders
-  for insert to anon, authenticated with check (true);
+  for insert to anon, authenticated
+  with check (
+    public.est_maison()
+    or (
+      status = 'recue'
+      and paid = false
+      and audio_url = ''
+      and audio_title = ''
+      and music_task_id = ''
+      and coalesce(paypal_id, '') = ''
+    )
+  );
 
 -- On ne lit que ses propres commandes — sauf la maison.
 drop policy if exists "chacun lit ses commandes" on public.orders;

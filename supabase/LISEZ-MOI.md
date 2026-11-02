@@ -175,12 +175,15 @@ croire ce que le jeton raconte.
 
 ### Ce qui reste ouvert, et pourquoi
 
-L'insertion dans `orders` est autorisée sans compte : une famille
-commande sans s'inscrire, c'est le principe même. C'est la même
-exposition que n'importe quel formulaire public. Si des commandes
-indésirables apparaissaient, il faudrait faire passer l'écriture par
-une fonction serverless plutôt que par le navigateur — dites-le-moi
-le cas échéant.
+Une famille commande sans compte. Depuis l'audit, cette insertion
+n'est plus un `with check (true)` : le statut doit être `recue`,
+la commande ne peut pas se déclarer payée, et les champs d'œuvre
+restent vides. Le détail est dans
+`supabase/migrations/20261102_02_s2_orders_insert.sql`, à appliquer
+avec les autres migrations, dans l'ordre des noms. Ne pas rejouer
+l'ancien script de fondation sur le projet live : d'autres produits
+partagent la base (tables `quant_*` notamment) et ne doivent pas
+être déplacés.
 
 ## Revenir en arrière
 
