@@ -85,7 +85,7 @@ const MODELES = {
     texte: [
       salut(d) + 'L\'œuvre est achevée. Vous pouvez l\'écouter, la télécharger, et la remettre à la personne qui s\'occupe de la sonorisation.',
       'Le fichier est au format MP3, lisible sur n\'importe quel téléphone, ordinateur ou sono de salle. Nous vous conseillons de le télécharger dès à présent plutôt que de compter sur une connexion le jour de la cérémonie.',
-      'Si quelque chose ne va pas — un prénom mal prononcé, un couplet à reprendre — répondez à ce courriel. Une révision est comprise dans votre offre.',
+      'Si quelque chose ne va pas — un prénom mal prononcé, un couplet à reprendre — répondez à ce courriel. ' + phraseRevision(d.offre),
       'Nous pensons à vous pour ce jour.'
     ].join('\n\n'),
     fiche: fiche(d),
@@ -125,6 +125,16 @@ function fiche(d) {
 /* Un même champ ne doit pas pouvoir contenir un roman : ce qui arrive
    ici vient du navigateur d'un inconnu. */
 function court(v, n) { return String(v == null ? '' : v).replace(/[\r\n]+/g, ' ').trim().slice(0, n); }
+
+/* Ce que l'offre comprend vraiment en révisions (voir offres.html) :
+   Essentiel aucune (option 49 €), Prestige une, Mémorial illimitées. */
+function phraseRevision(offre) {
+  const o = String(offre || '');
+  if (/m[ée]morial/i.test(o)) return 'Les révisions sont illimitées avec votre offre Mémorial.';
+  if (/prestige/i.test(o)) return 'Une révision est comprise dans votre offre Prestige.';
+  if (/essentiel/i.test(o)) return 'Sur l\'offre Essentiel, une révision est possible pour 49 €.';
+  return 'Une révision est comprise en Prestige, et les révisions sont illimitées en Mémorial.';
+}
 
 export default async function handler(req, res) {
   /* Pas d'astérisque ici : le point d'entrée n'est ouvert qu'aux pages
