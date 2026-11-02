@@ -142,7 +142,7 @@
         '{phrase_musique}',
         'Vous pouvez l’écouter ici :',
         '{lien_musique}',
-        'Dites-moi simplement ce qui vous touche, et ce qui ne va pas. On reprend le texte autant qu’il le faut avant la cérémonie. Rien n’est diffusé sans votre accord.',
+        'Dites-moi simplement ce qui vous touche, et ce qui ne va pas. Une révision est comprise avec l’offre Prestige, et les révisions sont illimitées avec l’offre Mémorial. Rien n’est diffusé sans votre accord.',
         'La famille {famille} garde l’enregistrement, quoi qu’il arrive ensuite.',
         '{collaborateur}\nMelodia Funèbre'
       ].join('\n\n')
@@ -379,7 +379,7 @@
       texte: [
         'Bonjour{dirigeant},',
         'Merci pour cet échange, pour {agence} à {ville}.',
-        '· Une œuvre originale, à partir du récit de la famille\n· Livrée en vingt-quatre heures, révisée jusqu’à ce que la famille s’y reconnaisse\n· Soixante pour cent reversés à l’agence, aucune démarche SACEM',
+        '· Une œuvre originale, à partir du récit de la famille\n· Livrée en vingt-quatre heures, avec une révision incluse en Prestige et des révisions illimitées en Mémorial\n· Soixante pour cent reversés à l’agence, aucune démarche SACEM',
         'Je vous laisse le temps d’y réfléchir ; je reviendrai vers vous dans une semaine, sauf si vous préférez que je ne le fasse pas.',
         'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
       ].join('\n\n')

@@ -68,7 +68,7 @@ function trustStrip(light) {
     [ICON.clock, 'Livré en 24 heures'],
     [ICON.shield, 'Zéro droit SACEM'],
     [ICON.lock, 'Paiement sécurisé'],
-    [ICON.heart, 'Révision jusqu\'à satisfaction']
+    [ICON.heart, 'Révision incluse dès Prestige']
   ];
   return `<div class="trust-strip">
 ${items.map(([ic, l]) => `        <div class="trust-item">${ic}<span>${l}</span></div>`).join('\n')}
