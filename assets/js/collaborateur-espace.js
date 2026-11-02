@@ -13,7 +13,7 @@
   var JULIE = 'julie@melodia-funebre.fr';
   var lireProspects = function () { return []; };
   var aller = function () {};
-  var pretEtat = { id: 'seq-1', layout: 'standard', siret: '', vars: {}, pisteId: '', creerFiche: false, dest: '' };
+  var pretEtat = { id: 'seq-1', layout: '', siret: '', vars: {}, pisteId: '', creerFiche: false, dest: '' };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -884,7 +884,7 @@
       return '<option value="' + esc(p.siret) + '"' + (p.siret === pretEtat.siret ? ' selected' : '') + '>' +
         esc(p.nom) + (p.ville ? ' · ' + esc(p.ville) : '') + '</option>';
     }).join('');
-    var premiumOn = pretEtat.layout === 'premium' || (m && m.layout === 'premium');
+    var premiumOn = pretEtat.layout ? pretEtat.layout === 'premium' : !!(m && m.layout === 'premium');
     return '<p class="col-banniere-etat">Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail. Les images utilisent les adresses du site.</p>' +
       '<div class="col-pret-entete">' +
         '<p class="col-pret-objectif"><span id="pret-compteur">' + fait + ' / ' + obj + '</span> mails aujourd’hui · ' +
@@ -922,7 +922,7 @@
               '<div class="field"><label class="field-label" for="pret-ville">Ville <span class="col-opt">(facultatif)</span></label>' +
                 '<input class="field-input" id="pret-ville" value="' + esc((pretEtat.vars && pretEtat.vars.ville) || '') + '"></div>' +
             '</div>' +
-            (pretEtat.siret ? '' : '<label class="col-case"><input type="checkbox" id="pret-creer"' + (pretEtat.creerFiche ? ' checked' : '') + '> Créer la fiche au enregistrement</label>') +
+            (pretEtat.siret ? '' : '<label class="col-case"><input type="checkbox" id="pret-creer"' + (pretEtat.creerFiche ? ' checked' : '') + '> Créer la fiche à l’enregistrement</label>') +
             '<div class="field"><label class="field-label" for="pret-piste">Exemple musical</label>' +
               '<select class="field-select" id="pret-piste"><option value="">Chargement…</option></select></div>' +
           '</div>' +
@@ -956,7 +956,7 @@
     if (!M || !m) return null;
     var select = racine.querySelector('#pret-piste');
     var piste = catalogue && select ? (catalogue.filter(function (p) { return p.id === select.value; })[0] || null) : null;
-    var layout = (pretEtat.layout === 'premium' || m.layout === 'premium') ? 'premium' : 'standard';
+    var layout = (pretEtat.layout ? pretEtat.layout === 'premium' : m.layout === 'premium') ? 'premium' : 'standard';
     var u = utilisateur();
     return M.composer({
       modele: m,
