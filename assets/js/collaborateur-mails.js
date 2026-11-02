@@ -18,7 +18,8 @@
   var BANNIERE = '/assets/img/courriel/banniere.jpg';
   var PARRAIN = 'julie-serve';
   /* Trouvés dans le pied du site. TikTok et le LinkedIn de Julie
-     n'y figurent pas : les emplacements restent nommés. */
+     n’y figurent pas : les emplacements restent nommés, et ne sont
+     pas montrés dans le courriel tant qu’ils ne sont pas remplis. */
   var RESEAUX = [
     { nom: 'Facebook', url: 'https://www.facebook.com/share/1GUX4Ht8M8/' },
     { nom: 'Instagram', url: 'https://www.instagram.com/melodia_funebre' },
@@ -590,10 +591,12 @@
   }
 
   function reseauxHtml() {
-    var cellules = RESEAUX.map(function (r) {
-      var contenu = /^\{\{/.test(r.url)
-        ? esc(r.nom) + ' : ' + esc(r.url)
-        : '<a href="' + esc(r.url) + '" style="color:#97803c;text-decoration:none;">' + esc(r.nom) + '</a>';
+    /* Un emplacement encore nommé ({{…}}) ne part pas chez le
+       prospect : le réseau apparaîtra quand son lien sera renseigné. */
+    var cellules = RESEAUX.filter(function (r) {
+      return r.url && !/^\{\{/.test(r.url);
+    }).map(function (r) {
+      var contenu = '<a href="' + esc(r.url) + '" style="color:#97803c;text-decoration:none;">' + esc(r.nom) + '</a>';
       return '<td style="padding:0 14px 8px 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.4;color:#5c574c;">' + contenu + '</td>';
     }).join('');
     return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 8px;"><tr>' + cellules + '</tr></table>';
