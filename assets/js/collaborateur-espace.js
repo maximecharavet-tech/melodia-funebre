@@ -13,6 +13,7 @@
   var JULIE = 'julie@melodia-funebre.fr';
   var lireProspects = function () { return []; };
   var aller = function () {};
+  var pretEtat = { id: 'seq-1', layout: 'standard', siret: '', vars: {}, pisteId: '', creerFiche: false, dest: '' };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -110,6 +111,7 @@
     {
       id: 'emails', nom: 'Emails',
       cartes: [
+        { v: 'pret', t: 'Mail prêt à envoyer', d: 'Composer, prévisualiser, copier ou ouvrir dans Gmail.' },
         { v: 'mails', t: 'Mails tout faits', d: 'Familles, pompes funèbres, fleuristes. Images et musiques.' },
         { v: 'modeles', t: 'Modèles du pipeline', d: 'Ceux qui font avancer le statut d’une fiche.' },
         { v: 'boite', t: 'Ma boîte', d: 'L’adresse professionnelle, sans service d’envoi externe.' }
@@ -791,22 +793,427 @@
     });
   }
 
+  /* ─── Mail prêt à envoyer ─── */
+  function paramsHash() {
+    var h = (location.hash || '').replace(/^#/, '');
+    var morceaux = h.split('?');
+    var q = {};
+    try {
+      new URLSearchParams(morceaux[1] || '').forEach(function (v, k) { q[k] = v; });
+    } catch (e) {}
+    return { vue: morceaux[0], siret: q.siret || '', modele: q.modele || q.template || '' };
+  }
+
+  function aujourdhuiIso() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function modelePretCourant() {
+    var M = window.MelodiaMails;
+    if (!M) return null;
+    var liste = M.modelesPret();
+    for (var i = 0; i < liste.length; i++) if (liste[i].id === pretEtat.id) return liste[i];
+    return liste[0] || null;
+  }
+
+  function objectifMails(email) {
+    var n = lire(email, 'objectif_mails', 10);
+    return typeof n === 'number' && n > 0 ? n : 10;
+  }
+
+  function compteurMailsJour(email) {
+    var cle = 'mails_jour_' + aujourdhuiIso();
+    return lire(email, cle, 0) || 0;
+  }
+
+  function noterMailPrepare(email, entree) {
+    var hist = lire(email, 'historique_mails', []);
+    if (!Array.isArray(hist)) hist = [];
+    hist.unshift(entree);
+    ecrire(email, 'historique_mails', hist.slice(0, 30));
+    var cle = 'mails_jour_' + aujourdhuiIso();
+    ecrire(email, cle, compteurMailsJour(email) + 1);
+  }
+
+  function joursPlus(n) {
+    var d = new Date();
+    d.setDate(d.getDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function ficheParSiret(siret) {
+    if (!siret) return null;
+    var tous = lireProspects() || [];
+    for (var i = 0; i < tous.length; i++) if (tous[i].siret === siret) return tous[i];
+    return null;
+  }
+
+  function appliquerPrefillPret() {
+    var p = paramsHash();
+    if (p.modele) pretEtat.id = p.modele;
+    if (p.siret) {
+      pretEtat.siret = p.siret;
+      var f = ficheParSiret(p.siret);
+      if (f) {
+        pretEtat.vars = {
+          dirigeant: f.dirigeant || '',
+          agence: f.nom || '',
+          ville: f.ville || ''
+        };
+        pretEtat.dest = f.email || '';
+      }
+    }
+  }
+
+  function vuePret() {
+    appliquerPrefillPret();
+    var M = window.MelodiaMails;
+    if (!M) return '<p class="form-msg err" style="display:block;">La bibliothèque de mails n’est pas chargée.</p>';
+    var u = utilisateur();
+    var liste = M.modelesPret();
+    var m = modelePretCourant() || liste[0];
+    if (m && !pretEtat.id) pretEtat.id = m.id;
+    var fiche = ficheParSiret(pretEtat.siret);
+    var seq = fiche && M.prochaineSequence ? M.prochaineSequence(fiche) : null;
+    var obj = objectifMails(u.email);
+    var fait = compteurMailsJour(u.email);
+    var hist = lire(u.email, 'historique_mails', []);
+    if (!Array.isArray(hist)) hist = [];
+    var prospects = (lireProspects() || []).filter(function (p) { return p.email; });
+    var optionsProspects = prospects.map(function (p) {
+      return '<option value="' + esc(p.siret) + '"' + (p.siret === pretEtat.siret ? ' selected' : '') + '>' +
+        esc(p.nom) + (p.ville ? ' · ' + esc(p.ville) : '') + '</option>';
+    }).join('');
+    var premiumOn = pretEtat.layout === 'premium' || (m && m.layout === 'premium');
+    return '<p class="col-banniere-etat">Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail. Les images utilisent les adresses du site.</p>' +
+      '<div class="col-pret-entete">' +
+        '<p class="col-pret-objectif"><span id="pret-compteur">' + fait + ' / ' + obj + '</span> mails aujourd’hui · ' +
+        '<label class="col-pret-obj-l">Objectif <input class="field-input col-pret-obj-i" id="pret-objectif" type="number" min="1" max="99" value="' + obj + '"></label></p>' +
+        (seq ? '<p class="col-aide">Prochain : Séquence ' + seq.num + ' — le ' + esc(seq.le.split('-').reverse().join('/')) +
+          ' <button type="button" class="btn btn-outline btn-sm" id="pret-seq">Ouvrir la séquence</button></p>' : '') +
+        (fiche ? '<p class="col-aide">Fiche liée : <strong>' + esc(fiche.nom) + '</strong> · <a href="#prospects" class="col-lien-btn" data-aller-fiche="' + esc(fiche.siret) + '">Voir la fiche</a></p>' : '') +
+      '</div>' +
+      '<div class="col-mails col-pret">' +
+        '<div class="col-mails-liste">' +
+          '<ul class="col-modeles">' + liste.map(function (x) {
+            return '<li><button type="button" class="col-modele' + (x.id === m.id ? ' est-on' : '') + '" data-pret-modele="' + esc(x.id) + '">' +
+              '<strong>' + esc(x.nom) + '</strong><span>' + esc(x.quand) + '</span></button></li>';
+          }).join('') + '</ul>' +
+        '</div>' +
+        '<div class="col-mails-edit">' +
+          '<div class="col-pret-layout">' +
+            '<span class="field-label">Mise en page</span>' +
+            '<button type="button" class="col-filtre' + (!premiumOn ? ' est-on' : '') + '" data-pret-layout="standard">Standard</button>' +
+            '<button type="button" class="col-filtre' + (premiumOn ? ' est-on' : '') + '" data-pret-layout="premium">Premium</button>' +
+          '</div>' +
+          '<div class="col-champs">' +
+            '<div class="field"><label class="field-label" for="pret-prospect">Rattacher une fiche du portefeuille</label>' +
+              '<select class="field-select" id="pret-prospect"><option value="">— Saisie libre —</option>' + optionsProspects + '</select></div>' +
+            '<div class="field"><label class="field-label" for="pret-dirigeant">Nom du contact</label>' +
+              '<input class="field-input" id="pret-dirigeant" list="pret-noms" value="' + esc((pretEtat.vars && pretEtat.vars.dirigeant) || '') + '" placeholder="Prénom ou nom"></div>' +
+            '<datalist id="pret-noms">' + prospects.map(function (p) {
+              return '<option value="' + esc(p.dirigeant || p.nom) + '">' + esc(p.nom) + '</option>';
+            }).join('') + '</datalist>' +
+            '<div class="field"><label class="field-label" for="pret-email">Email</label>' +
+              '<input class="field-input" id="pret-email" type="email" value="' + esc(pretEtat.dest || (fiche && fiche.email) || '') + '" placeholder="contact@agence.fr"></div>' +
+            '<div class="field-row">' +
+              '<div class="field"><label class="field-label" for="pret-agence">Agence <span class="col-opt">(facultatif)</span></label>' +
+                '<input class="field-input" id="pret-agence" value="' + esc((pretEtat.vars && pretEtat.vars.agence) || '') + '"></div>' +
+              '<div class="field"><label class="field-label" for="pret-ville">Ville <span class="col-opt">(facultatif)</span></label>' +
+                '<input class="field-input" id="pret-ville" value="' + esc((pretEtat.vars && pretEtat.vars.ville) || '') + '"></div>' +
+            '</div>' +
+            (pretEtat.siret ? '' : '<label class="col-case"><input type="checkbox" id="pret-creer"' + (pretEtat.creerFiche ? ' checked' : '') + '> Créer la fiche au enregistrement</label>') +
+            '<div class="field"><label class="field-label" for="pret-piste">Exemple musical</label>' +
+              '<select class="field-select" id="pret-piste"><option value="">Chargement…</option></select></div>' +
+          '</div>' +
+          '<div class="col-actions">' +
+            '<button type="button" class="btn btn-gold btn-sm" id="pret-copier">Copier le mail</button>' +
+            '<button type="button" class="btn btn-outline btn-sm" id="pret-objet">Copier l’objet</button>' +
+            '<button type="button" class="btn btn-outline btn-sm" id="pret-gmail">Ouvrir dans Gmail</button>' +
+            '<a class="btn btn-ghost btn-sm" id="pret-mailto" href="#">mailto</a>' +
+          '</div>' +
+          '<p class="col-aide" id="pret-etat" role="status"></p>' +
+          '<iframe class="col-apercu" id="pret-apercu" title="Aperçu du courriel" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
+          (hist.length ? '<div class="col-pret-hist"><div class="field-label">Derniers mails préparés</div><ul>' +
+            hist.slice(0, 8).map(function (h, i) {
+              return '<li><button type="button" class="col-lien-btn" data-pret-rouvrir="' + i + '">' + esc(h.quand + ' — ' + h.modele) + '</button></li>';
+            }).join('') + '</ul></div>' : '') +
+        '</div>' +
+      '</div>';
+  }
+
+  function varsPret(racine) {
+    return {
+      dirigeant: ((racine.querySelector('#pret-dirigeant') || {}).value || '').trim(),
+      agence: ((racine.querySelector('#pret-agence') || {}).value || '').trim(),
+      ville: ((racine.querySelector('#pret-ville') || {}).value || '').trim()
+    };
+  }
+
+  function renduPret(racine, catalogue, absolu) {
+    var M = window.MelodiaMails;
+    var m = modelePretCourant();
+    if (!M || !m) return null;
+    var select = racine.querySelector('#pret-piste');
+    var piste = catalogue && select ? (catalogue.filter(function (p) { return p.id === select.value; })[0] || null) : null;
+    var layout = (pretEtat.layout === 'premium' || m.layout === 'premium') ? 'premium' : 'standard';
+    var u = utilisateur();
+    return M.composer({
+      modele: m,
+      vars: varsPret(racine),
+      piste: piste,
+      exemple: true,
+      signature: m.signatureFixe || signatureDe(u.email, u),
+      absolu: !!absolu,
+      layout: layout
+    });
+  }
+
+  function majApresPreparation(racine, rendu) {
+    var m = modelePretCourant();
+    if (!m || !rendu) return;
+    var email = ((racine.querySelector('#pret-email') || {}).value || '').trim();
+    var u = utilisateur();
+    noterMailPrepare(u.email, {
+      quand: new Date().toLocaleString('fr-FR'),
+      modele: m.nom,
+      id: m.id,
+      siret: pretEtat.siret,
+      vars: varsPret(racine),
+      layout: rendu.layout,
+      dest: email
+    });
+    var cpt = racine.querySelector('#pret-compteur');
+    if (cpt) cpt.textContent = compteurMailsJour(u.email) + ' / ' + objectifMails(u.email);
+    if (!window.MelodiaProspects || !window.MelodiaProspects.enregistrer) return;
+    var prom = Promise.resolve();
+    if (!pretEtat.siret && racine.querySelector('#pret-creer') && racine.querySelector('#pret-creer').checked) {
+      var v = varsPret(racine);
+      var cle = 'imp-' + String(v.agence || email || 'prospect').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
+      prom = window.MelodiaProspects.enregistrer({
+        siret: cle,
+        nom: v.agence || 'Prospect',
+        ville: v.ville,
+        dirigeant: v.dirigeant,
+        email: email,
+        statut: 'nouveau',
+        journal: [{ le: new Date().toISOString(), quoi: 'Fiche créée', detail: 'Depuis mail prêt' }]
+      }).then(function (f) { pretEtat.siret = f.siret; });
+    }
+    prom.then(function () {
+      var fiche = ficheParSiret(pretEtat.siret);
+      if (!fiche) return;
+      var journal = (fiche.journal || []).concat([{
+        le: new Date().toISOString(),
+        quoi: 'Mail préparé — ' + m.nom
+      }]);
+      var maj = { journal: journal, relance_le: joursPlus(7) };
+      if (fiche.statut === 'nouveau') maj.statut = 'contacte';
+      if (m.id === 'seq-4' || m.id === 'pf-relance') maj.statut = 'relance';
+      return window.MelodiaProspects.enregistrer(Object.assign({}, fiche, maj));
+    }).catch(function () {});
+  }
+
+  function brancherPret(racine) {
+    var M = window.MelodiaMails;
+    var catalogue = [];
+    var timer = null;
+    function relire() {
+      var rendu = renduPret(racine, catalogue, false);
+      var iframe = racine.querySelector('#pret-apercu');
+      var etat = racine.querySelector('#pret-etat');
+      if (!rendu || !iframe) return null;
+      iframe.srcdoc = rendu.html;
+      if (etat) {
+        var msgs = [];
+        if (rendu.manquants.length) msgs.push('À remplir : ' + rendu.manquants.map(function (k) {
+          return (M.CHAMPS[k] && M.CHAMPS[k].label) || k;
+        }).join(', ') + '.');
+        if (rendu.sansMusique) msgs.push('Aucun morceau du catalogue : choisissez-en un dans la liste.');
+        if (!msgs.length) msgs.push('Aperçu à jour.');
+        etat.textContent = msgs.join(' ');
+      }
+      var ml = racine.querySelector('#pret-mailto');
+      var dest = (racine.querySelector('#pret-email') || {}).value || '';
+      if (ml) ml.href = M.mailto(dest, rendu.sujet, rendu.texte);
+      return rendu;
+    }
+    function planifier() {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(relire, 220);
+    }
+    var zone = racine.querySelector('.col-pret') || racine;
+    zone.addEventListener('click', function (e) {
+      var mod = e.target.closest && e.target.closest('[data-pret-modele]');
+      if (mod) {
+        pretEtat.id = mod.getAttribute('data-pret-modele');
+        pretEtat.vars = varsPret(racine);
+        aller('pret');
+        return;
+      }
+      var lay = e.target.closest && e.target.closest('[data-pret-layout]');
+      if (lay) {
+        pretEtat.layout = lay.getAttribute('data-pret-layout');
+        relire();
+        Array.prototype.forEach.call(racine.querySelectorAll('[data-pret-layout]'), function (b) {
+          b.classList.toggle('est-on', b.getAttribute('data-pret-layout') === pretEtat.layout);
+        });
+      }
+      var rouv = e.target.closest && e.target.closest('[data-pret-rouvrir]');
+      if (rouv) {
+        var u = utilisateur();
+        var hist = lire(u.email, 'historique_mails', []);
+        var h = hist[Number(rouv.getAttribute('data-pret-rouvrir'))];
+        if (h) {
+          pretEtat.id = h.id;
+          pretEtat.siret = h.siret || '';
+          pretEtat.vars = h.vars || {};
+          pretEtat.layout = h.layout || 'standard';
+          pretEtat.dest = h.dest || '';
+          aller('pret');
+        }
+      }
+    });
+    zone.addEventListener('input', planifier);
+    zone.addEventListener('change', function (e) {
+      if (e.target.id === 'pret-prospect') {
+        var siret = e.target.value;
+        pretEtat.siret = siret;
+        var f = ficheParSiret(siret);
+        if (f) {
+          racine.querySelector('#pret-dirigeant').value = f.dirigeant || '';
+          racine.querySelector('#pret-agence').value = f.nom || '';
+          racine.querySelector('#pret-ville').value = f.ville || '';
+          racine.querySelector('#pret-email').value = f.email || '';
+        }
+      }
+      if (e.target.id === 'pret-objectif') {
+        var u = utilisateur();
+        var v = Number(e.target.value);
+        if (v > 0) ecrire(u.email, 'objectif_mails', v);
+      }
+      planifier();
+    });
+    var seqBtn = racine.querySelector('#pret-seq');
+    if (seqBtn) seqBtn.addEventListener('click', function () {
+      var f = ficheParSiret(pretEtat.siret);
+      var s = f && M.prochaineSequence(f);
+      if (s) { pretEtat.id = s.id; aller('pret'); }
+    });
+    M.chargerCatalogue().then(function (liste) {
+      catalogue = liste || [];
+      var select = racine.querySelector('#pret-piste');
+      var m = modelePretCourant();
+      if (!select || !m) return;
+      var pref = M.pisteParTitre(m.piste);
+      var choisi = pretEtat.pisteId || (pref && pref.id) || (catalogue[0] && catalogue[0].id);
+      select.innerHTML = catalogue.map(function (p) {
+        return '<option value="' + esc(p.id) + '"' + (p.id === choisi ? ' selected' : '') + '>' + esc(p.titre) + '</option>';
+      }).join('');
+      relire();
+    });
+    function actionCopie(fn) {
+      var rendu = renduPret(racine, catalogue, true);
+      if (!rendu) return;
+      fn(rendu);
+    }
+    var copier = racine.querySelector('#pret-copier');
+    if (copier) copier.addEventListener('click', function () {
+      actionCopie(function (rendu) {
+        M.copierMailHtml(rendu.html, rendu.texte).then(function (ok) {
+          toast(ok ? 'Mail copié (HTML et texte).' : 'Copie impossible.');
+          if (ok) majApresPreparation(racine, rendu);
+        });
+      });
+    });
+    var objet = racine.querySelector('#pret-objet');
+    if (objet) objet.addEventListener('click', function () {
+      actionCopie(function (rendu) {
+        copierTexte(rendu.sujet).then(function (ok) { toast(ok ? 'Objet copié.' : 'Copie impossible.'); });
+      });
+    });
+    var gmail = racine.querySelector('#pret-gmail');
+    if (gmail) gmail.addEventListener('click', function () {
+      actionCopie(function (rendu) {
+        var dest = (racine.querySelector('#pret-email') || {}).value || '';
+        window.open(M.gmailCompose(dest, rendu.sujet, rendu.texte), '_blank', 'noopener');
+        majApresPreparation(racine, rendu);
+      });
+    });
+  }
+
   /* ─── Analyse ─── */
   function vueAnalyse() {
     var u = utilisateur();
     var pack = fichesPour(u.email);
     var ST = window.MELODIA_PROSPECT_STATUTS || {};
-    var ordre = ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'refus'];
-    var lignes = ordre.map(function (k) {
-      var n = pack.lignes.filter(function (p) { return p.statut === k; }).length;
+    var ordre = (window.MelodiaProspects && window.MelodiaProspects.STATUTS) ||
+      ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'refus'];
+    var auj = aujourdhuiIso();
+    var colonnes = ordre.map(function (k) {
       var label = (ST[k] && ST[k].label) || k;
-      return '<div class="col-pipe"><span>' + esc(label) + '</span><strong>' + n + '</strong></div>';
+      var cartes = pack.lignes.filter(function (p) { return p.statut === k; }).map(function (p) {
+        var tard = p.relance_le && p.relance_le < auj && k !== 'partenaire' && k !== 'refus';
+        return '<article class="col-kanban-carte' + (tard ? ' est-retard' : '') + '" draggable="true" data-siret="' + esc(p.siret) + '">' +
+          '<strong>' + esc(p.nom) + '</strong>' +
+          '<span>' + esc(p.ville || '') + '</span>' +
+          (p.relance_le ? '<em' + (tard ? ' class="est-retard"' : '') + '>Relance ' + esc(p.relance_le.split('-').reverse().join('/')) + '</em>' : '') +
+          '<select class="field-select col-kanban-sel" data-kanban-sel="' + esc(p.siret) + '" aria-label="Changer le statut">' +
+          ordre.map(function (s) {
+            return '<option value="' + s + '"' + (s === k ? ' selected' : '') + '>' + esc((ST[s] && ST[s].label) || s) + '</option>';
+          }).join('') + '</select></article>';
+      }).join('');
+      return '<div class="col-kanban-col" data-statut="' + esc(k) + '">' +
+        '<h3 class="col-kanban-t">' + esc(label) + ' <span>' + pack.lignes.filter(function (p) { return p.statut === k; }).length + '</span></h3>' +
+        '<div class="col-kanban-zone">' + (cartes || '<p class="col-vide">—</p>') + '</div></div>';
     }).join('');
     var total = pack.lignes.length;
-    return '<p class="panel-note">' + esc(phrasePorte(pack.porte, u.email)) + ' Les zéros sont des comptes, pas des objectifs.</p>' +
-      '<p class="col-total">' + total + ' fiche' + (total > 1 ? 's' : '') + ' chargée' + (total > 1 ? 's' : '') + '.</p>' +
-      '<div class="col-pipes">' + lignes + '</div>' +
-      (total ? '' : '<p class="col-vide">Le pipeline est vide. Il se remplit quand des fiches entrent dans le portefeuille.</p>');
+    return '<p class="panel-note">' + esc(phrasePorte(pack.porte, u.email)) + ' Glissez une fiche ou changez le statut dans la liste.</p>' +
+      '<p class="col-total">' + total + ' fiche' + (total > 1 ? 's' : '') + '.</p>' +
+      '<div class="col-kanban">' + colonnes + '</div>' +
+      (total ? '' : '<p class="col-vide">Le pipeline est vide.</p>');
+  }
+
+  function brancherAnalyse(racine) {
+    var zone = racine.querySelector('.col-kanban');
+    if (!zone || !window.MelodiaProspects) return;
+    var dragSiret = '';
+    zone.addEventListener('dragstart', function (e) {
+      var c = e.target.closest && e.target.closest('.col-kanban-carte');
+      if (!c) return;
+      dragSiret = c.getAttribute('data-siret');
+      e.dataTransfer.setData('text/plain', dragSiret);
+    });
+    zone.addEventListener('dragover', function (e) {
+      if (e.target.closest && e.target.closest('.col-kanban-zone')) e.preventDefault();
+    });
+    zone.addEventListener('drop', function (e) {
+      var z = e.target.closest && e.target.closest('.col-kanban-zone');
+      if (!z) return;
+      e.preventDefault();
+      var col = z.closest('.col-kanban-col');
+      var statut = col && col.getAttribute('data-statut');
+      if (!statut || !dragSiret) return;
+      enregistrerStatutKanban(dragSiret, statut);
+    });
+    zone.addEventListener('change', function (e) {
+      if (!e.target || !e.target.getAttribute('data-kanban-sel')) return;
+      enregistrerStatutKanban(e.target.getAttribute('data-kanban-sel'), e.target.value);
+    });
+  }
+
+  function enregistrerStatutKanban(siret, statut) {
+    var fiche = ficheParSiret(siret);
+    if (!fiche || fiche.statut === statut) return;
+    var ST = window.MELODIA_PROSPECT_STATUTS || {};
+    var label = (ST[statut] && ST[statut].label) || statut;
+    var journal = (fiche.journal || []).concat([{
+      le: new Date().toISOString(),
+      quoi: 'Pipeline — ' + label
+    }]);
+    window.MelodiaProspects.enregistrer(Object.assign({}, fiche, { statut: statut, journal: journal }))
+      .then(function () { aller('analyse'); })
+      .catch(function () { toast('Enregistrement impossible.'); });
   }
 
   /* ─── Simulateur ─── */
@@ -858,6 +1265,7 @@
     profil: function () { return vueProfil('profil'); },
     julie: function () { return vueProfil('julie'); },
     mails: vueMails,
+    pret: vuePret,
     posts: vuePosts,
     kit: vueKit,
     ecoute: vueEcoute,
@@ -872,11 +1280,13 @@
     profil: function (r) { brancherProfil(r, 'profil'); },
     julie: function (r) { brancherProfil(r, 'julie'); },
     mails: brancherMails,
+    pret: brancherPret,
     posts: brancherPosts,
     ecoute: brancherEcoute,
     faq: brancherFaq,
     rappels: brancherRappels,
     checklist: brancherChecklist,
+    analyse: brancherAnalyse,
     simulateur: brancherSimulateur
   };
 
@@ -884,6 +1294,9 @@
     attacher: function (o) {
       if (o && o.prospects) lireProspects = o.prospects;
       if (o && o.aller) aller = o.aller;
+    },
+    prefillPret: function (o) {
+      Object.assign(pretEtat, o || {});
     },
     rendre: function (nom) {
       var fn = VUES[nom];

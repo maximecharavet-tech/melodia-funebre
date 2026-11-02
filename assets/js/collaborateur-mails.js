@@ -218,7 +218,7 @@
       ].join('\n\n')
     },
     {
-      id: 'seq-1-presentation',
+      id: 'seq-1',
       categorie: 'sequence',
       nom: 'Séquence 1 — Présentation',
       quand: 'Premier message. Faire connaître la maison, sans demander une décision.',
@@ -242,7 +242,7 @@
       ].join('\n\n')
     },
     {
-      id: 'seq-2-familles',
+      id: 'seq-2',
       categorie: 'sequence',
       nom: 'Séquence 2 — Pour les familles',
       quand: 'Après la présentation. Ce que la famille reçoit : la chanson, puis la page et son QR.',
@@ -266,7 +266,7 @@
       ].join('\n\n')
     },
     {
-      id: 'seq-3-partenariat',
+      id: 'seq-3',
       categorie: 'sequence',
       nom: 'Séquence 3 — Le partenariat',
       quand: 'Les conditions, telles qu’elles sont écrites sur la page Professionnels.',
@@ -290,7 +290,7 @@
       ].join('\n\n')
     },
     {
-      id: 'seq-4-relance',
+      id: 'seq-4',
       categorie: 'sequence',
       nom: 'Séquence 4 — Relance',
       quand: 'Une relance douce, si le premier message est resté sans réponse.',
@@ -314,7 +314,7 @@
       ].join('\n\n')
     },
     {
-      id: 'seq-5-dernier',
+      id: 'seq-5',
       categorie: 'sequence',
       nom: 'Séquence 5 — Dernier mot',
       quand: 'Dernière relance, ou invitation à un échange court. Ensuite, on s’arrête.',
@@ -334,6 +334,102 @@
         'C’est mon dernier message à ce sujet, pour {agence} à {ville}. Après celui-ci, je ne reviendrai pas, sauf si vous me le demandez.',
         'Si un échange de quelques minutes vous est utile, je suis disponible. Si ce n’est pas pour vous, répondez STOP : votre adresse est retirée, et je n’insiste pas.',
         'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'apres-rencontre',
+      categorie: 'prospection-plus',
+      nom: 'P1 — Après rencontre',
+      quand: 'Juste après un échange en salon ou au téléphone. Un seul lien d’écoute, pas de pression.',
+      visuel: '/assets/img/campagne/adieux-en-musique.jpg',
+      visuelAlt: 'Des adieux en musique — Melodia Funèbre',
+      piste: 'Le Papi Pêcheur',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Écouter le catalogue', url: SITE + '/demos?parrain=' + PARRAIN },
+      objet: 'Suite à notre échange — {agence}',
+      titre: 'Pour écouter tranquillement',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Merci pour le temps que vous m’avez accordé. Comme promis, voici de quoi écouter tranquillement : le catalogue est public, chaque œuvre y a été écrite pour une personne.',
+        'Si une famille vous en parle un jour, la première composition est offerte : vous la présentez, nous composons, livraison en vingt-quatre heures.',
+        'Je reste disponible pour toute question.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'merci-rdv',
+      categorie: 'prospection-plus',
+      nom: 'P2 — Merci rendez-vous',
+      quand: 'Après un rendez-vous ou un appel abouti. Rappel des faits, sans relancer trop tôt.',
+      visuel: '/assets/img/campagne/poignee-de-main.webp',
+      visuelAlt: 'Visuel Melodia : une poignée de main',
+      piste: 'Jean, Paris',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Écouter un exemple', url: SITE + '/demos?parrain=' + PARRAIN },
+      objet: 'Merci pour ce rendez-vous — {agence}',
+      titre: 'Ce dont nous avons parlé',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Merci pour cet échange, pour {agence} à {ville}.',
+        '· Une œuvre originale, à partir du récit de la famille\n· Livrée en vingt-quatre heures, révisée jusqu’à ce que la famille s’y reconnaisse\n· Soixante pour cent reversés à l’agence, aucune démarche SACEM',
+        'Je vous laisse le temps d’y réfléchir ; je reviendrai vers vous dans une semaine, sauf si vous préférez que je ne le fasse pas.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'premiere-offerte',
+      categorie: 'prospection-plus',
+      nom: 'P3 — Première offerte',
+      quand: 'Quand l’agence hésite encore. Insister sur l’offre et le déroulé concret.',
+      visuel: '/assets/img/campagne/affiche-partenaire.jpg',
+      visuelAlt: 'Affiche Melodia : devenir partenaire',
+      piste: 'Le Papi Pêcheur',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Devenir partenaire', url: SITE + '/professionnels?parrain=' + PARRAIN },
+      objet: 'Votre première composition est offerte — {agence}',
+      titre: 'Juger sur pièce, une seule fois',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Pour que vous jugiez sur pièce, la première composition est offerte, pour la prochaine famille qui vous le demande.',
+        'Rien à installer, aucune compétence musicale, aucune démarche SACEM. L’œuvre est diffusée pendant la cérémonie, prolongée par une page souvenir et son QR code.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'premium-presentation',
+      categorie: 'prospection-plus',
+      nom: 'P4 — Présentation premium',
+      quand: 'Premier contact visuel soigné. Même fond que la séquence 1, en gabarit premium.',
+      visuel: '/assets/img/campagne/adieux-en-musique.jpg',
+      visuelAlt: 'Des adieux en musique — Melodia Funèbre',
+      piste: 'Le Papi Pêcheur',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      layout: 'premium',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      sourcil: 'UNE APPROCHE SINGULIÈRE',
+      bouton: { texte: 'ÉCOUTER LE CATALOGUE', url: SITE + '/demos?parrain=' + PARRAIN },
+      objet: 'Et si chaque hommage avait sa propre musique ?',
+      titre: 'Parce que chaque vie mérite une musique qui lui ressemble.',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Je suis Julie Serve, de Melodia Funèbre. Je vous écris pour {agence}, à {ville}, sans rien vous demander dans l’instant.',
+        'Nous composons une œuvre musicale pour une personne précise, à partir de ce que sa famille raconte d’elle.',
+        'Vous n’avez rien à produire : vous présentez, nous composons. Le catalogue est public. Il permet d’entendre ce que cela donne avant d’en parler à qui que ce soit.'
       ].join('\n\n')
     },
     {
@@ -498,19 +594,36 @@
       texte: remplir(modele.bouton.texte, vars),
       url: avecParrain(remplir(modele.bouton.url, vars))
     } : null;
-    var html = habiller({
-      sujet: sujet,
-      titre: titre,
-      texte: texte,
-      visuel: modele.visuel,
-      visuelAlt: modele.visuelAlt,
-      pistes: modele.bouton ? (choisie ? [choisie] : []) : (choisie ? [choisie] : []).concat(autres),
-      signature: modele.signatureFixe || o.signature || {},
-      pied: modele.pied,
-      bouton: bouton,
-      reseaux: !!modele.reseaux,
-      absolu: !!o.absolu
-    });
+    var layoutMail = o.layout === 'standard' ? 'standard'
+      : (o.layout === 'premium' || modele.layout === 'premium') ? 'premium' : 'standard';
+    var html = layoutMail === 'premium'
+      ? habillerPremium({
+        sujet: sujet,
+        titre: titre,
+        texte: texte,
+        visuel: modele.visuel,
+        visuelAlt: modele.visuelAlt,
+        sourcil: modele.sourcil,
+        piste: choisie,
+        signature: modele.signatureFixe || o.signature || {},
+        pied: modele.pied,
+        bouton: bouton,
+        reseaux: !!modele.reseaux,
+        absolu: !!o.absolu
+      })
+      : habiller({
+        sujet: sujet,
+        titre: titre,
+        texte: texte,
+        visuel: modele.visuel,
+        visuelAlt: modele.visuelAlt,
+        pistes: modele.bouton ? (choisie ? [choisie] : []) : (choisie ? [choisie] : []).concat(autres),
+        signature: modele.signatureFixe || o.signature || {},
+        pied: modele.pied,
+        bouton: bouton,
+        reseaux: !!modele.reseaux,
+        absolu: !!o.absolu
+      });
     return {
       sujet: sujet,
       titre: titre,
@@ -518,7 +631,8 @@
       html: html,
       lien: lien,
       manquants: manquants(modele, o.vars || {}),
-      sansMusique: !choisie
+      sansMusique: !choisie,
+      layout: layoutMail
     };
   }
 
@@ -602,6 +716,126 @@
     return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 8px;"><tr>' + cellules + '</tr></table>';
   }
 
+  function paragraphePremium(bloc) {
+    var t = bloc.trim();
+    if (!t) return '';
+    if (/^[·•]\s/m.test(t)) {
+      var items = t.split('\n').map(function (l) { return l.replace(/^[·•]\s*/, '').trim(); }).filter(Boolean);
+      return '<ul style="margin:0 0 14px;padding-left:18px;color:#57564f;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.8;">' +
+        items.map(function (i) { return '<li style="margin:0 0 6px;">' + marque(i) + '</li>'; }).join('') + '</ul>';
+    }
+    return '<p style="margin:0 0 14px;color:#57564f;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.8;text-align:left;">' +
+      marque(t).replace(/\n/g, '<br>') + '</p>';
+  }
+
+  function cartePistePremium(p, absolu) {
+    if (!p) return '';
+    var page = src(p.page, absolu);
+    var image = src(p.image, absolu);
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #e3ded2;">' +
+      '<tr><td width="112" style="width:112px;padding:0;line-height:0;">' +
+      '<a href="' + esc(page) + '"><img src="' + esc(image) + '" width="112" height="112" alt="' + esc(p.titre) + '" style="display:block;width:112px;height:112px;border:0;"></a></td>' +
+      '<td valign="middle" style="padding:13px 16px;">' +
+      '<p style="margin:0 0 5px;color:#a48a55;font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;">EXEMPLE DU CATALOGUE</p>' +
+      '<p style="margin:0 0 5px;color:#17232b;font-family:Georgia,\'Times New Roman\',serif;font-size:19px;">' + esc(p.titre) + '</p>' +
+      (p.qui ? '<p style="margin:0 0 8px;color:#69665e;font-family:Arial,Helvetica,sans-serif;font-size:12px;">' + esc(p.qui) + (p.style ? ' · ' + esc(p.style) : '') + '</p>' : '') +
+      '<a href="' + esc(page) + '" style="color:#9b8047;font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:underline;">Écouter cette création</a>' +
+      '</td></tr></table>';
+  }
+
+  function signaturePremiumHtml(sig, absolu) {
+    sig = sig || SIGNATURE_JULIE;
+    var photo = sig.photo ? src(sig.photo, absolu) : '';
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#17232b;">' +
+      '<tr><td valign="middle" style="padding:22px 12px 22px 22px;">' +
+      '<p style="margin:0;color:#e8d5aa;font-family:Georgia,\'Times New Roman\',serif;font-size:23px;">' + esc(sig.nom || 'Julie Serve') + '</p>' +
+      (sig.role ? '<p style="margin:7px 0 13px;color:#c9ad75;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;">' + esc(sig.role) + '</p>' : '') +
+      '<p style="margin:0 0 7px;color:#eee9dd;font-family:Arial,Helvetica,sans-serif;font-size:12px;">Melodia Funèbre</p>' +
+      (sig.email ? '<p style="margin:0 0 6px;"><a href="mailto:' + esc(sig.email) + '" style="color:#e8d5aa;font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:none;">' + esc(sig.email) + '</a></p>' : '') +
+      '<a href="' + SITE + '" style="color:#e8d5aa;font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:none;">melodia-funebre.fr</a>' +
+      '</td>' +
+      (photo ? '<td width="104" valign="middle" align="center" style="width:104px;padding:12px 15px 12px 5px;">' +
+        '<img src="' + esc(photo) + '" width="82" height="82" alt="' + esc(sig.nom || '') + '" style="display:block;width:82px;height:82px;border-radius:50%;border:2px solid #c9ad75;">' +
+        '</td>' : '') +
+      '</tr></table>';
+  }
+
+  function habillerPremium(o) {
+    var corps = String(o.texte || '').split(/\n{2,}/).map(paragraphePremium).join('');
+    var visuel = src(o.visuel, o.absolu);
+    var banniere = src(BANNIERE, o.absolu);
+    var sourcil = o.sourcil || 'UNE APPROCHE SINGULIÈRE';
+    var pied = o.pied === 'prospection'
+      ? 'Vous recevez ce message dans un cadre professionnel. Pour ne plus être contacté, répondez STOP : votre adresse est retirée.'
+      : 'Ce message vous est adressé par Melodia Funèbre. Vous pouvez répondre à ce courriel : une personne le lit.';
+    var benefices = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>' +
+      '<td width="33.33%" valign="top" align="center" style="padding:0 8px;">' +
+      '<p style="margin:0 0 12px;color:#bda16b;font-family:Georgia,serif;font-size:27px;">✧</p>' +
+      '<p style="margin:0 0 9px;color:#17232b;font-family:Georgia,\'Times New Roman\',serif;font-size:17px;">Personnalisée</p>' +
+      '<p style="margin:0;color:#69665e;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.65;">Une création à partir de l\'histoire racontée par la famille.</p></td>' +
+      '<td width="33.33%" valign="top" align="center" style="padding:0 8px;border-left:1px solid #ded8ca;border-right:1px solid #ded8ca;">' +
+      '<p style="margin:0 0 12px;color:#bda16b;font-family:Georgia,serif;font-size:27px;">◷</p>' +
+      '<p style="margin:0 0 9px;color:#17232b;font-family:Georgia,\'Times New Roman\',serif;font-size:17px;">Réactive</p>' +
+      '<p style="margin:0;color:#69665e;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.65;">Une œuvre livrée en vingt-quatre heures.</p></td>' +
+      '<td width="33.33%" valign="top" align="center" style="padding:0 8px;">' +
+      '<p style="margin:0 0 12px;color:#bda16b;font-family:Georgia,serif;font-size:27px;">♫</p>' +
+      '<p style="margin:0 0 9px;color:#17232b;font-family:Georgia,\'Times New Roman\',serif;font-size:17px;">Durable</p>' +
+      '<p style="margin:0;color:#69665e;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.65;">Diffusée pendant la cérémonie et conservée par la famille.</p></td>' +
+      '</tr></table>';
+    var cta = '';
+    if (o.bouton && o.bouton.url) {
+      cta = '<tr><td align="center" style="background-color:#101820;padding:35px 25px 38px;">' +
+        '<p style="margin:0 0 10px;color:#d8bd83;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;">PRENEZ LE TEMPS DE DÉCOUVRIR</p>' +
+        '<p style="margin:0 0 23px;color:#f8f5ed;font-family:Georgia,\'Times New Roman\',serif;font-size:23px;line-height:1.5;">Découvrez notre univers musical.</p>' +
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#c9ad75" style="background-color:#c9ad75;">' +
+        '<a href="' + esc(o.bouton.url) + '" style="display:inline-block;padding:16px 31px;color:#17232b;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;letter-spacing:1.5px;text-decoration:none;text-transform:uppercase;">' +
+        esc(o.bouton.texte || 'ÉCOUTER LE CATALOGUE') + '</a></td></tr></table>' +
+        '<p style="margin:20px 0 0;color:#c9c5ba;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;">Un premier aperçu, sans engagement.</p></td></tr>';
+    }
+    var social = '';
+    if (o.reseaux) {
+      var liens = RESEAUX.filter(function (r) { return r.url && !/^\{\{/.test(r.url); });
+      if (liens.length) {
+        social = '<tr><td align="center" style="padding:23px 20px 15px;background-color:#eeece6;">' +
+          '<p style="margin:0 0 15px;color:#8b806c;font-family:Georgia,\'Times New Roman\',serif;font-size:16px;">Restons en contact</p>' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>' +
+          liens.map(function (r, i) {
+            return (i ? '<td style="color:#c0b7a5;font-size:12px;">|</td>' : '') +
+              '<td style="padding:0 12px;"><a href="' + esc(r.url) + '" style="color:#827047;font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:none;">' + esc(r.nom) + '</a></td>';
+          }).join('') +
+          '</tr></table></td></tr>';
+      }
+    }
+    return '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="x-apple-disable-message-reformatting"><title>' + esc(o.sujet || 'Melodia Funèbre') + '</title></head>' +
+      '<body style="margin:0;padding:0;background-color:#eeece6;">' +
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eeece6;"><tr><td align="center" style="padding:30px 10px;">' +
+      '<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#faf9f5;">' +
+      '<tr><td align="center" style="background-color:#17232b;padding:30px 25px 24px;">' +
+      '<p style="margin:0;color:#d8bd83;font-family:Georgia,\'Times New Roman\',serif;font-size:25px;letter-spacing:2px;font-weight:normal;">MÉLODIA FUNÈBRE</p>' +
+      '<p style="margin:9px 0 0;color:#e8e0d0;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;">L\'art de rendre hommage en musique</p></td></tr>' +
+      '<tr><td height="2" style="background-color:#bda16b;font-size:0;line-height:0;">&nbsp;</td></tr>' +
+      '<tr><td style="padding:0;line-height:0;"><img src="' + esc(banniere) + '" width="600" alt="Melodia Funèbre — Des hommages en musique" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></td></tr>' +
+      '<tr><td align="center" style="padding:39px 35px 12px;background-color:#eeece6;">' +
+      '<p style="margin:0 0 14px;color:#a48a55;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;">' + esc(sourcil) + '</p>' +
+      (o.titre ? '<h1 style="margin:0;color:#17232b;font-family:Georgia,\'Times New Roman\',serif;font-size:30px;line-height:1.3;font-weight:normal;">' + marque(o.titre).replace(/<br>/g, '<br>') + '</h1>' : '') +
+      '<table role="presentation" width="55" cellpadding="0" cellspacing="0" border="0" style="margin:23px auto;"><tr><td height="1" style="background-color:#bda16b;font-size:0;line-height:0;">&nbsp;</td></tr></table>' +
+      corps + '</td></tr>' +
+      (visuel ? '<tr><td style="padding:20px 25px 10px;line-height:0;background-color:#eeece6;"><img src="' + esc(visuel) + '" width="550" alt="' + esc(o.visuelAlt || '') + '" style="display:block;width:100%;max-width:550px;height:auto;border:0;"></td></tr>' : '') +
+      '<tr><td style="padding:30px 25px 12px;background-color:#eeece6;">' +
+      '<p style="margin:0 0 23px;text-align:center;color:#a48a55;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;">UNE PRESTATION PENSÉE POUR VOS FAMILLES</p>' +
+      benefices + '</td></tr>' +
+      (o.piste ? '<tr><td style="padding:5px 25px 30px;background-color:#eeece6;">' +
+        '<p style="margin:0 0 15px;color:#a48a55;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;">DÉCOUVRIR UNE CRÉATION</p>' +
+        cartePistePremium(o.piste, o.absolu) + '</td></tr>' : '') +
+      cta +
+      '<tr><td style="padding:27px 25px 30px;background-color:#f8f6f0;">' + signaturePremiumHtml(o.signature, o.absolu) + '</td></tr>' +
+      social +
+      '<tr><td align="center" style="padding:15px 28px 24px;background-color:#eeece6;">' +
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td height="1" style="background-color:#d9d3c6;font-size:0;line-height:0;">&nbsp;</td></tr></table>' +
+      '<p style="margin:15px 0 0;color:#8c877c;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.7;">' + esc(pied).replace('STOP', '<strong>STOP</strong>') + '</p></td></tr>' +
+      '</table></td></tr></table></body></html>';
+  }
+
   function habiller(o) {
     var corps = String(o.texte || '').split(/\n{2,}/).map(paragraphe).join('');
     var visuel = src(o.visuel, o.absolu);
@@ -636,17 +870,123 @@
     return (dest ? 'mailto:' + dest : 'mailto:') + '?' + q;
   }
 
+  function gmailCompose(email, sujet, texte) {
+    var dest = String(email || '').trim();
+    if (dest && !/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(dest)) dest = '';
+    return 'https://mail.google.com/mail/?view=cm&fs=1' +
+      (dest ? '&to=' + encodeURIComponent(dest) : '') +
+      '&su=' + encodeURIComponent(sujet || '') +
+      '&body=' + encodeURIComponent(texte || '');
+  }
+
+  function copierMailHtml(html, texte) {
+    html = String(html || '');
+    texte = String(texte != null ? texte : '');
+    if (navigator.clipboard && window.ClipboardItem) {
+      return navigator.clipboard.write([
+        new ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([texte], { type: 'text/plain' })
+        })
+      ]).then(function () { return true; }, function () { return copierMailRepli(html, texte); });
+    }
+    return Promise.resolve(copierMailRepli(html, texte));
+  }
+
+  function copierMailRepli(html, texte) {
+    var zone = document.createElement('div');
+    zone.contentEditable = 'true';
+    zone.innerHTML = html;
+    zone.style.position = 'fixed';
+    zone.style.left = '-9999px';
+    document.body.appendChild(zone);
+    var sel = window.getSelection();
+    var plage = document.createRange();
+    plage.selectNodeContents(zone);
+    sel.removeAllRanges();
+    sel.addRange(plage);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    zone.remove();
+    if (ok) return true;
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = texte;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      ok = document.execCommand('copy');
+      ta.remove();
+    } catch (e2) { ok = false; }
+    return ok;
+  }
+
+  var SEQ_IDS = ['seq-1', 'seq-2', 'seq-3', 'seq-4', 'seq-5'];
+  var SEQ_DELAIS = [0, 3, 7, 14, 21];
+
+  function modelesPret() {
+    return MODELES.filter(function (m) {
+      return m.categorie === 'sequence' || m.categorie === 'prospection-plus' ||
+        m.id === 'pf-contact' || m.id === 'pf-relance';
+    });
+  }
+
+  function idSeqDepuisJournal(quoi) {
+    var t = String(quoi || '');
+    var m = t.match(/Mail préparé —\s*(.+)/i);
+    if (!m) return null;
+    var cle = m[1].trim();
+    for (var i = 0; i < MODELES.length; i++) {
+      if (MODELES[i].nom === cle || MODELES[i].id === cle) return MODELES[i].id;
+    }
+    if (/^seq-[1-5]$/.test(cle)) return cle;
+    return null;
+  }
+
+  function prochaineSequence(fiche) {
+    fiche = fiche || {};
+    if (fiche.oppose || fiche.statut === 'refus' || fiche.statut === 'partenaire') return null;
+    var journal = fiche.journal || [];
+    var dernierIdx = -1;
+    var premierLe = null;
+    journal.forEach(function (j) {
+      var id = idSeqDepuisJournal(j.quoi);
+      if (!id) return;
+      var n = SEQ_IDS.indexOf(id);
+      if (n < 0) return;
+      if (premierLe == null && n === 0) premierLe = j.le;
+      if (n > dernierIdx) dernierIdx = n;
+    });
+    if (dernierIdx >= SEQ_IDS.length - 1) return null;
+    var prochain = SEQ_IDS[dernierIdx + 1];
+    var base = premierLe ? new Date(premierLe) : new Date();
+    if (isNaN(base.getTime())) base = new Date();
+    var quand = new Date(base.getTime());
+    quand.setDate(quand.getDate() + SEQ_DELAIS[dernierIdx + 1]);
+    return { id: prochain, le: quand.toISOString().slice(0, 10), num: dernierIdx + 2 };
+  }
+
   window.MelodiaMails = {
     ENVOI_ACTIF: ENVOI_ACTIF,
     SITE: SITE,
     MODELES: MODELES,
     CHAMPS: CHAMPS,
+    SEQ_IDS: SEQ_IDS,
+    SEQ_DELAIS: SEQ_DELAIS,
+    RESEAUX: RESEAUX,
     limace: limace,
     chargerCatalogue: chargerCatalogue,
     pisteParTitre: pisteParTitre,
     urlPublique: urlPublique,
     composer: composer,
     mailto: mailto,
+    gmailCompose: gmailCompose,
+    copierMailHtml: copierMailHtml,
+    modelesPret: modelesPret,
+    prochaineSequence: prochaineSequence,
+    manquants: manquants,
     /* Exposé pour que l’espace sache qu’aucun envoi ne part d’ici. */
     envoi: function () { return false; }
   };
