@@ -43,7 +43,7 @@
 
 import {
   SITE, gabarit, carteVisite, envoyer, envoyerLot, valideEmail,
-  expediteurProspection, boiteMaison, origineAutorisee, tropSouvent
+  expediteurProspection, boiteMaison, origineAutorisee, entetesOrigine, tropSouvent
 } from './_courrier.js';
 
 const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
@@ -83,7 +83,7 @@ async function demandeur(req) {
   let role = null;
   try {
     const cle = SB_SERVICE || SB_ANON;
-    const r = await fetch(SB_URL + '/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(email), {
+    const r = await fetch(SB_URL + '/rest/v1/roles?select=role&email=ilike.' + encodeURIComponent(email), {
       headers: { apikey: cle, Authorization: 'Bearer ' + (SB_SERVICE || jeton) }
     });
     if (r.ok) { const l = await r.json(); role = (l && l[0] && l[0].role) || null; }
@@ -111,11 +111,9 @@ function defautDe(e, exigerDest) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  entetesOrigine(req, res, 'POST, OPTIONS');
   res.setHeader('Cache-Control', 'no-store');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method === 'OPTIONS') return res.status(origineAutorisee(req) ? 200 : 403).end();
   if (req.method !== 'POST') return json(res, 405, { error: 'POST uniquement' });
 
   if (!origineAutorisee(req)) {
@@ -148,7 +146,7 @@ export default async function handler(req, res) {
   /* ─── Aperçu : rien ne part ─── */
   if (mode === 'apercu') {
     const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'inconnu';
-    if (tropSouvent('apercu:' + ip, 120, 10 * 60 * 1000)) return json(res, 429, { error: 'Trop d\'aperçus demandés.', code: 'RATE_LIMIT' });
+    if (await tropSouvent('apercu:' + ip, 120, 10 * 60 * 1000)) return json(res, 429, { error: 'Trop d\'aperçus demandés.', code: 'RATE_LIMIT' });
     const e = envois[0];
     if (!e.sujet) e.sujet = 'Melodia Funèbre';
     const email = valideEmail(sigEntree.email) ? String(sigEntree.email).trim() : '';
@@ -165,7 +163,7 @@ export default async function handler(req, res) {
   if (!ENVOI_ACTIF) {
     return json(res, 503, {
       error: 'L’envoi automatique est désactivé.',
-      code: 'NOT_CONFIGURED',
+      code: 'ENVOI_DESACTIVE',
       hint: 'Les courriers se copient ou s’ouvrent dans la messagerie. Aucun service payant n’est appelé.'
     });
   }
@@ -189,7 +187,7 @@ export default async function handler(req, res) {
   if (envois.length > LOT_MAX) {
     return json(res, 400, { error: 'Au plus ' + LOT_MAX + ' destinataires par envoi.', code: 'LOT_TROP_GRAND' });
   }
-  if (tropSouvent('envoi:' + qui.email, 12, 60 * 60 * 1000)) {
+  if (await tropSouvent('envoi:' + qui.email, 12, 60 * 60 * 1000)) {
     return json(res, 429, { error: 'Trop d\'envois cette heure-ci. Réessayez plus tard.', code: 'RATE_LIMIT' });
   }
 

@@ -161,7 +161,7 @@ export default async function handler(req, res) {
   /* Une adresse ne reçoit pas dix courriels en dix minutes, et une même
      source ne déclenche pas cent envois. */
   const ip = court((req.headers['x-forwarded-for'] || '').split(',')[0], 60) || 'inconnu';
-  if (tropSouvent('a:' + dest.toLowerCase(), 6, 10 * 60 * 1000) || tropSouvent('i:' + ip, 30, 10 * 60 * 1000)) {
+  if (await tropSouvent('a:' + dest.toLowerCase(), 6, 10 * 60 * 1000) || await tropSouvent('i:' + ip, 30, 10 * 60 * 1000)) {
     return res.status(429).json({ error: 'Trop d\'envois. Réessayez dans quelques minutes.', code: 'RATE_LIMIT' });
   }
 

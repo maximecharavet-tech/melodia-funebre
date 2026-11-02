@@ -80,7 +80,7 @@ export default async function handler(req, res) {
   if (!ok) return res.status(403).json({ error: 'Origine non autorisée.' });
 
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'inconnue';
-  if (tropSouvent('etat:' + ip, 30, 10 * 60 * 1000)) {
+  if (await tropSouvent('etat:' + ip, 30, 10 * 60 * 1000)) {
     return res.status(429).json({ error: 'Trop de vérifications. Réessayez dans quelques minutes.' });
   }
 

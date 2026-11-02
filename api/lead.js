@@ -13,7 +13,7 @@
 //                     à défaut, LEAD_FROM est utilisé
 // ═══════════════════════════════════════════════════════════════
 
-import { envoyer, expediteurCourrier, boiteMaison } from './_courrier.js';
+import { envoyer, expediteurCourrier, boiteMaison, entetesOrigine, origineAutorisee } from './_courrier.js';
 
 const TITRES = {
   rappel: 'Demande de rappel',
@@ -36,11 +36,9 @@ function echapper(s) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  entetesOrigine(req, res, 'POST, OPTIONS');
   res.setHeader('Cache-Control', 'no-store');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method === 'OPTIONS') return res.status(origineAutorisee(req) ? 204 : 403).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST uniquement' });
 
   const dest = boiteMaison();
@@ -102,6 +100,8 @@ export default async function handler(req, res) {
           ligne('Défunt', d.defunt) +
           ligne('Offre', d.offre) +
           ligne('Référence', d.ref) +
+          ligne('Parrain', String(d.parrain || '').toLowerCase().slice(0, 40)) +
+          ligne('Paiement signalé', String(d.paiement || '').slice(0, 80)) +
           ligne('Message', d.message) +
           ligne('Page', d.page) +
         '</table>' +
