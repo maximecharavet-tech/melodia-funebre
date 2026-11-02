@@ -16,6 +16,21 @@
   var SITE = 'https://melodia-funebre.fr';
   var ENVOI_ACTIF = false;
   var BANNIERE = '/assets/img/courriel/banniere.jpg';
+  var PARRAIN = 'julie-serve';
+  /* Trouvés dans le pied du site. TikTok et le LinkedIn de Julie
+     n'y figurent pas : les emplacements restent nommés. */
+  var RESEAUX = [
+    { nom: 'Facebook', url: 'https://www.facebook.com/share/1GUX4Ht8M8/' },
+    { nom: 'Instagram', url: 'https://www.instagram.com/melodia_funebre' },
+    { nom: 'TikTok', url: '{{LIEN_TIKTOK}}' },
+    { nom: 'LinkedIn — Julie Serve', url: '{{LIEN_LINKEDIN_JULIE}}' }
+  ];
+  var SIGNATURE_JULIE = {
+    nom: 'Julie Serve',
+    role: 'Directrice marketing & commerciale',
+    email: 'julie@melodia-funebre.fr',
+    photo: '/assets/img/equipe/julie-serve.jpg'
+  };
 
   /* Même règle que build/adresses.js : l’adresse d’un hommage. */
   function limace(texte) {
@@ -202,6 +217,125 @@
       ].join('\n\n')
     },
     {
+      id: 'seq-1-presentation',
+      categorie: 'sequence',
+      nom: 'Séquence 1 — Présentation',
+      quand: 'Premier message. Faire connaître la maison, sans demander une décision.',
+      visuel: '/assets/img/campagne/adieux-en-musique.jpg',
+      visuelAlt: 'Affiche Melodia Funèbre : des adieux en musique',
+      piste: 'Le Papi Pêcheur',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Écouter le catalogue', url: SITE + '/demos?parrain=' + PARRAIN },
+      objet: '{agence} — une œuvre pour vos familles',
+      titre: 'Une chanson écrite pour une personne',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Je suis Julie Serve, de Melodia Funèbre. Je vous écris pour {agence}, à {ville}, sans rien vous demander dans l’instant.',
+        'Nous composons une œuvre musicale pour une personne précise, à partir de ce que sa famille raconte d’elle. L’œuvre est livrée en vingt-quatre heures. Elle peut être diffusée pendant la cérémonie, et elle reste à la famille.',
+        'Vous n’avez rien à produire : vous présentez, nous composons. Le catalogue est public. Il permet d’entendre ce que cela donne avant d’en parler à qui que ce soit.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'seq-2-familles',
+      categorie: 'sequence',
+      nom: 'Séquence 2 — Pour les familles',
+      quand: 'Après la présentation. Ce que la famille reçoit : la chanson, puis la page et son QR.',
+      visuel: '/assets/img/campagne/plaque-et-telephone.webp',
+      visuelAlt: 'Une plaque commémorative et un téléphone qui ouvre la page de souvenir',
+      piste: 'Jean, Paris',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Voir la page et le QR', url: SITE + '/qr-code-memorial?parrain=' + PARRAIN },
+      objet: 'Ce que la famille emporte — {agence}',
+      titre: 'La chanson, puis une page que l’on peut rouvrir',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Pour les familles de {agence}, à {ville}, l’hommage ne s’arrête pas à la cérémonie.',
+        'La famille reçoit une chanson originale, composée pour le défunt à partir de ce qu’elle a raconté. Elle peut être diffusée le jour même. Ensuite, une page de souvenir prolonge l’hommage, avec un QR code : on peut la rouvrir, la transmettre, la garder.',
+        'Ce n’est pas un morceau du commerce. C’est une pièce écrite pour une seule personne. Vous n’avez rien à installer. Vous montrez. Nous livrons.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'seq-3-partenariat',
+      categorie: 'sequence',
+      nom: 'Séquence 3 — Le partenariat',
+      quand: 'Les conditions, telles qu’elles sont écrites sur la page Professionnels.',
+      visuel: '/assets/img/campagne/affiche-partenaire.jpg',
+      visuelAlt: 'Affiche Melodia : devenir partenaire',
+      piste: 'Le roi de la route',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Lire les conditions', url: SITE + '/professionnels?parrain=' + PARRAIN },
+      objet: 'Le partenariat, en clair — {agence}',
+      titre: 'Ce que vous conservez, et ce que vous n’avez pas à faire',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Voici les conditions, pour {agence} à {ville}, sans autre chiffre que ceux publiés sur le site.',
+        '· Vous conservez 60 % du montant payé par la famille, soit 179 € nets sur une offre Prestige.\n· Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée.\n· Aucune démarche SACEM : l’œuvre est originale, et les droits d’usage sont cédés. Rien à déclarer pour la diffuser, la copier pour la famille ou la conserver.\n· La première composition est offerte, pour que vous la présentiez à une famille avant de décider.\n· Le délai annoncé est de vingt-quatre heures.',
+        'Vous présentez. Nous composons.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'seq-4-relance',
+      categorie: 'sequence',
+      nom: 'Séquence 4 — Relance',
+      quand: 'Une relance douce, si le premier message est resté sans réponse.',
+      visuel: '/assets/img/campagne/ce-que-les-mots.webp',
+      visuelAlt: 'Visuel Melodia : ce que les mots ne disent pas toujours',
+      piste: 'Sous le lierre',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Écouter un exemple', url: SITE + '/demos?parrain=' + PARRAIN },
+      objet: 'Je me permets de revenir — {agence}',
+      titre: 'Un mot, sans insister',
+      texte: [
+        'Bonjour{dirigeant},',
+        'Je vous avais écrit au sujet d’un hommage musical pour les familles de {agence}, à {ville}. Je me permets de revenir une fois, calmement.',
+        'Si le moment n’est pas le bon, vous n’avez rien à faire. Si vous voulez seulement entendre, le catalogue est là : ce sont des exemples, pas des commandes en cours.',
+        'La première composition reste offerte, dans les mêmes conditions.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
+      id: 'seq-5-dernier',
+      categorie: 'sequence',
+      nom: 'Séquence 5 — Dernier mot',
+      quand: 'Dernière relance, ou invitation à un échange court. Ensuite, on s’arrête.',
+      visuel: '/assets/img/campagne/poignee-de-main.webp',
+      visuelAlt: 'Visuel Melodia : une poignée de main',
+      piste: 'Le Jardin du Temps',
+      champs: ['agence', 'ville', 'dirigeant'],
+      requis: ['agence'],
+      pied: 'prospection',
+      reseaux: true,
+      signatureFixe: SIGNATURE_JULIE,
+      bouton: { texte: 'Proposer un échange', url: SITE + '/contact?parrain=' + PARRAIN },
+      objet: 'Dernier message — {agence}',
+      titre: 'Je vous laisse le choix, puis je m’arrête',
+      texte: [
+        'Bonjour{dirigeant},',
+        'C’est mon dernier message à ce sujet, pour {agence} à {ville}. Après celui-ci, je ne reviendrai pas, sauf si vous me le demandez.',
+        'Si un échange de quelques minutes vous est utile, je suis disponible. Si ce n’est pas pour vous, répondez STOP : votre adresse est retirée, et je n’insiste pas.',
+        'Julie Serve\nDirectrice marketing & commerciale\nMelodia Funèbre'
+      ].join('\n\n')
+    },
+    {
       id: 'fleuriste',
       categorie: 'fleuriste',
       nom: 'Fleuriste — prospection',
@@ -350,20 +484,30 @@
       texte = texte.replace(/[ ]{2,}/g, ' ');
       texte = texte.replace(/\s+([.,])/g, '$1');
     }
-    var suite = blocExemples(choisie, autres);
-    if (texte.indexOf(suite) === -1) texte = texte.replace(/\s+$/, '') + '\n\n' + suite;
+    /* La séquence a déjà un bouton et une carte d'écoute : on n'ajoute
+       pas la liste d'adresses qui allonge le message. */
+    if (!modele.bouton) {
+      var suite = blocExemples(choisie, autres);
+      if (texte.indexOf(suite) === -1) texte = texte.replace(/\s+$/, '') + '\n\n' + suite;
+    }
 
     var sujet = remplir(modele.objet, vars).replace(/\s{2,}/g, ' ').trim();
     var titre = remplir(modele.titre, vars);
+    var bouton = modele.bouton ? {
+      texte: remplir(modele.bouton.texte, vars),
+      url: avecParrain(remplir(modele.bouton.url, vars))
+    } : null;
     var html = habiller({
       sujet: sujet,
       titre: titre,
       texte: texte,
       visuel: modele.visuel,
       visuelAlt: modele.visuelAlt,
-      pistes: (choisie ? [choisie] : []).concat(autres),
-      signature: o.signature || {},
+      pistes: modele.bouton ? (choisie ? [choisie] : []) : (choisie ? [choisie] : []).concat(autres),
+      signature: modele.signatureFixe || o.signature || {},
       pied: modele.pied,
+      bouton: bouton,
+      reseaux: !!modele.reseaux,
       absolu: !!o.absolu
     });
     return {
@@ -375,6 +519,12 @@
       manquants: manquants(modele, o.vars || {}),
       sansMusique: !choisie
     };
+  }
+
+  function avecParrain(url) {
+    var u = String(url || '');
+    if (!u || u.indexOf('parrain=') !== -1) return u;
+    return u + (u.indexOf('?') === -1 ? '?' : '&') + 'parrain=' + PARRAIN;
   }
 
   function src(chemin, absolu) {
@@ -432,6 +582,23 @@
       '</tr></table>';
   }
 
+  function boutonHtml(b) {
+    if (!b || !b.url || !b.texte) return '';
+    return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 18px;"><tr><td align="center" bgcolor="#c9a84c" style="background:#c9a84c;border-radius:2px;">' +
+      '<a href="' + esc(b.url) + '" style="display:inline-block;padding:12px 22px;font-family:Helvetica,Arial,sans-serif;font-size:14px;font-weight:600;color:#17150f;text-decoration:none;">' +
+      esc(b.texte) + '</a></td></tr></table>';
+  }
+
+  function reseauxHtml() {
+    var cellules = RESEAUX.map(function (r) {
+      var contenu = /^\{\{/.test(r.url)
+        ? esc(r.nom) + ' : ' + esc(r.url)
+        : '<a href="' + esc(r.url) + '" style="color:#97803c;text-decoration:none;">' + esc(r.nom) + '</a>';
+      return '<td style="padding:0 14px 8px 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.4;color:#5c574c;">' + contenu + '</td>';
+    }).join('');
+    return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 8px;"><tr>' + cellules + '</tr></table>';
+  }
+
   function habiller(o) {
     var corps = String(o.texte || '').split(/\n{2,}/).map(paragraphe).join('');
     var visuel = src(o.visuel, o.absolu);
@@ -450,9 +617,11 @@
       '<tr><td style="padding:28px 28px 8px;font-family:Helvetica,Arial,sans-serif;">' +
       (o.titre ? '<h1 style="margin:0 0 18px;font-family:Georgia,serif;font-weight:400;font-size:26px;line-height:1.3;color:#17150f;">' + marque(o.titre) + '</h1>' : '') +
       corps +
+      (o.bouton ? boutonHtml(o.bouton) : '') +
       (pistes ? '<div style="margin:8px 0 18px;">' + pistes + '</div>' : '') +
       '</td></tr>' +
       '<tr><td style="padding:6px 18px 22px;">' + signatureHtml(o.signature, o.absolu) + '</td></tr>' +
+      (o.reseaux ? '<tr><td style="padding:4px 28px 8px;background:#faf8f3;border-top:1px solid #e2ddd0;">' + reseauxHtml() + '</td></tr>' : '') +
       '<tr><td style="padding:14px 28px 18px;background:#faf8f3;border-top:1px solid #e2ddd0;font-family:Helvetica,Arial,sans-serif;font-size:11px;line-height:1.55;color:#8b8474;">' + esc(pied) + '</td></tr>' +
       '</table></td></tr></table></body></html>';
   }

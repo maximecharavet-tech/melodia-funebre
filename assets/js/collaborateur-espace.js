@@ -417,7 +417,7 @@
   function vueMails() {
     var M = window.MelodiaMails;
     if (!M) return '<p class="form-msg err" style="display:block;">La bibliothèque de mails n’est pas chargée.</p>';
-    var cats = [['tous', 'Tous'], ['famille', 'Familles'], ['pompes', 'Pompes funèbres'], ['fleuriste', 'Fleuristes']];
+    var cats = [['tous', 'Tous'], ['sequence', 'Séquence agences'], ['famille', 'Familles'], ['pompes', 'Pompes funèbres'], ['fleuriste', 'Fleuristes']];
     var liste = M.MODELES.filter(function (m) { return brouillon.cat === 'tous' || m.categorie === brouillon.cat; });
     var m = modeleCourant();
     var champs = (m.champs || []).map(function (k) {
@@ -498,7 +498,9 @@
       var msgs = [];
       if (rendu.manquants.length) msgs.push('À remplir : ' + rendu.manquants.join(', ') + '.');
       if (rendu.sansMusique) msgs.push('Aucun morceau du catalogue n’est disponible. Le lien musical n’a pas été inventé : ouvrez la page Écouter.');
-      if (/\{\w/.test(rendu.html)) msgs.push('Les surlignages sont des variables encore vides.');
+      var sansEmplacements = rendu.html.replace(/\{\{LIEN_[A-Z0-9_]+\}\}/g, '');
+      if (/\{\w/.test(sansEmplacements)) msgs.push('Les surlignages sont des variables encore vides.');
+      if (/\{\{LIEN_/.test(rendu.html)) msgs.push('TikTok et le LinkedIn de Julie ne sont pas dans le dépôt : les emplacements restent nommés.');
       if (!msgs.length) msgs.push('Aperçu à jour.');
       etat.textContent = msgs.join(' ');
     }
