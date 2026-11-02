@@ -6,15 +6,30 @@
     "cdg1"
   ],
   "functions": {
-    "api/*.js": {
-      "maxDuration": 30
-    },
     "api/document.js": {
       "maxDuration": 30,
-      "includeFiles": "documents/melodia-manuel-de-vente.pdf,documents/melodia-plan-linkedin.pdf,documents/melodia-plan-reseaux-sociaux.pdf"
+      "includeFiles": "documents/melodia-{manuel-de-vente,plan-linkedin,plan-reseaux-sociaux}.pdf"
+    },
+    "api/*.js": {
+      "maxDuration": 30
     }
   },
   "redirects": [
+    {
+      "source": "/documents/melodia-manuel-de-vente.pdf",
+      "destination": "/api/document?fichier=manuel",
+      "permanent": false
+    },
+    {
+      "source": "/documents/melodia-plan-linkedin.pdf",
+      "destination": "/api/document?fichier=linkedin",
+      "permanent": false
+    },
+    {
+      "source": "/documents/melodia-plan-reseaux-sociaux.pdf",
+      "destination": "/api/document?fichier=reseaux",
+      "permanent": false
+    },
     {
       "source": "/(.*)",
       "has": [
@@ -363,18 +378,6 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/documents/melodia-manuel-de-vente.pdf",
-      "destination": "/api/document?fichier=manuel"
-    },
-    {
-      "source": "/documents/melodia-plan-linkedin.pdf",
-      "destination": "/api/document?fichier=linkedin"
-    },
-    {
-      "source": "/documents/melodia-plan-reseaux-sociaux.pdf",
-      "destination": "/api/document?fichier=reseaux"
-    },
     {
       "source": "/m/:jeton",
       "destination": "/hommage?j=:jeton"

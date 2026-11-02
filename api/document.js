@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // /api/document — PDF internes (manuel, plans)
 //
-// Ces fichiers ne sont plus servis en statique : vercel.json réécrit
+// Ces fichiers ne sont plus servis en statique : vercel.json redirige
 // leur URL publique vers ici. Sans session de la maison, 401.
 // La brochure partenaire n'est pas dans cette liste : elle reste
 // publique, à /documents/melodia-brochure-partenaire.pdf.
