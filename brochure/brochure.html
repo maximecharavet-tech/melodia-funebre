@@ -7,11 +7,12 @@
      Chiffres et promesses repris de /professionnels et /offres, rien d'autre.
      Rendu : node brochure/pdf.js → brochure/melodia-funebre-brochure-pro.pdf
 
-     Règle des images : aucune personne n'est recadrée. Les affiches de
-     campagne sont montrées entières, à leur format (9:16) ; la photo du
-     studio garde le sien (16:9) ; seule la plaque, sans personne, est
-     cadrée. Les visuels sont des JPEG (brochure/img) : Chrome ré-encode le
-     WebP sans perte dans un PDF, ce qui triplait le poids du fichier. -->
+     Images : jamais une personne coupée, jamais un reste de texte d'affiche.
+     Les visuels c-*.jpg sont des recadrages faits au pixel dans les affiches
+     de campagne (voir l'en-tête de brochure/recadrages.js) ; la plaque de
+     couverture ne montre personne. Aucune photo du studio : on y reconnaît
+     l'équipe, retirée du site. JPEG obligatoire : Chrome ré-encode le WebP
+     sans perte dans un PDF, ce qui triplait le poids du fichier. -->
 <style>
 @font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 400;src:url(../assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2) format('woff2')}
 @font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300 400;src:url(../assets/fonts/cormorant-garamond-italic-latin-4db21d.woff2) format('woff2')}
@@ -19,128 +20,139 @@
 @page{size:A4;margin:0}
 :root{
   --ink:#050508;--panel:#0e0e15;--or:#c9a84c;--or-clair:#e6cd7e;--or-fonce:#7a6428;
-  --texte:#e9e6de;--doux:#bdb6a5;--filet:rgba(201,168,76,.28);
-  --ivoire:#f6f2e9;--encre:#15130d;--encre-doux:#4a4538;
+  --texte:#ece9e1;--doux:#c3bcab;--filet:rgba(201,168,76,.3);
+  --ivoire:#f6f2e9;--encre:#15130d;--encre-doux:#46412f;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--ink)}
-body{font-family:'Jost',Arial,sans-serif;font-weight:300;color:var(--texte);font-size:12.5pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:'Jost',Arial,sans-serif;font-weight:300;color:var(--texte);font-size:12pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+a{color:inherit;text-decoration:none}
 .page{width:210mm;height:297mm;position:relative;overflow:hidden;page-break-after:always;background:var(--ink)}
 .page:last-child{page-break-after:auto}
 .pad{position:relative;padding:20mm 18mm 0}
-h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;line-height:1.04}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;line-height:1.05}
 h1{font-size:40pt;color:#fff}
-h2{font-size:38pt;color:#fff}
+h2{font-size:36pt;color:#fff}
 h1 em,h2 em{font-style:italic;color:var(--or-clair)}
-h3{font-size:17pt;font-weight:400;color:#fff;margin-bottom:1.5mm;line-height:1.15}
+h3{font-size:16.5pt;font-weight:400;color:#fff;margin-bottom:1mm;line-height:1.15}
 .sur{font-size:9pt;letter-spacing:.3em;text-transform:uppercase;color:var(--or);font-weight:500;margin-bottom:4mm}
-.chapo{font-size:13.5pt;line-height:1.5;color:var(--doux);margin-top:5mm;max-width:160mm}
+.chapo{font-size:13pt;line-height:1.5;color:var(--doux);margin-top:5mm;max-width:165mm}
 b,strong{font-weight:500;color:#fff}
 .pied{position:absolute;bottom:10mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:8pt;letter-spacing:.24em;text-transform:uppercase;color:#8d877a}
 .pied b{color:var(--or);font-weight:500}
-.bouton{display:inline-flex;align-items:center;background:linear-gradient(135deg,#a8893f,#e6cd7e 50%,#c9a84c);color:#15120a;font-weight:600;font-size:11pt;letter-spacing:.06em;padding:4mm 8mm;border-radius:30mm}
+.bouton{display:inline-block;background:linear-gradient(135deg,#a8893f,#e6cd7e 50%,#c9a84c);color:#15120a;font-weight:600;font-size:11pt;letter-spacing:.05em;padding:4mm 8mm;border-radius:30mm}
 .ico{width:11mm;height:11mm;flex:none;border:1px solid var(--filet);border-radius:50%;display:grid;place-items:center}
 .ico svg{width:5.5mm;height:5.5mm;stroke:var(--or-clair);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-/* Affiche entière, jamais recadrée : la largeur fixe, la hauteur suit le 9:16. */
-.affiche{display:block;width:100%;aspect-ratio:941/1672;object-fit:contain;border-radius:2.5mm;border:1px solid var(--filet);box-shadow:0 4mm 12mm rgba(0,0,0,.55)}
-.legende{font-size:8.5pt;letter-spacing:.12em;text-transform:uppercase;color:#8d877a;margin-top:3mm;text-align:center}
+.cadre{display:block;width:100%;border-radius:2.5mm;border:1px solid var(--filet);box-shadow:0 4mm 12mm rgba(0,0,0,.5)}
 
-/* ── Clair ── */
+/* ── Pages claires ── */
 .clair{background:var(--ivoire);color:var(--encre-doux)}
 .clair h2,.clair h3,.clair b{color:var(--encre)}
 .clair h2 em{color:var(--or-fonce)}
 .clair .sur{color:var(--or-fonce)}
 .clair .chapo{color:var(--encre-doux)}
-.clair .pied{color:#8a8473}
+.clair .pied{color:#857f6e}
 .clair .pied b{color:var(--or-fonce)}
-.clair .ico{border-color:rgba(122,100,40,.35)}
+.clair .ico{border-color:rgba(122,100,40,.4)}
 .clair .ico svg{stroke:var(--or-fonce)}
 
-/* ── 1. Couverture : la plaque, sans personne, cadrée sur le QR ── */
-.cv-tete{position:absolute;top:0;left:0;right:0;height:30mm;display:flex;justify-content:space-between;align-items:center;padding:0 18mm;z-index:2}
-.cv-tete img{width:19mm;border-radius:50%;mix-blend-mode:lighten}
-.cv-tete .cible{font-size:8.5pt;letter-spacing:.3em;text-transform:uppercase;color:var(--or);border:1px solid var(--filet);padding:2mm 4mm;border-radius:20mm}
-.cv-img{position:absolute;top:30mm;left:0;width:100%;height:172mm;object-fit:cover;object-position:50% 28%}
-.cv-voile{position:absolute;top:30mm;left:0;right:0;height:172mm;background:linear-gradient(180deg,#050508 0%,rgba(5,5,8,0) 10%,rgba(5,5,8,0) 80%,#050508 100%)}
+/* ── 1 · Couverture ── */
+.cv-tete{position:absolute;top:0;left:0;right:0;height:30mm;display:flex;justify-content:space-between;align-items:center;padding:0 18mm}
+.marque{display:flex;align-items:center;gap:4mm}
+.marque img{width:15mm;height:15mm;border-radius:50%}
+.marque span{font-family:'Cormorant Garamond',serif;font-size:15pt;letter-spacing:.32em;text-transform:uppercase;color:var(--or-clair);line-height:1.1}
+.marque small{display:block;font-family:'Jost',sans-serif;font-size:7pt;letter-spacing:.34em;color:var(--doux)}
+.cible{font-size:8pt;letter-spacing:.28em;text-transform:uppercase;color:var(--or);border:1px solid var(--filet);padding:2mm 4mm;border-radius:20mm}
+.cv-img{position:absolute;top:30mm;left:0;width:100%;height:162mm;object-fit:cover;object-position:50% 27%}
+.cv-voile{position:absolute;top:30mm;left:0;right:0;height:162mm;background:linear-gradient(180deg,#050508 0%,rgba(5,5,8,0) 9%,rgba(5,5,8,0) 82%,#050508 100%)}
 .cv-bas{position:absolute;left:18mm;right:18mm;bottom:18mm}
 .cv-bas .chapo{color:var(--texte)}
-.cv-bas .actions{margin-top:7mm;display:flex;align-items:center;gap:6mm}
-.cv-bas .site{font-size:10.5pt;color:var(--doux);letter-spacing:.06em}
+.actions{margin-top:7mm;display:flex;align-items:center;gap:6mm}
+.actions .site{font-size:10.5pt;color:var(--doux);letter-spacing:.05em}
 
-/* ── 2. Le service ── */
-.trois{display:grid;grid-template-columns:repeat(3,1fr);margin-top:8mm;border-top:1px solid var(--filet);border-bottom:1px solid var(--filet)}
-.trois>div{padding:5mm 2mm 5mm 6mm;border-left:1px solid var(--filet)}
-.trois>div:first-child{border-left:0;padding-left:0}
-.trois .n{font-family:'Cormorant Garamond',serif;font-size:40pt;color:var(--or-clair);line-height:1}
-.trois .l{font-size:11pt;color:var(--doux);margin-top:1.5mm;line-height:1.35}
-.liste{list-style:none;margin-top:7mm;display:grid;gap:4mm}
-.liste li{display:flex;gap:5mm;align-items:center}
-.liste p{font-size:12pt;color:var(--doux)}
-.studio{position:absolute;left:0;right:0;bottom:0;height:119.6mm}  /* 210 mm × 720/1264 : photo entière */
-.studio img{width:100%;height:100%;display:block}
-.studio::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#050508 0%,rgba(5,5,8,0) 18%,rgba(5,5,8,0) 72%,rgba(5,5,8,.88) 100%)}
-.studio figcaption{position:absolute;left:18mm;right:18mm;bottom:8mm;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14pt;color:#fff}
+/* ── 2 · Le service ── */
+.service{display:grid;grid-template-columns:1fr 78mm;gap:10mm;margin-top:9mm;align-items:start}
+.chiffre{display:grid;grid-template-columns:36mm 1fr;align-items:center;padding:4mm 0;border-top:1px solid var(--filet)}
+.chiffre:last-of-type{border-bottom:1px solid var(--filet)}
+.chiffre .n{font-family:'Cormorant Garamond',serif;font-size:34pt;color:var(--or-clair);line-height:1}
+.chiffre .l{font-size:11pt;color:var(--doux);line-height:1.4}
+.puces{list-style:none;margin-top:7mm;display:grid;gap:5mm}
+.puces li{display:flex;gap:4mm;align-items:center;font-size:11.5pt;color:var(--doux);line-height:1.4}
+.recoit{position:absolute;left:18mm;right:18mm;bottom:24mm}
+.recoit .grille{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm}
+.recoit .grille div{background:var(--panel);border:1px solid var(--filet);border-radius:3mm;padding:5mm}
+.recoit h3{font-size:15pt;margin-top:3mm}
+.recoit p{font-size:10.5pt;color:var(--doux);line-height:1.45}
 
-/* ── 3. Ce que gagne l'agence ── */
-.gros{display:flex;align-items:flex-end;gap:7mm;margin-top:8mm}
-.gros .montant{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:96pt;line-height:.8;color:var(--encre)}
-.gros .montant small{font-size:44pt}
-.gros p{font-size:13pt;padding-bottom:2mm;max-width:85mm}
-.offres{display:grid;grid-template-columns:repeat(3,1fr);gap:4.5mm;margin-top:11mm}
-.offre{background:#fff;border:1px solid rgba(21,19,13,.1);border-radius:3mm;padding:6mm 5mm 5.5mm;text-align:center;position:relative}
+/* ── 3 · Rémunération ── */
+.gros{display:flex;align-items:center;gap:8mm;margin-top:9mm}
+.gros .montant{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:80pt;line-height:.9;color:var(--encre);white-space:nowrap}
+.gros .montant small{font-size:38pt}
+.gros p{font-size:13pt;line-height:1.45}
+.offres{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:12mm}
+.offre{background:#fff;border:1px solid rgba(21,19,13,.1);border-radius:3mm;padding:7mm 5mm 6mm;text-align:center;position:relative}
 .offre.top{background:var(--encre);border-color:var(--encre);color:var(--doux)}
 .offre.top h3,.offre.top .prix{color:#fff}
 .offre .badge{position:absolute;top:-3.2mm;left:50%;transform:translateX(-50%);background:var(--or);color:var(--encre);font-size:7.5pt;font-weight:600;letter-spacing:.18em;text-transform:uppercase;padding:1.2mm 3.5mm;border-radius:10mm;white-space:nowrap}
-.offre h3{font-size:16pt;margin:0}
-.offre .prix{font-family:'Cormorant Garamond',serif;font-size:30pt;color:var(--encre);line-height:1.1}
-.offre .prix small{font-size:10pt;font-family:'Jost',sans-serif;opacity:.7}
-.offre .quoi{font-size:9.5pt;margin-top:2.5mm;line-height:1.4;min-height:9mm}
-.offre .marge{margin-top:3mm;padding-top:3mm;border-top:1px solid rgba(122,100,40,.3);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--or-fonce)}
+.offre h3{font-size:17pt;margin:0}
+.offre .et{font-size:8pt;letter-spacing:.18em;text-transform:uppercase;margin-top:3mm;opacity:.75}
+.offre .prix{font-family:'Cormorant Garamond',serif;font-size:30pt;color:var(--encre);line-height:1.05}
+.offre .quoi{font-size:10pt;margin-top:2mm;line-height:1.4;min-height:10mm}
+.offre .marge{margin-top:4mm;padding-top:3.5mm;border-top:1px solid rgba(122,100,40,.3);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--or-fonce)}
 .offre.top .marge{color:var(--or-clair);border-color:var(--filet)}
-.offre .marge strong{display:block;font-family:'Cormorant Garamond',serif;font-size:25pt;letter-spacing:0;text-transform:none;font-weight:400;color:var(--or-fonce)}
+.offre .marge strong{display:block;font-family:'Cormorant Garamond',serif;font-size:27pt;letter-spacing:0;text-transform:none;font-weight:400;color:var(--or-fonce);margin-top:1mm}
 .offre.top .marge strong{color:var(--or-clair)}
-.simu{margin-top:9mm;background:var(--encre);border-radius:3mm;padding:6mm 7mm;display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:6mm;color:var(--doux);align-items:center}
-.simu .t{font-size:11pt;line-height:1.4}
+.simu{margin-top:12mm;background:var(--encre);border-radius:3mm;padding:7mm 8mm;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6mm;color:var(--doux);align-items:center}
+.simu .t{font-size:11.5pt;line-height:1.45}
 .simu .t b{color:#fff}
-.simu .v{font-family:'Cormorant Garamond',serif;font-size:34pt;line-height:1;color:var(--or-clair)}
-.simu .k{font-size:8.5pt;letter-spacing:.18em;text-transform:uppercase}
-.zero{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin-top:9mm}
-.zero div{display:flex;gap:3mm;align-items:center;font-size:10.5pt;line-height:1.25;color:var(--encre)}
-.note{font-size:8.5pt;color:#7d776a;margin-top:6mm;line-height:1.45}
+.simu .v{font-family:'Cormorant Garamond',serif;font-size:36pt;line-height:1;color:var(--or-clair);white-space:nowrap}
+.simu .k{font-size:8.5pt;letter-spacing:.18em;text-transform:uppercase;margin-top:1mm}
+.garanties{display:grid;grid-template-columns:1fr 1fr;gap:5mm 10mm;margin-top:10mm}
+.garanties div{display:flex;gap:4mm;align-items:center;font-size:11.5pt;color:var(--encre)}
+.note{font-size:8.5pt;color:#7a7465;margin-top:7mm;line-height:1.5}
 
-/* ── 4 et 5 : texte à gauche, affiche entière à droite ── */
-.deux{display:grid;grid-template-columns:1fr 64mm;gap:10mm;margin-top:9mm;align-items:start}
-.etape{display:grid;grid-template-columns:12mm 1fr;gap:3mm;padding:4.5mm 0;border-top:1px solid var(--filet)}
+/* ── 4 · Comment ça marche ── */
+.marche{display:grid;grid-template-columns:1fr 70mm;gap:10mm;margin-top:9mm;align-items:start}
+.etape{display:grid;grid-template-columns:12mm 1fr;gap:3mm;padding:5mm 0;border-top:1px solid var(--filet)}
 .etape:last-child{border-bottom:1px solid var(--filet)}
-.etape .num{font-family:'Cormorant Garamond',serif;font-size:36pt;line-height:.9;color:var(--or-clair)}
-.etape h3{font-size:16pt}
+.etape .num{font-family:'Cormorant Garamond',serif;font-size:34pt;line-height:.95;color:var(--or-clair)}
 .etape p{font-size:11pt;color:var(--doux);line-height:1.45}
 .etape .duree{display:block;margin-top:1.5mm;font-size:8pt;letter-spacing:.22em;text-transform:uppercase;color:var(--or)}
-.qr-page .deux{grid-template-columns:1fr 72mm}
-.essai{position:absolute;left:18mm;right:18mm;bottom:24mm;display:flex;gap:8mm;align-items:center;background:var(--panel);border:1px solid var(--filet);border-radius:3mm;padding:6mm}
-.essai .qr{width:36mm;height:36mm;flex:none;background:#fff;padding:2.5mm;border-radius:2mm}
-.essai .qr svg{width:100%;height:100%;display:block}
-.essai h3{font-size:20pt}
-.essai p{font-size:11pt;color:var(--doux)}
-.essai .url{color:var(--or-clair);font-size:11pt;margin-top:2mm;letter-spacing:.03em}
+.offert{position:absolute;left:18mm;right:18mm;bottom:24mm;display:flex;gap:6mm;align-items:center;border:1px solid var(--or);border-radius:3mm;padding:6mm 7mm;background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.03))}
+.offert .ico{width:14mm;height:14mm}
+.offert .ico svg{width:7mm;height:7mm}
+.offert h3{font-size:19pt}
+.offert p{font-size:11pt;color:var(--doux)}
 
-/* ── 6. Dos ── */
-.raisons{display:grid;grid-template-columns:1fr 1fr;gap:9mm 10mm;margin-top:12mm}
-.raisons div{display:flex;gap:4.5mm}
-.raisons p{font-size:12pt;line-height:1.45}
-.appel{position:absolute;left:0;right:0;bottom:0;height:128mm;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,.22),rgba(201,168,76,0) 60%),var(--encre);color:var(--doux)}
-.appel .in{position:relative;padding:20mm 18mm 0;text-align:center}
-.appel h2{font-size:38pt;color:#fff}
+/* ── 5 · Plaque QR ── */
+.plaque{margin-top:8mm}
+.quatre{display:grid;grid-template-columns:repeat(4,1fr);gap:5mm;margin-top:8mm}
+.quatre div{border-top:2px solid var(--or);padding-top:3mm}
+.quatre h3{font-size:15pt}
+.quatre p{font-size:10.5pt;color:var(--doux);line-height:1.4}
+.essai{position:absolute;left:18mm;right:18mm;bottom:24mm;display:flex;gap:8mm;align-items:center;background:var(--panel);border:1px solid var(--filet);border-radius:3mm;padding:6mm}
+.essai .qr{width:34mm;height:34mm;flex:none;background:#fff;padding:2.5mm;border-radius:2mm}
+.essai .qr svg{width:100%;height:100%;display:block}
+.essai h3{font-size:19pt}
+.essai p{font-size:11pt;color:var(--doux)}
+.essai .url{color:var(--or-clair);font-size:11pt;margin-top:1.5mm}
+
+/* ── 6 · Dos ── */
+.raisons{display:grid;grid-template-columns:1fr 1fr;gap:10mm 10mm;margin-top:12mm}
+.raisons div{display:flex;gap:4.5mm;align-items:flex-start}
+.raisons p{font-size:11.5pt;line-height:1.45}
+.appel{position:absolute;left:0;right:0;bottom:0;height:124mm;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,.22),rgba(201,168,76,0) 60%),var(--encre);color:var(--doux);text-align:center;padding:16mm 18mm 0}
+.appel h2{font-size:36pt;color:#fff}
 .appel h2 em{color:var(--or-clair)}
 .appel .sur{color:var(--or)}
-.appel .chapo{margin:4mm auto 0;color:var(--texte);font-size:13pt;max-width:150mm}
+.appel .chapo{margin:4mm auto 0;color:var(--texte);max-width:150mm}
 .appel .bouton{margin-top:7mm}
-.coord{display:grid;grid-template-columns:1fr 1fr;max-width:150mm;margin:9mm auto 0;border-top:1px solid var(--filet)}
+.coord{display:grid;grid-template-columns:1fr 1fr;max-width:150mm;margin:8mm auto 0;border-top:1px solid var(--filet)}
 .coord div{padding:4.5mm 2mm 0}
 .coord div+div{border-left:1px solid var(--filet)}
 .coord span{display:block;font-size:8pt;letter-spacing:.28em;text-transform:uppercase;color:var(--or)}
-.coord strong{font-weight:400;font-size:13pt;color:#fff}
-.signe{position:absolute;bottom:9mm;left:0;right:0;text-align:center;font-size:8pt;letter-spacing:.26em;text-transform:uppercase;color:#8d877a}
+.coord strong{font-weight:400;font-size:12.5pt;color:#fff}
+.signe{position:absolute;bottom:8mm;left:0;right:0;font-size:8pt;letter-spacing:.26em;text-transform:uppercase;color:#8d877a}
 </style>
 </head>
 <body>
@@ -154,21 +166,24 @@ b,strong{font-weight:500;color:#fff}
   <symbol id="i-euro" viewBox="0 0 24 24"><path d="M18 6.5A7 7 0 1 0 18 17.5M4 10h10M4 14h10"/></symbol>
   <symbol id="i-carte" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
   <symbol id="i-cadeau" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9M12 8v13M12 8S10.5 3 8 3.5 7 8 12 8zM12 8s1.5-5 4-4.5S17 8 12 8z"/></symbol>
+  <symbol id="i-page" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></symbol>
+  <symbol id="i-ecran" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-outil" viewBox="0 0 24 24"><path d="M4 20l6-6M14.5 3.5a4.5 4.5 0 0 0-4 6.5L4 16.5 7.5 20l6.5-6.5a4.5 4.5 0 0 0 6.5-4l-3 1-3-3z"/></symbol>
 </svg>
 
 <!-- ═══ 1 · COUVERTURE ═══ -->
 <section class="page">
   <div class="cv-tete">
-    <img src="img/logo-melodia-600.jpg" alt="Melodia Funèbre">
+    <div class="marque"><img src="img/logo-melodia-600.jpg" alt=""><span>Melodia Funèbre<small>Des hommages en musique</small></span></div>
     <span class="cible">Pour les pompes funèbres</span>
   </div>
   <img class="cv-img" src="../assets/img/plaque-qr-1100.jpg" alt="">
   <div class="cv-voile"></div>
   <div class="cv-bas">
-    <div class="sur">Melodia Funèbre · Hommages musicaux</div>
     <h1>Offrez à chaque famille<br><em>une chanson pour lui dire adieu.</em></h1>
-    <p class="chapo">Une œuvre originale, écrite et composée pour le défunt, livrée en 24 heures pour la cérémonie. <b>Vous la proposez, nous faisons tout le reste — et votre agence garde 60 %.</b></p>
-    <div class="actions"><span class="bouton">Votre première composition est offerte</span><span class="site">melodia-funebre.fr</span></div>
+    <p class="chapo">Une œuvre originale, écrite et composée pour le défunt,<br>livrée en 24&nbsp;heures pour la cérémonie.<br><b>Vous la proposez, nous faisons le reste. Votre agence garde 60&nbsp;%.</b></p>
+    <div class="actions"><a class="bouton" href="https://melodia-funebre.fr/professionnels">Votre première composition est offerte</a><a class="site" href="https://melodia-funebre.fr/professionnels">melodia-funebre.fr</a></div>
   </div>
 </section>
 
@@ -178,46 +193,54 @@ b,strong{font-weight:500;color:#fff}
     <div class="sur">Le service</div>
     <h2>La musique qui l’a connu,<br><em>enfin jouée à ses obsèques.</em></h2>
     <p class="chapo">Aux obsèques, la musique n’a presque jamais connu le défunt. Avec Melodia Funèbre, la salle entend son prénom, son métier, ses manies : une chanson écrite pour lui, et pour personne d’autre.</p>
-    <div class="trois">
-      <div><div class="n">5 min</div><div class="l">d’entretien avec la famille, par téléphone ou dans vos bureaux</div></div>
-      <div><div class="n">24 h</div><div class="l">pour recevoir l’œuvre, avant la cérémonie</div></div>
-      <div><div class="n">À vie</div><div class="l">la musique reste à la famille, avec sa page souvenir</div></div>
+    <div class="service">
+      <div>
+        <div class="chiffre"><div class="n">5 min</div><div class="l">d’entretien avec la famille, au téléphone ou dans vos bureaux</div></div>
+        <div class="chiffre"><div class="n">24 h</div><div class="l">pour recevoir l’œuvre, avant la cérémonie</div></div>
+        <div class="chiffre"><div class="n">À vie</div><div class="l">la musique reste à la famille, droits d’usage compris</div></div>
+        <ul class="puces">
+          <li><span class="ico"><svg><use href="#i-note"/></svg></span><span><b>Une musique originale</b>, dans le style choisi, chantée ou instrumentale.</span></li>
+          <li><span class="ico"><svg><use href="#i-coeur"/></svg></span><span><b>Écoutée en entier par une personne</b> avant chaque envoi.</span></li>
+        </ul>
+      </div>
+      <img class="cadre" src="img/c-pianiste.jpg" alt="">
     </div>
-    <ul class="liste">
-      <li><span class="ico"><svg><use href="#i-note"/></svg></span><p><b>Paroles et musique originales</b>, dans le style choisi, avec ou sans paroles.</p></li>
-      <li><span class="ico"><svg><use href="#i-coeur"/></svg></span><p><b>Écoutée en entier par une personne</b> avant chaque envoi, et reprise si elle ne ressemble pas au défunt.</p></li>
-    </ul>
   </div>
-  <figure class="studio">
-    <img src="img/atelier-ecoute-1264.jpg" alt="">
-    <figcaption>Notre studio : chaque hommage est écrit, composé et relu par des personnes.</figcaption>
-  </figure>
+  <div class="recoit">
+    <div class="sur">Ce que reçoit la famille</div>
+    <div class="grille">
+      <div><span class="ico"><svg><use href="#i-note"/></svg></span><h3>Son œuvre</h3><p>Le fichier à garder, à réécouter, à transmettre.</p></div>
+      <div><span class="ico"><svg><use href="#i-page"/></svg></span><h3>Sa page hommage</h3><p>Portrait, dates, paroles et lecteur, à partager.</p></div>
+      <div><span class="ico"><svg><use href="#i-qr"/></svg></span><h3>Son QR code</h3><p>À graver sur une plaque, pour l’écouter sur place.</p></div>
+    </div>
+  </div>
+  <div class="pied"><span><b>Melodia Funèbre</b> · Pour les pompes funèbres</span><span>02</span></div>
 </section>
 
-<!-- ═══ 3 · CE QUE GAGNE L'AGENCE ═══ -->
+<!-- ═══ 3 · RÉMUNÉRATION ═══ -->
 <section class="page clair">
   <div class="pad">
     <div class="sur">Votre rémunération</div>
     <h2>Un nouveau service,<br><em>sans le moindre investissement.</em></h2>
     <div class="gros">
-      <div class="montant">179<small> €</small></div>
-      <p><b>nets pour votre agence</b> sur chaque hommage Prestige vendu. Vous conservez 60 % du prix payé par la famille.</p>
+      <div class="montant">179,40<small>&nbsp;€</small></div>
+      <p><b>nets pour votre agence</b> sur chaque hommage Prestige vendu. Vous conservez 60&nbsp;% du prix payé par la famille.</p>
     </div>
     <div class="offres">
-      <div class="offre"><h3>Essentiel</h3><div class="prix">149 € <small>famille</small></div><div class="quoi">Une œuvre de 2 à 3 minutes, livrée en 24 h</div><div class="marge">Votre marge<strong>89,40 €</strong></div></div>
-      <div class="offre top"><span class="badge">Le plus choisi</span><h3>Prestige</h3><div class="prix">299 € <small>famille</small></div><div class="quoi">Deux versions, une révision, l’instrumental</div><div class="marge">Votre marge<strong>179,40 €</strong></div></div>
-      <div class="offre"><h3>Mémorial</h3><div class="prix">499 € <small>famille</small></div><div class="quoi">Mini-album de trois titres, livret imprimé</div><div class="marge">Votre marge<strong>299,40 €</strong></div></div>
+      <div class="offre"><h3>Essentiel</h3><div class="et">Prix famille</div><div class="prix">149&nbsp;€</div><div class="quoi">Une œuvre de 2 à 3 minutes, livrée en 24 h</div><div class="marge">Votre marge<strong>89,40&nbsp;€</strong></div></div>
+      <div class="offre top"><span class="badge">Le plus choisi</span><h3>Prestige</h3><div class="et">Prix famille</div><div class="prix">299&nbsp;€</div><div class="quoi">Deux versions, une révision, la version instrumentale</div><div class="marge">Votre marge<strong>179,40&nbsp;€</strong></div></div>
+      <div class="offre"><h3>Mémorial</h3><div class="et">Prix famille</div><div class="prix">499&nbsp;€</div><div class="quoi">Mini-album de trois titres, livret souvenir imprimé</div><div class="marge">Votre marge<strong>299,40&nbsp;€</strong></div></div>
     </div>
     <div class="simu">
       <div class="t">Une agence qui organise <b>20 obsèques par mois</b> et vend <b>5 hommages Prestige</b>* :</div>
-      <div><div class="v">897 €</div><div class="k">nets par mois</div></div>
-      <div><div class="v">10 764 €</div><div class="k">nets par an</div></div>
+      <div><div class="v">897&nbsp;€</div><div class="k">nets par mois</div></div>
+      <div><div class="v">10&nbsp;764&nbsp;€</div><div class="k">nets par an</div></div>
     </div>
-    <div class="zero">
-      <div><span class="ico"><svg><use href="#i-euro"/></svg></span>Aucun stock ni abonnement</div>
+    <div class="garanties">
+      <div><span class="ico"><svg><use href="#i-euro"/></svg></span>Aucun stock, aucun abonnement</div>
       <div><span class="ico"><svg><use href="#i-bouclier"/></svg></span>Aucun minimum, aucun engagement</div>
-      <div><span class="ico"><svg><use href="#i-coeur"/></svg></span>Famille non satisfaite : non facturée</div>
-      <div><span class="ico"><svg><use href="#i-note"/></svg></span>Zéro droit SACEM à régler</div>
+      <div><span class="ico"><svg><use href="#i-coeur"/></svg></span>Famille non satisfaite : rien n’est facturé</div>
+      <div><span class="ico"><svg><use href="#i-note"/></svg></span>Aucun droit SACEM à régler</div>
     </div>
     <p class="note">* Estimation indicative : une famille sur quatre retient l’hommage lorsqu’il lui est présenté. Ne constitue pas un engagement contractuel. Facture récapitulative mensuelle. Prix payés par la famille, TVA non applicable (art. 293 B du CGI).</p>
   </div>
@@ -229,42 +252,44 @@ b,strong{font-weight:500;color:#fff}
   <div class="pad">
     <div class="sur">Comment ça marche</div>
     <h2>Trente secondes<br><em>pour le proposer.</em></h2>
-    <p class="chapo">Rien à installer, aucune compétence musicale. Vous restez l’interlocuteur de la famille.</p>
-    <div class="deux">
+    <p class="chapo">Rien à installer, aucune compétence musicale.<br>Vous restez l’interlocuteur de la famille.</p>
+    <div class="marche">
       <div>
         <div class="etape"><div class="num">1</div><div><h3>Vous le proposez</h3><p>« Nous pouvons faire composer une chanson originale pour lui, livrée avant la cérémonie. » Puis vous faites écouter un exemple.</p><span class="duree">30 secondes</span></div></div>
         <div class="etape"><div class="num">2</div><div><h3>Vous transmettez le brief</h3><p>Depuis votre espace partenaire, ou vous nous passez le contact et nous menons l’entretien en votre nom.</p><span class="duree">3 minutes</span></div></div>
         <div class="etape"><div class="num">3</div><div><h3>Nous composons</h3><p>Écriture, composition, mixage, écoute de contrôle : tout est de notre côté.</p><span class="duree">24 heures</span></div></div>
-        <div class="etape"><div class="num">4</div><div><h3>Vous encaissez votre marge</h3><p>60 % pour votre agence, facture récapitulative chaque mois. Aucun minimum.</p><span class="duree">Chaque mois</span></div></div>
+        <div class="etape"><div class="num">4</div><div><h3>Vous encaissez votre marge</h3><p>60&nbsp;% pour votre agence, facture récapitulative chaque mois. Aucun minimum.</p><span class="duree">Chaque mois</span></div></div>
       </div>
-      <figure><img class="affiche" src="img/belle-note-finale.jpg" alt=""><figcaption class="legende">Visuel de campagne Melodia Funèbre</figcaption></figure>
+      <img class="cadre" src="img/c-adieux.jpg" alt="">
     </div>
+  </div>
+  <div class="offert">
+    <span class="ico"><svg><use href="#i-cadeau"/></svg></span>
+    <div><h3>Votre première composition est offerte.</h3><p>Présentez un hommage réel à votre prochaine famille, avant tout engagement.</p></div>
   </div>
   <div class="pied"><span><b>Melodia Funèbre</b> · Pour les pompes funèbres</span><span>04</span></div>
 </section>
 
-<!-- ═══ 5 · LE QR MÉMORIAL ═══ -->
-<section class="page qr-page">
+<!-- ═══ 5 · LA PLAQUE QR ═══ -->
+<section class="page">
   <div class="pad">
     <div class="sur">La plaque QR mémorial</div>
     <h2>L’hommage ne s’arrête pas<br><em>à la cérémonie.</em></h2>
-    <div class="deux">
-      <div>
-        <div class="etape"><div class="num">1</div><div><h3>La plaque</h3><p>Gravée par votre marbrier ou simplement posée. Le code tient en quatre centimètres.</p></div></div>
-        <div class="etape"><div class="num">2</div><div><h3>Le scan</h3><p>Avec l’appareil photo du téléphone. Aucune application à installer.</p></div></div>
-        <div class="etape"><div class="num">3</div><div><h3>La page de souvenir</h3><p>Son nom, ses dates, les mots de la famille et ses photos.</p></div></div>
-        <div class="etape"><div class="num">4</div><div><h3>Sa musique</h3><p>L’œuvre écrite pour lui se met à jouer, là, devant ses proches.</p></div></div>
-      </div>
-      <figure><img class="affiche" src="img/plaque-et-telephone.jpg" alt=""></figure>
+    <img class="cadre plaque" src="img/c-plaque.jpg" alt="">
+    <div class="quatre">
+      <div><h3>La plaque</h3><p>Gravée par votre marbrier ou simplement posée.</p></div>
+      <div><h3>Le scan</h3><p>Avec l’appareil photo. Aucune application.</p></div>
+      <div><h3>La page</h3><p>Son nom, ses dates, les mots de la famille.</p></div>
+      <div><h3>Sa musique</h3><p>L’œuvre écrite pour lui se met à jouer.</p></div>
     </div>
   </div>
   <div class="essai">
-    <div class="qr" id="qr"></div>
+    <a class="qr" id="qr" href="https://melodia-funebre.fr/m/demo"></a>
     <div>
       <div class="sur" style="margin-bottom:2mm">Essayez maintenant</div>
       <h3>Scannez ce code avec votre téléphone.</h3>
-      <p>Vous arrivez sur une vraie page de souvenir, telle qu’une famille la publie. Aucune application, aucun compte.</p>
-      <div class="url">melodia-funebre.fr/m/demo</div>
+      <p>Vous arrivez sur une vraie page de souvenir, telle qu’une famille la publie.</p>
+      <a class="url" href="https://melodia-funebre.fr/m/demo">melodia-funebre.fr/m/demo</a>
     </div>
   </div>
   <div class="pied"><span><b>Melodia Funèbre</b> · Pour les pompes funèbres</span><span>05</span></div>
@@ -276,22 +301,22 @@ b,strong{font-weight:500;color:#fff}
     <div class="sur">Pourquoi les agences nous rejoignent</div>
     <h2>Devenez l’agence<br><em>dont on parle à la sortie.</em></h2>
     <div class="raisons">
-      <div><span class="ico"><svg><use href="#i-etoile"/></svg></span><p><b>Un vrai facteur de différence.</b> Une expérience que les agences voisines ne proposent pas — c’est souvent ce qui fait choisir une maison.</p></div>
-      <div><span class="ico"><svg><use href="#i-carte"/></svg></span><p><b>Partenaires limités par secteur.</b> Nous restreignons volontairement le nombre d’agences par bassin de population.</p></div>
-      <div><span class="ico"><svg><use href="#i-horloge"/></svg></span><p><b>Vingt minutes pour démarrer.</b> Compte partenaire, kit de présentation et hommages de démonstration à faire écouter.</p></div>
-      <div><span class="ico"><svg><use href="#i-cadeau"/></svg></span><p><b>Première œuvre offerte.</b> Vous présentez un hommage réel à une famille, avant tout engagement.</p></div>
+      <div><span class="ico"><svg><use href="#i-etoile"/></svg></span><p><b>Un vrai facteur de différence.</b> Une expérience que les agences voisines ne proposent pas.</p></div>
+      <div><span class="ico"><svg><use href="#i-carte"/></svg></span><p><b>Partenaires limités par secteur.</b> Un nombre d’agences volontairement restreint par bassin.</p></div>
+      <div><span class="ico"><svg><use href="#i-outil"/></svg></span><p><b>Aucun travail de production.</b> Vous présentez, nous produisons : rien à installer.</p></div>
+      <div><span class="ico"><svg><use href="#i-ecran"/></svg></span><p><b>Un espace partenaire en ligne.</b> Brief en trois minutes, suivi, catalogue à faire écouter.</p></div>
+      <div><span class="ico"><svg><use href="#i-horloge"/></svg></span><p><b>Vingt minutes pour démarrer.</b> Compte, kit de présentation et hommages de démonstration.</p></div>
+      <div><span class="ico"><svg><use href="#i-cadeau"/></svg></span><p><b>Première œuvre offerte.</b> Un hommage réel à présenter, avant tout engagement.</p></div>
     </div>
   </div>
   <div class="appel">
-    <div class="in">
-      <div class="sur">Prochaine étape</div>
-      <h2>Demandez votre <em>démonstration.</em></h2>
-      <p class="chapo">Écoutez de vraies œuvres, découvrez l’espace partenaire, et vérifiez la disponibilité de votre secteur.</p>
-      <span class="bouton">Votre première composition est offerte</span>
-      <div class="coord">
-        <div><span>Écrivez-nous</span><strong>contact@melodia-funebre.fr</strong></div>
-        <div><span>Découvrez</span><strong>melodia-funebre.fr/professionnels</strong></div>
-      </div>
+    <div class="sur">Prochaine étape</div>
+    <h2>Demandez votre <em>démonstration.</em></h2>
+    <p class="chapo">Écoutez de vraies œuvres, découvrez l’espace partenaire et vérifiez la disponibilité de votre secteur.</p>
+    <a class="bouton" href="https://melodia-funebre.fr/professionnels">Votre première composition est offerte</a>
+    <div class="coord">
+      <div><span>Écrivez-nous</span><a href="mailto:contact@melodia-funebre.fr"><strong>contact@melodia-funebre.fr</strong></a></div>
+      <div><span>Découvrez</span><a href="https://melodia-funebre.fr/professionnels"><strong>melodia-funebre.fr/professionnels</strong></a></div>
     </div>
     <div class="signe">Melodia Funèbre · Des voix pour ceux qui restent</div>
   </div>
