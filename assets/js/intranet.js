@@ -560,7 +560,15 @@
       var depuis = O.ajouteJours(O.debutJour(new Date()), -60);
       var jusqua = O.ajouteJours(new Date(), etat.jours);
       var cmds = [];
-      try { cmds = await window.MelodiaDB.all(); } catch (e) { cmds = []; }
+      /* Le commercial n'a pas à voir les commandes des familles, ni
+         avant ni après la migration qui retire ce droit en base. */
+      if (O.estMaitre()) {
+        try { cmds = await window.MelodiaDB.all(); }
+        catch (e) {
+          cmds = [];
+          if (window.melodiaToast) window.melodiaToast('Les commandes n’ont pas pu être lues : ' + (e && e.message ? e.message : 'erreur'));
+        }
+      }
       var r = await Promise.all([I.Agenda.liste(depuis, jusqua), I.equipe()]);
       etat.rdv = r[0].concat(depuisCommandes(cmds));
       etat.rdv.sort(function (a, b) { return new Date(a.debut) - new Date(b.debut); });
@@ -671,7 +679,7 @@
       '<div class="form-msg" id="ms-msg"></div>' +
       '<div style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap;">' +
         '<button class="btn btn-gold btn-sm" id="ms-envoyer">Envoyer</button>' +
-        '<span style="color:var(--dust);font-size:.8rem;">Entrée + Ctrl pour envoyer</span>' +
+        '<span style="color:var(--dust);font-size:.8rem;">Ctrl + Entrée pour envoyer</span>' +
       '</div>';
   }
 
@@ -914,13 +922,17 @@
       : etat.pubs.filter(function (p) { return p.statut === etat.filtre; });
 
     var compte = {};
-    Object.keys(I.ETATS_PUB).forEach(function (s) {
-      compte[s] = etat.pubs.filter(function (p) { return p.statut === s; }).length;
+    Object.keys(I.ETATS_PUB).forEach(function (s) { compte[s] = 0; });
+    etat.pubs.forEach(function (p) {
+      var s = I.ETATS_PUB[p.statut] ? p.statut : 'autre';
+      compte[s] = (compte[s] || 0) + 1;
     });
+    var total = 0;
+    Object.keys(compte).forEach(function (s) { total += compte[s]; });
 
     var h = '<div class="panel"><div class="panel-head"><div>' +
       '<div class="panel-title">Réseaux <em>sociaux</em></div>' +
-      '<div class="panel-sub">' + etat.pubs.length + ' publication(s) au plan</div></div>' +
+      '<div class="panel-sub">' + total + ' publication' + (total > 1 ? 's' : '') + ' au plan</div></div>' +
       '<button class="btn btn-gold btn-sm" id="pb-neuf">+ Publication</button></div>' +
 
       '<div class="form-msg" style="display:block;background:rgba(56,189,248,.08);' +
@@ -930,9 +942,10 @@
         'Le bouton « Copier » met le texte dans le presse-papiers : vous le collez dans l\'application du réseau.</div>' +
 
       '<div class="kpi-grid" style="margin-bottom:1.2rem;">' +
-        Object.keys(I.ETATS_PUB).map(function (s) {
-          return '<div class="kpi"><div class="kpi-label">' + esc(I.ETATS_PUB[s].l) + '</div>' +
-            '<div class="kpi-value" style="color:var(--' + I.ETATS_PUB[s].c + ');">' + compte[s] + '</div></div>';
+        Object.keys(I.ETATS_PUB).concat(compte.autre ? ['autre'] : []).map(function (s) {
+          var meta = I.ETATS_PUB[s] || { l: 'Autre', c: 'silver-dim' };
+          return '<div class="kpi"><div class="kpi-label">' + esc(meta.l) + '</div>' +
+            '<div class="kpi-value" style="color:var(--' + meta.c + ');">' + (compte[s] || 0) + '</div></div>';
         }).join('') +
       '</div>' +
 

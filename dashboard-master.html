@@ -10,10 +10,11 @@
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=aa8861a7">
-<link rel="stylesheet" href="/assets/css/dashboard.css?v=cd9a4551">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=b97bdc91">
 <link rel="stylesheet" href="/assets/css/relief.css?v=3d4a9fe9">
 <link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
 <link rel="stylesheet" href="/assets/css/souvenir.css?v=3653a8f8">
+<style>@view-transition { navigation: none; }</style>
 </head>
 <body>
 <div class="dash">
@@ -41,7 +42,7 @@
     <button class="side-item" data-v="partenaires"><span class="ico">◇</span>Partenaires</button>
     <button class="side-item" data-v="finances"><span class="ico">€</span>Finances</button>
     <button class="side-item" data-v="prospection"><span class="ico">◎</span>Prospection</button>
-    <button class="side-item" onclick="location.href='dashboard-commercial.html'"><span class="ico">◈</span>Console commerciale</button>
+    <button class="side-item" data-act="lien" data-arg="/dashboard-commercial"><span class="ico">◈</span>Console commerciale</button>
     <button class="side-item" data-v="systeme"><span class="ico">⚙</span>Système</button>
     <div class="side-foot">
       <div class="side-user">
@@ -51,14 +52,14 @@
           <div class="side-urole" style="color:var(--or);">Fondateur · Maître</div>
         </div>
       </div>
-      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" onclick="logout()">Déconnexion</button>
+      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" data-act="deconnexion">Déconnexion</button>
     </div>
   </aside>
 
   <main class="dash-main">
     <div class="dash-top">
       <div style="display:flex; gap:1rem; align-items:flex-start;">
-        <button class="dash-burger" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+        <button class="dash-burger" data-act="toggle-side">☰</button>
         <div>
           <div class="dash-eyebrow" id="head-eyebrow">Console maître</div>
           <h1 class="dash-title" id="head-title">Vue <em>générale</em></h1>
@@ -71,21 +72,21 @@
 </div>
 
 <script src="/assets/js/config.js?v=e792fc99"></script>
-<script src="/assets/js/auth.js?v=db992d44"></script>
+<script src="/assets/js/auth.js?v=7a4babb2"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
-<script src="/assets/js/main.js?v=9608f633"></script>
+<script src="/assets/js/main.js?v=8f4a86c6"></script>
 <script src="/assets/js/commercial-contenu.js?v=3593a3cb"></script>
 <script src="/assets/js/livraison.js?v=8816d59c"></script>
 <script src="/assets/js/atelier-music.js?v=4d8dcbf9"></script>
-<script src="/assets/js/proprietaire.js?v=04452e6f"></script>
+<script src="/assets/js/proprietaire.js?v=4a4180af"></script>
 <script src="/assets/js/qr.js?v=f6fe5656"></script>
 <script src="/assets/js/memorial.js?v=eb8a6362"></script>
 <script src="/assets/js/photos.js?v=ca80d50c"></script>
 <script src="/assets/js/motdepasse.js?v=865738d9"></script>
-<script src="/assets/js/intranet.js?v=4b2436ff"></script>
+<script src="/assets/js/intranet.js?v=30b605fd"></script>
 <script src="/assets/js/relief.js?v=99c4c9ba"></script>
 <script src="/assets/js/mobile.js?v=43030276"></script>
-<script src="/assets/js/palette.js?v=b599a8c8"></script>
+<script src="/assets/js/palette.js?v=52eaafd3"></script>
 <script src="/assets/js/maitre-graphes.js?v=05ad7ec7"></script>
 <script>
 var U = window.MelodiaAuth.guard();
@@ -100,7 +101,7 @@ window.MelodiaAuth.orienter('master').then(function (u) { if (u) U = u; });
 
 function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
 function eur(n){return (n||0).toLocaleString('fr-FR')+' €';}
-function logout(){window.MelodiaAuth.logout();location.href='compte.html';}
+function logout(){window.MelodiaAuth.logout();location.replace('/compte');}
 
 var ORDERS = [], PARTNERS = [], FLOW = window.MELODIA_FLOW, ST = window.MELODIA_STATUS;
 var AI = { title:'', lyrics:'', style:'', visuel:'' };
@@ -244,8 +245,8 @@ function orderCard(o) {
     (ech ? '<div class="o-quand ' + ech.c + '">' + ech.t + '</div>' : '') + '</div>' +
     '<div style="display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">' +
     '<span class="pill pill-etat" style="color:' + m.color + ';">' + m.label + '</span>' +
-    (next ? '<button class="btn ' + (presse ? 'btn-gold' : 'btn-outline') + ' btn-sm" onclick="advance(\'' + o.ref + '\',\'' + next + '\')">→ ' + ST[next].label + '</button>' : '') +
-    '<button class="btn btn-outline btn-sm" onclick="loadBrief(\'' + esc(o.ref) + '\')">Composer</button>' +
+    (next ? '<button type="button" class="btn ' + (presse ? 'btn-gold' : 'btn-outline') + ' btn-sm" data-act="advance" data-arg="' + o.ref + '" data-arg2="' + next + '">→ ' + ST[next].label + '</button>' : '') +
+    '<button type="button" class="btn btn-outline btn-sm" data-act="loadBrief" data-arg="' + esc(o.ref) + '">Composer</button>' +
     '</div></div>' + timeline(o.status) +
     /* Le brief en colonnes : chaque champ sous son étiquette. En une
        seule phrase courante, retrouver le métier demandait de relire
@@ -426,7 +427,7 @@ async function majEtatCourriel() {
        '<div style="display:flex; gap:0.8rem; flex-wrap:wrap; align-items:center;">' +
        '<input class="field-input" id="sys-courriel-a" type="email" style="flex:1 1 240px; min-width:0;" ' +
        'value="' + esc((U && U.email) || '') + '" placeholder="vous@gmail.com">' +
-       '<button class="btn btn-outline btn-sm" onclick="essaiCourriel()">Envoyer l\'essai</button></div>' +
+       '<button class="btn btn-outline btn-sm" data-act="essaiCourriel">Envoyer l\'essai</button></div>' +
        '<div id="sys-courriel-essai" style="color:var(--ash); font-size:0.85rem; margin-top:0.8rem;"></div>';
 
   c.innerHTML = h;
@@ -662,7 +663,7 @@ function vPremierePas() {
     '<div class="panel-title">Ce qui <em>tourne déjà</em></div>' +
     '<div class="panel-sub">Un service en ligne, indépendant des commandes</div>' +
     '</div>' +
-    '<button class="btn btn-outline btn-sm" onclick="go(\'adieux\')">Voir le détail</button></div>' +
+    '<button class="btn btn-outline btn-sm" data-act="go" data-arg="adieux">Voir le détail</button></div>' +
     '<p style="color:var(--ash); max-width:58ch;">' +
     '« Un mot pour toi » reçoit des dépôts et des lectures sans passer par une ' +
     'commande. C’est aujourd’hui la seule chose vivante de la maison : ' +
@@ -711,7 +712,7 @@ function vAccueil() {
     '</div>' +
     (graphes ? '<div class="gr-duo ma-duo">' + graphes + '</div>' : '') +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">À <em>traiter</em></div><div class="panel-sub">Commandes en attente d\'action</div></div>' +
-    '<button class="btn btn-outline btn-sm" onclick="go(\'commandes\')">Tout voir</button></div>' +
+    '<button class="btn btn-outline btn-sm" data-act="go" data-arg="commandes">Tout voir</button></div>' +
     (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune commande en attente.</p>') + '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Le <em>workflow</em></div><div class="panel-sub">Mode débutant — composition manuelle</div></div></div>' +
     '<div style="font-size:0.92rem; color:var(--bone); line-height:2;">' +
@@ -743,11 +744,11 @@ function vAtelier() {
     ['Chanson française','Folk acoustique','Classique piano','Jazz doux','Bossa nova','Gospel'].map(function(s){return '<option>'+s+'</option>';}).join('') + '</select></div></div>' +
     '<div class="field"><label class="field-label">Habitude quotidienne</label><input class="field-input" id="at-habitude" placeholder="sifflait en marchant"></div>' +
     '<div class="field"><label class="field-label">Anecdote</label><textarea class="field-area" id="at-anecdote"></textarea></div>' +
-    '<button class="btn btn-gold" style="width:100%;" id="at-btn" onclick="genLyrics()">Écrire les paroles</button>' +
+    '<button class="btn btn-gold" style="width:100%;" id="at-btn" data-act="genLyrics">Écrire les paroles</button>' +
     '<p style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.12em; color:var(--dust); margin-top:1rem; text-align:center;">HYPER AI ENGINE · AUCUNE DONNÉE CONSERVÉE</p></div>' +
 
     '<div><div class="panel"><div class="panel-head"><div><div class="panel-title" id="at-title-h">Les <em>paroles</em></div><div class="panel-sub">Éditables avant composition</div></div>' +
-    '<button class="btn btn-outline btn-sm" onclick="copyLyrics()">Copier</button></div>' +
+    '<button class="btn btn-outline btn-sm" data-act="copyLyrics">Copier</button></div>' +
     '<div id="at-status" style="display:none; margin-bottom:1rem;" class="status-live">Rédaction…</div>' +
     '<div id="at-msg" class="form-msg"></div>' +
     '<textarea class="field-area" id="at-lyrics" style="min-height:230px; font-family:var(--ff-d); font-size:1.05rem; line-height:1.8;" placeholder="Les paroles apparaîtront ici…"></textarea>' +
@@ -756,12 +757,12 @@ function vAtelier() {
     '<p style="font-family:var(--ff-m); font-size:0.52rem; letter-spacing:0.12em; color:var(--dust); margin-top:0.9rem; text-align:center;">RELISEZ ET CORRIGEZ AVANT DE COMPOSER</p></div></div></div>' +
     '<div class="panel" style="margin-top:1.4rem;"><div class="panel-head"><div><div class="panel-title">Un <em>visuel</em> d\'accompagnement</div>' +
     '<div class="panel-sub">Paysage calme tiré du métier et du style, sans visage ni texte · Pollinations, gratuit</div></div>' +
-    '<button class="btn btn-outline btn-sm" id="at-vis-btn" onclick="genVisuel()">Proposer un visuel</button></div>' +
+    '<button class="btn btn-outline btn-sm" id="at-vis-btn" data-act="genVisuel">Proposer un visuel</button></div>' +
     '<div id="at-vis" style="display:none; text-align:center;">' +
     '<img id="at-vis-img" alt="Visuel d\'accompagnement proposé" style="width:100%; max-width:420px; aspect-ratio:1; object-fit:cover; border-radius:6px; border:1px solid var(--line-strong); background:rgba(201,168,76,.04);">' +
     '<p id="at-vis-msg" class="form-msg" style="margin-top:.8rem;"></p>' +
     '<div style="display:flex; gap:.6rem; justify-content:center; margin-top:.8rem;">' +
-    '<button class="btn btn-outline btn-sm" onclick="genVisuel()">Autre version</button>' +
+    '<button class="btn btn-outline btn-sm" data-act="genVisuel">Autre version</button>' +
     '<a class="btn btn-gold btn-sm" id="at-vis-lien" target="_blank" rel="noopener">Ouvrir en grand</a></div></div></div>' +
     '<div id="at-music" style="margin-top:1.4rem;"></div>';
 }
@@ -997,7 +998,7 @@ function vSysteme() {
     '</div></div>' +
     '<div class="panel" style="grid-column:1/-1;"><div class="panel-head"><div><div class="panel-title">Le <em>courriel</em></div>' +
     '<div class="panel-sub">Ce que le site sait envoyer, et ce qui manque</div></div>' +
-    '<button class="btn btn-outline btn-sm" onclick="majEtatCourriel()">Revérifier</button></div>' +
+    '<button class="btn btn-outline btn-sm" data-act="majEtatCourriel">Revérifier</button></div>' +
     '<div id="sys-courriel">Vérification…</div></div>' +
     '<div class="panel"><div class="panel-title">Accès <em>maître</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Sécurité</div>' +
     (window.MelodiaDB.mode === 'supabase'
@@ -1005,8 +1006,8 @@ function vSysteme() {
       : '<p style="font-size:0.9rem; color:var(--bone); line-height:1.8;">L\'identifiant maître ouvre toutes les fonctions. Il est défini dans <code style="color:var(--or);">assets/js/auth.js</code>.</p>' +
         '<p style="font-size:0.85rem; color:var(--amber); margin-top:1rem;">Avant l\'ouverture au public : changez ce mot de passe et passez en base Supabase, afin que l\'accès ne repose plus sur du code côté navigateur.</p>') + '</div>' +
     '<div class="panel"><div class="panel-title">Actions <em>rapides</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Outils</div>' +
-    '<button class="btn btn-outline" style="width:100%; margin-bottom:0.8rem;" onclick="exportCSV()">Exporter les commandes (CSV)</button>' +
-    '<button class="btn btn-outline" style="width:100%;" onclick="window.open(\'index.html\')">Voir le site public</button></div>' +
+    '<button class="btn btn-outline" style="width:100%; margin-bottom:0.8rem;" data-act="exportCSV">Exporter les commandes (CSV)</button>' +
+    '<button class="btn btn-outline" style="width:100%;" data-act="fenetre" data-arg="/">Voir le site public</button></div>' +
     '</div>' +
     /* Le mot de passe du fondateur a transité par une conversation :
        il devait être changé, et jusqu'ici cela demandait de passer par

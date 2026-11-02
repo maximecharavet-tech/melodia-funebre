@@ -8,8 +8,10 @@
    quarante fiches au portefeuille. Une campagne fait la même chose en
    une fois, sans rien perdre de ce qui rend un message lisible :
 
-   · chaque agence reçoit SON message — son nom, sa ville, son
-     dirigeant — et non une circulaire en copie cachée ;
+   · quand l’envoi automatique est actif, chaque agence reçoit SON
+     message — son nom, sa ville, son dirigeant. Tant qu’il est
+     désactivé, le repli est un seul mailto en copie cachée : le
+     message n’est alors pas personnalisé destinataire par destinataire ;
    · on voit, avant d'envoyer, le courriel exact que recevra chacune,
      destinataire par destinataire : bannière, texte, carte de visite ;
    · les fiches qu'il ne faut pas toucher sont écartées d'office, avec
@@ -270,7 +272,7 @@
     function repli(r) {
       var adresses = r.map(function (l) { return l.p.email; });
       var c = courrielPour({ p: { email: '' }, v: {} });
-      dire('L’envoi direct n’est pas encore branché (clé d’envoi absente). Vous pouvez copier les adresses ou ouvrir votre messagerie en copie cachée — sans personnalisation.', 'attention');
+      dire('L’envoi automatique est désactivé. Vous pouvez copier les adresses ou ouvrir votre messagerie en copie cachée : ce repli n’envoie pas un message personnalisé à chaque agence.', 'attention');
       var pied = fond.querySelector('.cmp-pied');
       if (pied.querySelector('[data-copier]')) return;
       var b1 = document.createElement('button'); b1.className = 'btn btn-outline btn-sm'; b1.dataset.copier = '1'; b1.textContent = 'Copier les adresses';
@@ -294,7 +296,7 @@
       var res = await appeler(Object.assign({ mode: 'test', envois: [courrielPour(l)], signature: signature() }, lien()));
       b.disabled = false;
       if (res.ok) dire('Test envoyé à ' + (utilisateur().email || 'votre adresse') + ', avec le message de « ' + l.v.nom + ' ».', 'bon');
-      else if (res.d.code === 'NOT_CONFIGURED') repli(r);
+      else if (res.d.code === 'NOT_CONFIGURED' || res.d.code === 'ENVOI_DESACTIVE') repli(r);
       else dire(erreur(res), 'mal');
     });
 
@@ -311,7 +313,7 @@
         dire('Envoi… ' + Math.min(i + lot.length, r.length) + ' / ' + r.length);
         var res = await appeler(Object.assign({ mode: 'envoi', envois: lot.map(courrielPour), signature: signature() }, lien()));
         if (!res.ok) {
-          if (res.d.code === 'NOT_CONFIGURED') { arret = 'repli'; break; }
+          if (res.d.code === 'NOT_CONFIGURED' || res.d.code === 'ENVOI_DESACTIVE') { arret = 'repli'; break; }
           arret = erreur(res);
           lot.forEach(function (l) { refus.push({ l: l, motif: arret }); });
           break;

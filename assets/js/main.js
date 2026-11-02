@@ -10,7 +10,7 @@
 
   /* Lien personnel d’un collaborateur (?parrain=julie-serve).
      Retenu sur cet appareil seulement : rien n’est envoyé à un serveur,
-     et aucun compteur de visites n’est tenu. */
+     La commande le reprend si la colonne « parrain » existe déjà. */
   try {
     var parrain = new URLSearchParams(location.search).get('parrain') || '';
     parrain = parrain.trim().toLowerCase();
@@ -638,3 +638,34 @@
     } catch (err) { dire('Copie refusée'); }
   });
 })();
+
+/* Les anciens onclick= sont remplacés par data-act, pour qu'une
+   politique de contenu puisse un jour interdire les scripts en ligne. */
+document.addEventListener('click', function (e) {
+  var el = e.target && e.target.closest && e.target.closest('[data-act]');
+  if (!el) return;
+  e.preventDefault();
+  var act = el.getAttribute('data-act');
+  if (act === 'deconnexion') {
+    if (window.MelodiaAuth) window.MelodiaAuth.logout();
+    location.replace('/compte');
+    return;
+  }
+  if (act === 'toggle-side') {
+    var side = document.getElementById(el.getAttribute('data-target') || 'side');
+    if (side) side.classList.toggle('open');
+    return;
+  }
+  if (act === 'showView' && typeof window.showView === 'function') {
+    window.showView(el.getAttribute('data-arg'));
+    return;
+  }
+  if (act === 'lien') { location.href = el.getAttribute('data-arg') || '/'; return; }
+  if (act === 'fenetre') { window.open(el.getAttribute('data-arg') || '/'); return; }
+  var fn = window[act];
+  if (typeof fn !== 'function') return;
+  if (act === 'sendOrder') { fn(false); return; }
+  if (el.hasAttribute('data-arg2')) fn(el.getAttribute('data-arg'), el.getAttribute('data-arg2'));
+  else if (el.hasAttribute('data-arg')) fn(el.getAttribute('data-arg'));
+  else fn();
+});

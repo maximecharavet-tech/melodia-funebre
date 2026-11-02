@@ -289,12 +289,12 @@ async function doReset(e) {
        lien devient une session normale, on relit le rôle et on mène
        la personne à son espace plutôt que de la faire ressaisir. */
     await window.MelodiaAuth.relireRole();
-    setTimeout(function () { location.href = window.MelodiaAuth.home(); }, 1400);
+    setTimeout(function () { location.replace(window.MelodiaAuth.home()); }, 1400);
   } catch (err) {
     b.disabled = false; b.textContent = 'Enregistrer mon nouveau mot de passe';
     msg(err.message);
   }
   return false;
 }
-if (window.MelodiaAuth.current()) location.href = window.MelodiaAuth.home();
+if (window.MelodiaAuth.current()) location.replace(window.MelodiaAuth.home());
 </script>

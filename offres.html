@@ -164,7 +164,7 @@
             <li class="muted">Une seule version</li>
             <li class="muted">Sans révision incluse</li>
           </ul>
-          <button class="btn btn-outline btn-block" onclick="openOrder('Essentiel')">Choisir Essentiel</button>
+          <button class="btn btn-outline btn-block" data-act="openOrder" data-arg="Essentiel">Choisir Essentiel</button>
         </div>
         <div class="card price card-lift featured reveal" data-offer-id="prestige">
           <span class="price-tag">Le plus choisi</span>
@@ -181,7 +181,7 @@
             <li>Fichier WAV sans perte sur demande</li>
 
           </ul>
-          <button class="btn btn-gold btn-block" onclick="openOrder('Prestige')">Choisir Prestige</button>
+          <button class="btn btn-gold btn-block" data-act="openOrder" data-arg="Prestige">Choisir Prestige</button>
         </div>
         <div class="card price card-lift reveal" data-offer-id="memorial">
           <span class="price-tag" style="display:none"></span>
@@ -198,7 +198,7 @@
             <li>Accompagnement dédié du fondateur</li>
 
           </ul>
-          <button class="btn btn-outline btn-block" onclick="openOrder('Mémorial')">Choisir Mémorial</button>
+          <button class="btn btn-outline btn-block" data-act="openOrder" data-arg="Mémorial">Choisir Mémorial</button>
         </div>
       </div>
       <div style="margin-top:2.5rem;"><div class="trust-strip">
@@ -489,7 +489,7 @@
             <p class="wz-sub">Vérifiez le récapitulatif ci-contre, puis réglez en ligne — ou enregistrez et réglez après l'entretien.</p>
             <div class="form-msg" id="o-msg"></div>
             <div id="paypal-zone" style="min-height:46px;margin-bottom:1rem;"></div>
-            <button class="btn btn-outline btn-block" id="o-submit" type="button" onclick="sendOrder(false)">Enregistrer et régler après l'entretien</button>
+            <button class="btn btn-outline btn-block" id="o-submit" type="button" data-act="sendOrder">Enregistrer et régler après l'entretien</button>
             <p style="font-size:.78rem;color:var(--dust);margin-top:1rem;line-height:1.6;">Aucun prélèvement n'est effectué tant que vous n'avez pas validé le paiement. Vous pouvez annuler sans frais jusqu'au début de la composition.</p>
             <div class="wz-actions"><button type="button" class="btn btn-ghost" data-wz-prev><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 18l-6-6 6-6"/></svg> Retour</button></div>
           </div>
@@ -668,14 +668,14 @@
 </nav>
 <script src="/assets/js/config.js?v=e792fc99"></script>
 <script src="/assets/js/content.js?v=b3438db0"></script>
-<script src="/assets/js/main.js?v=9608f633"></script>
+<script src="/assets/js/main.js?v=8f4a86c6"></script>
 <script src="/assets/js/application.js?v=7f9b3448"></script>
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=b37cef91"></script>
 <script src="/assets/js/motion.js?v=59d24715"></script>
-<script src="/assets/js/auth.js?v=db992d44"></script>
-<script src="/assets/js/order.js?v=7ff08127"></script>
+<script src="/assets/js/auth.js?v=7a4babb2"></script>
+<script src="/assets/js/order.js?v=3c4bfa58"></script>
 <script>
 /* ═══ ENCAISSEMENT ═══════════════════════════════════════════════
    Trois modes, choisis d'après assets/js/config.js :

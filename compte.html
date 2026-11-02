@@ -33,6 +33,7 @@
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=aa8861a7">
+<style>@view-transition { navigation: none; }</style>
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -200,7 +201,7 @@
         <!-- Déverrouillage par empreinte : n'apparaît que sur un appareil
              où la clé a été posée, et seulement s'il sait la lire. -->
         <div id="view-empreinte" class="empreinte" hidden>
-          <button type="button" class="empreinte-btn" onclick="ouvrirParEmpreinte()">
+          <button type="button" class="empreinte-btn" data-act="ouvrirParEmpreinte">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <path d="M12 2a9 9 0 00-9 9c0 1.4.2 2.7.7 4"/>
               <path d="M12 6a5 5 0 00-5 5c0 3 .6 5.3 1.7 7.6"/>
@@ -213,7 +214,7 @@
               <em id="empreinte-qui"></em>
             </span>
           </button>
-          <button type="button" class="lien-bascule" onclick="oublierEmpreinte()">Oublier cet appareil</button>
+          <button type="button" class="lien-bascule" data-act="oublierEmpreinte">Oublier cet appareil</button>
           <div class="empreinte-ou"><span>ou par mot de passe</span></div>
         </div>
 
@@ -229,8 +230,8 @@
           </div>
           <button class="btn btn-gold btn-block" type="submit">Se connecter</button>
           <div class="auth-switch">
-            <button type="button" class="lien-bascule" onclick="showView('forgot')">Mot de passe oublié</button>
-            <button type="button" class="lien-bascule lien-bascule-or" onclick="showView('signup')">Créer un compte</button>
+            <button type="button" class="lien-bascule" data-act="showView" data-arg="forgot">Mot de passe oublié</button>
+            <button type="button" class="lien-bascule lien-bascule-or" data-act="showView" data-arg="signup">Créer un compte</button>
           </div>
         </form>
 
@@ -270,7 +271,7 @@
           </div>
           <button class="btn btn-gold btn-block" type="submit">Créer mon compte</button>
           <div class="auth-switch auth-switch-solo">
-            <button type="button" class="lien-bascule" onclick="showView('login')">← J'ai déjà un compte</button>
+            <button type="button" class="lien-bascule" data-act="showView" data-arg="login">← J'ai déjà un compte</button>
           </div>
         </form>
 
@@ -283,7 +284,7 @@
           </div>
           <button class="btn btn-gold btn-block" type="submit">Réinitialiser mon mot de passe</button>
           <div class="auth-switch auth-switch-solo">
-            <button type="button" class="lien-bascule" onclick="showView('login')">← Retour à la connexion</button>
+            <button type="button" class="lien-bascule" data-act="showView" data-arg="login">← Retour à la connexion</button>
           </div>
         </form>
 
@@ -415,15 +416,15 @@
 
 <script src="/assets/js/config.js?v=e792fc99"></script>
 <script src="/assets/js/content.js?v=b3438db0"></script>
-<script src="/assets/js/main.js?v=9608f633"></script>
+<script src="/assets/js/main.js?v=8f4a86c6"></script>
 <script src="/assets/js/application.js?v=7f9b3448"></script>
 <script src="/assets/js/rappel.js?v=1840ff2c"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=b37cef91"></script>
 <script src="/assets/js/motion.js?v=59d24715"></script>
-<script src="/assets/js/auth.js?v=db992d44"></script>
+<script src="/assets/js/auth.js?v=7a4babb2"></script>
 <script src="/assets/js/empreinte.js?v=d4610d73"></script>
-<script src="/assets/js/accueil-connexion.js?v=ebad0e50"></script>
+<script src="/assets/js/accueil-connexion.js?v=a1db1af8"></script>
 <script>window.MELODIA_ACCUEIL_FILM = "assets/img/connexion.mp4?v=44886729";</script>
 <script>
 var TITLES = { login: 'Accès à votre <em>espace</em>', signup: 'Créer votre <em>compte</em>', forgot: 'Réinitialiser le <em>mot de passe</em>', reset: 'Votre nouveau <em>mot de passe</em>' };
@@ -716,14 +717,14 @@ async function doReset(e) {
        lien devient une session normale, on relit le rôle et on mène
        la personne à son espace plutôt que de la faire ressaisir. */
     await window.MelodiaAuth.relireRole();
-    setTimeout(function () { location.href = window.MelodiaAuth.home(); }, 1400);
+    setTimeout(function () { location.replace(window.MelodiaAuth.home()); }, 1400);
   } catch (err) {
     b.disabled = false; b.textContent = 'Enregistrer mon nouveau mot de passe';
     msg(err.message);
   }
   return false;
 }
-if (window.MelodiaAuth.current()) location.href = window.MelodiaAuth.home();
+if (window.MelodiaAuth.current()) location.replace(window.MelodiaAuth.home());
 </script>
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->

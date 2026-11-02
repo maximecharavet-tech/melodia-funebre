@@ -317,7 +317,7 @@
       lignes.push('· ' + p.titre + (p.qui ? ' — ' + p.qui : '') + ' : ' + urlPublique(p.page));
     });
     if (!lignes.length) {
-      return 'Exemples à écouter\n· TODO : le catalogue n’a pas pu être chargé. Indiquez une page /ecouter/ du site, sans inventer d’adresse.';
+      return 'Exemples à écouter\n· Le catalogue n’a pas pu être chargé. Ouvrez la page Écouter du site et copiez-en un lien, sans en inventer.';
     }
     return 'Autres exemples du catalogue (ce ne sont pas des hommages de circonstance) :\n' + lignes.join('\n');
   }

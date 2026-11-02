@@ -11,7 +11,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 function pricing(mode) {
   return OFFERS.map((o, i) => {
     const action = mode === 'order'
-      ? `<button class="btn ${o.featured ? 'btn-gold' : 'btn-outline'} btn-block" onclick="openOrder('${o.name}')">Choisir ${o.name}</button>`
+      ? `<button class="btn ${o.featured ? 'btn-gold' : 'btn-outline'} btn-block" data-act="openOrder" data-arg="${o.name}">Choisir ${o.name}</button>`
       : `<a href="/offres" class="btn ${o.featured ? 'btn-gold' : 'btn-outline'} btn-block">Choisir ${o.name}</a>`;
     const oid = o.name.toLowerCase().normalize('NFD').replace(/[^a-z]/g, '');
     return `        <div class="card price card-lift${o.featured ? ' featured' : ''} reveal" data-offer-id="${oid}">
