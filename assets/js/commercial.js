@@ -119,6 +119,16 @@
   }
 
   /* ═══ Navigation ═══ */
+  function vueEsp(nom) {
+    return function () {
+      if (!window.MelodiaEspace) return '<p class="form-msg err" style="display:block;">L’espace collaborateur n’est pas chargé.</p>';
+      return window.MelodiaEspace.rendre(nom);
+    };
+  }
+  function brEsp(nom) {
+    return function () { if (window.MelodiaEspace) window.MelodiaEspace.brancher(nom); };
+  }
+
   var VUES = {
     accueil: ['Prospection', 'Tableau de <em>bord</em>', vAccueil, brancherAccueil],
     relances: ['À faire', 'Mes <em>relances</em>', vRelances, brancherProspects],
@@ -152,6 +162,19 @@
     plan: ['Ressources', 'Plan de <em>prospection</em>', vPlan, function () {}],
     traditions: ['Ressources', 'Les <em>traditions</em>', vTraditions, brancherTraditions],
 
+    atelier: ['Boîte à outils', 'L’<em>atelier</em>', vueEsp('atelier'), brEsp('atelier')],
+    profil: ['Mon poste', 'Mon <em>profil</em>', vueEsp('profil'), brEsp('profil')],
+    julie: ['La maison', 'Julie <em>Serve</em>', vueEsp('julie'), brEsp('julie')],
+    mails: ['Courriers', 'Mails <em>tout faits</em>', vueEsp('mails'), brEsp('mails')],
+    posts: ['Réseaux', 'Publications <em>prêtes</em>', vueEsp('posts'), brEsp('posts')],
+    kit: ['Ressources', 'Kit <em>média</em>', vueEsp('kit'), function () {}],
+    ecoute: ['Le fonds', 'Écouter les <em>exemples</em>', vueEsp('ecoute'), brEsp('ecoute')],
+    faq: ['Familles', 'Réponses pour les <em>familles</em>', vueEsp('faq'), brEsp('faq')],
+    rappels: ['Suivi', 'Mes <em>rappels</em>', vueEsp('rappels'), brEsp('rappels')],
+    checklist: ['Arrivée', 'Parcours <em>d’arrivée</em>', vueEsp('checklist'), brEsp('checklist')],
+    analyse: ['Activité', 'Pipeline <em>réel</em>', vueEsp('analyse'), function () {}],
+    simulateur: ['Chiffres', '<em>Simulateur</em>', vueEsp('simulateur'), brEsp('simulateur')],
+
     /* Les quatre outils de l'intranet se montent eux-mêmes dans un
        hôte vide : ils sont asynchrones et partagés avec la console du
        fondateur, d'où ce branchement en deux temps. */
@@ -181,12 +204,19 @@
     $('head-title').innerHTML = def[1];
     $('view').innerHTML = def[2]();
     def[3]();
+    if (history.replaceState) {
+      try { history.replaceState(null, '', '#' + v); } catch (e) {}
+    }
     Array.prototype.forEach.call(document.querySelectorAll('.side-item'), function (b) {
       b.classList.toggle('active', b.dataset.v === v);
     });
     window.scrollTo(0, 0);
   }
   window.go = go;
+  window.addEventListener('hashchange', function () {
+    var h = (location.hash || '').replace(/^#/, '');
+    if (VUES[h] && h !== vueCourante) go(h);
+  });
 
   /* ═══════════════════════════════════════════════════════════
      Vue : tableau de bord
@@ -1612,13 +1642,26 @@
   });
 
   (async function () {
-    $('u-initial').textContent = (U.name || 'C').charAt(0).toUpperCase();
-    $('u-name').textContent = U.name || U.email;
-    $('u-role').textContent = EST_MAITRE ? 'Fondateur · vue totale' : 'Collaborateur' + (U.secteur ? ' · ' + U.secteur : '');
+    var sigBarre = window.MelodiaSignature ? window.MelodiaSignature.pour(U) : {};
+    if (sigBarre.photo) {
+      $('u-initial').classList.add('has-photo');
+      $('u-initial').innerHTML = '<img alt="" src="' + String(sigBarre.photo).replace(/[^a-z0-9./_-]/gi, '') + '">';
+    } else {
+      $('u-initial').textContent = (sigBarre.nom || U.name || 'C').charAt(0).toUpperCase();
+    }
+    $('u-name').textContent = sigBarre.nom || U.name || U.email;
+    $('u-role').textContent = EST_MAITRE ? 'Fondateur · vue totale' : (sigBarre.role || 'Collaborateur');
     var m = $('mode-badge');
     if (m) m.textContent = EST_MAITRE ? 'Vue fondateur' : 'Collaborateur';
+    if (window.MelodiaEspace) {
+      window.MelodiaEspace.attacher({
+        prospects: function () { return PROSPECTS; },
+        aller: go
+      });
+    }
     await charger();
-    go('accueil');
+    var demarrage = (location.hash || '').replace(/^#/, '');
+    go(VUES[demarrage] ? demarrage : 'accueil');
     /* Le compteur de messages non lus doit vivre dès l'ouverture :
        sans cela, on ne sait qu'on a du courrier qu'en cliquant dessus. */
     if (window.MelodiaIntranet && window.MelodiaIntranet.majBadgeMessages) {
