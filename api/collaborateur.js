@@ -45,6 +45,8 @@
 //     sert de valeur par défaut)
 // ═══════════════════════════════════════════════════════════════
 
+import { entetesOrigine, origineAutorisee } from './_courrier.js';
+
 const URL_BASE = process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co';
 const CLE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
@@ -104,7 +106,7 @@ async function demandeur(req) {
 
   /* Le rôle se lit dans la base, jamais dans le jeton : les métadonnées
      d'un compte peuvent être écrites par son titulaire. */
-  const lignes = await admin('/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(email));
+  const lignes = await admin('/rest/v1/roles?select=role&email=ilike.' + encodeURIComponent(email));
   return { email, role: (lignes && lignes[0] && lignes[0].role) || null };
 }
 
@@ -112,16 +114,22 @@ async function demandeur(req) {
    l'on crée ou si l'on met à jour — un collaborateur qui s'était
    inscrit lui-même auparavant ne doit pas faire échouer la création. */
 async function compteExistant(email) {
-  const r = await admin('/auth/v1/admin/users?page=1&per_page=200');
-  const liste = (r && (r.users || r)) || [];
-  return liste.find((u) => (u.email || '').toLowerCase() === email) || null;
+  /* L'admin ne renvoie que 200 comptes par page. S'arrêter à la
+     première laissait un collaborateur déjà inscrit invisible, et la
+     création échouait sans dire pourquoi. */
+  for (let page = 1; page <= 50; page++) {
+    const r = await admin('/auth/v1/admin/users?page=' + page + '&per_page=200');
+    const liste = (r && (r.users || r)) || [];
+    const trouve = liste.find((u) => (u.email || '').toLowerCase() === email);
+    if (trouve) return trouve;
+    if (!Array.isArray(liste) || liste.length < 200) return null;
+  }
+  return null;
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  entetesOrigine(req, res, 'POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(origineAutorisee(req) ? 200 : 403).end();
   if (req.method !== 'POST') return json(res, 405, { error: 'POST uniquement' });
 
   if (!CLE) {
@@ -267,7 +275,7 @@ async function creer(res, d, email) {
 async function rattacher(res, d, email) {
   const agence = String(d.agence || '').trim();
 
-  const lignes = await admin('/rest/v1/roles?select=role&email=eq.' + encodeURIComponent(email));
+  const lignes = await admin('/rest/v1/roles?select=role&email=ilike.' + encodeURIComponent(email));
   const role = lignes && lignes[0] && lignes[0].role;
   if (!role) return json(res, 404, { code: 'INTROUVABLE', error: 'Ce compte n\'a pas de droits posés.' });
   if (role === 'partner' && !agence) {

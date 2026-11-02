@@ -62,7 +62,7 @@
         <!-- Déverrouillage par empreinte : n'apparaît que sur un appareil
              où la clé a été posée, et seulement s'il sait la lire. -->
         <div id="view-empreinte" class="empreinte" hidden>
-          <button type="button" class="empreinte-btn" onclick="ouvrirParEmpreinte()">
+          <button type="button" class="empreinte-btn" data-act="ouvrirParEmpreinte">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <path d="M12 2a9 9 0 00-9 9c0 1.4.2 2.7.7 4"/>
               <path d="M12 6a5 5 0 00-5 5c0 3 .6 5.3 1.7 7.6"/>
@@ -75,7 +75,7 @@
               <em id="empreinte-qui"></em>
             </span>
           </button>
-          <button type="button" class="lien-bascule" onclick="oublierEmpreinte()">Oublier cet appareil</button>
+          <button type="button" class="lien-bascule" data-act="oublierEmpreinte">Oublier cet appareil</button>
           <div class="empreinte-ou"><span>ou par mot de passe</span></div>
         </div>
 
@@ -91,8 +91,8 @@
           </div>
           <button class="btn btn-gold btn-block" type="submit">Se connecter</button>
           <div class="auth-switch">
-            <button type="button" class="lien-bascule" onclick="showView('forgot')">Mot de passe oublié</button>
-            <button type="button" class="lien-bascule lien-bascule-or" onclick="showView('signup')">Créer un compte</button>
+            <button type="button" class="lien-bascule" data-act="showView" data-arg="forgot">Mot de passe oublié</button>
+            <button type="button" class="lien-bascule lien-bascule-or" data-act="showView" data-arg="signup">Créer un compte</button>
           </div>
         </form>
 
@@ -132,7 +132,7 @@
           </div>
           <button class="btn btn-gold btn-block" type="submit">Créer mon compte</button>
           <div class="auth-switch auth-switch-solo">
-            <button type="button" class="lien-bascule" onclick="showView('login')">← J'ai déjà un compte</button>
+            <button type="button" class="lien-bascule" data-act="showView" data-arg="login">← J'ai déjà un compte</button>
           </div>
         </form>
 
@@ -145,7 +145,7 @@
           </div>
           <button class="btn btn-gold btn-block" type="submit">Réinitialiser mon mot de passe</button>
           <div class="auth-switch auth-switch-solo">
-            <button type="button" class="lien-bascule" onclick="showView('login')">← Retour à la connexion</button>
+            <button type="button" class="lien-bascule" data-act="showView" data-arg="login">← Retour à la connexion</button>
           </div>
         </form>
 

@@ -349,32 +349,83 @@ export async function envoyerLot(charges) {
  * envoie à des tiers un accusé de réception Melodia, pas un message
  * de son choix.
  */
+/**
+ * Origine autorisée : le domaine de production, et les aperçus de CE
+ * projet seulement. Un aperçu d'un autre projet Vercel (*.vercel.app)
+ * n'est pas une préproduction Melodia.
+ */
 export function origineAutorisee(req) {
-  const permis = [SITE, 'https://melodia-funebre.fr', 'https://www.melodia-funebre.fr'];
-  if (process.env.VERCEL_URL) permis.push('https://' + process.env.VERCEL_URL);
   const o = req.headers && (req.headers.origin || req.headers.Origin);
-  if (!o) return false;
-  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o)) return true;   /* développement */
-  if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(o)) return true;         /* préproduction */
-  return permis.indexOf(o) !== -1;
+  if (!o || typeof o !== 'string') return false;
+  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o)) return true;
+  let hote = '';
+  try { hote = new URL(o).host; } catch (e) { return false; }
+  const permis = new Set(['melodia-funebre.fr', 'www.melodia-funebre.fr']);
+  [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL, process.env.VERCEL_PROJECT_PRODUCTION_URL]
+    .filter(Boolean)
+    .forEach((h) => permis.add(String(h).replace(/^https?:\/\//, '')));
+  if (permis.has(hote)) return true;
+  return /^melodia-funebre(-[a-z0-9-]+)?\.vercel\.app$/i.test(hote);
+}
+
+/** Reflète l'origine seulement si elle est dans la liste. Jamais « * ». */
+export function entetesOrigine(req, res, methodes) {
+  const o = req.headers && (req.headers.origin || req.headers.Origin);
+  if (o && origineAutorisee(req)) {
+    res.setHeader('Access-Control-Allow-Origin', o);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', methodes || 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 /**
- * Limite de débit, en mémoire de l'instance.
+ * Limite de débit.
  *
- * Vercel démarre plusieurs instances en parallèle : ce compteur n'est
- * donc pas un plafond global, et ne prétend pas l'être. Il coupe les
- * rafales — le cas réel d'un script qui martèle le point d'entrée —
- * sans base de données ni dépendance supplémentaire.
+ * Quand la migration 20261102_06 est appliquée et que la clé de
+ * service est posée, le compteur vit dans public.rate_limits (seau
+ * « melodia ») : il tient entre les instances. Sinon — fonction
+ * absente, clé absente, base injoignable — on retombe sur la mémoire
+ * de l'instance, pour que l'appel ne réponde pas 500. Ce repli ne
+ * prétend pas être un plafond global.
  */
+const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const compteurs = new Map();
-export function tropSouvent(cle, max, fenetreMs) {
+let limiteAbsente = false;
+
+function tropSouventMemoire(cle, max, fenetreMs) {
   const t = Date.now();
   const e = compteurs.get(cle);
   if (!e || t > e.fin) { compteurs.set(cle, { n: 1, fin: t + fenetreMs }); return false; }
   e.n += 1;
-  if (compteurs.size > 500) {                       /* la mémoire d'une instance n'est pas extensible */
+  if (compteurs.size > 500) {
     for (const [k, v] of compteurs) if (t > v.fin) compteurs.delete(k);
   }
   return e.n > max;
+}
+
+export async function tropSouvent(cle, max, fenetreMs) {
+  if (!limiteAbsente && SB_SERVICE) {
+    try {
+      const r = await fetch(SB_URL + '/rest/v1/rpc/melodia_trop_souvent', {
+        method: 'POST',
+        headers: {
+          apikey: SB_SERVICE,
+          Authorization: 'Bearer ' + SB_SERVICE,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ p_cle: String(cle).slice(0, 200), p_max: max, p_fenetre_ms: fenetreMs })
+      });
+      const texte = await r.text();
+      if (r.status === 404 || /melodia_trop_souvent|PGRST202|42883|42P01/i.test(texte)) {
+        limiteAbsente = true;
+      } else if (r.ok) {
+        let d = null;
+        try { d = JSON.parse(texte); } catch (e) { d = null; }
+        return d === true;
+      }
+    } catch (e) { /* base injoignable : le repli mémoire prend le relais */ }
+  }
+  return tropSouventMemoire(cle, max, fenetreMs);
 }

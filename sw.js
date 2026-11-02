@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = 'ae8e8699f2';
+const VERSION = 'audit02b4c1';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -68,7 +68,7 @@ const PRECHARGE = [
   "/assets/img/maxime-128.webp?v=59ad45f3",
   "/assets/img/hyper-engine-80.webp?v=0f6180f0",
   "/assets/js/content.js?v=b3438db0",
-  "/assets/js/main.js?v=9608f633",
+  "/assets/js/main.js?v=8f4a86c6",
   "/assets/js/application.js?v=7f9b3448",
   "/assets/js/rappel.js?v=1840ff2c",
   "/assets/js/courrier.js?v=7feee7d2",
@@ -94,7 +94,7 @@ const PRECHARGE = [
    exactement la raison pour laquelle les pages mémoriales y figurent
    déjà. Et le studio ne doit pas servir une version gardée de côté
    à quelqu'un qui vient déposer son mot. */
-const JAMAIS = /\/(api|rest|auth|pour|carte)\/|supabase\.co|\/m\/|\/a\/|un-mot-pour-toi|hommage\.html|dashboard-|espace\.html|compte\.html|config\.js/;
+const JAMAIS = /\/(api|rest|auth|pour|carte)\/|supabase\.co|\/m\/|\/a\/|un-mot-pour-toi|hommage\.html|dashboard-|espace\.html|compte\.html|\/espace(?:$|\?|\/)|\/compte(?:$|\?|\/)|config\.js/;
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {

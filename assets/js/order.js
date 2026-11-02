@@ -307,7 +307,11 @@
           offre: state.offer + ' · ' + euro(priceOf()) +
                  (facturees().length ? ' · ' + facturees().map(function (o) { return o.titre; }).join(' · ') : ''),
           urgent: !!state.urgence,
-          message: briefComplet(), page: location.pathname
+          message: briefComplet(), page: location.pathname,
+          parrain: (function () {
+            try { return localStorage.getItem('melodia_parrain') || ''; } catch (e) { return ''; }
+          })(),
+          paiement: pid || ''
         })
       }).catch(function () {});
 

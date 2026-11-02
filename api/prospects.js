@@ -19,6 +19,8 @@
 // ne pas dépendre de la politique CORS d'un service tiers.
 // ═══════════════════════════════════════════════════════════════
 
+import { entetesOrigine, origineAutorisee } from './_courrier.js';
+
 /* Surchargeable pour les essais ; en production, l'annuaire de l'État. */
 const SOURCE = process.env.PROSPECTS_API_URL || 'https://recherche-entreprises.api.gouv.fr/search';
 const NAF = {
@@ -111,9 +113,8 @@ function normaliser(e, dep) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  entetesOrigine(req, res, 'GET, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(origineAutorisee(req) ? 200 : 403).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'GET uniquement' });
 
   const { departement, q, page, per_page, type } = req.query || {};
@@ -122,7 +123,7 @@ export default async function handler(req, res) {
   if (!dep && !q) {
     return res.status(400).json({ error: 'Indiquez au moins un département ou une recherche.' });
   }
-  if (dep && !/^(0[1-9]|[1-8][0-9]|9[0-5]|2[AB]|97[1-6])$/i.test(dep)) {
+  if (dep && !/^(0[1-9]|[1-8][0-9]|9[0-5]|2[AB]|97[1-8])$/i.test(dep)) {
     return res.status(400).json({ error: 'Département invalide. Exemples : 69, 2A, 974.' });
   }
 

@@ -377,23 +377,34 @@
      lui seul rapporte l'avancement. Sur un téléphone en 4G, une
      vidéo de 9 Mo prend une vingtaine de secondes — sans barre, on
      croit que c'est planté et on recharge la page. */
-  function deposerFichier(b, chemin) {
-    return new Promise(function (resoudre, rejeter) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', C.SUPABASE_URL + '/storage/v1/object/' + C.ESPACE + '/' + chemin, true);
-      xhr.setRequestHeader('apikey', C.SUPABASE_ANON_KEY);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + C.SUPABASE_ANON_KEY);
-      xhr.setRequestHeader('Content-Type', b.type || 'application/octet-stream');
-      xhr.setRequestHeader('x-upsert', 'false');
-      xhr.upload.onprogress = function (e) {
-        if (e.lengthComputable) avancement(e.loaded / e.total);
-      };
-      xhr.onload = function () {
-        if (xhr.status >= 200 && xhr.status < 300) resoudre();
-        else rejeter(new Error('L’envoi du fichier a échoué (' + xhr.status + ').'));
-      };
-      xhr.onerror = function () { rejeter(new Error('L’envoi du fichier a échoué : connexion interrompue.')); };
-      xhr.send(b);
+  /* Le dépôt anonyme direct est fermé. On demande une URL signée,
+     valable pour ce seul fichier, puis on envoie le blob dessus. */
+  function deposerFichier(b) {
+    return fetch('/api/adieu-media', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mime: b.type || '', taille: b.size || 0 })
+    }).then(function (r) {
+      return r.json().then(function (d) {
+        if (!r.ok) throw new Error((d && d.error) || 'Le dépôt a été refusé.');
+        return d;
+      });
+    }).then(function (d) {
+      return new Promise(function (resoudre, rejeter) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('PUT', d.url, true);
+        xhr.setRequestHeader('Content-Type', b.type || 'application/octet-stream');
+        xhr.setRequestHeader('x-upsert', 'false');
+        xhr.upload.onprogress = function (e) {
+          if (e.lengthComputable) avancement(e.loaded / e.total);
+        };
+        xhr.onload = function () {
+          if (xhr.status >= 200 && xhr.status < 300) resoudre(d.publicUrl);
+          else rejeter(new Error('L’envoi du fichier a échoué (' + xhr.status + ').'));
+        };
+        xhr.onerror = function () { rejeter(new Error('L’envoi du fichier a échoué : connexion interrompue.')); };
+        xhr.send(b);
+      });
     });
   }
 
@@ -443,10 +454,7 @@
 
     var chaine = Promise.resolve(null);
     if (blob) {
-      var chemin = nomAuHasard() + '.' + extension(blobMime);
-      chaine = deposerFichier(blob, chemin).then(function () {
-        return C.SUPABASE_URL + '/storage/v1/object/public/' + C.ESPACE + '/' + chemin;
-      });
+      chaine = deposerFichier(blob);
     }
 
     chaine.then(function (adresseMedia) {

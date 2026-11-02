@@ -63,7 +63,7 @@ const PRECHARGE = __PRECHARGE__;
    exactement la raison pour laquelle les pages mémoriales y figurent
    déjà. Et le studio ne doit pas servir une version gardée de côté
    à quelqu'un qui vient déposer son mot. */
-const JAMAIS = /\/(api|rest|auth|pour|carte)\/|supabase\.co|\/m\/|\/a\/|un-mot-pour-toi|hommage\.html|dashboard-|espace\.html|compte\.html|config\.js/;
+const JAMAIS = /\/(api|rest|auth|pour|carte)\/|supabase\.co|\/m\/|\/a\/|un-mot-pour-toi|hommage\.html|dashboard-|espace\.html|compte\.html|\/espace(?:$|\?|\/)|\/compte(?:$|\?|\/)|config\.js/;
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {

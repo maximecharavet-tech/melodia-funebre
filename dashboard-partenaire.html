@@ -10,9 +10,10 @@
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=aa8861a7">
-<link rel="stylesheet" href="/assets/css/dashboard.css?v=cd9a4551">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=b97bdc91">
 <link rel="stylesheet" href="/assets/css/relief.css?v=3d4a9fe9">
 <link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
+<style>@view-transition { navigation: none; }</style>
 <link rel="stylesheet" href="/assets/css/souvenir.css?v=3653a8f8">
 </head>
 <body>
@@ -40,32 +41,32 @@
           <div class="side-urole" id="u-role">Partenaire</div>
         </div>
       </div>
-      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" onclick="logout()">Déconnexion</button>
+      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" data-act="deconnexion">Déconnexion</button>
     </div>
   </aside>
 
   <main class="dash-main">
     <div class="dash-top">
       <div style="display:flex; gap:1rem; align-items:flex-start;">
-        <button class="dash-burger" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+        <button class="dash-burger" data-act="toggle-side">☰</button>
         <div>
           <div class="dash-eyebrow" id="head-eyebrow">Espace partenaire</div>
           <h1 class="dash-title" id="head-title">Bonjour, <em id="head-name">—</em></h1>
         </div>
       </div>
-      <a href="#" class="btn btn-gold btn-sm" onclick="go('nouvelle');return false;">Nouvelle commande</a>
+      <a href="#" class="btn btn-gold btn-sm" data-act="go" data-arg="nouvelle">Nouvelle commande</a>
     </div>
     <div id="view"></div>
   </main>
 </div>
 
 <script src="/assets/js/config.js?v=e792fc99"></script>
-<script src="/assets/js/auth.js?v=db992d44"></script>
+<script src="/assets/js/auth.js?v=7a4babb2"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
-<script src="/assets/js/main.js?v=9608f633"></script>
+<script src="/assets/js/main.js?v=8f4a86c6"></script>
 <script src="/assets/js/content.js?v=b3438db0"></script>
 <script src="/assets/js/catalogue.js?v=937566dc"></script>
-<script src="/assets/js/intranet.js?v=4b2436ff"></script>
+<script src="/assets/js/intranet.js?v=30b605fd"></script>
 <script src="/assets/js/qr.js?v=f6fe5656"></script>
 <script src="/assets/js/memorial.js?v=eb8a6362"></script>
 <script src="/assets/js/photos.js?v=ca80d50c"></script>
@@ -73,7 +74,7 @@
 <script src="/assets/js/partenaire-graphes.js?v=2c123e13"></script>
 <script src="/assets/js/relief.js?v=99c4c9ba"></script>
 <script src="/assets/js/mobile.js?v=43030276"></script>
-<script src="/assets/js/palette.js?v=b599a8c8"></script>
+<script src="/assets/js/palette.js?v=52eaafd3"></script>
 <script>
 var U = window.MelodiaAuth.guard();
 /* Chaque console renvoyait vers l'autre quand le rôle ne lui convenait
@@ -97,7 +98,7 @@ function marge(prix){
   return window.MelodiaPartenaireGraphes ? window.MelodiaPartenaireGraphes.margeDe(prix)
                                          : Math.round((prix||0)*0.6);
 }
-function logout(){window.MelodiaAuth.logout();location.href='compte.html';}
+function logout(){window.MelodiaAuth.logout();location.replace('/compte');}
 
 var ORDERS = [];
 var FLOW = window.MELODIA_FLOW, ST = window.MELODIA_STATUS;
@@ -256,8 +257,8 @@ function vAccueil() {
     '</div>' +
     graphes +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Compositions <em>en cours</em></div><div class="panel-sub">Suivi en temps réel</div></div>' +
-    '<button class="btn btn-outline btn-sm" onclick="go(\'commandes\')">Tout voir</button></div>' +
-    (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune composition en cours. <a href="#" onclick="go(\'nouvelle\');return false;" style="color:var(--or);">Lancer une commande →</a></p>') +
+    '<button class="btn btn-outline btn-sm" data-act="go" data-arg="commandes">Tout voir</button></div>' +
+    (encours.length ? encours.slice(0,3).map(orderCard).join('') : '<p style="color:var(--ash);">Aucune composition en cours. <a href="#nouvelle" data-act="go" data-arg="nouvelle" style="color:var(--or);">Lancer une commande →</a></p>') +
     '</div>' +
     '<div class="panel"><div class="panel-head"><div><div class="panel-title">Votre <em>argumentaire</em></div><div class="panel-sub">À présenter aux familles</div></div></div>' +
     '<p style="color:var(--bone); font-family:var(--ff-d); font-size:1.15rem; line-height:1.7; font-style:italic;">« Nous pouvons créer un hommage musical unique pour [Prénom] — une œuvre originale composée à partir de sa vie, de ses gestes, de ce qui faisait sa personne. Souhaitez-vous l\'écouter ? »</p>' +
@@ -290,7 +291,7 @@ function vNouvelle() {
     '<div class="field"><label class="field-label">Habitude quotidienne</label><input class="field-input" id="nv-habitude" placeholder="sifflait en marchant"></div></div>' +
     '<div class="field"><label class="field-label">Anecdote qui le résume</label><textarea class="field-area" id="nv-anecdote" placeholder="Il a appris à pêcher à ses quatre petits-enfants…"></textarea></div>' +
     '<label style="display:flex; align-items:center; gap:0.8rem; color:var(--bone); font-size:0.9rem; margin-bottom:1.6rem; cursor:pointer;"><input type="checkbox" id="nv-urgence" style="accent-color:var(--or); width:17px; height:17px;">Urgence — cérémonie sous 48 heures</label>' +
-    '<button class="btn btn-gold" style="width:100%;" onclick="submitOrder()">Transmettre la commande</button>' +
+    '<button class="btn btn-gold" style="width:100%;" data-act="submitOrder">Transmettre la commande</button>' +
     '<p style="font-family:var(--ff-m); font-size:0.54rem; letter-spacing:0.12em; color:var(--dust); margin-top:1.2rem; text-align:center;">FACTURATION EN FIN DE MOIS · ENTRETIEN DE VALIDATION SOUS 24 H</p></div>';
 }
 
@@ -387,7 +388,7 @@ function vCompte() {
     '<tr><td style="color:var(--ash);">Marge contractuelle</td><td style="color:var(--or);">' + tauxAgence() + ' %</td></tr>' +
     '</tbody></table>' +
     '<p style="color:var(--ash); font-size:0.88rem; margin-top:1.6rem;">Pour modifier le nom de votre agence ou vos coordonnées, écrivez à <a href="mailto:contact@melodia-funebre.fr" style="color:var(--or);">contact@melodia-funebre.fr</a>. Votre mot de passe, lui, se change ci-dessous.</p>' +
-    '<button class="btn btn-outline" style="margin-top:1.6rem;" onclick="logout()">Se déconnecter</button></div>' +
+    '<button class="btn btn-outline" style="margin-top:1.6rem;" data-act="deconnexion">Se déconnecter</button></div>' +
     mdp;
 }
 

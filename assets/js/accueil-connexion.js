@@ -23,22 +23,28 @@
     saluer: function (nom, destination) {
       return new Promise(function (fini) {
         var parti = false;
+        function adresse(dest) {
+          var d = String(dest || '/compte');
+          if (/^https?:\/\//.test(d)) return d;
+          if (d.charAt(0) !== '/') d = '/' + d;
+          return d.replace(/\.html(?=$|\?)/, '');
+        }
         function partir() {
           if (parti) return;
           parti = true;
-          try { if (voile.parentNode) voile.classList.add('sort'); } catch (e) {}
-          setTimeout(function () { location.href = destination; fini(); }, 420);
+          try { if (voile && voile.parentNode) voile.classList.add('sort'); } catch (e) {}
+          setTimeout(function () { location.replace(adresse(destination)); fini(); }, 160);
         }
 
         /* En mouvement réduit, on n'impose ni film ni attente. */
-        if (REDUIT) { location.href = destination; return fini(); }
+        if (REDUIT) { location.replace(adresse(destination)); return fini(); }
 
         var voile = document.createElement('div');
         voile.className = 'accueil';
         voile.setAttribute('role', 'status');
         voile.innerHTML =
-          '<video class="accueil-film" muted playsinline autoplay ' +
-          'preload="auto" width="1040" height="880" aria-hidden="true"></video>' +
+          '<video class="accueil-film" muted playsinline preload="none" poster="/assets/img/connexion-poster.jpg" ' +
+          'width="720" height="610" aria-hidden="true"></video>' +
           '<div class="accueil-mots">' +
             '<span class="accueil-sur">Bienvenue</span>' +
             '<span class="accueil-nom"></span>' +
@@ -53,16 +59,13 @@
         requestAnimationFrame(function () { voile.classList.add('vu'); });
 
         var film = voile.querySelector('.accueil-film');
-        var src = (window.MELODIA_ACCUEIL_FILM || 'assets/img/connexion.mp4');
+        var src = (window.MELODIA_ACCUEIL_FILM || '/assets/img/connexion.mp4');
         film.src = src;
+        try { var lecture = film.play(); if (lecture && lecture.catch) lecture.catch(function () {}); } catch (e) {}
 
-        /* Filet : si le film ne démarre pas — fichier absent, format
-           refusé, onglet en arrière-plan — on n'immobilise personne. */
-        var secours = setTimeout(partir, 4000);
-        film.addEventListener('playing', function () {
-          clearTimeout(secours);
-          secours = setTimeout(partir, 11500);
-        }, { once: true });
+        /* Le film ne retient personne : une seconde et demie, puis la
+           console, que la vidéo ait démarré ou non. */
+        setTimeout(partir, 1500);
         film.addEventListener('ended', partir);
         film.addEventListener('error', partir);
 

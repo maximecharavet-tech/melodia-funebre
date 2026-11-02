@@ -229,7 +229,7 @@ ${optionsBloc}
             <p class="wz-sub">Vérifiez le récapitulatif ci-contre, puis réglez en ligne — ou enregistrez et réglez après l'entretien.</p>
             <div class="form-msg" id="o-msg"></div>
             <div id="paypal-zone" style="min-height:46px;margin-bottom:1rem;"></div>
-            <button class="btn btn-outline btn-block" id="o-submit" type="button" onclick="sendOrder(false)">Enregistrer et régler après l'entretien</button>
+            <button class="btn btn-outline btn-block" id="o-submit" type="button" data-act="sendOrder">Enregistrer et régler après l'entretien</button>
             <p style="font-size:.78rem;color:var(--dust);margin-top:1rem;line-height:1.6;">Aucun prélèvement n'est effectué tant que vous n'avez pas validé le paiement. Vous pouvez annuler sans frais jusqu'au début de la composition.</p>
             <div class="wz-actions"><button type="button" class="btn btn-ghost" data-wz-prev>${ICON.arrowL} Retour</button></div>
           </div>

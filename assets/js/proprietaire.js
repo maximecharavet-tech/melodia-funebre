@@ -533,7 +533,7 @@
       '<div class="panel" style="margin-top:1.2rem;">' +
         '<div class="panel-head"><div><div class="panel-title">L\'<em>équipe</em></div>' +
           '<div class="panel-sub">' + equipe.length + ' collaborateur' + (equipe.length > 1 ? 's' : '') + ' · ' + prospects.length + ' fiches au total</div></div>' +
-          '<button class="btn btn-outline btn-sm" onclick="window.open(\'dashboard-commercial.html\')">Ouvrir la console commerciale</button></div>' +
+          '<button class="btn btn-outline btn-sm" data-act="fenetre" data-arg="/dashboard-commercial">Ouvrir la console commerciale</button></div>' +
         (equipe.length ?
           '<table class="tbl"><thead><tr><th>Collaborateur</th><th>Secteur</th><th>Fiches</th><th>Contactées</th><th>Partenaires</th><th></th></tr></thead><tbody>' +
           equipe.map(function (c) {

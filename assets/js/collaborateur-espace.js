@@ -41,9 +41,21 @@
   /* ─── Qui regarde quelle fiche ─── */
   function cible(nomVue) {
     var u = utilisateur();
-    if (nomVue === 'julie') return signatureDe(JULIE, { name: 'Julie Serve' });
+    if (nomVue === 'julie') {
+      var pub = window.MelodiaSignature && window.MelodiaSignature.declaree(JULIE);
+      return pub || signatureDe(JULIE, { name: 'Julie Serve' });
+    }
     var email = String(u.email || '').toLowerCase();
-    return signatureDe(email, u);
+    var s = signatureDe(email, u);
+    /* La fiche publique de Julie reste dans le menu à son nom.
+       « Mon profil » est le compte connecté, même quand c'est elle. */
+    if (String(s.email || '').toLowerCase() === JULIE) {
+      return Object.assign({}, s, {
+        graine: false,
+        bio: 'Votre fiche de travail. La fiche publique est dans le menu « Julie Serve ».'
+      });
+    }
+    return s;
   }
 
   function fichesPour(email) {
@@ -224,7 +236,8 @@
       '<section class="col-bloc" aria-labelledby="col-lien-titre">' +
         '<h3 id="col-lien-titre">Lien personnel</h3>' +
         (lien
-          ? '<p class="panel-note">Ce lien ouvre le site avec votre code. Le code est retenu dans le navigateur du visiteur. Les arrivées ne sont pas comptées : il n’existe pas de relevé.</p>' +
+          ? '<p class="panel-note">Ce lien ouvre le site avec votre code. Le code est retenu dans le navigateur du visiteur. Le nombre de commandes qui le portent s’affiche ci-dessous quand la base a la colonne.</p>' +
+            '<p class="col-aide" id="col-parrain-n" data-code="' + esc(s.code) + '">Compteur en cours de lecture…</p>' +
             '<div class="col-lien-ligne">' +
               '<label class="field-label" for="col-lien">Adresse</label>' +
               '<input class="field-input" id="col-lien" readonly value="' + esc(lien) + '">' +
@@ -249,6 +262,7 @@
 
       '<section class="col-bloc" aria-labelledby="col-obj-titre">' +
         '<h3 id="col-obj-titre">Objectifs du mois</h3>' +
+        '<p class="panel-note">Enregistrés sur cet appareil seulement. Ils ne suivent pas le compte d’un poste à l’autre.</p>' +
         (moi ? formulaireObjectifs(s.email, obj, stats) : '<p class="col-vide">Les objectifs se saisissent sur le compte concerné, pas depuis une autre session.</p>') +
       '</section>' +
 
@@ -336,6 +350,17 @@
       a.remove();
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
     });
+    var compteur = racine.querySelector('#col-parrain-n');
+    if (compteur && window.MelodiaDB && window.MelodiaDB.parrainages) {
+      var code = compteur.getAttribute('data-code');
+      window.MelodiaDB.parrainages(code).then(function (n) {
+        if (!compteur.isConnected) return;
+        if (n == null) compteur.textContent = 'Le nombre de commandes portant ce code s’affichera quand la colonne « parrain » sera en place. Aucune donnée de famille n’est montrée ici.';
+        else compteur.textContent = n + ' commande' + (n > 1 ? 's' : '') + ' porte' + (n > 1 ? 'nt' : '') + ' ce code. Aucun nom de famille n’est affiché.';
+      }).catch(function () {
+        compteur.textContent = 'Le compteur n’a pas pu être lu.';
+      });
+    }
     var form = racine.querySelector('#col-obj-form');
     if (form) form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -392,7 +417,7 @@
   function vueMails() {
     var M = window.MelodiaMails;
     if (!M) return '<p class="form-msg err" style="display:block;">La bibliothèque de mails n’est pas chargée.</p>';
-    var cats = [['tous', 'Tous'], ['famille', 'Familles'], ['pompes', 'Pompes funèbres'], ['fleuriste', 'Fleuristes']];
+    var cats = [['tous', 'Tous'], ['sequence', 'Séquence agences'], ['famille', 'Familles'], ['pompes', 'Pompes funèbres'], ['fleuriste', 'Fleuristes']];
     var liste = M.MODELES.filter(function (m) { return brouillon.cat === 'tous' || m.categorie === brouillon.cat; });
     var m = modeleCourant();
     var champs = (m.champs || []).map(function (k) {
@@ -472,8 +497,10 @@
     if (etat) {
       var msgs = [];
       if (rendu.manquants.length) msgs.push('À remplir : ' + rendu.manquants.join(', ') + '.');
-      if (rendu.sansMusique) msgs.push('TODO : aucun morceau du catalogue n’est disponible. Le lien musical n’a pas été inventé.');
-      if (/\{\w/.test(rendu.html)) msgs.push('Les surlignages sont des variables encore vides.');
+      if (rendu.sansMusique) msgs.push('Aucun morceau du catalogue n’est disponible. Le lien musical n’a pas été inventé : ouvrez la page Écouter.');
+      var sansEmplacements = rendu.html.replace(/\{\{LIEN_[A-Z0-9_]+\}\}/g, '');
+      if (/\{\w/.test(sansEmplacements)) msgs.push('Les surlignages sont des variables encore vides.');
+      if (/\{\{LIEN_/.test(rendu.html)) msgs.push('TikTok et le LinkedIn de Julie ne sont pas dans le dépôt : les emplacements restent nommés.');
       if (!msgs.length) msgs.push('Aperçu à jour.');
       etat.textContent = msgs.join(' ');
     }
@@ -606,9 +633,9 @@
   /* ─── Kit ─── */
   var KIT = [
     { t: 'Brochure partenaire', f: '/documents/melodia-brochure-partenaire.pdf', d: 'À remettre ou à envoyer à une agence.' },
-    { t: 'Manuel de vente', f: '/documents/melodia-manuel-de-vente.pdf', d: 'Document interne : script, objections, séquence.' },
-    { t: 'Plan LinkedIn', f: '/documents/melodia-plan-linkedin.pdf', d: 'Document interne.' },
-    { t: 'Plan réseaux sociaux', f: '/documents/melodia-plan-reseaux-sociaux.pdf', d: 'Document interne.' },
+    { t: 'Manuel de vente', f: '/api/document?fichier=manuel', doc: 'manuel', nom: 'melodia-manuel-de-vente.pdf', d: 'Document interne : script, objections, séquence.' },
+    { t: 'Plan LinkedIn', f: '/api/document?fichier=linkedin', doc: 'linkedin', nom: 'melodia-plan-linkedin.pdf', d: 'Document interne.' },
+    { t: 'Plan réseaux sociaux', f: '/api/document?fichier=reseaux', doc: 'reseaux', nom: 'melodia-plan-reseaux-sociaux.pdf', d: 'Document interne.' },
     { t: 'Affiche « Devenez partenaire »', f: '/assets/img/campagne/affiche-partenaire.jpg', d: 'JPEG, salon ou pièce jointe.' },
     { t: 'Affiche « Des adieux en musique »', f: '/assets/img/campagne/adieux-en-musique.jpg', d: 'Pour une vitrine ou une famille.' },
     { t: 'Visuel poignée de main', f: '/assets/img/campagne/poignee-de-main.webp', d: 'Pour un message à un prescripteur.' },
@@ -617,7 +644,9 @@
   function vueKit() {
     return '<p class="panel-note">Fichiers déjà présents dans le dépôt. Le téléchargement est un lien direct, sans compte tiers.</p>' +
       '<ul class="col-kit">' + KIT.map(function (k) {
-        return '<li><a class="col-kit-a" href="' + esc(k.f) + '" download><strong>' + esc(k.t) + '</strong><span>' + esc(k.d) + '</span></a></li>';
+        return '<li><a class="col-kit-a" href="' + esc(k.f) + '"' +
+          (k.doc ? ' data-doc="' + esc(k.doc) + '" data-nom="' + esc(k.nom) + '"' : ' download') +
+          '><strong>' + esc(k.t) + '</strong><span>' + esc(k.d) + '</span></a></li>';
       }).join('') + '</ul>';
   }
 
@@ -630,7 +659,7 @@
     if (!window.MelodiaMails) { hote.textContent = 'Module musical absent.'; return; }
     window.MelodiaMails.chargerCatalogue().then(function (liste) {
       if (!liste.length) {
-        hote.innerHTML = '<p class="col-vide">TODO : le catalogue n’a pas pu être chargé. Ouvrez la page Écouter du site plutôt que de coller un lien inventé.</p>';
+        hote.innerHTML = '<p class="col-vide">Le catalogue n’a pas pu être chargé. Ouvrez la page Écouter du site plutôt que de coller un lien inventé.</p>';
         return;
       }
       hote.innerHTML = '<ul class="col-ecoute-liste">' + liste.map(function (p) {

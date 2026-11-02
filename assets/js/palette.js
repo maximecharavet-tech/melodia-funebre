@@ -83,8 +83,12 @@
       if (el.hidden || getComputedStyle(el).display === 'none') return;
       var ico = el.querySelector('.ico');
       var badge = el.querySelector('.side-badge');
-      var nom = Array.prototype.filter.call(el.childNodes, function (n) { return n.nodeType === 3; })
-        .map(function (n) { return n.textContent; }).join(' ').replace(/\s+/g, ' ').trim() || el.textContent.trim();
+      var nom = '';
+      for (var n = el.firstChild; n; n = n.nextSibling) {
+        if (n.nodeType === 3) nom += n.nodeValue;
+        else if (n.nodeType === 1 && n.classList && !n.classList.contains('ico') && !n.classList.contains('side-badge') && !n.classList.contains('pal-ici')) nom += n.textContent;
+      }
+      nom = nom.replace(/\s+/g, ' ').replace(/\bici\b/gi, '').trim();
       entrees.push({
         el: el, nom: nom, groupe: groupe,
         ico: ico ? ico.textContent : '·',
@@ -125,7 +129,7 @@
         '<span class="pal-ico" aria-hidden="true">' + e.ico + '</span>' +
         '<span class="pal-nom">' + e.nom.replace(/</g, '&lt;') + '</span>' +
         (e.badge ? '<span class="pal-badge">' + e.badge + '</span>' : '') +
-        (e.actuel ? '<span class="pal-ici">ici</span>' : (q && e.groupe ? '<span class="pal-g">' + e.groupe + '</span>' : '')) +
+        (e.actuel ? '<span class="pal-ici" aria-current="page"></span>' : (q && e.groupe ? '<span class="pal-g">' + e.groupe + '</span>' : '')) +
       '</li>';
     }).join('');
     champ.setAttribute('aria-activedescendant', 'pal-o' + actif);

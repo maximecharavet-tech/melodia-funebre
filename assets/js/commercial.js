@@ -44,7 +44,7 @@
   var filtreOwner = '';
   var envoiDirect = null;   /* null = inconnu, true/false une fois testé */
 
-  window.logout = function () { window.MelodiaAuth.logout(); location.href = '/compte'; };
+  window.logout = function () { window.MelodiaAuth.logout(); location.replace('/compte'); };
 
   /* ═══ Dates ═══ */
   function jour(d) { return new Date(d).toISOString().slice(0, 10); }
@@ -107,7 +107,14 @@
 
   /* ═══ Chargement ═══ */
   async function charger() {
-    PROSPECTS = await window.MelodiaProspects.mine();
+    try {
+      PROSPECTS = await window.MelodiaProspects.mine();
+      window.__prospectsErreur = '';
+    } catch (e) {
+      PROSPECTS = PROSPECTS || [];
+      window.__prospectsErreur = (e && e.message) || 'Lecture impossible.';
+      if (window.melodiaToast) window.melodiaToast('Les fiches n’ont pas pu être lues : ' + window.__prospectsErreur);
+    }
     var b = $('badge-pro');
     if (b) b.textContent = PROSPECTS.length;
     var r = $('badge-rel');
@@ -142,11 +149,11 @@
                  '<div class="panel-title">Vos <em>informations</em></div>' +
                  '<div class="panel-sub" style="margin-bottom:1.2rem;">Compte collaborateur</div>' +
                  '<table class="tbl"><tbody>' +
-                   '<tr><td style="color:var(--ash);">Nom</td><td>' + esc(u.name || u.nom || '—') + '</td></tr>' +
+                   '<tr><td style="color:var(--ash);">Nom</td><td>' + esc((window.MelodiaSignature && window.MelodiaSignature.pour(u).nom) || u.name || u.nom || '—') + '</td></tr>' +
                    '<tr><td style="color:var(--ash);">Identifiant</td><td>' + esc(u.email || '—') + '</td></tr>' +
-                   '<tr><td style="color:var(--ash);">Secteur</td><td>' + esc(u.secteur || '—') + '</td></tr>' +
+                   (u.secteur ? '<tr><td style="color:var(--ash);">Secteur</td><td>' + esc(u.secteur) + '</td></tr>' : '') +
                  '</tbody></table>' +
-                 '<button class="btn btn-outline" style="margin-top:1.6rem;" onclick="window.MelodiaAuth.logout();location.href=\'compte.html\';">Se déconnecter</button>' +
+                 '<button type="button" class="btn btn-outline" style="margin-top:1.6rem;" data-act="deconnexion">Se déconnecter</button>' +
                '</div>' +
                (window.MelodiaCampagne ? window.MelodiaCampagne.vueSignature() : '') +
                (window.MelodiaMotDePasse ? window.MelodiaMotDePasse.vue() : '');
@@ -264,7 +271,7 @@
         '<div class="panel-head"><div><div class="panel-title">À faire <em>aujourd\'hui</em></div>' +
         '<div class="panel-sub">' + aFaire.length + ' fiche' + (aFaire.length > 1 ? 's' : '') +
         (retard.length ? ' — dont ' + retard.length + ' en retard' : '') + '</div></div>' +
-        '<button class="btn btn-gold btn-sm" onclick="go(\'relances\')">Ouvrir la file</button></div>' +
+        '<button type="button" class="btn btn-gold btn-sm" data-act="go" data-arg="relances">Ouvrir la file</button></div>' +
         aFaire.slice(0, 6).map(ligneCourte).join('') +
       '</div>' : '') +
 
@@ -301,7 +308,7 @@
         '<div class="panel-head"><div><div class="panel-title">Coordonnées <em>à compléter</em></div>' +
         '<div class="panel-sub">' + sansMail.length + ' fiche' + (sansMail.length > 1 ? 's sont' : ' est') +
         ' sans adresse email — l\'annuaire public n\'en publie pas</div></div>' +
-        '<button class="btn btn-outline btn-sm" onclick="go(\'prospects\')">Compléter</button></div>' +
+        '<button type="button" class="btn btn-outline btn-sm" data-act="go" data-arg="prospects">Compléter</button></div>' +
         sansMail.slice(0, 5).map(ligneCourte).join('') +
       '</div>' : '') +
 
@@ -393,7 +400,7 @@
     return '<div class="panel">' +
         '<div class="panel-head"><div><div class="panel-title">À faire <em>maintenant</em></div>' +
         '<div class="panel-sub">' + (liste.length ? liste.length + ' fiche' + (liste.length > 1 ? 's' : '') + ' arrivée' + (liste.length > 1 ? 's' : '') + ' à échéance' : 'Rien en attente — profitez-en pour prospecter') + '</div></div>' +
-        '<button class="btn btn-outline btn-sm" onclick="go(\'recherche\')">Ajouter des agences</button></div>' +
+        '<button type="button" class="btn btn-outline btn-sm" data-act="go" data-arg="recherche">Ajouter des agences</button></div>' +
         (liste.length ? liste.map(fiche).join('') :
           '<p style="color:var(--ash);font-size:.9rem;">Aucune action prévue aujourd\'hui.</p>') +
       '</div>' +
@@ -511,19 +518,31 @@
       b.addEventListener('click', async function () {
         var e = d.resultats.filter(function (x) { return x.siret === b.dataset.ajout; })[0];
         if (!e) return;
-        await ajouter(e, d.type);
-        b.outerHTML = '<span class="pill" style="color:var(--green);border-color:rgba(74,222,128,.35);">Ajoutée</span>';
+        b.disabled = true;
+        try {
+          await ajouter(e, d.type);
+          b.outerHTML = '<span class="pill" style="color:var(--green);border-color:rgba(74,222,128,.35);">Ajoutée</span>';
+        } catch (err) {
+          b.disabled = false;
+          if (window.melodiaToast) window.melodiaToast('Ajout refusé : ' + (err.message || 'erreur'));
+        }
       });
     });
     var tout = $('rc-tout');
     if (tout) tout.addEventListener('click', async function () {
       tout.disabled = true;
-      for (var i = 0; i < d.resultats.length; i++) {
-        if (!connus[d.resultats[i].siret]) await ajouter(d.resultats[i], d.type);
+      try {
+        for (var i = 0; i < d.resultats.length; i++) {
+          if (!connus[d.resultats[i].siret]) await ajouter(d.resultats[i], d.type);
+        }
+        await charger();
+        if (window.melodiaToast) window.melodiaToast(d.resultats.length + ' agences ajoutées à votre portefeuille.');
+        go('prospects');
+      } catch (err) {
+        if (window.melodiaToast) window.melodiaToast('L’ajout groupé s’est arrêté : ' + (err.message || 'erreur'));
+      } finally {
+        tout.disabled = false;
       }
-      await charger();
-      if (window.melodiaToast) window.melodiaToast(d.resultats.length + ' agences ajoutées à votre portefeuille.');
-      go('prospects');
     });
     var pr = $('rc-prev'), nx = $('rc-next');
     if (pr) pr.addEventListener('click', function () { window.__rcLancer(d.page - 1); });
@@ -545,6 +564,40 @@
   }
 
   /* ═══ Import d'une liste collée ═══ */
+  /* CSV : guillemets, virgules dans un champ, point-virgule, tabulation, BOM. */
+  function decouperCsv(texte) {
+    var sample = texte.split(/\r?\n/).slice(0, 5).join('\n');
+    var sep = [';', '\t', ','].map(function (s) {
+      var n = 0, q = false;
+      for (var i = 0; i < sample.length; i++) {
+        var c = sample[i];
+        if (c === '"') { if (q && sample[i + 1] === '"') { i++; continue; } q = !q; }
+        else if (!q && c === s) n++;
+      }
+      return { s: s, n: n };
+    }).sort(function (a, b) { return b.n - a.n; })[0].s;
+    var lignes = [], ligne = [], champ = '', q = false;
+    for (var i = 0; i < texte.length; i++) {
+      var c = texte[i];
+      if (q) {
+        if (c === '"') {
+          if (texte[i + 1] === '"') { champ += '"'; i++; }
+          else q = false;
+        } else champ += c;
+      } else if (c === '"') q = true;
+      else if (c === sep) { ligne.push(champ.trim()); champ = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && texte[i + 1] === '\n') i++;
+        ligne.push(champ.trim()); champ = '';
+        if (ligne.some(function (x) { return x; })) lignes.push(ligne);
+        ligne = [];
+      } else champ += c;
+    }
+    ligne.push(champ.trim());
+    if (ligne.some(function (x) { return x; })) lignes.push(ligne);
+    return lignes;
+  }
+
   var ALIAS = {
     nom: 'nom', raison: 'nom', societe: 'nom', entreprise: 'nom', agence: 'nom',
     email: 'email', mail: 'email', courriel: 'email', 'e-mail': 'email',
@@ -564,15 +617,11 @@
     var brut = $('rc-csv').value.trim();
     if (!brut) { if (window.melodiaToast) window.melodiaToast('Collez d\'abord une liste.'); return; }
 
-    var lignes = brut.split(/\r?\n/).filter(function (l) { return l.trim(); });
+    if (brut.charCodeAt(0) === 0xFEFF) brut = brut.slice(1);
+    var lignes = decouperCsv(brut);
     if (lignes.length < 2) { if (window.melodiaToast) window.melodiaToast('Il faut au moins une ligne d\'intitulés et une ligne de données.'); return; }
 
-    /* Le séparateur est celui qui revient le plus dans la ligne d'intitulés */
-    var sep = [';', '\t', ','].map(function (s) {
-      return { s: s, n: lignes[0].split(s).length };
-    }).sort(function (a, b) { return b.n - a.n; })[0].s;
-
-    var cols = lignes[0].split(sep).map(function (c) { return ALIAS[normCle(c)] || null; });
+    var cols = lignes[0].map(function (c) { return ALIAS[normCle(c)] || null; });
     if (cols.indexOf('nom') === -1) {
       if (window.melodiaToast) window.melodiaToast('Aucune colonne « nom » reconnue dans les intitulés.');
       return;
@@ -583,7 +632,7 @@
     var ajouts = 0, majs = 0;
 
     for (var i = 1; i < lignes.length; i++) {
-      var cases = lignes[i].split(sep);
+      var cases = lignes[i];
       var f = {};
       cols.forEach(function (c, j) {
         if (c && cases[j] != null) f[c] = String(cases[j]).trim().replace(/^"|"$/g, '');
@@ -635,7 +684,7 @@
         '<div class="panel-head"><div><div class="panel-title">Mes <em>prospects</em></div>' +
           '<div class="panel-sub">' + liste.length + ' fiche' + (liste.length > 1 ? 's' : '') +
           (filtreStatut || filtreOwner ? ' · filtre actif' : '') + '</div></div>' +
-          '<button class="btn btn-outline btn-sm" onclick="go(\'recherche\')">Ajouter des agences</button></div>' +
+          '<button type="button" class="btn btn-outline btn-sm" data-act="go" data-arg="recherche">Ajouter des agences</button></div>' +
         '<div class="own-tabs" style="margin-bottom:1rem;">' +
           '<button class="own-tab' + (filtreStatut === '' ? ' active' : '') + '" data-filtre="">Toutes (' + PROSPECTS.length + ')</button>' +
           window.MelodiaProspects.STATUTS.map(function (s) {
@@ -649,9 +698,12 @@
           Object.keys(owners).map(function (k) {
             return '<option value="' + esc(k) + '"' + (filtreOwner === k ? ' selected' : '') + '>' + esc(owners[k]) + '</option>';
           }).join('') + '</select></div>' : '') +
-        barreSelection(liste) +
+        (window.__prospectsErreur ? '<p class="form-msg err" style="display:block;">' + esc(window.__prospectsErreur) + '</p>' : '') +
+        (PROSPECTS.length ? barreSelection(liste) : '') +
         (liste.length ? liste.map(fiche).join('') :
-          '<p style="color:var(--ash);font-size:.9rem;">Aucune fiche dans ce filtre.</p>') +
+          '<p style="color:var(--ash);font-size:.9rem;">' +
+            (PROSPECTS.length ? 'Aucune fiche dans ce filtre.' : 'Aucune fiche pour l’instant. Ajoutez une agence depuis Rechercher, ou importez une liste.') +
+          '</p>') +
       '</div>';
   }
 
@@ -692,7 +744,8 @@
       p.dernier_contact = new Date().toISOString();
       if (m.etape && ordre.indexOf(p.statut) < ordre.indexOf(m.etape)) p.statut = m.etape;
       p.relance_le = dans(m.nom === 'Relance' ? 14 : 7);
-      try { await window.MelodiaProspects.enregistrer(p); } catch (e) {}
+      try { await window.MelodiaProspects.enregistrer(p); }
+      catch (e) { if (window.melodiaToast) window.melodiaToast('Une fiche n’a pas été mise à jour : ' + (e.message || 'erreur')); }
     }
     SELECTION = {};
     await charger();
@@ -815,7 +868,7 @@
           '<div style="border-top:1px solid var(--line-soft);margin-top:1rem;padding-top:1rem;">' +
             '<div class="field-label" style="margin-bottom:.6rem;">Historique</div>' +
             '<div style="font-size:.83rem;color:var(--ash);line-height:1.8;">' +
-              p.journal.slice(0, 8).map(function (j) {
+              p.journal.slice().sort(function (a, b) { return String(b.le || '').localeCompare(String(a.le || '')); }).slice(0, 8).map(function (j) {
                 return '<div style="display:flex;gap:.7rem;">' +
                   '<span style="color:var(--dust);white-space:nowrap;font-family:var(--ff-m);font-size:.68rem;">' + joli(j.le) + '</span>' +
                   '<span><b style="color:var(--bone);">' + esc(j.quoi) + '</b>' +
@@ -878,7 +931,9 @@
         if (!p) return;
         p.relance_le = dans(Number(b.dataset.report));
         window.MelodiaProspects.enregistrer(p).then(function () {
-          charger().then(function () { ouvrirApres = p.siret; go(vueCourante); });
+          return charger();
+        }).then(function () { ouvrirApres = p.siret; go(vueCourante); }).catch(function (err) {
+          if (window.melodiaToast) window.melodiaToast('Report refusé : ' + (err.message || 'erreur'));
         });
       });
     });
@@ -902,9 +957,13 @@
           p.oppose = false;
           noter(p, 'Opposition levée', 'À la demande de l\'agence');
         }
-        await window.MelodiaProspects.enregistrer(p);
-        await charger();
-        go(vueCourante);
+        try {
+          await window.MelodiaProspects.enregistrer(p);
+          await charger();
+          go(vueCourante);
+        } catch (err) {
+          if (window.melodiaToast) window.melodiaToast('Opposition non enregistrée : ' + (err.message || 'erreur'));
+        }
       });
     });
 
@@ -916,9 +975,13 @@
       b.addEventListener('click', async function () {
         var p = trouver(b.dataset.suppr);
         if (!confirm('Retirer « ' + (p ? p.nom : '') + ' » de votre portefeuille ?')) return;
-        await window.MelodiaProspects.supprimer(b.dataset.suppr);
-        await charger();
-        go(vueCourante);
+        try {
+          await window.MelodiaProspects.supprimer(b.dataset.suppr);
+          await charger();
+          go(vueCourante);
+        } catch (err) {
+          if (window.melodiaToast) window.melodiaToast('Retrait refusé : ' + (err.message || 'erreur'));
+        }
       });
     });
 
@@ -942,7 +1005,9 @@
     minuteur = setTimeout(function () {
       if (champ === 'statut' && avant !== valeur) noter(p, 'Statut : ' + (ST[valeur] || {}).label, '');
       window.MelodiaProspects.enregistrer(p).then(function () {
-        if (champ === 'statut') { charger().then(function () { ouvrirApres = siret; go(vueCourante); }); }
+        if (champ === 'statut') { return charger().then(function () { ouvrirApres = siret; go(vueCourante); }); }
+      }).catch(function (err) {
+        if (window.melodiaToast) window.melodiaToast('Enregistrement refusé : ' + (err.message || 'erreur'));
       });
     }, 400);
   }
@@ -956,7 +1021,9 @@
     if (quoi.trim()) p.notes = (p.notes ? p.notes + '\n' : '') + joli(Date.now()) + ' — ' + quoi.trim();
     if (!p.relance_le || p.relance_le <= aujourdhui()) p.relance_le = dans(7);
     window.MelodiaProspects.enregistrer(p).then(function () {
-      charger().then(function () { ouvrirApres = siret; go(vueCourante); });
+      return charger();
+    }).then(function () { ouvrirApres = siret; go(vueCourante); }).catch(function (err) {
+      if (window.melodiaToast) window.melodiaToast('L’appel n’a pas été noté : ' + (err.message || 'erreur'));
     });
   }
 
@@ -1215,13 +1282,13 @@
     var h = '<div class="panel mod-atelier">' +
       '<div class="panel-head"><div>' +
         '<div class="panel-title">Un message <em>prêt à partir</em></div>' +
-        '<div class="panel-sub">' + (p._exemple ? 'Agence d\'exemple' : esc(p.nom)) + '</div>' +
+        '<div class="panel-sub">' + (p._exemple ? 'Exemple — les jetons {agence}, {ville}, {dirigeant} seront remplacés' : esc(p.nom)) + '</div>' +
       '</div></div>' +
 
       '<div class="mod-choix">' +
         '<div class="field"><label class="field-label">Pour quelle agence</label>' +
           '<select class="field-select" id="mod-fiche">' +
-            '<option value="">— Agence d\'exemple —</option>' +
+            '<option value="">— Exemple (jeton {agence}) —</option>' +
             ouvrables.map(function (x) {
               return '<option value="' + esc(x.id) + '"' + (String(x.id) === etatMod.fiche ? ' selected' : '') + '>' +
                 esc(x.nom) + (x.ville ? ' · ' + esc(x.ville) : '') + '</option>';
@@ -1421,14 +1488,14 @@
           'le script d\'appel, les douze objections, les lieux de culte et les modèles de courriel. ' +
           'À imprimer et à garder près du téléphone.</p>' +
         '<div class="doc-lot">' +
-          '<a class="doc-carte doc-phare" href="/documents/melodia-manuel-de-vente.pdf" download>' +
+          '<a class="doc-carte doc-phare" href="/api/document?fichier=manuel" data-doc="manuel" data-nom="melodia-manuel-de-vente.pdf">' +
             '<span class="doc-genre">PDF · 18 pages · interne</span>' +
             '<span class="doc-nom">Manuel de vente</span>' +
             '<span class="doc-dit">Il contient les tarifs, les marges et les méthodes : ' +
               'il ne se remet pas à une agence.</span>' +
             '<span class="doc-act">Télécharger</span>' +
           '</a>' +
-          '<a class="doc-carte" href="/documents/melodia-plan-linkedin.pdf" download>' +
+          '<a class="doc-carte" href="/api/document?fichier=linkedin" data-doc="linkedin" data-nom="melodia-plan-linkedin.pdf">' +
             '<span class="doc-genre">PDF · 19 pages · interne</span>' +
             '<span class="doc-nom">Plan LinkedIn</span>' +
             '<span class="doc-dit">Se faire connaître des dirigeants avant de les appeler : ' +
@@ -1436,7 +1503,7 @@
               'et ce qu\'il ne faut jamais faire sur ce réseau.</span>' +
             '<span class="doc-act">Télécharger</span>' +
           '</a>' +
-          '<a class="doc-carte" href="/documents/melodia-plan-reseaux-sociaux.pdf" download>' +
+          '<a class="doc-carte" href="/api/document?fichier=reseaux" data-doc="reseaux" data-nom="melodia-plan-reseaux-sociaux.pdf">' +
             '<span class="doc-genre">PDF · 19 pages · interne</span>' +
             '<span class="doc-nom">Plan réseaux sociaux</span>' +
             '<span class="doc-dit">Instagram, Facebook et TikTok : la stratégie, six formats, ' +
@@ -1630,6 +1697,38 @@
 
   function brancherTraditions() { brancherPlaybook(); }
 
+  async function telechargerDoc(fichier, nom) {
+    var s = null;
+    try { s = JSON.parse(localStorage.getItem('melodia_session') || 'null'); } catch (e) { s = null; }
+    var jeton = s && s.access_token;
+    if (!jeton) {
+      if (window.melodiaToast) window.melodiaToast('Reconnectez-vous pour ouvrir ce document interne.');
+      return;
+    }
+    var r = await fetch('/api/document?fichier=' + encodeURIComponent(fichier), {
+      headers: { Authorization: 'Bearer ' + jeton }
+    });
+    if (!r.ok) {
+      if (window.melodiaToast) window.melodiaToast('Document refusé (' + r.status + ').');
+      return;
+    }
+    var blob = await r.blob();
+    var url = URL.createObjectURL(blob);
+    var lien = document.createElement('a');
+    lien.href = url;
+    lien.download = nom || 'document.pdf';
+    document.body.appendChild(lien);
+    lien.click();
+    lien.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+  document.addEventListener('click', function (ev) {
+    var a = ev.target.closest && ev.target.closest('[data-doc]');
+    if (!a) return;
+    ev.preventDefault();
+    telechargerDoc(a.getAttribute('data-doc'), a.getAttribute('data-nom'));
+  });
+
   /* Départements, pour la saisie assistée */
   var DEPS = [['01','Ain'],['02','Aisne'],['03','Allier'],['04','Alpes-de-Haute-Provence'],['05','Hautes-Alpes'],['06','Alpes-Maritimes'],['07','Ardèche'],['08','Ardennes'],['09','Ariège'],['10','Aube'],['11','Aude'],['12','Aveyron'],['13','Bouches-du-Rhône'],['14','Calvados'],['15','Cantal'],['16','Charente'],['17','Charente-Maritime'],['18','Cher'],['19','Corrèze'],['2A','Corse-du-Sud'],['2B','Haute-Corse'],['21','Côte-d\'Or'],['22','Côtes-d\'Armor'],['23','Creuse'],['24','Dordogne'],['25','Doubs'],['26','Drôme'],['27','Eure'],['28','Eure-et-Loir'],['29','Finistère'],['30','Gard'],['31','Haute-Garonne'],['32','Gers'],['33','Gironde'],['34','Hérault'],['35','Ille-et-Vilaine'],['36','Indre'],['37','Indre-et-Loire'],['38','Isère'],['39','Jura'],['40','Landes'],['41','Loir-et-Cher'],['42','Loire'],['43','Haute-Loire'],['44','Loire-Atlantique'],['45','Loiret'],['46','Lot'],['47','Lot-et-Garonne'],['48','Lozère'],['49','Maine-et-Loire'],['50','Manche'],['51','Marne'],['52','Haute-Marne'],['53','Mayenne'],['54','Meurthe-et-Moselle'],['55','Meuse'],['56','Morbihan'],['57','Moselle'],['58','Nièvre'],['59','Nord'],['60','Oise'],['61','Orne'],['62','Pas-de-Calais'],['63','Puy-de-Dôme'],['64','Pyrénées-Atlantiques'],['65','Hautes-Pyrénées'],['66','Pyrénées-Orientales'],['67','Bas-Rhin'],['68','Haut-Rhin'],['69','Rhône'],['70','Haute-Saône'],['71','Saône-et-Loire'],['72','Sarthe'],['73','Savoie'],['74','Haute-Savoie'],['75','Paris'],['76','Seine-Maritime'],['77','Seine-et-Marne'],['78','Yvelines'],['79','Deux-Sèvres'],['80','Somme'],['81','Tarn'],['82','Tarn-et-Garonne'],['83','Var'],['84','Vaucluse'],['85','Vendée'],['86','Vienne'],['87','Haute-Vienne'],['88','Vosges'],['89','Yonne'],['90','Territoire de Belfort'],['91','Essonne'],['92','Hauts-de-Seine'],['93','Seine-Saint-Denis'],['94','Val-de-Marne'],['95','Val-d\'Oise'],['971','Guadeloupe'],['972','Martinique'],['973','Guyane'],['974','La Réunion'],['976','Mayotte']];
 
@@ -1642,6 +1741,7 @@
   });
 
   (async function () {
+    try {
     var sigBarre = window.MelodiaSignature ? window.MelodiaSignature.pour(U) : {};
     if (sigBarre.photo) {
       $('u-initial').classList.add('has-photo');
@@ -1666,6 +1766,12 @@
        sans cela, on ne sait qu'on a du courrier qu'en cliquant dessus. */
     if (window.MelodiaIntranet && window.MelodiaIntranet.majBadgeMessages) {
       window.MelodiaIntranet.majBadgeMessages();
+    }
+    } catch (e) {
+      var vue = document.getElementById('view');
+      var msg = (e && e.message) || 'La console n’a pas pu s’ouvrir.';
+      if (vue) vue.innerHTML = '<p class="form-msg err" style="display:block;">' + msg + ' Rechargez la page. Si cela continue, déconnectez-vous et reconnectez-vous.</p>';
+      if (window.melodiaToast) window.melodiaToast(msg);
     }
   })();
 })();

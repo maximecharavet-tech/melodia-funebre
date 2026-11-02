@@ -29,7 +29,10 @@
     del: function (k) { localStorage.removeItem(k); }
   };
   function uid() { return 'MEL-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
-  function hash(s) { return btoa(unescape(encodeURIComponent(s))); }
+  /* Aucun mot de passe n'est conservé dans le navigateur. Le mode sans
+     base ne sert qu'à ouvrir les écrans ; il ne vérifie pas un secret,
+     et il n'en écrit pas (l'ancien « hachage » était du base64, donc
+     lisible par quiconque ouvrait le stockage local). */
 
   /* ═══ LA SESSION ═══
 
@@ -175,7 +178,7 @@
              agence a donné son nom, une famille non. Ce choix ne décide
              que de l'écran : l'accès aux données reste tenu par les
              règles de la base, qui filtrent sur l'adresse. */
-          role: role || (meta.agence ? 'partner' : 'client'),
+          role: LS.get('melodia_role_erreur') ? 'erreur' : (role || (meta.agence ? 'partner' : 'client')),
           /* Celle de la base fait foi ; celle des métadonnées ne sert
              plus qu'à afficher un nom tant que le rattachement n'a pas
              été fait par la maison. */
@@ -214,30 +217,28 @@
        soit son rôle, soit rien. Sans rôle attribué, on reste partenaire. */
     async relireRole() {
       if (!HAS_SB) return null;
+      var s = LS.get('melodia_session', null);
+      if (!s || !s.user) return null;
+      var r;
       try {
-        var s = LS.get('melodia_session', null);
-        if (!s || !s.user) return null;
-        var r = await sb('/rest/v1/roles?select=role,agence&email=eq.' + encodeURIComponent(s.user.email));
-        var meta = (s.user.user_metadata || {});
-        var repli = meta.agence ? 'partner' : 'client';
-        var role = (r && r[0] && r[0].role) || repli;
-        LS.set('melodia_role', role);
-        /* L'agence vient de « roles », que seule la maison écrit — pas
-           des métadonnées du compte, que le navigateur choisit. Les
-           règles de la base tranchent sur la même source : si le
-           filtre d'écran lisait les métadonnées, une agence rattachée
-           correctement verrait une liste vide, et l'écart serait
-           incompréhensible. */
-        LS.set('melodia_agence', (r && r[0] && r[0].agence) || '');
-        return role;
+        /* ilike : la casse de la ligne ne fait pas rater le rôle, y
+           compris avant la migration qui aligne les policies. */
+        r = await sb('/rest/v1/roles?select=role,agence&email=ilike.' + encodeURIComponent(s.user.email));
       } catch (e) {
-        /* Ne pas réussir à LIRE le rôle n'est pas la preuve qu'il n'y
-           en a pas. L'ancien repli écrivait « client » : un jeton
-           périmé suffisait donc à rétrograder le fondateur et à
-           l'expédier dans l'espace des familles — exactement ce qu'on
-           voyait. On garde ce qu'on savait, et on n'invente rien. */
-        return LS.get('melodia_role', null);
+        LS.set('melodia_role_erreur', '1');
+        throw new Error('Le rôle n’a pas pu être lu. Réessayez : rien n’a été deviné, et le compte n’est pas devenu celui d’une famille.');
       }
+      LS.del('melodia_role_erreur');
+      if (!r || !r[0] || !r[0].role) {
+        /* Requête réussie, aucune ligne : c'est une famille, ou un
+           compte auquel la maison n'a pas encore donné de rôle. */
+        LS.del('melodia_role');
+        LS.set('melodia_agence', '');
+        return null;
+      }
+      LS.set('melodia_role', r[0].role);
+      LS.set('melodia_agence', r[0].agence || '');
+      return r[0].role;
     },
 
     async login(identifiant, password) {
@@ -254,7 +255,7 @@
       }
       var users = LS.get('melodia_users', {});
       var u = users[email];
-      if (!u || u.pw !== hash(password)) throw new Error('Identifiant ou mot de passe incorrect.');
+      if (!u) throw new Error('Identifiant ou mot de passe incorrect.');
       /* Un compte désactivé par le fondateur ne doit plus ouvrir de session */
       if (u.actif === false) throw new Error('Ce compte a été désactivé. Contactez la maison.');
       var user = {
@@ -269,7 +270,7 @@
     async signup(data) {
       var email = (data.email || '').trim().toLowerCase();
       if (!data.name || !email || !data.password) throw new Error('Tous les champs marqués * sont requis.');
-      if (data.password.length < 6) throw new Error('Le mot de passe doit contenir au moins 6 caractères.');
+      if (data.password.length < 8) throw new Error('Le mot de passe doit contenir au moins 8 caractères.');
       if (email === MASTER_ID) throw new Error('Cet identifiant est réservé.');
       if (HAS_SB) {
         var d = await sb('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: email, password: data.password, data: { name: data.name, role: (data.agence ? 'partner' : 'client'), agence: data.agence || '', ville: data.ville || '', tel: data.tel || '' } }) });
@@ -278,7 +279,7 @@
       }
       var users = LS.get('melodia_users', {});
       if (users[email]) throw new Error('Un compte existe déjà avec cet email.');
-      users[email] = { id: uid(), name: data.name, email: email, pw: hash(data.password), role: 'partner', agence: data.agence || '', ville: data.ville || '', tel: data.tel || '' };
+      users[email] = { id: uid(), name: data.name, email: email, role: 'partner', agence: data.agence || '', ville: data.ville || '', tel: data.tel || '' };
       LS.set('melodia_users', users);
       var user = { id: users[email].id, name: data.name, email: email, role: 'partner', agence: data.agence || '' };
       LS.set('melodia_user', user);
@@ -367,10 +368,7 @@
       }
       var users = LS.get('melodia_users', {});
       if (!users[email]) throw new Error('Aucun compte associé à cet email.');
-      var temp = 'MF' + Math.random().toString(36).slice(2, 8).toUpperCase();
-      users[email].pw = hash(temp);
-      LS.set('melodia_users', users);
-      return 'Mode démo — mot de passe provisoire : ' + temp + ' (à changer après connexion). En production, un email est envoyé.';
+      return 'Mode local : aucun mot de passe n’est conservé sur cet appareil. En production, un lien est envoyé.';
     },
 
     /* ─── Poser un nouveau mot de passe ───
@@ -390,11 +388,7 @@
       if (!HAS_SB) {
         var u = this.current();
         if (!u) throw new Error('Vous n\'êtes pas connecté.');
-        var users = LS.get('melodia_users', {});
-        if (!users[u.email]) throw new Error('Compte introuvable.');
-        users[u.email].pw = hash(nouveau);
-        LS.set('melodia_users', users);
-        return 'Mot de passe modifié.';
+        return 'Mode local : aucun mot de passe n’est conservé sur cet appareil.';
       }
       var s = LS.get('melodia_session', null);
       if (!s || !s.access_token) {
@@ -430,7 +424,21 @@
 
     /* Le rôle en cache part avec la session : sans cela, le compte
        suivant ouvert sur le même navigateur hériterait du précédent. */
-    logout: function () { LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user'); LS.del('melodia_role'); LS.del('melodia_agence'); },
+    logout: function () {
+      var s = LS.get('melodia_session', null);
+      LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user');
+      LS.del('melodia_role'); LS.del('melodia_agence'); LS.del('melodia_role_erreur');
+      try {
+        sessionStorage.removeItem('melodia_saut');
+        sessionStorage.removeItem('melodia_intro');
+      } catch (e) {}
+      if (HAS_SB && s && s.access_token) {
+        fetch(SB + '/auth/v1/logout', {
+          method: 'POST',
+          headers: { apikey: SBK, Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' }
+        }).catch(function () {});
+      }
+    },
 
     /** Redirige vers le bon tableau de bord, ou vers compte.html si non connecté */
     guard: function () {
@@ -478,11 +486,11 @@
 
     home: function () {
       var u = this.current();
-      if (!u) return 'compte.html';
-      if (u.role === 'master') return 'dashboard-master.html';
-      if (u.role === 'commercial') return 'dashboard-commercial.html';
-      if (u.role === 'partner') return 'dashboard-partenaire.html';
-      return 'espace.html';
+      if (!u || u.role === 'erreur') return '/compte';
+      if (u.role === 'master') return '/dashboard-master';
+      if (u.role === 'commercial') return '/dashboard-commercial';
+      if (u.role === 'partner') return '/dashboard-partenaire';
+      return '/espace';
     }
   };
 
@@ -581,6 +589,18 @@
   window.MelodiaDB = {
     mode: HAS_SB ? 'supabase' : 'local',
 
+    async _caps() {
+      if (!HAS_SB) return {};
+      if (this._capsCache) return this._capsCache;
+      try {
+        var d = await sb('/rest/v1/rpc/melodia_capacites', { method: 'POST', body: '{}' });
+        this._capsCache = (d && typeof d === 'object') ? d : {};
+      } catch (e) {
+        this._capsCache = {};
+      }
+      return this._capsCache;
+    },
+
     async create(o) {
       var u = window.MelodiaAuth.current();
       var rec = {
@@ -593,15 +613,33 @@
         offer: o.offer, price: o.price, defunt: o.defunt,
         traits: o.traits || '', metier: o.metier || '', habitude: o.habitude || '',
         anecdote: o.anecdote || '', style: o.style || '',
-        urgence: !!o.urgence, paid: !!o.paid,
-        /* Les suppléments retenus. Sans eux, l'atelier ignorerait
-           qu'il doit composer sept minutes dans une autre langue. */
+        urgence: !!o.urgence,
+        /* Le navigateur ne se déclare jamais payé. Un insert anonyme
+           paid=true est refusé par la base ; l'identifiant PayPal, s'il
+           y en a un, part dans le courriel à la maison (order.js). */
+        paid: false,
         options: Array.isArray(o.options) ? o.options : [],
-        paypal_id: o.paypal_id || ''
+        paypal_id: ''
       };
+      var caps = await this._caps();
+      if (caps.orders_parrain) {
+        var code = '';
+        try { code = String(localStorage.getItem('melodia_parrain') || '').trim().toLowerCase(); } catch (e) {}
+        if (/^[a-z0-9-]{2,40}$/.test(code)) rec.parrain = code;
+      }
       if (HAS_SB) {
-        var rows = await sb('/rest/v1/orders', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(rec) });
-        return (rows && rows[0]) || rec;
+        try {
+          var rows = await sb('/rest/v1/orders', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(rec) });
+          return (rows && rows[0]) || rec;
+        } catch (e) {
+          /* Colonne pas encore migrée : on renvoie la commande sans elle. */
+          if (rec.parrain && /parrain/i.test(e.message || '')) {
+            delete rec.parrain;
+            var rows2 = await sb('/rest/v1/orders', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(rec) });
+            return (rows2 && rows2[0]) || rec;
+          }
+          throw e;
+        }
       }
       var all = LS.get('melodia_orders', []);
       all.unshift(rec); LS.set('melodia_orders', all);
@@ -619,6 +657,17 @@
     async all() {
       if (HAS_SB) return sb('/rest/v1/orders?order=created_at.desc');
       return LS.get('melodia_orders', []);
+    },
+
+    async parrainages(code) {
+      var caps = await this._caps();
+      if (!caps.orders_parrain || !code) return null;
+      try {
+        var n = await sb('/rest/v1/rpc/parrainages', {
+          method: 'POST', body: JSON.stringify({ code: String(code).toLowerCase() })
+        });
+        return typeof n === 'number' ? n : null;
+      } catch (e) { return null; }
     },
 
     async setStatus(ref, status) {
@@ -717,10 +766,7 @@
     mode: HAS_SB ? 'supabase' : 'local',
 
     async liste() {
-      if (HAS_SB) {
-        try { return await sb('/rest/v1/collaborateurs?order=created_at.desc'); }
-        catch (e) { return []; }
-      }
+      if (HAS_SB) return await sb('/rest/v1/collaborateurs?order=created_at.desc');
       var users = LS.get('melodia_users', {});
       return Object.keys(users)
         .map(function (k) { return users[k]; })
@@ -785,7 +831,7 @@
       };
       var users = LS.get('melodia_users', {});
       if (users[email]) throw new Error('Un compte existe déjà avec cette adresse.');
-      users[email] = Object.assign({}, fiche, { pw: hash(data.pw) });
+      users[email] = Object.assign({}, fiche);
       LS.set('melodia_users', users);
       fiche._message = 'Compte créé dans ce navigateur uniquement.';
       fiche._cree = true;
@@ -797,8 +843,7 @@
       if (HAS_SB) return await this._serveur({ action: 'motdepasse', email: email, pw: pw });
       var users = LS.get('melodia_users', {});
       if (!users[email]) throw new Error('Compte inconnu.');
-      users[email].pw = hash(pw); LS.set('melodia_users', users);
-      return { ok: true, message: 'Mot de passe remplacé.' };
+      return { ok: true, message: 'Mode local : aucun mot de passe n’est conservé.' };
     },
 
     /* Suspendre fermait la fiche mais laissait le compte ouvrir une
@@ -846,6 +891,34 @@
     refus: { label: 'Sans suite', color: '#5d5a51' }
   };
 
+  function depuisProspect(p) {
+    if (!p) return p;
+    if (!p.relance_le && p.relance) p.relance_le = String(p.relance).slice(0, 10);
+    return p;
+  }
+
+  /* Colonnes connues du live. Les autres ne partent que si
+     melodia_capacites() dit que la migration B1 est passée : sinon
+     PostgREST refuse toute la ligne, et le carnet reste vide. */
+  var COLONNES_PROSPECT = ['siret', 'siren', 'nom', 'enseigne', 'type', 'adresse', 'cp', 'ville', 'email', 'tel', 'site', 'statut', 'notes', 'journal', 'owner', 'owner_nom', 'relance'];
+  var COLONNES_PROSPECT_PLUS = ['relance_le', 'oppose', 'dernier_contact', 'dirigeant', 'departement', 'effectif', 'creation', 'etablissements', 'agence'];
+
+  function versProspect(fiche, caps) {
+    var out = {};
+    COLONNES_PROSPECT.forEach(function (k) {
+      if (fiche[k] !== undefined) out[k] = fiche[k];
+    });
+    if (caps && caps.prospects_relance_le) {
+      COLONNES_PROSPECT_PLUS.forEach(function (k) {
+        if (fiche[k] !== undefined) out[k] = fiche[k];
+      });
+      if (fiche.relance_le) out.relance = fiche.relance_le;
+    } else if (fiche.relance_le) {
+      out.relance = fiche.relance_le;
+    }
+    return out;
+  }
+
   window.MelodiaProspects = {
     mode: HAS_SB ? 'supabase' : 'local',
     STATUTS: STATUTS,
@@ -859,8 +932,8 @@
       if (!u) return [];
       if (u.role === 'master') return this.all();
       if (HAS_SB) {
-        try { return await sb('/rest/v1/prospects?owner=eq.' + encodeURIComponent(u.email) + '&order=updated_at.desc'); }
-        catch (e) { return []; }
+        var lignes = await sb('/rest/v1/prospects?owner=eq.' + encodeURIComponent(u.email) + '&order=updated_at.desc');
+        return (lignes || []).map(depuisProspect);
       }
       var mail = (u.email || '').toLowerCase();
       return this._local().filter(function (p) { return (p.owner || '').toLowerCase() === mail; });
@@ -868,7 +941,8 @@
 
     async all() {
       if (HAS_SB) {
-        try { return await sb('/rest/v1/prospects?order=updated_at.desc'); } catch (e) { return []; }
+        var lignes = await sb('/rest/v1/prospects?order=updated_at.desc');
+        return (lignes || []).map(depuisProspect);
       }
       return this._local();
     },
@@ -887,12 +961,27 @@
       if (!fiche.siret) fiche.siret = fiche.siren || uid();
 
       if (HAS_SB) {
-        var rows = await sb('/rest/v1/prospects', {
-          method: 'POST',
-          headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
-          body: JSON.stringify(fiche)
-        });
-        return (rows && rows[0]) || fiche;
+        var caps = await window.MelodiaDB._caps();
+        var corps = versProspect(fiche, caps);
+        var url = '/rest/v1/prospects' + (caps.prospects_cle_owner ? '?on_conflict=owner,siret' : '');
+        try {
+          var rows = await sb(url, {
+            method: 'POST',
+            headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
+            body: JSON.stringify(corps)
+          });
+          return depuisProspect((rows && rows[0]) || fiche);
+        } catch (e) {
+          if (caps.prospects_cle_owner && /on_conflict|constraint|42P10/i.test(e.message || '')) {
+            var rows2 = await sb('/rest/v1/prospects', {
+              method: 'POST',
+              headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
+              body: JSON.stringify(corps)
+            });
+            return depuisProspect((rows2 && rows2[0]) || fiche);
+          }
+          throw e;
+        }
       }
       var l = this._local();
       var i = l.findIndex(function (x) { return x.siret === fiche.siret; });
@@ -903,7 +992,7 @@
 
     async supprimer(siret) {
       if (HAS_SB) {
-        try { await sb('/rest/v1/prospects?siret=eq.' + encodeURIComponent(siret), { method: 'DELETE' }); } catch (e) {}
+        await sb('/rest/v1/prospects?siret=eq.' + encodeURIComponent(siret), { method: 'DELETE' });
       }
       this._ecrire(this._local().filter(function (p) { return p.siret !== siret; }));
       return true;

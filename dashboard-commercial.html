@@ -10,10 +10,11 @@
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=aa8861a7">
-<link rel="stylesheet" href="/assets/css/dashboard.css?v=cd9a4551">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=b97bdc91">
 <link rel="stylesheet" href="/assets/css/relief.css?v=3d4a9fe9">
 <link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
 <link rel="stylesheet" href="/assets/css/collaborateur.css?v=369e3733">
+<style>@view-transition { navigation: none; }</style>
 </head>
 <body>
 <div class="dash">
@@ -44,6 +45,14 @@
     <button class="side-item" data-v="messagerie"><span class="ico">✉</span>Messagerie<span class="side-badge" id="badge-msg" style="display:none;">0</span></button>
     <button class="side-item" data-v="catalogue"><span class="ico">♫</span>Catalogue</button>
     <button class="side-item" data-v="social"><span class="ico">◉</span>Réseaux sociaux</button>
+    <button class="side-item" data-v="posts"><span class="ico">✎</span>Publications prêtes</button>
+    <button class="side-item" data-v="kit"><span class="ico">▤</span>Kit média</button>
+    <button class="side-item" data-v="ecoute"><span class="ico">♫</span>Écouter les exemples</button>
+    <button class="side-item" data-v="faq"><span class="ico">?</span>Réponses familles</button>
+    <button class="side-item" data-v="rappels"><span class="ico">⏱</span>Mes rappels</button>
+    <button class="side-item" data-v="checklist"><span class="ico">✓</span>Parcours d’arrivée</button>
+    <button class="side-item" data-v="analyse"><span class="ico">◈</span>Pipeline réel</button>
+    <button class="side-item" data-v="simulateur"><span class="ico">%</span>Simulateur</button>
     <div class="side-foot">
       <div class="side-user">
         <div class="side-avatar" id="u-initial">—</div>
@@ -52,14 +61,14 @@
           <div class="side-urole" id="u-role">Collaborateur</div>
         </div>
       </div>
-      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" onclick="logout()">Déconnexion</button>
+      <button class="btn btn-outline btn-sm" style="width:100%; margin-top:0.8rem;" data-act="deconnexion">Déconnexion</button>
     </div>
   </aside>
 
   <main class="dash-main">
     <div class="dash-top">
       <div style="display:flex; gap:1rem; align-items:flex-start;">
-        <button class="dash-burger" onclick="document.getElementById('side').classList.toggle('open')">☰</button>
+        <button class="dash-burger" data-act="toggle-side">☰</button>
         <div>
           <div class="dash-eyebrow" id="head-eyebrow">Prospection</div>
           <h1 class="dash-title" id="head-title">Tableau de <em>bord</em></h1>
@@ -71,22 +80,22 @@
   </main>
 </div>
 
-<script src="/assets/js/config.js?v=e792fc99"></script>
-<script src="/assets/js/auth.js?v=db992d44"></script>
-<script src="/assets/js/main.js?v=9608f633"></script>
-<script src="/assets/js/commercial-contenu.js?v=3593a3cb"></script>
-<script src="/assets/js/intranet.js?v=4b2436ff"></script>
-<script src="/assets/js/motdepasse.js?v=865738d9"></script>
-<script src="/assets/js/commercial-boite.js?v=cefb94bc"></script>
-<script src="/assets/js/commercial-graphes.js?v=69b04c77"></script>
-<script src="/assets/js/signatures.js?v=1faeb8df"></script>
-<script src="/assets/js/qr.js?v=f6fe5656"></script>
-<script src="/assets/js/collaborateur-mails.js?v=c93e06b9"></script>
-<script src="/assets/js/collaborateur-espace.js?v=6f826051"></script>
-<script src="/assets/js/campagne.js?v=9b822619"></script>
-<script src="/assets/js/commercial.js?v=2ffb0ee4"></script>
-<script src="/assets/js/relief.js?v=99c4c9ba"></script>
-<script src="/assets/js/mobile.js?v=43030276"></script>
-<script src="/assets/js/palette.js?v=b599a8c8"></script>
+<script defer src="/assets/js/config.js?v=e792fc99"></script>
+<script defer src="/assets/js/auth.js?v=7a4babb2"></script>
+<script defer src="/assets/js/main.js?v=8f4a86c6"></script>
+<script defer src="/assets/js/commercial-contenu.js?v=3593a3cb"></script>
+<script defer src="/assets/js/intranet.js?v=30b605fd"></script>
+<script defer src="/assets/js/motdepasse.js?v=865738d9"></script>
+<script defer src="/assets/js/commercial-boite.js?v=cefb94bc"></script>
+<script defer src="/assets/js/commercial-graphes.js?v=69b04c77"></script>
+<script defer src="/assets/js/signatures.js?v=1faeb8df"></script>
+<script defer src="/assets/js/qr.js?v=f6fe5656"></script>
+<script defer src="/assets/js/collaborateur-mails.js?v=e29f2f53"></script>
+<script defer src="/assets/js/collaborateur-espace.js?v=15293a63"></script>
+<script defer src="/assets/js/campagne.js?v=96e66ac0"></script>
+<script defer src="/assets/js/commercial.js?v=182d2141"></script>
+<script defer src="/assets/js/relief.js?v=99c4c9ba"></script>
+<script defer src="/assets/js/mobile.js?v=43030276"></script>
+<script defer src="/assets/js/palette.js?v=52eaafd3"></script>
 </body>
 </html>
