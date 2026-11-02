@@ -11,6 +11,8 @@ const files = [
   'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/intranet.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'assets/js/ornements.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
   'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js',
   'assets/js/auth.js', 'assets/js/config.js', 'assets/js/candidature.js', 'assets/js/espace.js',
+  'assets/js/collaborateur-mails.js', 'assets/js/collaborateur-espace.js', 'assets/css/collaborateur.css',
+  'assets/js/signatures.js', 'assets/js/qr.js', 'assets/img/equipe/julie-serve.jpg', 'assets/img/courriel/banniere.jpg',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-complet.jpg', 'assets/img/logo-melodia-anime.mp4',
   'assets/img/plaque-qr-700.webp', 'assets/img/plaque-qr-700.jpg',
   'assets/img/plaque-qr-1100.webp', 'assets/img/plaque-qr-1100.jpg',

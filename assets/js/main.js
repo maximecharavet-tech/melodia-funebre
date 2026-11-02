@@ -7,6 +7,15 @@
   'use strict';
 
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Lien personnel d’un collaborateur (?parrain=julie-serve).
+     Retenu sur cet appareil seulement : rien n’est envoyé à un serveur,
+     et aucun compteur de visites n’est tenu. */
+  try {
+    var parrain = new URLSearchParams(location.search).get('parrain') || '';
+    parrain = parrain.trim().toLowerCase();
+    if (/^[a-z0-9-]{2,40}$/.test(parrain)) localStorage.setItem('melodia_parrain', parrain);
+  } catch (e) {}
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 

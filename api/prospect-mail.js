@@ -55,6 +55,11 @@ const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const ROLES_PERMIS = ['commercial', 'master'];
 const LOT_MAX = 50;
 
+/* L’envoi payant (Resend) reste dans ce fichier, mais il ne part pas
+   tant que ce drapeau est faux. L’aperçu continue. La console retombe
+   sur la messagerie du collaborateur, sans appeler le service. */
+const ENVOI_ACTIF = false;
+
 function json(res, code, corps) { return res.status(code).json(corps); }
 
 /* ─── Qui demande ? ───
@@ -157,6 +162,14 @@ export default async function handler(req, res) {
   }
 
   /* ─── Test et envoi : session obligatoire ─── */
+  if (!ENVOI_ACTIF) {
+    return json(res, 503, {
+      error: 'L’envoi automatique est désactivé.',
+      code: 'NOT_CONFIGURED',
+      hint: 'Les courriers se copient ou s’ouvrent dans la messagerie. Aucun service payant n’est appelé.'
+    });
+  }
+
   const exp = expediteurProspection();
   if (!process.env.RESEND_API_KEY || !exp) {
     return json(res, 503, {
