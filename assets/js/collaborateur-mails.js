@@ -632,7 +632,13 @@
       lien: lien,
       manquants: manquants(modele, o.vars || {}),
       sansMusique: !choisie,
-      layout: layoutMail
+      layout: layoutMail,
+      /* De quoi faire composer le même courrier au serveur (envoi
+         direct) : des champs de texte, jamais le HTML ci-dessus. */
+      bouton: bouton,
+      visuel: visuelCourriel(modele.visuel),
+      visuelAlt: modele.visuelAlt || '',
+      piste: choisie
     };
   }
 
