@@ -601,7 +601,7 @@
         sujet: sujet,
         titre: titre,
         texte: texte,
-        visuel: modele.visuel,
+        visuel: visuelCourriel(modele.visuel),
         visuelAlt: modele.visuelAlt,
         sourcil: modele.sourcil,
         piste: choisie,
@@ -615,7 +615,7 @@
         sujet: sujet,
         titre: titre,
         texte: texte,
-        visuel: modele.visuel,
+        visuel: visuelCourriel(modele.visuel),
         visuelAlt: modele.visuelAlt,
         pistes: modele.bouton ? (choisie ? [choisie] : []) : (choisie ? [choisie] : []).concat(autres),
         signature: modele.signatureFixe || o.signature || {},
@@ -640,6 +640,14 @@
     var u = String(url || '');
     if (!u || u.indexOf('parrain=') !== -1) return u;
     return u + (u.indexOf('?') === -1 ? '?' : '&') + 'parrain=' + PARRAIN;
+  }
+
+  /* Outlook (bureau) n'affiche pas le WebP : dans un courriel, un
+     visuel de campagne en .webp est remplacé par sa copie JPG, rangée
+     dans /assets/img/courriel/ (même nom). */
+  function visuelCourriel(chemin) {
+    var m = String(chemin || '').match(/^\/assets\/img\/campagne\/([a-z0-9-]+)\.webp$/i);
+    return m ? '/assets/img/courriel/' + m[1] + '.jpg' : chemin;
   }
 
   function src(chemin, absolu) {
@@ -879,8 +887,44 @@
       '&body=' + encodeURIComponent(texte || '');
   }
 
-  function copierMailHtml(html, texte) {
+  /* Ce qui part dans le presse-papiers : le corps du courriel seul.
+     Le document complet (doctype, <head>, <title>) colle mal : Gmail
+     et Outlook gardent le titre comme une ligne de texte, et le fond
+     posé sur <body> est perdu. On garde le contenu de <body>, enrobé
+     d'un bloc qui reprend son fond, tout en styles en ligne. */
+  function fragmentCourriel(html) {
     html = String(html || '');
+    var corps = html.match(/<body([^>]*)>([\s\S]*)<\/body>/i);
+    if (!corps) return html;
+    var style = (corps[1].match(/style="([^"]*)"/i) || [])[1] || '';
+    var fond = (style.match(/background(?:-color)?\s*:\s*(#[0-9a-f]{3,6})/i) || [])[1] || '#ffffff';
+    return '<div style="margin:0;padding:0;background-color:' + fond + ';">' + corps[2] + '</div>';
+  }
+
+  /* Copie synchrone par l'événement « copy » : text/html ET text/plain
+     exacts, dans le geste de l'utilisateur. Sert quand une fenêtre
+     (Gmail, mailto) va s'ouvrir juste après et prendre le focus. */
+  function copierMailSync(html, texte) {
+    html = fragmentCourriel(html);
+    texte = String(texte != null ? texte : '');
+    var ok = false;
+    function surCopie(e) {
+      if (!e.clipboardData) return;
+      e.clipboardData.setData('text/html', html);
+      e.clipboardData.setData('text/plain', texte);
+      e.preventDefault();
+      ok = true;
+    }
+    document.addEventListener('copy', surCopie, true);
+    var ret = false;
+    try { ret = document.execCommand('copy'); } catch (e) { ret = false; }
+    document.removeEventListener('copy', surCopie, true);
+    if (ok && ret) return true;
+    return copierMailRepli(html, texte);
+  }
+
+  function copierMailHtml(html, texte) {
+    html = fragmentCourriel(html);
     texte = String(texte != null ? texte : '');
     if (navigator.clipboard && window.ClipboardItem) {
       return navigator.clipboard.write([
@@ -888,9 +932,9 @@
           'text/html': new Blob([html], { type: 'text/html' }),
           'text/plain': new Blob([texte], { type: 'text/plain' })
         })
-      ]).then(function () { return true; }, function () { return copierMailRepli(html, texte); });
+      ]).then(function () { return true; }, function () { return copierMailSync(html, texte); });
     }
-    return Promise.resolve(copierMailRepli(html, texte));
+    return Promise.resolve(copierMailSync(html, texte));
   }
 
   function copierMailRepli(html, texte) {
@@ -984,6 +1028,9 @@
     mailto: mailto,
     gmailCompose: gmailCompose,
     copierMailHtml: copierMailHtml,
+    copierMailSync: copierMailSync,
+    fragmentCourriel: fragmentCourriel,
+    visuelCourriel: visuelCourriel,
     modelesPret: modelesPret,
     prochaineSequence: prochaineSequence,
     manquants: manquants,
