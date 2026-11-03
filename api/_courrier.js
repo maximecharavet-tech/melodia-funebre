@@ -289,6 +289,11 @@ export function gabarit(o) {
     </td></tr>`}
     <tr><td style="height:3px;background:linear-gradient(90deg,#97803c,#e3c977,#97803c);font-size:0;line-height:0;">&nbsp;</td></tr>
 
+    ${o.visuel && /^\/assets\/img\/(?:courriel|campagne)\/[a-z0-9-]+\.jpg$/i.test(o.visuel) ? `<tr><td style="padding:0;line-height:0;font-size:0;">
+      <img src="${SITE}${o.visuel}" width="600" alt="${echapper(o.visuelAlt || 'Melodia Funèbre')}"
+           style="display:block;width:100%;max-width:600px;height:auto;border:0;color:#5c5749;font-family:Georgia,serif;font-size:16px;line-height:1.4;">
+    </td></tr>` : ''}
+
     <!-- Corps -->
     <tr><td style="padding:32px 34px 26px;font-family:Helvetica,Arial,sans-serif;">
       ${o.titre ? '<h1 style="margin:0 0 20px;font-family:Georgia,\'Times New Roman\',serif;font-weight:400;font-size:25px;line-height:1.3;color:#17150f;">' + echapper(o.titre) + '</h1>' : ''}

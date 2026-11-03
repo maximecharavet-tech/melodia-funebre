@@ -4,7 +4,8 @@
    Branché dans la console commerciale. Les chiffres viennent des
    fiches réellement chargées. Les ventes et les commissions n’ont
    pas de colonne dans les commandes : on affiche un vide, pas un zéro
-   inventé. Aucun envoi de courriel ne part d’ici.
+   inventé. Les courriels partent seulement par « Envoyer directement »,
+   via /api/prospect-mail, qui compose le HTML côté serveur.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -441,7 +442,7 @@
         '<div class="col-mails-edit">' +
           '<p class="panel-note">' + esc(m.quand) + '</p>' +
           '<div class="col-champs">' + champs +
-            '<div class="field"><label class="field-label" for="mail-dest">Destinataire, pour le lien mailto</label>' +
+            '<div class="field"><label class="field-label" for="mail-dest">Destinataire</label>' +
               '<input class="field-input" id="mail-dest" type="email" autocomplete="off" value="' + esc(brouillon.dest) + '" placeholder="adresse@exemple.fr"></div>' +
             '<div class="field"><label class="field-label" for="mail-piste">Exemple musical du catalogue</label>' +
               '<select class="field-select" id="mail-piste"><option value="">Chargement du catalogue…</option></select></div>' +
@@ -450,11 +451,13 @@
               : '<p class="col-aide">Le morceau choisi est présenté comme un exemple du catalogue, jamais comme la chanson du défunt.</p>') +
           '</div>' +
           '<div class="col-actions">' +
+            boutonEnvoiDirect('mail-envoyer') +
             '<button type="button" class="btn btn-outline btn-sm" id="mail-copier">Copier le texte</button>' +
             '<button type="button" class="btn btn-outline btn-sm" id="mail-html">Copier le HTML</button>' +
-            '<button type="button" class="btn btn-gold btn-sm" id="mail-mailto">Ouvrir dans la messagerie</button>' +
+            '<button type="button" class="btn ' + (window.MelodiaMails && window.MelodiaMails.ENVOI_ACTIF ? 'btn-outline' : 'btn-gold') + ' btn-sm" id="mail-mailto">Ouvrir dans la messagerie</button>' +
           '</div>' +
           '<p class="col-aide" id="mail-etat" role="status"></p>' +
+          '<p class="col-aide" id="mail-envoi" role="status" aria-live="polite"></p>' +
           '<iframe class="col-apercu" id="mail-apercu" title="Aperçu du courriel" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
         '</div>' +
       '</div>';
@@ -467,9 +470,124 @@
     var M = window.MelodiaMails;
     if (M && M.ENVOI_ACTIF) {
       return '<p class="col-banniere-etat">Envoi direct actif : depuis Mes prospects, cochez les fiches puis « Écrire à la sélection ». ' +
-        'Jusqu’à 30 courriels par jour, avec les visuels. Ici, vous pouvez aussi copier le message ou l’ouvrir dans votre messagerie.</p>';
+        'Jusqu’à 30 courriels par jour, avec les visuels. Ici, « ✉ Envoyer directement » envoie ce courriel tel qu’affiché ; copier le message ou l’ouvrir dans votre messagerie reste possible.</p>';
     }
     return '<p class="col-banniere-etat">' + esc(repli) + '</p>';
+  }
+
+  /* ─── Envoi direct ───
+     Le lien mailto ne porte que du texte et casse au-delà de ~2 000
+     caractères. Ici le courrier part par le serveur (/api/prospect-mail,
+     mode « envoi »), exactement comme une campagne : le navigateur
+     transmet des champs de texte (objet, titre, corps, lien, chemin du
+     visuel), le serveur les échappe et compose lui-même le HTML, avec
+     la bannière, les disques d'or, la signature et le quota du jour. */
+  var RE_EMAIL = /^[^\s@<>(),;:"']+@[^\s@<>(),;:"']+\.[a-z]{2,}$/i;
+  var TEXTE_ENVOI = '✉ Envoyer directement';
+  var MSG_MAILTO_LONG = 'Trop long pour un lien mailto : utilisez « Envoyer directement » (avec les images).';
+
+  function envoiDirectDispo() {
+    return !!(window.MelodiaMails && window.MelodiaMails.ENVOI_ACTIF && window.MelodiaCampagne && window.MelodiaCampagne.appeler);
+  }
+  function boutonEnvoiDirect(id) {
+    if (!window.MelodiaMails || !window.MelodiaMails.ENVOI_ACTIF) return '';
+    return '<button type="button" class="btn btn-gold btn-sm" id="' + id + '">' + TEXTE_ENVOI + '</button>';
+  }
+  function texteQuotaEnvoi(q) {
+    var C = window.MelodiaCampagne;
+    if (!q) return '';
+    if (C && C.texteQuota) return C.texteQuota(q);
+    return q.utilise + ' / ' + q.max + ' envoyés aujourd’hui';
+  }
+  function ficheParEmail(email) {
+    var a = String(email || '').trim().toLowerCase();
+    if (!a) return null;
+    var tous = lireProspects() || [];
+    for (var i = 0; i < tous.length; i++) if (String(tous[i].email || '').trim().toLowerCase() === a) return tous[i];
+    return null;
+  }
+  function messageEchecEnvoi(r) {
+    var d = (r && r.d) || {};
+    var q = d.quota;
+    if (r.status === 401 || d.code === 'NON_CONNECTE') return 'Session expirée : reconnectez-vous, puis renvoyez. Rien n’est parti.';
+    if (r.status === 403 && d.code === 'INTERDIT') return 'Votre compte n’a pas le droit d’envoyer : l’envoi direct est réservé aux comptes commercial et fondateur. Utilisez « Copier » en attendant.';
+    if (d.code === 'QUOTA') return 'Quota du jour atteint' + (q ? ' (' + q.utilise + ' / ' + q.max + ')' : '') + ' : les envois reprennent demain. Rien n’est parti.';
+    if (d.code === 'RATE_LIMIT') return 'Trop d’envois en peu de temps : réessayez dans quelques minutes.';
+    if (d.code === 'ENVOI_DESACTIVE' || d.code === 'NOT_CONFIGURED') return 'Envoi direct indisponible pour le moment : copiez le mail à la place.';
+    if (d.code === 'ORIGINE') return 'Envoi refusé : ouvrez la console depuis melodia-funebre.fr.';
+    if (d.refuses && d.refuses[0] && d.refuses[0].motif) return 'Non envoyé : ' + d.refuses[0].motif;
+    if (r.status === 0) return 'Le serveur ne répond pas : vérifiez la connexion, puis réessayez.';
+    return 'Non envoyé : ' + (d.error || ('erreur ' + r.status)) + '.';
+  }
+  /* Le corps tel qu'il part : si le morceau choisi n'apparaît pas dans le
+     texte (modèles à bouton), sa ligne est ajoutée, et le serveur en fait
+     une carte au disque d'or. */
+  function texteEnvoi(rendu) {
+    var t = String(rendu.texte || '').replace(/\s+$/, '');
+    var p = rendu.piste;
+    if (rendu.lien && t.indexOf(rendu.lien) === -1 && p) {
+      t += '\n\n· ' + p.titre + (p.qui ? ' — ' + p.qui : '') + ' : ' + rendu.lien;
+    }
+    return t;
+  }
+  /* o : { bouton, etat, dest, rendu, modele, apres(fiche, res) } */
+  function envoyerDirect(o) {
+    var C = window.MelodiaCampagne;
+    var dire = function (t) { if (o.etat) o.etat.textContent = t; toast(t); };
+    if (!envoiDirectDispo()) { dire('Envoi direct indisponible ici : copiez le mail à la place.'); return; }
+    var dest = String(o.dest || '').trim();
+    if (!RE_EMAIL.test(dest)) { dire(dest ? 'Adresse invalide : ' + dest + '. Corrigez le champ destinataire.' : 'Indiquez l’adresse du destinataire avant d’envoyer.'); return; }
+    var rendu = o.rendu;
+    if (!rendu) return;
+    if (rendu.manquants && rendu.manquants.length) { dire('À remplir avant l’envoi : ' + rendu.manquants.join(', ') + '.'); return; }
+    if (rendu.sansMusique) { dire('Choisissez un morceau du catalogue avant d’envoyer.'); return; }
+    var texte = texteEnvoi(rendu);
+    if (/\{\{?[A-Za-zÀ-ÿ_]/.test(texte + ' ' + rendu.sujet + ' ' + (rendu.titre || ''))) {
+      dire('Le message contient encore des variables vides (entre accolades) : complétez-les avant d’envoyer.');
+      return;
+    }
+    if (!window.confirm('Envoyer ce courriel à ' + dest + ' ?')) return;
+    var fiche = ficheParEmail(dest);
+    var b = o.bouton;
+    b.disabled = true;
+    b.setAttribute('aria-busy', 'true');
+    b.textContent = 'Envoi en cours…';
+    dire('Envoi en cours à ' + dest + '…');
+    var corps = {
+      mode: 'envoi',
+      modele: (o.modele && o.modele.nom) || rendu.sujet,
+      envois: [{ to: dest, ref: fiche ? fiche.siret : '', sujet: rendu.sujet, titre: rendu.titre || '', texte: texte }],
+      signature: C.signature ? C.signature() : {},
+      lienTexte: rendu.bouton ? rendu.bouton.texte : '',
+      lienUrl: rendu.bouton ? rendu.bouton.url : '',
+      visuel: rendu.visuel || '',
+      visuelAlt: rendu.visuelAlt || ''
+    };
+    return C.appeler(corps).then(function (r) {
+      var parti = r.ok && r.d && r.d.envoyes && r.d.envoyes.length;
+      if (!parti) { dire(messageEchecEnvoi(r)); return; }
+      var q = texteQuotaEnvoi(r.d.quota);
+      dire('Courriel envoyé à ' + dest + ', avec les images.' + (q ? ' ' + q + '.' : '') + (fiche ? ' Noté sur la fiche ' + fiche.nom + '.' : ''));
+      var u = utilisateur();
+      if (u.email) noterGeste(u.email, 'mails');
+      if (fiche && window.MelodiaProspects && window.MelodiaProspects.enregistrer) {
+        var journal = (fiche.journal || []).concat([{
+          le: new Date().toISOString(),
+          quoi: 'Courriel envoyé',
+          detail: 'Envoi direct — modèle « ' + ((o.modele && o.modele.nom) || rendu.sujet) + ' »'
+        }]);
+        var maj = { journal: journal, relance_le: joursPlus(7) };
+        if (fiche.statut === 'nouveau') maj.statut = 'contacte';
+        Promise.resolve(window.MelodiaProspects.enregistrer(Object.assign({}, fiche, maj))).catch(function () {});
+      }
+      if (o.apres) { try { o.apres(fiche, r); } catch (e) {} }
+    }).catch(function () {
+      dire('Le serveur ne répond pas : vérifiez la connexion, puis réessayez.');
+    }).then(function () {
+      b.disabled = false;
+      b.removeAttribute('aria-busy');
+      b.textContent = TEXTE_ENVOI;
+    });
   }
 
   function varsSaisies(racine) {
@@ -589,9 +707,6 @@
         toast(racine.querySelector('#mail-etat').textContent);
         return null;
       }
-      if (rendu.texte.length > 1800) {
-        toast('Le message est long pour un lien mailto. Copiez-le : certaines messageries le coupent.');
-      }
       var u = utilisateur();
       if (u.email) noterGeste(u.email, 'mails');
       return rendu;
@@ -611,8 +726,25 @@
       var rendu = garde(); if (!rendu) return;
       var dest = (racine.querySelector('#mail-dest') || {}).value || '';
       var url = M.mailto(dest, rendu.sujet, rendu.texte);
-      if (url.length > 1900) { toast('Le lien mailto est trop long. Le texte a été copié à la place.'); copierTexte(rendu.texte); return; }
+      if (url.length > 1900) {
+        var etatM = racine.querySelector('#mail-envoi');
+        if (etatM) etatM.textContent = MSG_MAILTO_LONG;
+        toast(MSG_MAILTO_LONG);
+        return;
+      }
       location.href = url;
+    });
+    var envoi = racine.querySelector('#mail-envoyer');
+    if (envoi) envoi.addEventListener('click', function () {
+      var rendu = renduAbsolu(racine, catalogue);
+      if (!rendu) return;
+      envoyerDirect({
+        bouton: envoi,
+        etat: racine.querySelector('#mail-envoi'),
+        dest: (racine.querySelector('#mail-dest') || {}).value || '',
+        rendu: rendu,
+        modele: modeleCourant()
+      });
     });
   }
 
@@ -939,12 +1071,14 @@
               '<select class="field-select" id="pret-piste"><option value="">Chargement…</option></select></div>' +
           '</div>' +
           '<div class="col-actions">' +
-            '<button type="button" class="btn btn-gold btn-sm" id="pret-copier">Copier le mail</button>' +
+            boutonEnvoiDirect('pret-envoyer') +
+            '<button type="button" class="btn ' + (M.ENVOI_ACTIF ? 'btn-outline' : 'btn-gold') + ' btn-sm" id="pret-copier">Copier le mail</button>' +
             '<button type="button" class="btn btn-outline btn-sm" id="pret-objet">Copier l’objet</button>' +
             '<button type="button" class="btn btn-outline btn-sm" id="pret-gmail">Ouvrir dans Gmail</button>' +
             '<a class="btn btn-ghost btn-sm" id="pret-mailto" href="#">mailto</a>' +
           '</div>' +
           '<p class="col-aide" id="pret-etat" role="status"></p>' +
+          '<p class="col-aide" id="pret-envoi" role="status" aria-live="polite"></p>' +
           '<iframe class="col-apercu" id="pret-apercu" title="Aperçu du courriel" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
           (hist.length ? '<div class="col-pret-hist"><div class="field-label">Derniers mails préparés</div><ul>' +
             hist.slice(0, 8).map(function (h, i) {
@@ -981,7 +1115,9 @@
     });
   }
 
-  function majApresPreparation(racine, rendu) {
+  /* sansFiche : après un envoi direct, la fiche est déjà notée par
+     envoyerDirect (« Courriel envoyé ») et aucune fiche n'est créée. */
+  function majApresPreparation(racine, rendu, sansFiche) {
     var m = modelePretCourant();
     if (!m || !rendu) return;
     var email = ((racine.querySelector('#pret-email') || {}).value || '').trim();
@@ -997,6 +1133,7 @@
     });
     var cpt = racine.querySelector('#pret-compteur');
     if (cpt) cpt.textContent = compteurMailsJour(u.email) + ' / ' + objectifMails(u.email);
+    if (sansFiche) return;
     if (!window.MelodiaProspects || !window.MelodiaProspects.enregistrer) return;
     var prom = Promise.resolve();
     if (!pretEtat.siret && racine.querySelector('#pret-creer') && racine.querySelector('#pret-creer').checked) {
@@ -1047,7 +1184,11 @@
       }
       var ml = racine.querySelector('#pret-mailto');
       var dest = (racine.querySelector('#pret-email') || {}).value || '';
-      if (ml) ml.href = M.mailto(dest, rendu.sujet, rendu.texte);
+      if (ml) {
+        var url = M.mailto(dest, rendu.sujet, rendu.texte);
+        ml.href = url;
+        ml.title = url.length > 1900 ? MSG_MAILTO_LONG : '';
+      }
       return rendu;
     }
     function planifier() {
@@ -1164,8 +1305,30 @@
       actionCopie(function (rendu) {
         var dest = (racine.querySelector('#pret-email') || {}).value || '';
         var ok = M.copierMailSync(rendu.html, rendu.texte);
-        mlien.href = M.mailto(dest, rendu.sujet, ok ? '' : rendu.texte);
+        var url = M.mailto(dest, rendu.sujet, ok ? '' : rendu.texte);
+        if (url.length > 1900) {
+          mlien.href = '#';
+          var etatP = racine.querySelector('#pret-envoi');
+          if (etatP) etatP.textContent = MSG_MAILTO_LONG;
+          toast(MSG_MAILTO_LONG);
+          return;
+        }
+        mlien.href = url;
         toast(ok ? 'Mail copié : dans la messagerie, collez dans le corps (Ctrl+V / ⌘V).' : 'Copie HTML impossible : texte seul.');
+      });
+    });
+    var envoiP = racine.querySelector('#pret-envoyer');
+    if (envoiP) envoiP.addEventListener('click', function () {
+      var rendu = renduPret(racine, catalogue, true);
+      if (!rendu) return;
+      var m = modelePretCourant();
+      envoyerDirect({
+        bouton: envoiP,
+        etat: racine.querySelector('#pret-envoi'),
+        dest: (racine.querySelector('#pret-email') || {}).value || '',
+        rendu: rendu,
+        modele: m,
+        apres: function () { majApresPreparation(racine, rendu, true); }
       });
     });
   }

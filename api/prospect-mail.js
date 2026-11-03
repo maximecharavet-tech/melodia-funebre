@@ -269,11 +269,18 @@ export default async function handler(req, res) {
     lienTexte: String(d.lienTexte || '').slice(0, 60),
     lienUrl: /^https:\/\//.test(String(d.lienUrl || '')) ? String(d.lienUrl).slice(0, 300) : ''
   };
+  /* Le visuel du modèle : un chemin du site, jamais une adresse ni du
+     HTML venus du navigateur. Seules les images JPG des dossiers
+     courriel/ et campagne/ sont admises ; le gabarit écrit la balise. */
+  const visuel = /^\/assets\/img\/(?:courriel|campagne)\/[a-z0-9-]+\.jpg$/i.test(String(d.visuel || ''))
+    ? String(d.visuel) : '';
+  const visuelAlt = String(d.visuelAlt || '').replace(/\s+/g, ' ').trim().slice(0, 160);
   const sigEntree = (d.signature && typeof d.signature === 'object') ? d.signature : {};
   const habiller = (e, sig) => gabarit({
     sujet: e.sujet, titre: e.titre, texte: e.texte,
     apercu: e.texte.replace(/\s+/g, ' ').slice(0, 140),
     lienTexte: lien.lienTexte, lienUrl: lien.lienUrl,
+    visuel, visuelAlt,
     banniere: true, signature: sig, pied: 'prospection', cartesEcoute: true
   });
   const signature = (nom, email) => ({
