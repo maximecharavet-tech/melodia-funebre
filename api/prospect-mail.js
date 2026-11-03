@@ -31,7 +31,10 @@
 //
 // Variables d'environnement (Vercel → Settings → Environment Variables) :
 //   RESEND_API_KEY             clé Resend (resend.com)
-//   PROSPECT_FROM              expéditeur de prospection, vérifié chez Resend
+//   PROSPECT_FROM              expéditeur de prospection, vérifié chez Resend ;
+//                              seul son domaine sert : chaque courriel part
+//                              au nom du collaborateur connecté
+//                              (« Julie Serve <julie@contact.…> »)
 //   LEAD_TO                    copie invisible des envois unitaires
 //   SITE_URL                   adresse publique du site (logo, bannière)
 //   SUPABASE_URL               projet Supabase (repli : celui du site)
@@ -89,8 +92,48 @@ async function demandeur(req) {
     if (r.ok) { const l = await r.json(); role = (l && l[0] && l[0].role) || null; }
   } catch (e) { /* rôle inconnu : refusé plus bas */ }
 
+  /* Le nom affiché vient d'abord de la fiche « collaborateurs », que seul
+     le fondateur écrit ; à défaut, du compte authentifié par Supabase.
+     Jamais d'un champ envoyé par le navigateur. */
+  let fiche = '';
+  try {
+    const cle = SB_SERVICE || SB_ANON;
+    const r = await fetch(SB_URL + '/rest/v1/collaborateurs?select=nom,name&email=ilike.' + encodeURIComponent(email), {
+      headers: { apikey: cle, Authorization: 'Bearer ' + (SB_SERVICE || jeton) }
+    });
+    if (r.ok) { const l = await r.json(); fiche = (l && l[0] && (l[0].nom || l[0].name)) || ''; }
+  } catch (e) { /* pas de fiche : on prend le compte */ }
+
   const meta = (moi && moi.user_metadata) || {};
-  return { email, role, nom: String(meta.name || meta.nom || email.split('@')[0]).slice(0, 120) };
+  return { email, role, nom: String(fiche || meta.name || meta.nom || meta.full_name || email.split('@')[0]).slice(0, 120) };
+}
+
+/* ─── L'expéditeur : « Julie Serve <julie@contact.melodia-funebre.fr> » ───
+   Le domaine est toujours celui de PROSPECT_FROM (le seul vérifié chez
+   Resend). La partie locale reprend celle du compte du collaborateur,
+   réduite à [a-z0-9._-] ; « contact » si rien n'en reste. Le nom est
+   nettoyé de tout ce qui pourrait casser l'en-tête. Les réponses vont
+   à la vraie adresse du compte (reply_to). */
+function domaineDe(from) {
+  const m = String(from || '').match(/@([a-z0-9.-]+\.[a-z]{2,})\s*>?\s*$/i);
+  return m ? m[1].toLowerCase() : '';
+}
+export function partieLocale(email) {
+  let l = String(email || '').split('@')[0].toLowerCase().split('+')[0];
+  l = l.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  l = l.replace(/[^a-z0-9._-]/g, '').replace(/\.{2,}/g, '.').replace(/^[._-]+|[._-]+$/g, '').slice(0, 40);
+  l = l.replace(/[._-]+$/g, '');
+  return l || 'contact';
+}
+export function nomAffiche(nom) {
+  return String(nom || '').replace(/[\u0000-\u001f\u007f"<>@,;:\\()\[\]]/g, ' ')
+    .replace(/\s+/g, ' ').trim().slice(0, 64).trim();
+}
+export function expediteurDe(qui, fromBase) {
+  const domaine = domaineDe(fromBase);
+  if (!domaine) return fromBase;
+  const nom = nomAffiche(qui && qui.nom) || 'Melodia Funèbre';
+  return '"' + nom + '" <' + partieLocale(qui && qui.email) + '@' + domaine + '>';
 }
 
 /* Un destinataire du lot, nettoyé et validé. */
@@ -192,6 +235,7 @@ export default async function handler(req, res) {
   }
 
   const sig = signature(qui.nom, qui.email);
+  const de = expediteurDe(qui, exp);
   const refuses = [];
   const charges = [];
   const retenus = [];
@@ -202,7 +246,7 @@ export default async function handler(req, res) {
     if (motif) { refuses.push({ to: e.to, ref: e.ref, motif }); return; }
     retenus.push(e);
     charges.push({
-      from: exp,
+      from: de,
       to: [e.to],
       subject: e.sujet,
       html: habiller(e, sig),
@@ -230,6 +274,7 @@ export default async function handler(req, res) {
   return json(res, 200, {
     ok: true,
     mode,
+    expediteur: de,
     envoyes: retenus.map((e, i) => ({ to: e.to, ref: e.ref, id: ids[i] || null })),
     refuses,
     envoye_le: new Date().toISOString()
