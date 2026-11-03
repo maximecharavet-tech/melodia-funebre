@@ -2,9 +2,9 @@
    collaborateur-mails.js — Mails tout faits
 
    Une bibliothèque de courriers que le collaborateur personnalise,
-   relit, copie ou ouvre dans SA messagerie. Aucun service d’envoi
-   n’est appelé : ENVOI_ACTIF reste faux. Resend, s’il est un jour
-   rallumé, vit dans /api/prospect-mail et ne concerne pas ce module.
+   relit, copie ou ouvre dans SA messagerie. L’envoi direct (Resend)
+   est actif : il vit dans /api/prospect-mail, qui exige une session
+   commercial ou master ; ce module ne l’appelle pas lui-même.
 
    Les liens musicaux sortent du catalogue publié (content.json).
    Si le catalogue ne charge pas, le lien reste un TODO visible —
@@ -14,7 +14,7 @@
   'use strict';
 
   var SITE = 'https://melodia-funebre.fr';
-  var ENVOI_ACTIF = false;
+  var ENVOI_ACTIF = true;
   var BANNIERE = '/assets/img/courriel/banniere.jpg';
   var PARRAIN = 'julie-serve';
   /* Trouvés dans le pied du site. TikTok et le LinkedIn de Julie
