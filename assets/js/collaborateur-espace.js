@@ -1132,12 +1132,28 @@
         copierTexte(rendu.sujet).then(function (ok) { toast(ok ? 'Objet copié.' : 'Copie impossible.'); });
       });
     });
+    /* Un lien Gmail ou mailto ne peut porter que du texte : le corps
+       HTML (bandeau, visuels, bouton, signature) passe par le
+       presse-papiers, copié AVANT d'ouvrir la fenêtre, dans le geste.
+       Le corps prérempli reste vide pour ne pas doubler le message ;
+       si la copie échoue, on retombe sur le texte seul. */
     var gmail = racine.querySelector('#pret-gmail');
     if (gmail) gmail.addEventListener('click', function () {
       actionCopie(function (rendu) {
         var dest = (racine.querySelector('#pret-email') || {}).value || '';
-        window.open(M.gmailCompose(dest, rendu.sujet, rendu.texte), '_blank', 'noopener');
+        var ok = M.copierMailSync(rendu.html, rendu.texte);
+        window.open(M.gmailCompose(dest, rendu.sujet, ok ? '' : rendu.texte), '_blank', 'noopener');
+        toast(ok ? 'Mail copié : dans Gmail, cliquez dans le corps et collez (Ctrl+V / ⌘V).' : 'Copie HTML impossible : Gmail s’ouvre avec le texte seul.');
         majApresPreparation(racine, rendu);
+      });
+    });
+    var mlien = racine.querySelector('#pret-mailto');
+    if (mlien) mlien.addEventListener('click', function () {
+      actionCopie(function (rendu) {
+        var dest = (racine.querySelector('#pret-email') || {}).value || '';
+        var ok = M.copierMailSync(rendu.html, rendu.texte);
+        mlien.href = M.mailto(dest, rendu.sujet, ok ? '' : rendu.texte);
+        toast(ok ? 'Mail copié : dans la messagerie, collez dans le corps (Ctrl+V / ⌘V).' : 'Copie HTML impossible : texte seul.');
       });
     });
   }
