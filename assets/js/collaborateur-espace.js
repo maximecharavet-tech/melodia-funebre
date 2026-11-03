@@ -427,7 +427,7 @@
       return '<div class="field"><label class="field-label" for="mail-' + esc(k) + '">' + esc(meta.label) + '</label>' +
         '<input class="field-input" id="mail-' + esc(k) + '" data-var="' + esc(k) + '" value="' + esc(brouillon.vars[k] || '') + '" placeholder="' + esc(meta.placeholder) + '"></div>';
     }).join('');
-    return '<p class="col-banniere-etat">Envoi automatique désactivé. Rien ne part vers un service : vous copiez le message, ou vous l’ouvrez dans votre messagerie. Les images et les liens musicaux viennent du site.</p>' +
+    return banniereEnvoi('Envoi automatique désactivé. Rien ne part vers un service : vous copiez le message, ou vous l’ouvrez dans votre messagerie. Les images et les liens musicaux viennent du site.') +
       '<div class="col-mails">' +
         '<div class="col-mails-liste">' +
           '<div class="col-filtres" role="tablist" aria-label="Familles de courriers">' + cats.map(function (c) {
@@ -458,6 +458,18 @@
           '<iframe class="col-apercu" id="mail-apercu" title="Aperçu du courriel" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
         '</div>' +
       '</div>';
+  }
+
+  /* Le bandeau d'état dit la vérité sur l'envoi : quand l'envoi direct
+     (Resend) est actif, il l'annonce, avec le quota du jour ; l'ancien
+     texte ne sert plus que de repli quand l'interrupteur est coupé. */
+  function banniereEnvoi(repli) {
+    var M = window.MelodiaMails;
+    if (M && M.ENVOI_ACTIF) {
+      return '<p class="col-banniere-etat">Envoi direct actif : depuis Mes prospects, cochez les fiches puis « Écrire à la sélection ». ' +
+        'Jusqu’à 30 courriels par jour, avec les visuels. Ici, vous pouvez aussi copier le message ou l’ouvrir dans votre messagerie.</p>';
+    }
+    return '<p class="col-banniere-etat">' + esc(repli) + '</p>';
   }
 
   function varsSaisies(racine) {
@@ -885,7 +897,7 @@
         esc(p.nom) + (p.ville ? ' · ' + esc(p.ville) : '') + '</option>';
     }).join('');
     var premiumOn = pretEtat.layout ? pretEtat.layout === 'premium' : !!(m && m.layout === 'premium');
-    return '<p class="col-banniere-etat">Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail. Les images utilisent les adresses du site.</p>' +
+    return banniereEnvoi('Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail. Les images utilisent les adresses du site.') +
       '<div class="col-pret-entete">' +
         '<p class="col-pret-objectif"><span id="pret-compteur">' + fait + ' / ' + obj + '</span> mails aujourd’hui · ' +
         '<label class="col-pret-obj-l">Objectif <input class="field-input col-pret-obj-i" id="pret-objectif" type="number" min="1" max="99" value="' + obj + '"></label></p>' +

@@ -675,19 +675,28 @@
     });
   }
 
-  function cartePiste(p, absolu) {
+  /* La carte d'écoute : le disque d'or du site (pages « Écouter »), figé
+     en JPG pour les messageries, et un vrai bouton « ▶ Écouter ». La
+     vignette carrée de partage, recadrée au hasard, n'y figure plus.
+     Même dessin que la carte du serveur (api/_courrier.js, carteEcoute). */
+  var DISQUE_OR = '/assets/img/courriel/disque-or.jpg';
+  function carteEcoute(p, absolu, sourcil) {
     var page = src(p.page, absolu);
-    var image = src(p.image, absolu);
-    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#faf8f3;border:1px solid #e2ddd0;">' +
-      '<tr><td width="96" style="width:96px;padding:0;line-height:0;vertical-align:top;">' +
-      '<a href="' + esc(page) + '"><img src="' + esc(image) + '" width="96" height="96" alt="" style="display:block;width:96px;height:96px;object-fit:cover;border:0;"></a></td>' +
-      '<td style="padding:10px 12px;font-family:Georgia,serif;vertical-align:middle;">' +
-      '<div style="font-family:Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#8b8474;">Exemple du catalogue</div>' +
-      '<div style="font-size:16px;color:#17150f;margin-top:3px;">' + esc(p.titre) + '</div>' +
-      (p.qui ? '<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#5c574c;margin-top:2px;">' + esc(p.qui) + (p.style ? ' · ' + esc(p.style) : '') + '</div>' : '') +
-      '<a href="' + esc(page) + '" style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#97803c;">Écouter</a>' +
+    var disque = src(DISQUE_OR, absolu);
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#07070b" style="width:100%;margin:0 0 10px;background:#07070b;border:1px solid #6b5a2a;border-radius:6px;">' +
+      '<tr><td width="132" valign="middle" style="width:132px;padding:14px 4px 14px 14px;line-height:0;">' +
+      '<a href="' + esc(page) + '" style="text-decoration:none;"><img src="' + esc(disque) + '" width="118" height="118" alt="Disque d’or Melodia — écouter « ' + esc(p.titre) + ' »" style="display:block;width:118px;height:118px;border:0;outline:none;background:#07070b;color:#d9b862;font-family:Georgia,serif;font-size:12px;line-height:1.3;"></a></td>' +
+      '<td valign="middle" style="padding:14px 18px 14px 12px;">' +
+      '<div style="font-family:Helvetica,Arial,sans-serif;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:#a89a74;line-height:1.4;">' + esc(sourcil || 'Exemple du catalogue') + '</div>' +
+      '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:19px;line-height:1.3;color:#f2e6c4;margin:5px 0 3px;">' + esc(p.titre) + '</div>' +
+      (p.qui ? '<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#cfc6ae;line-height:1.5;">' + esc(p.qui) + (p.style ? ' · ' + esc(p.style) : '') + '</div>' : '') +
+      '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;"><tr><td bgcolor="#c9a84c" style="background:#c9a84c;border-radius:3px;">' +
+      '<a href="' + esc(page) + '" style="display:inline-block;padding:10px 20px;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:bold;letter-spacing:1px;color:#17150f;text-decoration:none;">&#9654;&nbsp;Écouter</a>' +
+      '</td></tr></table>' +
       '</td></tr></table>';
   }
+
+  function cartePiste(p, absolu) { return carteEcoute(p, absolu); }
 
   function signatureHtml(sig, absolu) {
     sig = sig || {};
@@ -738,17 +747,7 @@
 
   function cartePistePremium(p, absolu) {
     if (!p) return '';
-    var page = src(p.page, absolu);
-    var image = src(p.image, absolu);
-    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #e3ded2;">' +
-      '<tr><td width="112" style="width:112px;padding:0;line-height:0;">' +
-      '<a href="' + esc(page) + '"><img src="' + esc(image) + '" width="112" height="112" alt="' + esc(p.titre) + '" style="display:block;width:112px;height:112px;border:0;"></a></td>' +
-      '<td valign="middle" style="padding:13px 16px;">' +
-      '<p style="margin:0 0 5px;color:#a48a55;font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;">EXEMPLE DU CATALOGUE</p>' +
-      '<p style="margin:0 0 5px;color:#17232b;font-family:Georgia,\'Times New Roman\',serif;font-size:19px;">' + esc(p.titre) + '</p>' +
-      (p.qui ? '<p style="margin:0 0 8px;color:#69665e;font-family:Arial,Helvetica,sans-serif;font-size:12px;">' + esc(p.qui) + (p.style ? ' · ' + esc(p.style) : '') + '</p>' : '') +
-      '<a href="' + esc(page) + '" style="color:#9b8047;font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:underline;">Écouter cette création</a>' +
-      '</td></tr></table>';
+    return carteEcoute(p, absolu, 'Exemple du catalogue');
   }
 
   function signaturePremiumHtml(sig, absolu) {
