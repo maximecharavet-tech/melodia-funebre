@@ -12,7 +12,10 @@
 //           ce que le collaborateur voit est exactement ce qui part.
 //   test    l'envoie au seul collaborateur connecté, objet « [Test] ».
 //   envoi   un ou plusieurs destinataires (50 au plus par appel), en
-//           un seul appel au service d'envoi.
+//           un seul appel au service d'envoi. 30 par jour (jour de
+//           Paris) pour un collaborateur, 100 pour le fondateur.
+//   quota   ce qui reste à envoyer aujourd'hui, sans rien envoyer.
+//   Chaque réponse de test/envoi porte quota: {utilise, max, restant}.
 //
 // ─── QUI A LE DROIT D'ENVOYER ───
 // Cette route envoyait n'importe quel texte à n'importe quelle adresse,
@@ -46,7 +49,8 @@
 
 import {
   SITE, gabarit, carteVisite, envoyer, envoyerLot, valideEmail,
-  expediteurProspection, boiteMaison, origineAutorisee, entetesOrigine, tropSouvent
+  expediteurProspection, boiteMaison, origineAutorisee, entetesOrigine, tropSouvent,
+  entetesService
 } from './_courrier.js';
 
 const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
@@ -57,6 +61,16 @@ const SB_ANON = process.env.SUPABASE_ANON_KEY ||
 const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const ROLES_PERMIS = ['commercial', 'master'];
 const LOT_MAX = 50;
+
+/* ─── Quota quotidien (jour de Paris) ───
+   Un collaborateur « commercial » envoie au plus 30 courriels de
+   prospection par jour ; le fondateur 100 (le plafond gratuit de
+   Resend). Les tests comptent à part : 10 par jour. Le compte se lit
+   dans public.envois_prospect (migration 20261103_08). Sans cette table
+   ou sans clé de service utilisable, le plafond tient par appel et par
+   instance : moins sûr, mais jamais un envoi illimité. */
+const QUOTA = { commercial: 30, master: 100 };
+const QUOTA_TEST = 10;
 
 /* Interrupteur de l’envoi (Resend). Vrai : test et envoi partent, après
    contrôle de session et de rôle. Faux : 503 ENVOI_DESACTIVE, l’aperçu
@@ -70,6 +84,29 @@ function json(res, code, corps) { return res.status(code).json(corps); }
    seul dit s'il est authentique et à qui il appartient ; le rôle se lit
    ensuite dans la table « roles », jamais dans les métadonnées du compte,
    que son titulaire peut écrire. */
+/* Une ligne lue d'abord AVEC LA SESSION de l'utilisateur (clé anon +
+   son jeton : la RLS « chacun lit son role » / « chacun lit sa propre
+   fiche » la lui ouvre), puis, à défaut, avec la clé de service.
+   L'ancienne version envoyait d'emblée la clé de service en Bearer :
+   une clé secrète sb_secret_… n'est pas un JWT, PostgREST refusait, le
+   rôle restait vide et Julie recevait « Seuls les collaborateurs… ». */
+async function lireLigne(table, colonnes, email, jeton) {
+  const chemin = SB_URL + '/rest/v1/' + table + '?select=' + colonnes + ',email&email=ilike.' + encodeURIComponent(email);
+  const exacte = (l) => (Array.isArray(l) ? l : []).filter((x) => String((x && x.email) || '').toLowerCase() === email)[0] || null;
+  const essais = [{ apikey: SB_ANON, Authorization: 'Bearer ' + jeton }];
+  const service = entetesService();
+  if (service) essais.push(service);
+  for (const headers of essais) {
+    try {
+      const r = await fetch(chemin, { headers });
+      if (!r.ok) continue;
+      const ligne = exacte(await r.json());
+      if (ligne) return ligne;
+    } catch (e) { /* essai suivant */ }
+  }
+  return null;
+}
+
 async function demandeur(req) {
   const entete = req.headers.authorization || req.headers.Authorization || '';
   const jeton = entete.startsWith('Bearer ') ? entete.slice(7) : '';
@@ -83,29 +120,87 @@ async function demandeur(req) {
   const email = String((moi && moi.email) || '').toLowerCase();
   if (!email) return null;
 
-  let role = null;
-  try {
-    const cle = SB_SERVICE || SB_ANON;
-    const r = await fetch(SB_URL + '/rest/v1/roles?select=role&email=ilike.' + encodeURIComponent(email), {
-      headers: { apikey: cle, Authorization: 'Bearer ' + (SB_SERVICE || jeton) }
-    });
-    if (r.ok) { const l = await r.json(); role = (l && l[0] && l[0].role) || null; }
-  } catch (e) { /* rôle inconnu : refusé plus bas */ }
+  /* Le rôle se lit dans la table « roles », jamais dans les métadonnées
+     du compte, que son titulaire peut écrire. */
+  const r = await lireLigne('roles', 'role', email, jeton);
+  const role = (r && r.role) || null;
 
   /* Le nom affiché vient d'abord de la fiche « collaborateurs », que seul
      le fondateur écrit ; à défaut, du compte authentifié par Supabase.
      Jamais d'un champ envoyé par le navigateur. */
-  let fiche = '';
-  try {
-    const cle = SB_SERVICE || SB_ANON;
-    const r = await fetch(SB_URL + '/rest/v1/collaborateurs?select=nom,name&email=ilike.' + encodeURIComponent(email), {
-      headers: { apikey: cle, Authorization: 'Bearer ' + (SB_SERVICE || jeton) }
-    });
-    if (r.ok) { const l = await r.json(); fiche = (l && l[0] && (l[0].nom || l[0].name)) || ''; }
-  } catch (e) { /* pas de fiche : on prend le compte */ }
+  const f = await lireLigne('collaborateurs', 'nom,name', email, jeton);
+  const fiche = (f && (f.nom || f.name)) || '';
 
   const meta = (moi && moi.user_metadata) || {};
   return { email, role, nom: String(fiche || meta.name || meta.nom || meta.full_name || email.split('@')[0]).slice(0, 120) };
+}
+
+/* ─── Le jour de Paris ───
+   Minuit à Paris, en instant UTC : c'est la borne du quota. */
+export function debutJourParis(maintenant) {
+  const t = maintenant || new Date();
+  const f = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+  });
+  const p = {};
+  f.formatToParts(t).forEach((x) => { p[x.type] = x.value; });
+  const commeUtc = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second);
+  const decalage = commeUtc - Math.floor(t.getTime() / 1000) * 1000;
+  return new Date(Date.UTC(+p.year, +p.month - 1, +p.day) - decalage);
+}
+
+/* Repli en mémoire de l'instance, quand le journal est inaccessible. */
+const memoire = new Map();
+function cleMemoire(email, mode) { return email + '|' + mode + '|' + debutJourParis().toISOString().slice(0, 10); }
+
+let journalAbsent = false;
+
+/* Ce qui est déjà parti aujourd'hui pour ce collaborateur et ce mode.
+   Renvoie { persistant, lignes:[{destinataire, modele, sujet}] }. */
+async function envoisDuJour(email, mode) {
+  const service = entetesService();
+  if (service && !journalAbsent) {
+    try {
+      const url = SB_URL + '/rest/v1/envois_prospect?select=destinataire,modele,sujet' +
+        '&collaborateur=eq.' + encodeURIComponent(email) + '&mode=eq.' + mode +
+        '&envoye_le=gte.' + encodeURIComponent(debutJourParis().toISOString()) + '&limit=1000';
+      const r = await fetch(url, { headers: service });
+      if (r.ok) {
+        const l = await r.json();
+        return { persistant: true, lignes: Array.isArray(l) ? l : [] };
+      }
+      const texte = await r.text();
+      if (r.status === 404 || /42P01|PGRST205|envois_prospect/i.test(texte)) journalAbsent = true;
+    } catch (e) { /* base injoignable : repli */ }
+  }
+  return { persistant: false, lignes: memoire.get(cleMemoire(email, mode)) || [] };
+}
+
+async function journaliser(email, mode, lignes) {
+  const liste = memoire.get(cleMemoire(email, mode)) || [];
+  lignes.forEach((l) => liste.push({ destinataire: l.destinataire, modele: l.modele, sujet: l.sujet }));
+  memoire.set(cleMemoire(email, mode), liste);
+  if (memoire.size > 500) memoire.clear();
+  const service = entetesService({ 'Content-Type': 'application/json', Prefer: 'return=minimal' });
+  if (!service || journalAbsent) return false;
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/envois_prospect', {
+      method: 'POST', headers: service,
+      body: JSON.stringify(lignes.map((l) => Object.assign({ collaborateur: email, mode }, l)))
+    });
+    if (!r.ok) {
+      const texte = await r.text();
+      if (r.status === 404 || /42P01|PGRST205|envois_prospect/i.test(texte)) journalAbsent = true;
+      return false;
+    }
+    return true;
+  } catch (e) { return false; }
+}
+
+function quotaDe(role, mode, utilise, persistant) {
+  const max = mode === 'test' ? QUOTA_TEST : (QUOTA[role] || 0);
+  return { utilise, max, restant: Math.max(0, max - utilise), mode, persistant };
 }
 
 /* ─── L'expéditeur : « Julie Serve <julie@contact.melodia-funebre.fr> » ───
@@ -164,7 +259,10 @@ export default async function handler(req, res) {
   }
 
   const d = (req.body && typeof req.body === 'object') ? req.body : {};
-  const mode = ['apercu', 'test', 'envoi'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
+  const mode = ['apercu', 'test', 'envoi', 'quota'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
+  /* Le modèle choisi : il sert à ne pas renvoyer le même courrier au
+     même destinataire le même jour. À défaut, l'objet en tient lieu. */
+  const modele = String(d.modele || '').trim().slice(0, 80);
   /* L'ancien appel (un seul destinataire à plat) reste compris. */
   const envois = (Array.isArray(d.envois) && d.envois.length ? d.envois : [d]).map(lire);
   const lien = {
@@ -176,7 +274,7 @@ export default async function handler(req, res) {
     sujet: e.sujet, titre: e.titre, texte: e.texte,
     apercu: e.texte.replace(/\s+/g, ' ').slice(0, 140),
     lienTexte: lien.lienTexte, lienUrl: lien.lienUrl,
-    banniere: true, signature: sig, pied: 'prospection'
+    banniere: true, signature: sig, pied: 'prospection', cartesEcoute: true
   });
   const signature = (nom, email) => ({
     nom: String(sigEntree.nom || nom || 'Melodia Funèbre').slice(0, 80),
@@ -227,10 +325,31 @@ export default async function handler(req, res) {
     return json(res, 403, { error: 'Seuls les collaborateurs et le fondateur envoient des courriels de prospection.', code: 'INTERDIT' });
   }
 
+  /* ─── Quota du jour, sans rien envoyer ─── */
+  const modeQuota = mode === 'test' ? 'test' : 'envoi';
+  const deja = await envoisDuJour(qui.email, modeQuota);
+  if (mode === 'quota') {
+    const qt = await envoisDuJour(qui.email, 'test');
+    return json(res, 200, {
+      ok: true, mode,
+      quota: quotaDe(qui.role, 'envoi', deja.lignes.length, deja.persistant),
+      quotaTest: quotaDe(qui.role, 'test', qt.lignes.length, qt.persistant)
+    });
+  }
+  const quota = quotaDe(qui.role, modeQuota, deja.lignes.length, deja.persistant);
+  if (quota.restant <= 0) {
+    return json(res, 429, {
+      error: mode === 'test'
+        ? 'Vous avez envoyé vos ' + quota.max + ' tests du jour. Reprenez demain.'
+        : 'Quota du jour atteint : ' + quota.utilise + ' / ' + quota.max + ' courriels envoyés aujourd’hui. Reprenez demain.',
+      code: 'QUOTA', quota
+    });
+  }
+
   if (envois.length > LOT_MAX) {
     return json(res, 400, { error: 'Au plus ' + LOT_MAX + ' destinataires par envoi.', code: 'LOT_TROP_GRAND' });
   }
-  if (await tropSouvent('envoi:' + qui.email, 12, 60 * 60 * 1000)) {
+  if (await tropSouvent('envoi:' + qui.email, 60, 60 * 60 * 1000)) {
     return json(res, 429, { error: 'Trop d\'envois cette heure-ci. Réessayez plus tard.', code: 'RATE_LIMIT' });
   }
 
@@ -240,10 +359,26 @@ export default async function handler(req, res) {
   const charges = [];
   const retenus = [];
 
+  /* Déjà parti aujourd'hui : même destinataire, même modèle (ou même
+     objet). Les doublons du lot lui-même sont écartés aussi. */
+  const cleEnvoi = (to, m, sujet) => String(to || '').toLowerCase() + '|' + (m || ('objet:' + sujet));
+  const vus = new Set(mode === 'test' ? [] : deja.lignes.map((l) => cleEnvoi(l.destinataire, l.modele, l.sujet)));
+  let place = quota.restant;
+  const dansLot = new Set();
+
   envois.forEach((e) => {
     if (mode === 'test') { e.to = qui.email; e.sujet = '[Test] ' + e.sujet; }
     const motif = defautDe(e, true);
     if (motif) { refuses.push({ to: e.to, ref: e.ref, motif }); return; }
+    if (mode !== 'test') {
+      const cle = cleEnvoi(e.to, modele, e.sujet);
+      const adr = String(e.to).toLowerCase();
+      if (dansLot.has(adr)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Adresse en double dans cet envoi.', code: 'DOUBLON' }); return; }
+      if (vus.has(cle)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Déjà envoyé aujourd’hui avec ce modèle.', code: 'DEJA_ENVOYE' }); return; }
+      dansLot.add(adr);
+    }
+    if (place <= 0) { refuses.push({ to: e.to, ref: e.ref, motif: 'Quota du jour atteint (' + quota.max + ' par jour).', code: 'QUOTA' }); return; }
+    place -= 1;
     retenus.push(e);
     charges.push({
       from: de,
@@ -260,7 +395,7 @@ export default async function handler(req, res) {
     });
   });
 
-  if (!charges.length) return json(res, 400, { error: refuses[0] ? refuses[0].motif : 'Rien à envoyer.', code: 'RIEN', refuses });
+  if (!charges.length) return json(res, 400, { error: refuses[0] ? refuses[0].motif : 'Rien à envoyer.', code: 'RIEN', refuses, quota });
 
   /* La maison voit ce qui part en son nom. Pour un lot, une seule copie
      — la première — plutôt que cinquante dans la boîte du fondateur. */
@@ -268,15 +403,22 @@ export default async function handler(req, res) {
   if (maison.length && mode === 'envoi') charges[0].bcc = maison;
 
   const r = charges.length === 1 ? await envoyer(charges[0]) : await envoyerLot(charges);
-  if (!r.ok) return json(res, r.status, { error: r.error, code: r.code, motif: r.motif, refuses });
+  if (!r.ok) return json(res, r.status, { error: r.error, code: r.code, motif: r.motif, refuses, quota });
 
   const ids = r.ids || [r.id];
+  const persiste = await journaliser(qui.email, modeQuota, retenus.map((e, i) => ({
+    destinataire: e.to.toLowerCase(), sujet: e.sujet.slice(0, 200), modele, ref: e.ref, resend_id: ids[i] || null
+  })));
+  const utilise = quota.utilise + retenus.length;
   return json(res, 200, {
     ok: true,
     mode,
     expediteur: de,
     envoyes: retenus.map((e, i) => ({ to: e.to, ref: e.ref, id: ids[i] || null })),
     refuses,
+    quota: quotaDe(qui.role, modeQuota, utilise, deja.persistant && persiste),
+    note: deja.persistant && persiste ? undefined
+      : 'Journal des envois indisponible : le quota est tenu pour cet appel seulement (migration 20261103_08 à appliquer).',
     envoye_le: new Date().toISOString()
   });
 }

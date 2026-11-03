@@ -117,6 +117,55 @@ export function carteVisite(sig) {
   '</table>';
 }
 
+/* ─── La carte d'écoute : le disque d'or ───
+   Un lien d'écoute partait en adresse brute, ou sous une vignette carrée
+   recadrée au hasard. Il prend désormais le disque d'or du site (celui
+   des pages « Écouter »), figé en JPG : ni WebP, ni SVG, ni animation,
+   qu'Outlook et Gmail ignorent. Tableaux, styles en ligne, texte
+   alternatif : l'image bloquée laisse un bouton lisible. */
+export const DISQUE_OR = '/assets/img/courriel/disque-or.jpg';
+const RE_ECOUTE = /^https:\/\/(?:www\.)?melodia-funebre\.fr\/(?:ecouter(?:[\/-][a-z0-9-]+)?|demos)(?:[?#][^\s]*)?$/i;
+
+export function estLienEcoute(url) { return RE_ECOUTE.test(String(url || '').trim()); }
+
+export function carteEcoute(o) {
+  const url = String(o.url || '');
+  const titre = String(o.titre || 'Écouter une création');
+  const qui = String(o.qui || '');
+  const sourcil = String(o.sourcil || 'Écouter une création');
+  return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#07070b" ' +
+      'style="width:100%;margin:6px 0 16px;background:#07070b;border:1px solid #6b5a2a;border-radius:6px;">' +
+    '<tr>' +
+      '<td width="132" valign="middle" style="width:132px;padding:14px 4px 14px 14px;line-height:0;">' +
+        '<a href="' + echapper(url) + '" style="text-decoration:none;">' +
+        '<img src="' + SITE + DISQUE_OR + '" width="118" height="118" alt="Disque d’or Melodia — écouter « ' + echapper(titre) + ' »" ' +
+          'style="display:block;width:118px;height:118px;border:0;outline:none;background:#07070b;color:#d9b862;font-family:Georgia,serif;font-size:12px;line-height:1.3;"></a>' +
+      '</td>' +
+      '<td valign="middle" style="padding:14px 18px 14px 12px;">' +
+        '<div style="font-family:Helvetica,Arial,sans-serif;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:#a89a74;line-height:1.4;">' + echapper(sourcil) + '</div>' +
+        '<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:19px;line-height:1.3;color:#f2e6c4;margin:5px 0 3px;">' + echapper(titre) + '</div>' +
+        (qui ? '<div style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#cfc6ae;line-height:1.5;">' + echapper(qui) + '</div>' : '') +
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;"><tr>' +
+          '<td bgcolor="#c9a84c" style="background:#c9a84c;border-radius:3px;">' +
+          '<a href="' + echapper(url) + '" style="display:inline-block;padding:10px 20px;font-family:Helvetica,Arial,sans-serif;font-size:13px;' +
+            'font-weight:bold;letter-spacing:1px;color:#17150f;text-decoration:none;">&#9654;&nbsp;Écouter</a>' +
+          '</td></tr></table>' +
+      '</td>' +
+    '</tr></table>';
+}
+
+/* Une ligne du texte qui n'est qu'un lien d'écoute devient une carte :
+   « · Le Papi Pêcheur — Pierre : https://melodia-funebre.fr/ecouter/… »
+   ou l'adresse seule. Le reste du paragraphe reste du texte. */
+function ligneEcoute(l) {
+  const m = String(l).trim().match(/^(?:[·•-]\s*)?(?:(.*?)\s*:\s*)?(https:\/\/\S+)$/);
+  if (!m || !estLienEcoute(m[2])) return null;
+  const libelle = (m[1] || '').trim();
+  const [titre, qui] = libelle.split(/\s+[—–-]\s+/);
+  const demos = /\/demos(?:[?#]|$)/.test(m[2]);
+  return { url: m[2], titre: titre || (demos ? 'Écouter les hommages' : 'Écouter cette création'), qui: qui || '' };
+}
+
 /* ─── Gabarit ───
    Fond ivoire et non fond sombre : la charte du site ne survit pas aux
    clients de messagerie, qui inversent les fonds noirs, rognent les
@@ -128,12 +177,38 @@ export function carteVisite(sig) {
    « STOP » à une famille qui attend l'hommage de son père serait
    déplacé, et juridiquement inutile puisqu'il s'agit d'un message
    attaché à l'exécution du contrat. */
+function paragrapheSimple(t) {
+  if (/^[·•-]\s/m.test(t)) {
+    const items = t.split('\n').map((l) => l.replace(/^[·•-]\s*/, '').trim()).filter(Boolean);
+    return '<ul style="margin:0 0 18px;padding-left:20px;color:#3d3a33;font-size:15px;line-height:1.7;">' +
+      items.map((i) => '<li style="margin-bottom:6px;">' + echapper(i) + '</li>').join('') + '</ul>';
+  }
+  return '<p style="margin:0 0 18px;color:#3d3a33;font-size:15px;line-height:1.7;">' +
+    echapper(t).replace(/\n/g, '<br>') + '</p>';
+}
+
+/* Un paragraphe dont certaines lignes sont des liens d'écoute : le texte
+   reste du texte, chaque lien devient une carte au disque d'or. */
+function paragrapheAvecEcoute(t) {
+  const lignes = t.split('\n');
+  if (!lignes.some((l) => ligneEcoute(l))) return paragrapheSimple(t);
+  let html = '', tampon = [];
+  const vider = () => { const x = tampon.join('\n').trim(); if (x) html += paragrapheSimple(x); tampon = []; };
+  lignes.forEach((l) => {
+    const e = ligneEcoute(l);
+    if (e) { vider(); html += carteEcoute(e); } else tampon.push(l);
+  });
+  vider();
+  return html;
+}
+
 export function gabarit(o) {
   const corps = String(o.texte || '')
     .split(/\n{2,}/)
     .map((par) => {
       const t = par.trim();
       if (!t) return '';
+      if (o.cartesEcoute) return paragrapheAvecEcoute(t);
       /* Une liste à puces reste une liste */
       if (/^[·•-]\s/m.test(t)) {
         const items = t.split('\n').map((l) => l.replace(/^[·•-]\s*/, '').trim()).filter(Boolean);
@@ -144,7 +219,9 @@ export function gabarit(o) {
         echapper(t).replace(/\n/g, '<br>') + '</p>';
     }).join('');
 
-  const bouton = o.lienTexte && o.lienUrl
+  const bouton = o.lienTexte && o.lienUrl && o.cartesEcoute && estLienEcoute(o.lienUrl)
+    ? carteEcoute({ url: o.lienUrl, titre: o.lienTexte, sourcil: 'Des hommages en musique' })
+    : o.lienTexte && o.lienUrl
     ? '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:26px 0 8px;">' +
       '<tr><td style="background:#c9a84c;border-radius:2px;">' +
       '<a href="' + echapper(o.lienUrl) + '" style="display:inline-block;padding:13px 26px;' +
@@ -391,6 +468,22 @@ export function entetesOrigine(req, res, methodes) {
  */
 const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
 const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+/**
+ * En-têtes de la clé de service, ou null sans clé.
+ *
+ * Deux formats coexistent chez Supabase : l'ancienne clé « service_role »
+ * est un JWT (eyJ…) et se passe aussi en « Authorization: Bearer » ; la
+ * nouvelle clé secrète (sb_secret_…) n'est PAS un JWT : envoyée en
+ * Bearer, PostgREST la rejette. On ne la passe alors qu'en « apikey ».
+ */
+export function entetesService(extra) {
+  if (!SB_SERVICE) return null;
+  const h = { apikey: SB_SERVICE };
+  if (/^eyJ/.test(SB_SERVICE)) h.Authorization = 'Bearer ' + SB_SERVICE;
+  return Object.assign(h, extra || {});
+}
+
 const compteurs = new Map();
 let limiteAbsente = false;
 
@@ -410,11 +503,7 @@ export async function tropSouvent(cle, max, fenetreMs) {
     try {
       const r = await fetch(SB_URL + '/rest/v1/rpc/melodia_trop_souvent', {
         method: 'POST',
-        headers: {
-          apikey: SB_SERVICE,
-          Authorization: 'Bearer ' + SB_SERVICE,
-          'Content-Type': 'application/json'
-        },
+        headers: entetesService({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ p_cle: String(cle).slice(0, 200), p_max: max, p_fenetre_ms: fenetreMs })
       });
       const texte = await r.text();

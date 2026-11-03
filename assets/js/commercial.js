@@ -1165,10 +1165,20 @@
       $('cp-test').addEventListener('click', async function () {
         var b = this; b.disabled = true;
         var c = charge();
-        var r = await C.appeler({ mode: 'test', envois: [c], lienTexte: c.lienTexte, lienUrl: c.lienUrl, signature: C.signature() });
+        var r = await C.appeler({ mode: 'test', modele: m.nom, envois: [c], lienTexte: c.lienTexte, lienUrl: c.lienUrl, signature: C.signature() });
         b.disabled = false;
-        $('cp-etat').textContent = r.ok ? 'Test envoyé dans votre boîte.'
+        $('cp-etat').textContent = r.ok ? 'Test envoyé dans votre boîte' + (r.d.quota ? ' (' + r.d.quota.utilise + ' / ' + r.d.quota.max + ' tests aujourd’hui).' : '.')
           : (r.d.code === 'NOT_CONFIGURED' ? 'Envoi direct non branché : utilisez votre messagerie.' : (r.d.error || 'Test impossible.'));
+      });
+      /* Le quota du jour, sous les yeux avant d'envoyer : 30 par jour. */
+      if (C.quota) C.quota().then(function (q) {
+        if (!q || !document.body.contains(fond)) return;
+        $('cp-etat').textContent = C.texteQuota(q) + '.';
+        if (!q.restant) {
+          $('cp-envoyer').disabled = true;
+          $('cp-envoyer').textContent = 'Quota du jour atteint';
+          $('cp-etat').textContent = 'Quota du jour atteint (' + q.utilise + ' / ' + q.max + ') : l’envoi direct reprend demain. Vous pouvez encore ouvrir le message dans votre messagerie.';
+        }
       });
     } else {
       $('cp-test').hidden = true;
@@ -1185,15 +1195,19 @@
            un collaborateur authentifié, et signe de sa carte de visite. */
         var c = charge();
         var rep = window.MelodiaCampagne
-          ? await window.MelodiaCampagne.appeler({ mode: 'envoi', envois: [c], lienTexte: c.lienTexte, lienUrl: c.lienUrl, signature: window.MelodiaCampagne.signature() })
+          ? await window.MelodiaCampagne.appeler({ mode: 'envoi', modele: m.nom, envois: [c], lienTexte: c.lienTexte, lienUrl: c.lienUrl, signature: window.MelodiaCampagne.signature() })
           : { ok: false, d: { error: 'Module d\'envoi absent.' } };
         var r = { ok: rep.ok };
         var d = rep.d || {};
 
+        if (r.ok && !(d.envoyes && d.envoyes.length) && d.refuses && d.refuses.length) {
+          throw new Error(d.refuses[0].motif || 'Non envoyé.');
+        }
         if (r.ok) {
           envoiDirect = true;
           apresEnvoi(p, m, 'Courriel envoyé', 'Modèle « ' + m.nom + ' »');
-          if (window.melodiaToast) window.melodiaToast('Courriel envoyé à ' + p.email + '.');
+          if (window.melodiaToast) window.melodiaToast('Courriel envoyé à ' + p.email + '.' +
+            (d.quota ? ' ' + d.quota.utilise + ' / ' + d.quota.max + ' envoyés aujourd’hui.' : ''));
           fermer();
           return;
         }
@@ -1204,6 +1218,9 @@
           envoiDirect = false;
           await versMessagerie();
           return;
+        }
+        if (d.code === 'QUOTA' || (d.refuses && d.refuses[0] && d.refuses[0].code)) {
+          throw new Error((d.refuses && d.refuses[0] && d.refuses[0].motif) || d.error);
         }
         throw new Error(d.motif || d.error || 'Envoi impossible');
       } catch (e) {

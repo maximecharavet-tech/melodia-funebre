@@ -19,8 +19,13 @@
      double. Celles qu'on préfère éviter (déjà partenaire, contactée
      cette semaine) le sont aussi, mais peuvent être rajoutées ;
    · un test part d'abord dans sa propre boîte ;
-   · l'envoi se fait par lots de cinquante, avec une barre de
-     progression et un compte rendu ligne à ligne ;
+   · l'envoi se fait par petits lots de dix, l'un après l'autre avec
+     une courte pause (Resend gratuit : 2 requêtes par seconde), avec une
+     barre de progression et un compte rendu ligne à ligne ;
+   · le quota du jour (30 courriels par collaborateur, jour de Paris)
+     est affiché et respecté : au-delà, le bouton se limite à ce qui
+     reste, et le serveur refuse le surplus de toute façon ;
+   · une agence qui a déjà reçu CE modèle aujourd'hui est écartée ;
    · chaque fiche envoyée avance d'étape, note l'envoi dans son journal
      et reçoit sa prochaine relance.
 
@@ -34,7 +39,39 @@
 (function () {
   'use strict';
 
-  var LOT = 50;
+  var LOT = 10;
+  var PAUSE_MS = 1100;
+  var RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var pause = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+
+  /* Le jour de Paris, « AAAA-MM-JJ » : la borne du quota et des doublons. */
+  function jourParis(d) {
+    try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d || new Date()); }
+    catch (e) { return (d || new Date()).toISOString().slice(0, 10); }
+  }
+
+  /* La fiche a-t-elle déjà reçu ce modèle aujourd'hui ? Le journal de la
+     fiche le dit (« Courriel envoyé » — « … modèle « Nom » »). */
+  function dejaRecu(p, nomModele) {
+    if (!nomModele) return false;
+    var auj = jourParis();
+    return (p.journal || []).some(function (j) {
+      if (!j || !/Courriel envoyé/i.test(j.quoi || '')) return false;
+      if (String(j.detail || '').indexOf('« ' + nomModele + ' »') === -1) return false;
+      var d = new Date(j.le);
+      return !isNaN(d.getTime()) && jourParis(d) === auj;
+    });
+  }
+
+  /* Le quota du jour, lu sur le serveur. */
+  async function quota() {
+    var r = await appeler({ mode: 'quota' });
+    return r.ok && r.d && r.d.quota ? r.d.quota : null;
+  }
+  function texteQuota(q) {
+    if (!q) return '';
+    return q.utilise + ' / ' + q.max + ' envoyés aujourd’hui' + (q.restant ? ' · ' + q.restant + ' restant' + (q.restant > 1 ? 's' : '') : ' · quota atteint, reprise demain');
+  }
   var SEPT_JOURS = 7 * 86400000;
   var JETONS = [['{agence}', 'Nom de l’agence'], ['{ville}', 'Ville'], ['{dirigeant}', 'Dirigeant']];
 
@@ -99,13 +136,15 @@
   }
 
   /* ─── Qui reçoit, qui est écarté, et pourquoi ─── */
-  function eligibilite(p, vues) {
+  function eligibilite(p, vues, modele) {
     var email = String(p.email || '').trim().toLowerCase();
     if (p.oppose) return { ok: false, fixe: true, motif: 'Opposition (STOP)' };
     if (!email) return { ok: false, fixe: true, motif: 'Sans adresse email' };
+    if (!RE_EMAIL.test(email)) return { ok: false, fixe: true, motif: 'Adresse invalide' };
     if (p.statut === 'refus') return { ok: false, fixe: true, motif: 'A décliné' };
     if (vues[email]) return { ok: false, fixe: true, motif: 'Adresse en double' };
     vues[email] = 1;
+    if (modele && dejaRecu(p, modele.nom)) return { ok: false, fixe: true, motif: 'A déjà reçu ce modèle aujourd’hui' };
     if (p.statut === 'partenaire') return { ok: false, fixe: false, motif: 'Déjà partenaire' };
     if (p.dernier_contact && Date.now() - new Date(p.dernier_contact).getTime() < SEPT_JOURS) {
       return { ok: false, fixe: false, motif: 'Contactée il y a moins de 7 jours' };
@@ -123,12 +162,21 @@
     var cles = Object.keys(modeles);
     if (!cles.length) { toast('Aucun modèle de courriel disponible.'); return; }
 
-    var vues = {};
-    var lignes = o.prospects.map(function (p) {
-      var e = eligibilite(p, vues);
-      return { p: p, v: o.pourCourriel(p), e: e, inclus: e.ok };
-    });
-    var etat = { cle: cles.indexOf('contact') !== -1 ? 'contact' : cles[0], i: 0 };
+    var etat = { cle: cles.indexOf('contact') !== -1 ? 'contact' : cles[0], i: 0, quota: null };
+    var lignes = o.prospects.map(function (p) { return { p: p, v: o.pourCourriel(p), e: { ok: false }, inclus: false, neuf: true }; });
+    /* L'éligibilité dépend du modèle (déjà reçu aujourd'hui ?) : elle se
+       refait à chaque changement, sans écraser un choix manuel tant que
+       le verdict de la fiche ne change pas. */
+    function evaluer() {
+      var vues = {};
+      lignes.forEach(function (l) {
+        var e = eligibilite(l.p, vues, modeles[etat.cle]);
+        if (l.neuf || e.ok !== l.e.ok || e.fixe !== l.e.fixe) l.inclus = e.ok;
+        if (e.fixe) l.inclus = false;
+        l.e = e; l.neuf = false;
+      });
+    }
+    evaluer();
 
     var fond = document.createElement('div');
     fond.className = 'compo cmp-fond';
@@ -169,6 +217,7 @@
         '</div>' +
         '<div class="compo-pied cmp-pied">' +
           '<div class="cmp-etat" id="cmp-etat" role="status"></div>' +
+          '<div class="cmp-etat" id="cmp-quota" aria-live="polite" style="white-space:nowrap;"></div>' +
           '<div class="cmp-prog" id="cmp-prog" hidden><span></span></div>' +
           '<button class="btn btn-ghost btn-sm" id="cmp-test">M’envoyer un test</button>' +
           '<button class="btn btn-gold" id="cmp-envoyer"></button>' +
@@ -191,6 +240,7 @@
        collaborateur relit et retouche, une fois pour toutes. */
     function chargerModele() {
       var m = modeles[etat.cle];
+      evaluer(); dessinerListe();
       var gabarit = { nom: '{agence}', ville: '{ville}', dirigeant: '{dirigeant}', cp: '{cp}', type: o.prospects[0] && o.prospects[0].type };
       $('cmp-objet').value = m.objet(gabarit);
       $('cmp-titre-mail').value = m.titre ? m.titre(gabarit) : '';
@@ -201,12 +251,32 @@
 
     function retenues() { return lignes.filter(function (l) { return l.inclus; }); }
 
+    /* Combien partiront vraiment : la sélection, rognée au quota. */
+    function aEnvoyer() {
+      var r = retenues();
+      return etat.quota ? r.slice(0, etat.quota.restant) : r;
+    }
+    function dessinerQuota() {
+      var q = etat.quota, z = $('cmp-quota');
+      if (!z) return;
+      z.textContent = texteQuota(q);
+      z.className = 'cmp-etat' + (q && !q.restant ? ' mal' : (q && retenues().length > q.restant ? ' attention' : ''));
+    }
     function dessinerListe() {
       var n = retenues().length;
+      var k = aEnvoyer().length;
+      var q = etat.quota;
       $('cmp-compte').textContent = n + ' sur ' + lignes.length;
       $('cmp-sous').textContent = n + ' agence' + (n > 1 ? 's' : '') + ' recevront chacune un message à leur nom';
-      $('cmp-envoyer').textContent = n ? 'Envoyer à ' + n + ' agence' + (n > 1 ? 's' : '') : 'Aucun destinataire';
-      $('cmp-envoyer').disabled = !n;
+      $('cmp-envoyer').textContent = q && !q.restant ? 'Quota du jour atteint'
+        : (k ? 'Envoyer à ' + k + ' agence' + (k > 1 ? 's' : '') + (k < n ? ' (sur ' + n + ')' : '') : 'Aucun destinataire');
+      $('cmp-envoyer').disabled = !k;
+      if (q && n > q.restant) {
+        dire(q.restant
+          ? 'Quota : il reste ' + q.restant + ' envoi' + (q.restant > 1 ? 's' : '') + ' aujourd’hui. Seules les ' + q.restant + ' premières agences cochées partiront ; les autres attendront demain.'
+          : 'Quota du jour atteint (' + q.utilise + ' / ' + q.max + ') : les envois reprennent demain.', 'attention');
+      }
+      dessinerQuota();
       $('cmp-liste').innerHTML = lignes.map(function (l, k) {
         var id = 'cmp-d' + k;
         return '<li class="cmp-ligne' + (l.inclus ? '' : ' exclu') + '">' +
@@ -293,29 +363,39 @@
       var r = retenues(); var l = r[0] || lignes[0];
       if (!l) return;
       var b = this; b.disabled = true; dire('Envoi du test…');
-      var res = await appeler(Object.assign({ mode: 'test', envois: [courrielPour(l)], signature: signature() }, lien()));
+      var res = await appeler(Object.assign({ mode: 'test', modele: modeles[etat.cle].nom, envois: [courrielPour(l)], signature: signature() }, lien()));
       b.disabled = false;
-      if (res.ok) dire('Test envoyé à ' + (utilisateur().email || 'votre adresse') + ', avec le message de « ' + l.v.nom + ' ».', 'bon');
+      if (res.ok) dire('Test envoyé à ' + (utilisateur().email || 'votre adresse') + ', avec le message de « ' + l.v.nom + ' »' +
+        (res.d.quota ? ' (' + res.d.quota.utilise + ' / ' + res.d.quota.max + ' tests aujourd’hui)' : '') + '.', 'bon');
       else if (res.d.code === 'NOT_CONFIGURED' || res.d.code === 'ENVOI_DESACTIVE') repli(r);
       else dire(erreur(res), 'mal');
     });
 
     $('cmp-envoyer').addEventListener('click', async function () {
-      var r = retenues();
+      var r = aEnvoyer();
       if (!r.length) return;
-      if (!confirm('Envoyer ' + r.length + ' courriel' + (r.length > 1 ? 's' : '') + ' personnalisé' + (r.length > 1 ? 's' : '') + ' ?')) return;
+      var ecartees = retenues().length - r.length;
+      if (!confirm('Envoyer ' + r.length + ' courriel' + (r.length > 1 ? 's' : '') + ' personnalisé' + (r.length > 1 ? 's' : '') + ' ?' +
+        (ecartees ? '\n' + ecartees + ' agence' + (ecartees > 1 ? 's' : '') + ' au-delà du quota du jour attendront demain.' : ''))) return;
       fond.dataset.envoi = '1';
       var bouton = this; bouton.disabled = true; $('cmp-test').disabled = true;
       var prog = $('cmp-prog'), barre = prog.firstChild; prog.hidden = false;
       var partis = [], refus = [], arret = null;
+      var m = modeles[etat.cle];
       for (var i = 0; i < r.length; i += LOT) {
         var lot = r.slice(i, i + LOT);
+        if (i) await pause(PAUSE_MS);
         dire('Envoi… ' + Math.min(i + lot.length, r.length) + ' / ' + r.length);
-        var res = await appeler(Object.assign({ mode: 'envoi', envois: lot.map(courrielPour), signature: signature() }, lien()));
+        var res = await appeler(Object.assign({ mode: 'envoi', modele: m.nom, envois: lot.map(courrielPour), signature: signature() }, lien()));
+        if (res.d && res.d.quota) { etat.quota = res.d.quota; dessinerQuota(); }
         if (!res.ok) {
           if (res.d.code === 'NOT_CONFIGURED' || res.d.code === 'ENVOI_DESACTIVE') { arret = 'repli'; break; }
+          /* Un lot refusé en entier (quota, session, service) : on n'insiste
+             pas sur les suivants, chaque fiche restante est listée. */
           arret = erreur(res);
-          lot.forEach(function (l) { refus.push({ l: l, motif: arret }); });
+          var motifs = {};
+          (res.d.refuses || []).forEach(function (x) { motifs[x.ref] = x.motif; });
+          r.slice(i).forEach(function (l) { refus.push({ l: l, motif: motifs[l.p.siret] || arret }); });
           break;
         }
         var parRef = {};
@@ -325,24 +405,36 @@
         barre.style.width = Math.round(Math.min(i + LOT, r.length) / r.length * 100) + '%';
       }
       delete fond.dataset.envoi;
-      if (arret === 'repli') { prog.hidden = true; bouton.disabled = false; $('cmp-test').disabled = false; repli(r); return; }
+      if (arret === 'repli' && !partis.length) { prog.hidden = true; bouton.disabled = false; $('cmp-test').disabled = false; repli(r); return; }
 
       if (partis.length && o.apres) {
         dire('Mise à jour des fiches…');
-        try { await o.apres(partis.map(function (l) { return l.p; }), modeles[etat.cle]); } catch (e) {}
+        try { await o.apres(partis.map(function (l) { return l.p; }), m); } catch (e) {}
       }
-      rapport(partis, refus);
+      var attente = retenues().filter(function (l) { return r.indexOf(l) === -1; });
+      rapport(partis, refus, attente);
     });
 
-    function rapport(partis, refus) {
+    function rapport(partis, refus, attente) {
+      attente = attente || [];
       var corps = fond.querySelector('.cmp-corps');
       corps.innerHTML = '<div class="cmp-rapport">' +
         '<div class="cmp-r-chiffres"><div><b>' + partis.length + '</b><span>envoyé' + (partis.length > 1 ? 's' : '') + '</span></div>' +
-          '<div><b class="' + (refus.length ? 'mal' : '') + '">' + refus.length + '</b><span>non parti' + (refus.length > 1 ? 's' : '') + '</span></div></div>' +
+          '<div><b class="' + (refus.length ? 'mal' : '') + '">' + refus.length + '</b><span>non parti' + (refus.length > 1 ? 's' : '') + '</span></div>' +
+          (attente.length ? '<div><b>' + attente.length + '</b><span>pour demain (quota)</span></div>' : '') + '</div>' +
+        (etat.quota ? '<p class="gr-note">' + esc(texteQuota(etat.quota)) + '.</p>' : '') +
         (partis.length ? '<p class="gr-note">Chaque fiche envoyée est passée à l’étape suivante, l’envoi est noté dans son journal, et sa relance est prévue dans sept jours.</p>' : '') +
-        (refus.length ? '<ul class="cmp-liste">' + refus.map(function (x) {
-          return '<li class="cmp-ligne exclu"><span class="cmp-nom">' + esc(x.l.v.nom) + '</span><span class="cmp-motif fixe">' + esc(x.motif) + '</span></li>';
-        }).join('') + '</ul>' : '') +
+        '<ul class="cmp-liste">' +
+          partis.map(function (l) {
+            return '<li class="cmp-ligne"><span class="cmp-nom">' + esc(l.v.nom) + '</span><span class="cmp-mail">' + esc(l.p.email) + '</span><span class="cmp-motif">envoyé ✓</span></li>';
+          }).join('') +
+          refus.map(function (x) {
+            return '<li class="cmp-ligne exclu"><span class="cmp-nom">' + esc(x.l.v.nom) + '</span><span class="cmp-mail">' + esc(x.l.p.email || '') + '</span><span class="cmp-motif fixe">' + esc(x.motif) + '</span></li>';
+          }).join('') +
+          attente.map(function (l) {
+            return '<li class="cmp-ligne exclu"><span class="cmp-nom">' + esc(l.v.nom) + '</span><span class="cmp-mail">' + esc(l.p.email) + '</span><span class="cmp-motif">Quota du jour atteint : à envoyer demain</span></li>';
+          }).join('') +
+        '</ul>' +
       '</div>';
       var pied = fond.querySelector('.cmp-pied');
       pied.innerHTML = '<div class="cmp-etat bon" role="status">Campagne terminée.</div><button class="btn btn-gold" data-fin>Fermer</button>';
@@ -353,6 +445,7 @@
     $('cmp-modele').value = etat.cle;
     dessinerListe();
     chargerModele();
+    quota().then(function (q) { if (q && document.body.contains(fond) && !fond.dataset.envoi) { etat.quota = q; dessinerListe(); } });
     setTimeout(function () { $('cmp-objet').focus(); }, 40);
   }
 
@@ -395,7 +488,7 @@
   }
 
   window.MelodiaCampagne = {
-    ouvrir: ouvrir, appeler: appeler, apercuSur: apercuSur, signature: signature,
+    ouvrir: ouvrir, appeler: appeler, apercuSur: apercuSur, signature: signature, quota: quota, texteQuota: texteQuota,
     personnaliser: personnaliser, vueSignature: vueSignature, brancherSignature: brancherSignature
   };
 })();
