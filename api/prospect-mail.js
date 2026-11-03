@@ -55,10 +55,10 @@ const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const ROLES_PERMIS = ['commercial', 'master'];
 const LOT_MAX = 50;
 
-/* L’envoi payant (Resend) reste dans ce fichier, mais il ne part pas
-   tant que ce drapeau est faux. L’aperçu continue. La console retombe
-   sur la messagerie du collaborateur, sans appeler le service. */
-const ENVOI_ACTIF = false;
+/* Interrupteur de l’envoi (Resend). Vrai : test et envoi partent, après
+   contrôle de session et de rôle. Faux : 503 ENVOI_DESACTIVE, l’aperçu
+   continue et la console retombe sur la messagerie du collaborateur. */
+const ENVOI_ACTIF = true;
 
 function json(res, code, corps) { return res.status(code).json(corps); }
 
