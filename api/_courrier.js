@@ -23,6 +23,8 @@
 // LEAD_FROM : le site continue de fonctionner, sans cloisonnement.
 // ═══════════════════════════════════════════════════════════════
 
+import { cleServiceValide } from './_prospect-outils.js';
+
 const TIMEOUT_MS = 15000;
 
 export const SITE = (process.env.SITE_URL || 'https://melodia-funebre.fr').replace(/\/+$/, '');
@@ -481,11 +483,14 @@ const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
  * est un JWT (eyJ…) et se passe aussi en « Authorization: Bearer » ; la
  * nouvelle clé secrète (sb_secret_…) n'est PAS un JWT : envoyée en
  * Bearer, PostgREST la rejette. On ne la passe alors qu'en « apikey ».
+ * Une URL (par ex. la page des clés du tableau de bord) n'est pas une
+ * clé : on refuse de l'envoyer, pour éviter un 401 « Invalid API key ».
  */
 export function entetesService(extra) {
-  if (!SB_SERVICE) return null;
-  const h = { apikey: SB_SERVICE };
-  if (/^eyJ/.test(SB_SERVICE)) h.Authorization = 'Bearer ' + SB_SERVICE;
+  const cle = String(SB_SERVICE || '').trim();
+  if (!cleServiceValide(cle)) return null;
+  const h = { apikey: cle };
+  if (cle.startsWith('eyJ')) h.Authorization = 'Bearer ' + cle;
   return Object.assign(h, extra || {});
 }
 

@@ -77,6 +77,16 @@ function run() {
   test('signature trop ancienne', o.verifierSignatureResend(payload, { 'svix-id': id, 'svix-timestamp': String(Math.floor(Date.now() / 1000) - 1000), 'svix-signature': sig }, secret).ok === false);
   test('secret absent', o.verifierSignatureResend(payload, { 'svix-id': id, 'svix-timestamp': ts, 'svix-signature': sig }, '').ok === false);
 
+  test('clé service JWT', o.cleServiceValide('eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIn0.sig') === true);
+  test('clé service sb_secret', o.cleServiceValide('sb_secret_xxxxxxxxxxxxxxxxxxxx') === true);
+  test('clé service vide', o.cleServiceValide('') === false && o.cleServiceValide('   ') === false);
+  test('clé service URL tableau de bord', o.cleServiceValide('https://supabase.com/dashboard/project/awvgmkoozerfggdvvubi/settings/api-keys') === false);
+  test('journal 200', o.interpreterLectureJournal(200, '[]').ok === true);
+  test('journal table absente', o.interpreterLectureJournal(404, '{"code":"PGRST205"}').absent === true);
+  test('journal Invalid API key', (() => { const r = o.interpreterLectureJournal(401, '{"message":"Invalid API key","hint":"Double check your Supabase `anon` or `service_role` API key."}'); return r.ok === false && r.absent === false; })());
+  test('journal permission denied n’est pas une table absente', o.interpreterLectureJournal(401, '{"code":"42501","message":"permission denied for table envois_prospect"}').absent === false);
+
+
   return ok;
 }
 
