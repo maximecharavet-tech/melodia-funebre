@@ -47,11 +47,17 @@
 // console retombe sur le « mailto: » — rien n'est perdu en silence.
 // ═══════════════════════════════════════════════════════════════
 
+import { readFile } from 'fs/promises';
 import {
   SITE, gabarit, carteVisite, envoyer, envoyerLot, valideEmail,
   expediteurProspection, boiteMaison, origineAutorisee, entetesOrigine, tropSouvent,
   entetesService
 } from './_courrier.js';
+import { estModeleJulie, composerModele } from './_modeles-prospect.js';
+import {
+  BROCHURE_CHEMIN, BROCHURE_NOM, BROCHURE_URL,
+  pdfDepuisBase64, nomPiecePropre, avecBrochure
+} from './_prospect-outils.js';
 
 const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
 /* La clé « anon » est publique par construction (elle est dans le source
@@ -71,6 +77,48 @@ const LOT_MAX = 50;
    instance : moins sûr, mais jamais un envoi illimité. */
 const QUOTA = { commercial: 30, master: 100 };
 const QUOTA_TEST = 10;
+
+/* Visuel de campagne en .webp : Outlook n'affiche pas le WebP. On
+   sert la copie JPG déjà rangée dans /assets/img/courriel/. */
+function visuelCourriel(chemin) {
+  const m = String(chemin || '').match(/^\/assets\/img\/campagne\/([a-z0-9-]+)\.webp$/i);
+  return m ? '/assets/img/courriel/' + m[1] + '.jpg' : String(chemin || '');
+}
+
+function visuelAutorise(chemin) {
+  const v = visuelCourriel(chemin);
+  return /^\/assets\/img\/(?:courriel|campagne)\/[a-z0-9-]+\.jpg$/i.test(v) ? v : '';
+}
+
+function urlBrochurePublique() {
+  const h = process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL;
+  if (h) return 'https://' + String(h).replace(/^https?:\/\//, '') + '/' + BROCHURE_CHEMIN;
+  return BROCHURE_URL;
+}
+
+let cacheBrochure;
+async function lireBrochure() {
+  if (cacheBrochure === false) return null;
+  if (cacheBrochure) return cacheBrochure;
+  try {
+    cacheBrochure = await readFile(BROCHURE_CHEMIN);
+    return cacheBrochure;
+  } catch (e) {
+    cacheBrochure = false;
+    return null;
+  }
+}
+
+async function piecesJointes(joindre, perso, lot) {
+  const atts = [];
+  if (joindre) {
+    const buf = lot ? null : await lireBrochure();
+    if (buf) atts.push({ filename: BROCHURE_NOM, content: buf.toString('base64') });
+    else atts.push({ filename: BROCHURE_NOM, path: urlBrochurePublique() });
+  }
+  if (perso) atts.push(perso);
+  return atts;
+}
 
 /* Interrupteur de l’envoi (Resend). Vrai : test et envoi partent, après
    contrôle de session et de rôle. Faux : 503 ENVOI_DESACTIVE, l’aperçu
@@ -238,8 +286,31 @@ function lire(e) {
     sujet: String((e && e.sujet) || '').trim().slice(0, 200),
     texte: String((e && e.texte) || '').slice(0, 12000),
     titre: String((e && e.titre) || '').slice(0, 160),
-    ref: String((e && (e.ref || e.siret)) || '').slice(0, 40)
+    ref: String((e && (e.ref || e.siret)) || '').slice(0, 40),
+    nom: String((e && (e.nom || e.dirigeant)) || '').trim().slice(0, 120),
+    societe: String((e && (e.societe || e.agence)) || '').trim().slice(0, 160),
+    ville: String((e && e.ville) || '').trim().slice(0, 80)
   };
+}
+
+/* Un modèle Julie se compose ici : le navigateur n'envoie que l'id
+   et les champs (nom, e-mail, société, ville). */
+function appliquerModele(e, modeleId, joindre, lienBrochure) {
+  if (estModeleJulie(modeleId)) {
+    const c = composerModele(modeleId, {
+      nom: e.nom, societe: e.societe, ville: e.ville, email: e.to
+    }, { joindreBrochure: joindre, lienBrochure });
+    return Object.assign({}, e, {
+      sujet: c.sujet,
+      titre: c.titre,
+      texte: c.texte,
+      visuel: visuelAutorise(c.visuel),
+      visuelAlt: c.visuelAlt || '',
+      lienTexte: (c.bouton && c.bouton.texte) || '',
+      lienUrl: (c.bouton && c.bouton.url) || ''
+    });
+  }
+  return Object.assign({}, e, { texte: avecBrochure(e.texte, joindre, lienBrochure) });
 }
 function defautDe(e, exigerDest) {
   if (exigerDest && !valideEmail(e.to)) return 'Adresse du destinataire invalide.';
@@ -259,7 +330,7 @@ export default async function handler(req, res) {
   }
 
   const d = (req.body && typeof req.body === 'object') ? req.body : {};
-  const mode = ['apercu', 'test', 'envoi', 'quota'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
+  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
   /* Le modèle choisi : il sert à ne pas renvoyer le même courrier au
      même destinataire le même jour. À défaut, l'objet en tient lieu. */
   const modele = String(d.modele || '').trim().slice(0, 80);
@@ -275,12 +346,20 @@ export default async function handler(req, res) {
   const visuel = /^\/assets\/img\/(?:courriel|campagne)\/[a-z0-9-]+\.jpg$/i.test(String(d.visuel || ''))
     ? String(d.visuel) : '';
   const visuelAlt = String(d.visuelAlt || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+  const joindreBrochure = d.joindreBrochure !== false;
+  const lienBrochure = urlBrochurePublique();
+  let piecePerso = null;
+  if (d.pieceBase64) {
+    const v = pdfDepuisBase64(d.pieceBase64);
+    if (!v.ok) return json(res, 400, { error: v.motif, code: 'PIECE' });
+    piecePerso = { filename: nomPiecePropre(d.pieceNom), content: v.buf.toString('base64') };
+  }
   const sigEntree = (d.signature && typeof d.signature === 'object') ? d.signature : {};
   const habiller = (e, sig) => gabarit({
     sujet: e.sujet, titre: e.titre, texte: e.texte,
     apercu: e.texte.replace(/\s+/g, ' ').slice(0, 140),
-    lienTexte: lien.lienTexte, lienUrl: lien.lienUrl,
-    visuel, visuelAlt,
+    lienTexte: e.lienTexte || lien.lienTexte, lienUrl: e.lienUrl || lien.lienUrl,
+    visuel: e.visuel || visuel, visuelAlt: e.visuelAlt || visuelAlt,
     banniere: true, signature: sig, pied: 'prospection', cartesEcoute: true
   });
   const signature = (nom, email) => ({
@@ -295,7 +374,7 @@ export default async function handler(req, res) {
   if (mode === 'apercu') {
     const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'inconnu';
     if (await tropSouvent('apercu:' + ip, 120, 10 * 60 * 1000)) return json(res, 429, { error: 'Trop d\'aperçus demandés.', code: 'RATE_LIMIT' });
-    const e = envois[0];
+    let e = appliquerModele(envois[0], modele, joindreBrochure, lienBrochure);
     if (!e.sujet) e.sujet = 'Melodia Funèbre';
     const email = valideEmail(sigEntree.email) ? String(sigEntree.email).trim() : '';
     /* « Mon compte » ne montre que la carte : la bannière et le texte
@@ -343,6 +422,37 @@ export default async function handler(req, res) {
       quotaTest: quotaDe(qui.role, 'test', qt.lignes.length, qt.persistant)
     });
   }
+  if (mode === 'journal') {
+    const service = entetesService();
+    if (!service || journalAbsent) {
+      return json(res, 200, {
+        ok: true, mode, lignes: [],
+        quota: quotaDe(qui.role, 'envoi', deja.lignes.length, deja.persistant),
+        note: 'Journal des envois indisponible : appliquez la migration 20261103_08 pour le suivi.'
+      });
+    }
+    try {
+      const url = SB_URL + '/rest/v1/envois_prospect?select=id,destinataire,sujet,modele,mode,societe,piece_jointe,resend_id,statut,ouvert_nb,clique_nb,envoye_le,delivre_le,ouvert_le,clique_le,rejete_le,dernier_evenement' +
+        '&collaborateur=eq.' + encodeURIComponent(qui.email) +
+        '&order=envoye_le.desc&limit=80';
+      const r = await fetch(url, { headers: service });
+      if (!r.ok) {
+        const texte = await r.text();
+        if (r.status === 404 || /42P01|PGRST205|envois_prospect/i.test(texte)) journalAbsent = true;
+        return json(res, 200, { ok: true, mode, lignes: [], quota: quotaDe(qui.role, 'envoi', deja.lignes.length, deja.persistant),
+          note: 'Journal des envois indisponible : appliquez la migration 20261103_08 pour le suivi.' });
+      }
+      const lignes = await r.json();
+      return json(res, 200, {
+        ok: true, mode,
+        lignes: Array.isArray(lignes) ? lignes : [],
+        quota: quotaDe(qui.role, 'envoi', deja.lignes.length, deja.persistant)
+      });
+    } catch (e) {
+      return json(res, 200, { ok: true, mode, lignes: [], quota: quotaDe(qui.role, 'envoi', deja.lignes.length, deja.persistant),
+        note: 'Journal des envois indisponible.' });
+    }
+  }
   const quota = quotaDe(qui.role, modeQuota, deja.lignes.length, deja.persistant);
   if (quota.restant <= 0) {
     return json(res, 429, {
@@ -373,8 +483,17 @@ export default async function handler(req, res) {
   let place = quota.restant;
   const dansLot = new Set();
 
-  envois.forEach((e) => {
-    if (mode === 'test') { e.to = qui.email; e.sujet = '[Test] ' + e.sujet; }
+  if (piecePerso && envois.length > 3) {
+    return json(res, 400, { error: 'La pièce jointe personnelle est limitée à 3 destinataires à la fois.', code: 'PIECE_LOT' });
+  }
+  const atts = (joindreBrochure || piecePerso)
+    ? await piecesJointes(joindreBrochure, piecePerso, envois.length > 3)
+    : [];
+
+  envois.forEach((brut, idx) => {
+    const e = appliquerModele(brut, modele, joindreBrochure, lienBrochure);
+    envois[idx] = e;
+    if (mode === 'test') { e.to = qui.email; if (e.sujet && e.sujet.indexOf('[Test] ') !== 0) e.sujet = '[Test] ' + e.sujet; }
     const motif = defautDe(e, true);
     if (motif) { refuses.push({ to: e.to, ref: e.ref, motif }); return; }
     if (mode !== 'test') {
@@ -387,19 +506,22 @@ export default async function handler(req, res) {
     if (place <= 0) { refuses.push({ to: e.to, ref: e.ref, motif: 'Quota du jour atteint (' + quota.max + ' par jour).', code: 'QUOTA' }); return; }
     place -= 1;
     retenus.push(e);
-    charges.push({
+    const charge = {
       from: de,
       to: [e.to],
       subject: e.sujet,
       html: habiller(e, sig),
       text: e.texte + '\n\n—\n' + sig.nom + (sig.role ? '\n' + sig.role : '') + '\n' + qui.email + '\n' + SITE +
+            (joindreBrochure ? '\nBrochure : ' + lienBrochure : '') +
             '\n\nPour ne plus être contacté, répondez STOP à ce courriel.',
       reply_to: qui.email,
       /* Les messageries proposent alors un bouton « Se désabonner » :
          l'agence qui ne veut plus de nous le dit en un geste, plutôt que
          de nous signaler comme indésirables. */
       headers: { 'List-Unsubscribe': '<mailto:' + qui.email + '?subject=STOP>' }
-    });
+    };
+    if (atts.length) charge.attachments = atts;
+    charges.push(charge);
   });
 
   if (!charges.length) return json(res, 400, { error: refuses[0] ? refuses[0].motif : 'Rien à envoyer.', code: 'RIEN', refuses, quota });
@@ -414,7 +536,9 @@ export default async function handler(req, res) {
 
   const ids = r.ids || [r.id];
   const persiste = await journaliser(qui.email, modeQuota, retenus.map((e, i) => ({
-    destinataire: e.to.toLowerCase(), sujet: e.sujet.slice(0, 200), modele, ref: e.ref, resend_id: ids[i] || null
+    destinataire: e.to.toLowerCase(), sujet: e.sujet.slice(0, 200), modele, ref: e.ref,
+    societe: e.societe || '', piece_jointe: (atts[0] && atts[0].filename) || '',
+    statut: 'envoye', resend_id: ids[i] || null
   })));
   const utilise = quota.utilise + retenus.length;
   return json(res, 200, {

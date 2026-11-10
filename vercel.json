@@ -10,6 +10,13 @@
       "maxDuration": 30,
       "includeFiles": "documents/melodia-{manuel-de-vente,plan-linkedin,plan-reseaux-sociaux}.pdf"
     },
+    "api/prospect-mail.js": {
+      "maxDuration": 30,
+      "includeFiles": "{documents/melodia-brochure-professionnels.pdf,assets/data/modeles-julie.json}"
+    },
+    "api/prospect-webhook.js": {
+      "maxDuration": 30
+    },
     "api/*.js": {
       "maxDuration": 30
     }

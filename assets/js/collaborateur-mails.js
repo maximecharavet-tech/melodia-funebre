@@ -458,6 +458,12 @@
     }
   ];
 
+  var juliePack = (typeof MELODIA_MODELES_JULIE !== 'undefined' && MELODIA_MODELES_JULIE) || { modeles: [] };
+  (juliePack.modeles || []).forEach(function (m) {
+    var deja = MODELES.some(function (x) { return x.id === m.id; });
+    if (!deja) MODELES.push(m);
+  });
+
   var CHAMPS = {
     'prénom_défunt': { label: 'Prénom du défunt', placeholder: 'Prénom' },
     famille: { label: 'Famille', placeholder: 'Nom de famille' },
@@ -572,6 +578,15 @@
     if (!vars.ville) vars.ville = 'votre secteur';
     if (!vars.agence) vars.agence = '';
 
+    if (modele.categorie === 'julie') {
+      var nomJ = String(vars.nom || vars.dirigeant || '').replace(/\s+/g, ' ').trim();
+      var socJ = String(vars.societe || vars.agence || '').replace(/\s+/g, ' ').trim();
+      var vilJ = String(vars.ville || '').replace(/\s+/g, ' ').trim();
+      vars.civilite = nomJ ? ' ' + nomJ : '';
+      vars.agence = socJ || 'votre maison';
+      vars.ville_rel = vilJ ? ' à ' + vilJ : '';
+      vars.lien_brochure = SITE + '/documents/melodia-brochure-professionnels.pdf';
+    }
     var brut = modele.texte;
     var texte = remplir(brut, vars);
     if (!String((o.vars && o.vars.famille) || '').trim()) {
@@ -588,7 +603,12 @@
       if (texte.indexOf(suite) === -1) texte = texte.replace(/\s+$/, '') + '\n\n' + suite;
     }
 
-    var sujet = remplir(modele.objet, vars).replace(/\s{2,}/g, ' ').trim();
+    var sujetSrc = modele.objet;
+    if (modele.categorie === 'julie') {
+      var saisieAgence = String((o.vars && (o.vars.societe || o.vars.agence)) || '').trim();
+      if (!saisieAgence && modele.objetNu) sujetSrc = modele.objetNu;
+    }
+    var sujet = remplir(sujetSrc, vars).replace(/\s{2,}/g, ' ').trim();
     var titre = remplir(modele.titre, vars);
     var bouton = modele.bouton ? {
       texte: remplir(modele.bouton.texte, vars),
@@ -631,7 +651,7 @@
       html: html,
       lien: lien,
       manquants: manquants(modele, o.vars || {}),
-      sansMusique: !choisie,
+      sansMusique: modele.categorie === 'julie' ? false : !choisie,
       layout: layoutMail,
       /* De quoi faire composer le même courrier au serveur (envoi
          direct) : des champs de texte, jamais le HTML ci-dessus. */
@@ -976,11 +996,70 @@
   var SEQ_DELAIS = [0, 3, 7, 14, 21];
 
   function modelesPret() {
+    var julie = MODELES.filter(function (m) { return m.categorie === 'julie'; });
+    if (julie.length) return julie;
     return MODELES.filter(function (m) {
       return m.categorie === 'sequence' || m.categorie === 'prospection-plus' ||
         m.id === 'pf-contact' || m.id === 'pf-relance';
     });
   }
+
+  var PDF_MAX = Math.floor(2.5 * 1024 * 1024);
+  function validerEmailCsv(s) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim());
+  }
+  function decouperLigneCsv(s) {
+    s = String(s || '');
+    if (/[;\t]/.test(s) && s.indexOf(',') === -1) {
+      return s.split(/[;\t]/).map(function (x) { return x.replace(/^["']|["']$/g, '').trim(); });
+    }
+    var cols = [], cur = '', q = false, i, c;
+    for (i = 0; i < s.length; i++) {
+      c = s[i];
+      if (q) {
+        if (c === '"') { if (s[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+        else cur += c;
+      } else if (c === '"') q = true;
+      else if (c === ',' || c === ';' || c === '\t') { cols.push(cur.trim()); cur = ''; }
+      else cur += c;
+    }
+    cols.push(cur.trim());
+    return cols.map(function (x) { return x.replace(/^["']|["']$/g, '').trim(); });
+  }
+  function parseCsv(texte) {
+    var brut = String(texte || '').replace(/^\uFEFF/, '');
+    var lignes = brut.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+    var out = { ok: [], erreurs: [], ignores: 0 };
+    var vus = {};
+    var start = 0;
+    if (lignes[0] && /^(nom|name|pr[eé]nom|email|e-?mail|soci[eé]t[eé]|societe|agence|ville)\b/i.test(lignes[0].replace(/["']/g, ''))) start = 1;
+    for (var i = start; i < lignes.length; i++) {
+      var cols = decouperLigneCsv(lignes[i]).filter(Boolean);
+      var email = '', restes = [];
+      cols.forEach(function (c) {
+        if (!email && validerEmailCsv(c)) email = c;
+        else restes.push(c);
+      });
+      if (!email) { out.erreurs.push({ ligne: i + 1, motif: 'Adresse absente ou invalide.', brut: lignes[i] }); continue; }
+      var cle = email.toLowerCase();
+      if (vus[cle]) { out.ignores += 1; continue; }
+      vus[cle] = true;
+      out.ok.push({ nom: restes[0] || '', email: email, societe: restes[1] || '', ville: restes[2] || '', ligne: i + 1 });
+    }
+    return out;
+  }
+  function validerPdfFichier(file) {
+    if (!file) return Promise.resolve({ ok: false, motif: 'Aucun fichier.' });
+    if (file.size > PDF_MAX) {
+      return Promise.resolve({ ok: false, motif: 'Fichier trop lourd (maximum 2,5 Mo, limite technique du serveur).' });
+    }
+    return file.slice(0, 5).arrayBuffer().then(function (buf) {
+      var s = String.fromCharCode.apply(null, Array.from(new Uint8Array(buf)));
+      if (s !== '%PDF-') return { ok: false, motif: 'Le fichier n’est pas un PDF.' };
+      return { ok: true, file: file };
+    });
+  }
+
 
   function idSeqDepuisJournal(quoi) {
     var t = String(quoi || '');
@@ -1039,6 +1118,9 @@
     modelesPret: modelesPret,
     prochaineSequence: prochaineSequence,
     manquants: manquants,
+    parseCsv: parseCsv,
+    validerPdfFichier: validerPdfFichier,
+    PDF_MAX: PDF_MAX,
     /* Exposé pour que l’espace sache qu’aucun envoi ne part d’ici. */
     envoi: function () { return false; }
   };
