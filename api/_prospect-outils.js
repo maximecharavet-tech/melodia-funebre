@@ -2,8 +2,35 @@
 import * as crypto from 'crypto';
 
 const SITE = 'https://melodia-funebre.fr';
-const BROCHURE_CHEMIN = 'documents/melodia-brochure-professionnels.pdf';
-const BROCHURE_NOM = 'Melodia-Funebre-Brochure-professionnels.pdf';
+const BROCHURES = {
+  professionnels: {
+    id: 'professionnels',
+    label: 'Brochure professionnelle',
+    chemin: 'documents/melodia-brochure-professionnels.pdf',
+    nom: 'Melodia-Funebre-Brochure-professionnels.pdf'
+  },
+  'pompes-funebres': {
+    id: 'pompes-funebres',
+    label: 'Brochure Pompes funèbres',
+    chemin: 'documents/melodia-brochure-pompes-funebres.pdf',
+    nom: 'Melodia-Funebre-Brochure-Pompes-funebres.pdf'
+  },
+  marbriers: {
+    id: 'marbriers',
+    label: 'Brochure Marbriers',
+    chemin: 'documents/melodia-brochure-marbriers.pdf',
+    nom: 'Melodia-Funebre-Brochure-Marbriers.pdf'
+  },
+  crematoriums: {
+    id: 'crematoriums',
+    label: 'Brochure Crématoriums',
+    chemin: 'documents/melodia-brochure-crematoriums.pdf',
+    nom: 'Melodia-Funebre-Brochure-Crematoriums.pdf'
+  }
+};
+const BROCHURE_IDS = Object.keys(BROCHURES);
+const BROCHURE_CHEMIN = BROCHURES.professionnels.chemin;
+const BROCHURE_NOM = BROCHURES.professionnels.nom;
 const BROCHURE_URL = SITE + '/' + BROCHURE_CHEMIN;
 /* La limite réelle de Vercel (corps de requête 4,5 Mo) : un PDF en
    base64 gonfle d’un tiers. 2,5 Mo tiennent ; 10 Mo, non. */
@@ -51,18 +78,84 @@ function objetDe(modele, vars) {
   return remplir(brut, vars).replace(/\s{2,}/g, ' ').replace(/\s+—\s*$/, '').trim();
 }
 
-function mentionBrochure(joindre, url) {
-  if (!joindre) return '';
-  return 'La brochure professionnelle est jointe à ce courriel. Vous pouvez aussi la consulter ici :\n' +
-    (url || BROCHURE_URL);
+function resoudreBrochures(entree, joindreBrochure) {
+  if (entree !== undefined && entree !== null) {
+    const list = Array.isArray(entree) ? entree : [entree];
+    const out = [];
+    const vus = new Set();
+    for (let i = 0; i < list.length; i++) {
+      const id = String(list[i] || '').trim();
+      if (!id) continue;
+      if (!BROCHURES[id]) {
+        return { ok: false, motif: 'Brochure inconnue.', brochures: [], ids: [] };
+      }
+      if (vus.has(id)) continue;
+      vus.add(id);
+      out.push(BROCHURES[id]);
+    }
+    return { ok: true, brochures: out, ids: out.map((b) => b.id) };
+  }
+  if (joindreBrochure === false) return { ok: true, brochures: [], ids: [] };
+  return { ok: true, brochures: [BROCHURES.professionnels], ids: ['professionnels'] };
 }
 
-function avecBrochure(texte, joindre, url) {
+function brochureSuggeree(contexte) {
+  const c = contexte || {};
+  const morceaux = [c.type, c.activite, c.activite_principale, c.metier, c.categorie,
+    c.societe, c.agence, c.nom, c.enseigne]
+    .map((x) => String(x || '').toLowerCase()).join(' ');
+  if (/marbr/.test(morceaux)) return 'marbriers';
+  if (/cr[eé]matorium/.test(morceaux)) return 'crematoriums';
+  if (/pompe|fun[eè]bre|obs[eè]ques/.test(morceaux)) return 'pompes-funebres';
+  const cat = String(c.categorie || '').toLowerCase();
+  if (cat === 'pompes' || cat === 'sequence' || cat === 'prospection-plus') return 'pompes-funebres';
+  return null;
+}
+
+function urlDeBrochure(b, urls) {
+  if (!b) return BROCHURE_URL;
+  if (typeof urls === 'string') return urls;
+  if (urls && typeof urls === 'object') {
+    if (urls[b.id]) return urls[b.id];
+    if (urls[b.chemin]) return urls[b.chemin];
+  }
+  return SITE + '/' + b.chemin;
+}
+
+function itemsMention(joindreOuListe, urlOuMap) {
+  if (joindreOuListe === false || joindreOuListe == null || joindreOuListe === '') return [];
+  if (joindreOuListe === true) {
+    return [{ label: BROCHURES.professionnels.label, url: (typeof urlOuMap === 'string' && urlOuMap) || BROCHURE_URL }];
+  }
+  const list = Array.isArray(joindreOuListe) ? joindreOuListe : [];
+  const items = [];
+  for (let i = 0; i < list.length; i++) {
+    const b = typeof list[i] === 'string' ? BROCHURES[list[i]] : list[i];
+    if (!b || !b.label) continue;
+    items.push({ label: b.label, url: urlDeBrochure(b, urlOuMap) });
+  }
+  return items;
+}
+
+function mentionBrochure(joindreOuListe, urlOuMap) {
+  const items = itemsMention(joindreOuListe, urlOuMap);
+  if (!items.length) return '';
+  if (items.length === 1) {
+    const nom = items[0].label.replace(/^Brochure /i, 'brochure ');
+    return 'La ' + nom + ' est jointe à ce courriel. Vous pouvez aussi la consulter ici :\n' + items[0].url;
+  }
+  return 'Les brochures suivantes sont jointes à ce courriel :\n' +
+    items.map((it) => '— ' + it.label + ' : ' + it.url).join('\n');
+}
+
+function avecBrochure(texte, joindreOuListe, urlOuMap) {
   const t = String(texte || '').replace(/\s+$/, '');
-  const lien = url || BROCHURE_URL;
-  if (!joindre) return t;
-  if (t.indexOf(lien) !== -1 || /brochure professionnelle est jointe/i.test(t)) return t;
-  return t + '\n\n' + mentionBrochure(true, lien);
+  const mention = mentionBrochure(joindreOuListe, urlOuMap);
+  if (!mention) return t;
+  const items = itemsMention(joindreOuListe, urlOuMap);
+  const deja = items.some((it) => t.indexOf(it.url) !== -1) || /brochure .+ est jointe/i.test(t) || /brochures suivantes sont jointes/i.test(t);
+  if (deja) return t;
+  return t + '\n\n' + mention;
 }
 
 function decouperLigne(l) {
@@ -238,6 +331,8 @@ function nomPiecePropre(nom) {
 
 export {
   SITE,
+  BROCHURES,
+  BROCHURE_IDS,
   BROCHURE_CHEMIN,
   BROCHURE_NOM,
   BROCHURE_URL,
@@ -247,6 +342,8 @@ export {
   varsNormalisees,
   remplir,
   objetDe,
+  resoudreBrochures,
+  brochureSuggeree,
   mentionBrochure,
   avecBrochure,
   decouperLigne,

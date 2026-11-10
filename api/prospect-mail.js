@@ -56,7 +56,8 @@ import {
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
 import {
   BROCHURE_CHEMIN, BROCHURE_NOM, BROCHURE_URL,
-  pdfDepuisBase64, nomPiecePropre, avecBrochure
+  pdfDepuisBase64, nomPiecePropre, avecBrochure,
+  resoudreBrochures
 } from './_prospect-outils.js';
 
 const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
@@ -90,35 +91,52 @@ function visuelAutorise(chemin) {
   return /^\/assets\/img\/(?:courriel|campagne)\/[a-z0-9-]+\.jpg$/i.test(v) ? v : '';
 }
 
-function urlBrochurePublique() {
+function urlPubliqueDe(chemin) {
+  const c = String(chemin || BROCHURE_CHEMIN).replace(/^\/+/, '');
   const h = process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL;
-  if (h) return 'https://' + String(h).replace(/^https?:\/\//, '') + '/' + BROCHURE_CHEMIN;
-  return BROCHURE_URL;
+  if (h) return 'https://' + String(h).replace(/^https?:\/\//, '') + '/' + c;
+  return 'https://melodia-funebre.fr/' + c;
 }
 
-let cacheBrochure;
-async function lireBrochure() {
-  if (cacheBrochure === false) return null;
-  if (cacheBrochure) return cacheBrochure;
+function urlBrochurePublique() {
+  return urlPubliqueDe(BROCHURE_CHEMIN);
+}
+
+const cacheBrochures = new Map();
+async function lireBrochureChemin(chemin) {
+  const cle = String(chemin || '');
+  if (cacheBrochures.has(cle)) {
+    const v = cacheBrochures.get(cle);
+    return v === false ? null : v;
+  }
   try {
-    cacheBrochure = await readFile(BROCHURE_CHEMIN);
-    return cacheBrochure;
+    const buf = await readFile(cle);
+    cacheBrochures.set(cle, buf);
+    return buf;
   } catch (e) {
-    cacheBrochure = false;
+    cacheBrochures.set(cle, false);
     return null;
   }
 }
 
-async function piecesJointes(joindre, perso, lot) {
+async function lireBrochure() {
+  return lireBrochureChemin(BROCHURE_CHEMIN);
+}
+
+async function piecesJointes(brochures, perso, lot) {
   const atts = [];
-  if (joindre) {
-    const buf = lot ? null : await lireBrochure();
-    if (buf) atts.push({ filename: BROCHURE_NOM, content: buf.toString('base64') });
-    else atts.push({ filename: BROCHURE_NOM, path: urlBrochurePublique() });
+  const liste = Array.isArray(brochures) ? brochures : (brochures ? [BROCHURES_FALLBACK] : []);
+  for (let i = 0; i < liste.length; i++) {
+    const b = liste[i];
+    const buf = lot ? null : await lireBrochureChemin(b.chemin);
+    if (buf) atts.push({ filename: b.nom, content: buf.toString('base64') });
+    else atts.push({ filename: b.nom, path: urlPubliqueDe(b.chemin) });
   }
   if (perso) atts.push(perso);
   return atts;
 }
+
+const BROCHURES_FALLBACK = { chemin: BROCHURE_CHEMIN, nom: BROCHURE_NOM };
 
 /* Interrupteur de l’envoi (Resend). Vrai : test et envoi partent, après
    contrôle de session et de rôle. Faux : 503 ENVOI_DESACTIVE, l’aperçu
@@ -295,11 +313,11 @@ function lire(e) {
 
 /* Un modèle Julie se compose ici : le navigateur n'envoie que l'id
    et les champs (nom, e-mail, société, ville). */
-function appliquerModele(e, modeleId, joindre, lienBrochure) {
+function appliquerModele(e, modeleId, brochures, liensBrochure) {
   if (estModeleJulie(modeleId)) {
     const c = composerModele(modeleId, {
       nom: e.nom, societe: e.societe, ville: e.ville, email: e.to
-    }, { joindreBrochure: joindre, lienBrochure });
+    }, { brochures: brochures.map((b) => b.id), liensBrochure });
     return Object.assign({}, e, {
       sujet: c.sujet,
       titre: c.titre,
@@ -310,7 +328,7 @@ function appliquerModele(e, modeleId, joindre, lienBrochure) {
       lienUrl: (c.bouton && c.bouton.url) || ''
     });
   }
-  return Object.assign({}, e, { texte: avecBrochure(e.texte, joindre, lienBrochure) });
+  return Object.assign({}, e, { texte: avecBrochure(e.texte, brochures, liensBrochure) });
 }
 function defautDe(e, exigerDest) {
   if (exigerDest && !valideEmail(e.to)) return 'Adresse du destinataire invalide.';
@@ -346,8 +364,13 @@ export default async function handler(req, res) {
   const visuel = /^\/assets\/img\/(?:courriel|campagne)\/[a-z0-9-]+\.jpg$/i.test(String(d.visuel || ''))
     ? String(d.visuel) : '';
   const visuelAlt = String(d.visuelAlt || '').replace(/\s+/g, ' ').trim().slice(0, 160);
-  const joindreBrochure = d.joindreBrochure !== false;
-  const lienBrochure = urlBrochurePublique();
+  const choix = resoudreBrochures(d.brochures, d.joindreBrochure);
+  if (!choix.ok) return json(res, 400, { error: choix.motif, code: 'BROCHURE' });
+  const brochures = choix.brochures;
+  const liensBrochure = {};
+  brochures.forEach((b) => { liensBrochure[b.id] = urlPubliqueDe(b.chemin); });
+  const joindreBrochure = brochures.length > 0;
+  const lienBrochure = brochures[0] ? urlPubliqueDe(brochures[0].chemin) : urlBrochurePublique();
   let piecePerso = null;
   if (d.pieceBase64) {
     const v = pdfDepuisBase64(d.pieceBase64);
@@ -374,7 +397,7 @@ export default async function handler(req, res) {
   if (mode === 'apercu') {
     const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'inconnu';
     if (await tropSouvent('apercu:' + ip, 120, 10 * 60 * 1000)) return json(res, 429, { error: 'Trop d\'aperçus demandés.', code: 'RATE_LIMIT' });
-    let e = appliquerModele(envois[0], modele, joindreBrochure, lienBrochure);
+    let e = appliquerModele(envois[0], modele, brochures, liensBrochure);
     if (!e.sujet) e.sujet = 'Melodia Funèbre';
     const email = valideEmail(sigEntree.email) ? String(sigEntree.email).trim() : '';
     /* « Mon compte » ne montre que la carte : la bannière et le texte
@@ -383,7 +406,11 @@ export default async function handler(req, res) {
       return json(res, 200, { ok: true, html: '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"></head>' +
         '<body style="margin:0;padding:24px;background:#f4f1ea;">' + carteVisite(signature('', email)) + '</body></html>' });
     }
-    return json(res, 200, { ok: true, html: habiller(e, signature('', email)) });
+    return json(res, 200, {
+      ok: true,
+      html: habiller(e, signature('', email)),
+      pieces: brochures.map((b) => ({ id: b.id, label: b.label, nom: b.nom, url: liensBrochure[b.id] }))
+    });
   }
 
   /* ─── Test et envoi : session obligatoire ─── */
@@ -486,12 +513,12 @@ export default async function handler(req, res) {
   if (piecePerso && envois.length > 3) {
     return json(res, 400, { error: 'La pièce jointe personnelle est limitée à 3 destinataires à la fois.', code: 'PIECE_LOT' });
   }
-  const atts = (joindreBrochure || piecePerso)
-    ? await piecesJointes(joindreBrochure, piecePerso, envois.length > 3)
+  const atts = (brochures.length || piecePerso)
+    ? await piecesJointes(brochures, piecePerso, envois.length > 3)
     : [];
 
   envois.forEach((brut, idx) => {
-    const e = appliquerModele(brut, modele, joindreBrochure, lienBrochure);
+    const e = appliquerModele(brut, modele, brochures, liensBrochure);
     envois[idx] = e;
     if (mode === 'test') { e.to = qui.email; if (e.sujet && e.sujet.indexOf('[Test] ') !== 0) e.sujet = '[Test] ' + e.sujet; }
     const motif = defautDe(e, true);
@@ -512,7 +539,7 @@ export default async function handler(req, res) {
       subject: e.sujet,
       html: habiller(e, sig),
       text: e.texte + '\n\n—\n' + sig.nom + (sig.role ? '\n' + sig.role : '') + '\n' + qui.email + '\n' + SITE +
-            (joindreBrochure ? '\nBrochure : ' + lienBrochure : '') +
+            (brochures.length ? '\nBrochures :\n' + brochures.map((b) => b.label + ' : ' + liensBrochure[b.id]).join('\n') : '') +
             '\n\nPour ne plus être contacté, répondez STOP à ce courriel.',
       reply_to: qui.email,
       /* Les messageries proposent alors un bouton « Se désabonner » :
@@ -537,7 +564,7 @@ export default async function handler(req, res) {
   const ids = r.ids || [r.id];
   const persiste = await journaliser(qui.email, modeQuota, retenus.map((e, i) => ({
     destinataire: e.to.toLowerCase(), sujet: e.sujet.slice(0, 200), modele, ref: e.ref,
-    societe: e.societe || '', piece_jointe: (atts[0] && atts[0].filename) || '',
+    societe: e.societe || '', piece_jointe: atts.map((a) => a.filename).filter(Boolean).join(', '),
     statut: 'envoye', resend_id: ids[i] || null
   })));
   const utilise = quota.utilise + retenus.length;

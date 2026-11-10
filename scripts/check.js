@@ -13,6 +13,9 @@ const files = [
   'lib/prospect-outils.cjs', 'lib/modeles-prospect.cjs', 'api/_prospect-outils.js', 'api/_modeles-prospect.js',
   'assets/js/modeles-julie.js', 'assets/data/modeles-julie.json',
   'documents/melodia-brochure-professionnels.pdf',
+  'documents/melodia-brochure-pompes-funebres.pdf',
+  'documents/melodia-brochure-marbriers.pdf',
+  'documents/melodia-brochure-crematoriums.pdf',
   'assets/js/auth.js', 'assets/js/config.js', 'assets/js/candidature.js', 'assets/js/espace.js',
   'assets/js/collaborateur-mails.js', 'assets/js/collaborateur-espace.js', 'assets/css/collaborateur.css',
   'assets/js/signatures.js', 'assets/js/qr.js', 'assets/img/equipe/julie-serve.jpg', 'assets/img/courriel/banniere.jpg',
@@ -74,6 +77,9 @@ try {
    aussi que le PDF n'est pas un fichier vide de zéro octet. */
 for (const [f, mini] of [['documents/melodia-brochure-partenaire.pdf', 400],
                          ['documents/melodia-brochure-professionnels.pdf', 400],
+                         ['documents/melodia-brochure-pompes-funebres.pdf', 400],
+                         ['documents/melodia-brochure-marbriers.pdf', 400],
+                         ['documents/melodia-brochure-crematoriums.pdf', 200],
                          ['documents/melodia-manuel-de-vente.pdf', 200],
                          ['documents/melodia-plan-linkedin.pdf', 200],
                          ['documents/melodia-plan-reseaux-sociaux.pdf', 200]]) {
