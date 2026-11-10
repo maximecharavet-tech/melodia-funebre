@@ -86,8 +86,70 @@ function run() {
   test('journal Invalid API key', (() => { const r = o.interpreterLectureJournal(401, '{"message":"Invalid API key","hint":"Double check your Supabase `anon` or `service_role` API key."}'); return r.ok === false && r.absent === false; })());
   test('journal permission denied n’est pas une table absente', o.interpreterLectureJournal(401, '{"code":"42501","message":"permission denied for table envois_prospect"}').absent === false);
 
+  test('catalogue 4 brochures', o.BROCHURE_IDS && o.BROCHURE_IDS.length === 4 &&
+    o.BROCHURES['pompes-funebres'] && o.BROCHURES.marbriers && o.BROCHURES.crematoriums);
+  test('libellé Pompes funèbres', o.BROCHURES['pompes-funebres'].label === 'Brochure Pompes funèbres');
+  test('libellé Marbriers', o.BROCHURES.marbriers.label === 'Brochure Marbriers');
+  test('libellé Crématoriums', o.BROCHURES.crematoriums.label === 'Brochure Crématoriums');
+  test('orthographe Melodia Funèbre absente des libellés fautifs',
+    !Object.keys(o.BROCHURES).some((id) => /Mélodia|Mélodie|Funebre(?!-)/.test(o.BROCHURES[id].label)));
+
+  const refus = o.resoudreBrochures(['inconnue']);
+  test('allowlist refuse un id inconnu', refus.ok === false && refus.ids.length === 0);
+
+  const aucune = o.resoudreBrochures([]);
+  test('aucune brochure acceptée', aucune.ok === true && aucune.ids.length === 0);
+
+  const une = o.resoudreBrochures(['marbriers']);
+  test('une brochure', une.ok && une.ids.join(',') === 'marbriers');
+
+  const plusieurs = o.resoudreBrochures(['pompes-funebres', 'crematoriums', 'pompes-funebres']);
+  test('plusieurs brochures dédoublonnées', plusieurs.ok && plusieurs.ids.join(',') === 'pompes-funebres,crematoriums');
+
+  const compatOn = o.resoudreBrochures(undefined, true);
+  test('compat joindreBrochure true', compatOn.ok && compatOn.ids.join(',') === 'professionnels');
+  const compatOff = o.resoudreBrochures(undefined, false);
+  test('compat joindreBrochure false', compatOff.ok && compatOff.ids.length === 0);
+
+  test('suggestion marbrier', o.brochureSuggeree({ societe: 'Marbriers Dupont' }) === 'marbriers');
+  test('suggestion crématorium', o.brochureSuggeree({ societe: 'Crématorium de Lyon' }) === 'crematoriums');
+  test('suggestion pompes par catégorie', o.brochureSuggeree({ categorie: 'pompes' }) === 'pompes-funebres');
+  test('suggestion pompes par type', o.brochureSuggeree({ type: 'pompes funèbres' }) === 'pompes-funebres');
+  test('suggestion famille sans type', o.brochureSuggeree({ categorie: 'famille', societe: '' }) === null);
+
+  const mentionUne = o.mentionBrochure(une.brochures);
+  test('mention une brochure', /brochure Pompes funèbres est jointe/i.test(o.mentionBrochure(o.resoudreBrochures(['pompes-funebres']).brochures)) &&
+    mentionUne.indexOf(o.SITE + '/' + o.BROCHURES.marbriers.chemin) !== -1);
+  const mentionPlus = o.mentionBrochure(plusieurs.brochures);
+  test('mention plusieurs brochures', /Les brochures suivantes sont jointes/.test(mentionPlus) &&
+    mentionPlus.indexOf('Brochure Pompes funèbres') !== -1 && mentionPlus.indexOf('Brochure Crématoriums') !== -1);
+  test('mention vide', o.mentionBrochure([]) === '' && o.avecBrochure('Bonjour.', []) === 'Bonjour.');
+  test('mention compat true', /brochure professionnelle est jointe/.test(o.mentionBrochure(true)));
+
+  /* Alignement du catalogue exposé par la console. */
+  const fs = require('fs');
+  const srcMails = fs.readFileSync(require('path').join(__dirname, '../assets/js/collaborateur-mails.js'), 'utf8');
+  test('console : mêmes ids de brochures', BROCHURE_IDS_MAILS(srcMails).join(',') === o.BROCHURE_IDS.join(','));
+  test('console : libellés identiques',
+    srcMails.indexOf('Brochure Pompes funèbres') !== -1 &&
+    srcMails.indexOf('Brochure Marbriers') !== -1 &&
+    srcMails.indexOf('Brochure Crématoriums') !== -1);
+
+  const fsPdf = require('fs');
+  ['documents/melodia-brochure-pompes-funebres.pdf',
+   'documents/melodia-brochure-marbriers.pdf',
+   'documents/melodia-brochure-crematoriums.pdf'].forEach((f) => {
+    const buf = fsPdf.readFileSync(require('path').join(__dirname, '..', f));
+    test('PDF ' + f, buf.slice(0, 5).toString() === '%PDF-' && buf.length > 100 * 1024 && buf.length < 3 * 1024 * 1024);
+  });
 
   return ok;
+}
+
+function BROCHURE_IDS_MAILS(src) {
+  const m = src.match(/var BROCHURE_IDS = \[([^\]]+)\]/);
+  if (!m) return [];
+  return m[1].split(',').map((x) => x.replace(/['"\s]/g, '')).filter(Boolean);
 }
 
 if (require.main === module) process.exit(run() ? 0 : 1);

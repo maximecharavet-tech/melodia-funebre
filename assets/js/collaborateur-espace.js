@@ -14,7 +14,7 @@
   var JULIE = 'julie@melodia-funebre.fr';
   var lireProspects = function () { return []; };
   var aller = function () {};
-  var pretEtat = { id: 'pf-premier-contact', layout: '', siret: '', vars: {}, pisteId: '', creerFiche: false, dest: '', brochure: true, apercuFmt: 'desktop', piece: null };
+  var pretEtat = { id: 'pf-premier-contact', layout: '', siret: '', vars: {}, pisteId: '', creerFiche: false, dest: '', brochures: null, brochuresManuel: false, apercuFmt: 'desktop', piece: null };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -557,6 +557,7 @@
       mode: o.mode || 'envoi',
       modele: (o.modele && o.modele.id) || (o.modele && o.modele.nom) || rendu.sujet,
       joindreBrochure: o.joindreBrochure !== false,
+      brochures: Array.isArray(o.brochures) ? o.brochures : undefined,
       envois: [{
         to: dest,
         ref: fiche ? fiche.siret : '',
@@ -1021,6 +1022,86 @@
   }
 
 
+  function catalogueBrochures() {
+    var M = window.MelodiaMails;
+    return (M && M.BROCHURES) ? M.BROCHURES : {};
+  }
+  function idsCatalogueBrochures() {
+    var M = window.MelodiaMails;
+    if (M && M.BROCHURE_IDS) return M.BROCHURE_IDS.slice();
+    return Object.keys(catalogueBrochures());
+  }
+  function brochureSuggereePret(fiche) {
+    var M = window.MelodiaMails;
+    if (!M || !M.brochureSuggeree) return null;
+    var m = modelePretCourant();
+    var v = pretEtat.vars || {};
+    return M.brochureSuggeree({
+      categorie: m && m.categorie,
+      societe: v.societe || v.agence || '',
+      nom: (fiche && fiche.nom) || v.nom || '',
+      enseigne: fiche && (fiche.enseigne || fiche.nom),
+      type: fiche && (fiche.type || fiche.activite || fiche.metier),
+      activite: fiche && fiche.activite,
+      metier: fiche && fiche.metier
+    });
+  }
+  function brochuresParDefaut(fiche) {
+    var ids = ['professionnels'];
+    var s = brochureSuggereePret(fiche);
+    if (s && ids.indexOf(s) === -1) ids.push(s);
+    return ids;
+  }
+  function brochuresPret(fiche) {
+    if (pretEtat.brochures && pretEtat.brochuresManuel) return pretEtat.brochures.slice();
+    if (pretEtat.brochures && !pretEtat.brochuresManuel) {
+      /* Recalcule la suggestion tant que Julie n’a pas touché aux cases. */
+    }
+    return brochuresParDefaut(fiche);
+  }
+  function casesBrochuresHtml(idsCoches, suggeree) {
+    var cat = catalogueBrochures();
+    var ids = idsCatalogueBrochures();
+    var cases = ids.map(function (id) {
+      var b = cat[id];
+      if (!b) return '';
+      var on = idsCoches.indexOf(id) !== -1;
+      var hint = (suggeree === id) ? ' <span class="col-opt">suggérée</span>' : '';
+      return '<label class="col-case"><input type="checkbox" data-brochure="' + esc(id) + '"' +
+        (on ? ' checked' : '') + '> ' + esc(b.label) + hint + '</label>';
+    }).join('');
+    var aide = suggeree && cat[suggeree]
+      ? '<p class="col-aide col-brochure-hint" id="pret-brochure-suggestion">Suggestion d’après le prospect : ' + esc(cat[suggeree].label) + '.</p>'
+      : '<p class="col-aide col-brochure-hint" id="pret-brochure-suggestion">Aucune, une ou plusieurs brochures peuvent être jointes.</p>';
+    return '<div class="col-brochures" role="group" aria-label="Brochures à joindre">' +
+      '<p class="field-label">Brochures à joindre <span class="col-opt">(au choix)</span></p>' +
+      cases + aide + '</div>';
+  }
+  function lireBrochuresCochees(racine) {
+    var ids = [];
+    Array.prototype.forEach.call(racine.querySelectorAll('[data-brochure]'), function (el) {
+      if (el.checked) ids.push(el.getAttribute('data-brochure'));
+    });
+    return ids;
+  }
+  function libellesPieces(ids, piece) {
+    var cat = catalogueBrochures();
+    var noms = (ids || []).map(function (id) { return cat[id] && cat[id].label; }).filter(Boolean);
+    if (piece && piece.nom) noms.push(piece.nom);
+    return noms;
+  }
+  function dessinerPieces(racine, ids, piece) {
+    var el = racine.querySelector('#pret-pieces');
+    if (!el) return;
+    var noms = libellesPieces(ids, piece);
+    if (!noms.length) {
+      el.innerHTML = '<strong>Pièces jointes</strong> : aucune.';
+      return;
+    }
+    el.innerHTML = '<strong>Pièces jointes</strong> (' + noms.length + ') :' +
+      '<ul>' + noms.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>';
+  }
+
   function vuePret() {
     appliquerPrefillPret();
     var M = window.MelodiaMails;
@@ -1029,7 +1110,8 @@
     var m = modelePretCourant() || liste[0];
     if (m && !pretEtat.id) pretEtat.id = m.id;
     var fiche = ficheParSiret(pretEtat.siret);
-    var brochureOn = pretEtat.brochure !== false;
+    var idsBrochure = brochuresPret(fiche);
+    var suggeree = brochureSuggereePret(fiche);
     return banniereEnvoi('Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail.') +
       '<div class="col-pret-entete">' +
         '<p class="col-pret-objectif" id="pret-quota">Quota du jour : en cours de lecture…</p>' +
@@ -1056,10 +1138,10 @@
                 '<input class="field-input" id="pret-ville" value="' + esc((pretEtat.vars && pretEtat.vars.ville) || '') + '" placeholder="Ville"></div>' +
             '</div>' +
           '</div>' +
-          '<label class="col-case"><input type="checkbox" id="pret-brochure"' + (brochureOn ? ' checked' : '') + '> Joindre la brochure professionnelle (PDF)</label>' +
+          casesBrochuresHtml(idsBrochure, suggeree) +
           '<div class="field"><label class="field-label" for="pret-pdf">PDF personnel <span class="col-opt">(facultatif, 2,5 Mo maximum)</span></label>' +
             '<input class="field-input" id="pret-pdf" type="file" accept="application/pdf,.pdf">' +
-            '<p class="col-aide" id="pret-pdf-etat">La brochure officielle de 1 Mo est jointe par défaut. Un PDF personnel remplace ou s’ajoute, dans la limite technique du serveur (2,5 Mo).</p></div>' +
+            '<p class="col-aide" id="pret-pdf-etat">Cochez une ou plusieurs brochures, ou aucune. Un PDF personnel peut s’ajouter, dans la limite technique du serveur (2,5 Mo).</p></div>' +
           '<div class="col-actions">' +
             boutonEnvoiDirect('pret-envoyer') +
             (M.ENVOI_ACTIF ? '<button type="button" class="btn btn-outline btn-sm" id="pret-test">M’envoyer un test</button>' : '') +
@@ -1074,6 +1156,7 @@
           '<div class="col-apercu-cadre' + (pretEtat.apercuFmt === 'mobile' ? ' est-mobile' : ' est-desktop') + '" id="pret-cadre">' +
             '<iframe class="col-apercu" id="pret-apercu" title="Aperçu du courriel" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
           '</div>' +
+          '<div class="col-pieces" id="pret-pieces" aria-live="polite"></div>' +
           '<details class="col-lot">' +
             '<summary>Envoi groupé (CSV ou liste)</summary>' +
             '<p class="col-aide">Colonne : nom, e-mail, société, ville. L’e-mail suffit. Les doublons et les adresses invalides sont écartés. Le quota de 30 courriels par jour s’applique.</p>' +
@@ -1239,6 +1322,7 @@
       if (!rendu || !iframe) return null;
       iframe.srcdoc = rendu.html;
       if (etat) etat.textContent = 'Aperçu à jour.';
+      dessinerPieces(racine, lireBrochuresCochees(racine), pretEtat.piece);
       return rendu;
     }
     function relireServeur() {
@@ -1250,7 +1334,8 @@
       C.appeler({
         mode: 'apercu',
         modele: m && m.id,
-        joindreBrochure: !!(racine.querySelector('#pret-brochure') || { checked: true }).checked,
+        brochures: lireBrochuresCochees(racine),
+        joindreBrochure: lireBrochuresCochees(racine).length > 0,
         envois: [{ to: dest, nom: v.nom, societe: v.societe, ville: v.ville, sujet: rendu.sujet, titre: rendu.titre, texte: rendu.texte }],
         visuel: rendu.visuel || '',
         visuelAlt: rendu.visuelAlt || '',
@@ -1275,7 +1360,8 @@
         nom: v.nom,
         societe: v.societe,
         ville: v.ville,
-        joindreBrochure: !!(racine.querySelector('#pret-brochure') || { checked: true }).checked,
+        brochures: lireBrochuresCochees(racine),
+        joindreBrochure: lireBrochuresCochees(racine).length > 0,
         pieceBase64: piece && piece.base64,
         pieceNom: piece && piece.nom
       };
@@ -1330,12 +1416,27 @@
       if (e.target && (e.target.id === 'pret-dirigeant' || e.target.id === 'pret-email' || e.target.id === 'pret-agence' || e.target.id === 'pret-ville')) {
         pretEtat.vars = varsPret(racine);
         pretEtat.dest = ((racine.querySelector('#pret-email') || {}).value || '').trim();
+        if (!pretEtat.brochuresManuel && (e.target.id === 'pret-agence' || e.target.id === 'pret-dirigeant')) {
+          pretEtat.brochures = brochuresParDefaut(ficheParSiret(pretEtat.siret));
+          Array.prototype.forEach.call(racine.querySelectorAll('[data-brochure]'), function (el) {
+            el.checked = pretEtat.brochures.indexOf(el.getAttribute('data-brochure')) !== -1;
+          });
+          var s = brochureSuggereePret(ficheParSiret(pretEtat.siret));
+          var cat = catalogueBrochures();
+          var hint = racine.querySelector('#pret-brochure-suggestion');
+          if (hint) {
+            hint.textContent = (s && cat[s])
+              ? 'Suggestion d’après le prospect : ' + cat[s].label + '.'
+              : 'Aucune, une ou plusieurs brochures peuvent être jointes.';
+          }
+        }
         planifier();
       }
     });
     zone.addEventListener('change', function (e) {
-      if (e.target && e.target.id === 'pret-brochure') {
-        pretEtat.brochure = !!e.target.checked;
+      if (e.target && e.target.getAttribute && e.target.getAttribute('data-brochure')) {
+        pretEtat.brochures = lireBrochuresCochees(racine);
+        pretEtat.brochuresManuel = true;
         planifier();
       }
     });
@@ -1355,6 +1456,7 @@
           var b64 = r.indexOf(',') >= 0 ? r.split(',')[1] : r;
           pretEtat.piece = { nom: f.name, base64: b64 };
           if (etat) etat.textContent = 'PDF personnel prêt : ' + f.name + ' (' + Math.round(f.size / 1024) + ' Ko).';
+          dessinerPieces(racine, lireBrochuresCochees(racine), pretEtat.piece);
         };
         reader.readAsDataURL(f);
       });
@@ -1403,6 +1505,7 @@
         societe: c.societe,
         ville: c.ville,
         joindreBrochure: c.joindreBrochure,
+        brochures: c.brochures,
         pieceBase64: c.pieceBase64,
         pieceNom: c.pieceNom,
         apres: function () {
@@ -1432,7 +1535,8 @@
       var corps = {
         mode: 'envoi',
         modele: m.id,
-        joindreBrochure: c.joindreBrochure,
+        brochures: c.brochures || [],
+        joindreBrochure: (c.brochures || []).length > 0,
         envois: lotLu.ok.map(function (l) {
           return { to: l.email, nom: l.nom, societe: l.societe, ville: l.ville };
         }),

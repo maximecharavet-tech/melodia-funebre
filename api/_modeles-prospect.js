@@ -1,7 +1,7 @@
 /* 7 modèles Julie, composés côté serveur : aperçu, test et envoi
    partent du même texte. */
 import { readFileSync } from 'fs';
-import { objetDe, remplir, avecBrochure, varsNormalisees, BROCHURE_URL } from './_prospect-outils.js';
+import { objetDe, remplir, avecBrochure, varsNormalisees, BROCHURE_URL, resoudreBrochures } from './_prospect-outils.js';
 
 const data = JSON.parse(readFileSync('assets/data/modeles-julie.json', 'utf8'));
 export const MODELES_JULIE = data.modeles;
@@ -20,10 +20,11 @@ export function composerModele(id, vars, options) {
   const modele = modeleJulie(id);
   if (!modele) return null;
   const o = options || {};
-  const joindre = o.joindreBrochure !== false;
+  const choix = resoudreBrochures(o.brochures, o.joindreBrochure);
+  const joindre = choix.ids.length > 0;
   const sujet = objetDe(modele, vars);
   const titre = remplir(modele.titre, vars);
-  const texte = avecBrochure(remplir(modele.texte, vars), joindre, o.lienBrochure || BROCHURE_URL);
+  const texte = avecBrochure(remplir(modele.texte, vars), choix.brochures, o.liensBrochure || o.lienBrochure || BROCHURE_URL);
   const bouton = modele.bouton
     ? { texte: remplir(modele.bouton.texte, vars), url: modele.bouton.url }
     : null;
@@ -38,6 +39,7 @@ export function composerModele(id, vars, options) {
     signature: modele.signatureFixe || SIGNATURE_JULIE,
     pied: modele.pied || 'prospection',
     vars: varsNormalisees(vars),
-    joindreBrochure: joindre
+    joindreBrochure: joindre,
+    brochures: choix.ids
   };
 }

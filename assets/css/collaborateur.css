@@ -186,6 +186,20 @@
 .col-champs { display: grid; gap: 0.75rem; }
 .col-case { display: flex; gap: 0.6rem; align-items: flex-start; color: var(--bone); font-size: 0.92rem; line-height: 1.45; }
 .col-case input { margin-top: 0.25rem; width: 1.1rem; height: 1.1rem; accent-color: var(--or); }
+.col-brochures { display: grid; gap: 0.4rem; margin: 0.15rem 0 0.65rem; }
+.col-brochures .field-label { margin-bottom: 0.1rem; }
+.col-brochure-hint { margin: 0.1rem 0 0; }
+.col-pieces {
+  margin: 0.65rem 0 0;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line-soft);
+  background: var(--surface);
+  color: var(--bone);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.col-pieces strong { color: var(--paper); font-weight: 500; }
+.col-pieces ul { margin: 0.3rem 0 0; padding: 0 0 0 1.15rem; }
 .col-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 0.4rem; }
 .col-actions .btn { min-height: 44px; }
 .col-apercu {

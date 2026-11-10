@@ -1004,6 +1004,48 @@
     });
   }
 
+
+  var BROCHURES = {
+    professionnels: {
+      id: 'professionnels',
+      label: 'Brochure professionnelle',
+      chemin: 'documents/melodia-brochure-professionnels.pdf',
+      nom: 'Melodia-Funebre-Brochure-professionnels.pdf'
+    },
+    'pompes-funebres': {
+      id: 'pompes-funebres',
+      label: 'Brochure Pompes funèbres',
+      chemin: 'documents/melodia-brochure-pompes-funebres.pdf',
+      nom: 'Melodia-Funebre-Brochure-Pompes-funebres.pdf'
+    },
+    marbriers: {
+      id: 'marbriers',
+      label: 'Brochure Marbriers',
+      chemin: 'documents/melodia-brochure-marbriers.pdf',
+      nom: 'Melodia-Funebre-Brochure-Marbriers.pdf'
+    },
+    crematoriums: {
+      id: 'crematoriums',
+      label: 'Brochure Crématoriums',
+      chemin: 'documents/melodia-brochure-crematoriums.pdf',
+      nom: 'Melodia-Funebre-Brochure-Crematoriums.pdf'
+    }
+  };
+  var BROCHURE_IDS = ['professionnels', 'pompes-funebres', 'marbriers', 'crematoriums'];
+
+  function brochureSuggeree(contexte) {
+    var c = contexte || {};
+    var morceaux = [c.type, c.activite, c.activite_principale, c.metier, c.categorie,
+      c.societe, c.agence, c.nom, c.enseigne]
+      .map(function (x) { return String(x || '').toLowerCase(); }).join(' ');
+    if (/marbr/.test(morceaux)) return 'marbriers';
+    if (/cr[eé]matorium/.test(morceaux)) return 'crematoriums';
+    if (/pompe|fun[eè]bre|obs[eè]ques/.test(morceaux)) return 'pompes-funebres';
+    var cat = String(c.categorie || '').toLowerCase();
+    if (cat === 'pompes' || cat === 'sequence' || cat === 'prospection-plus') return 'pompes-funebres';
+    return null;
+  }
+
   var PDF_MAX = Math.floor(2.5 * 1024 * 1024);
   function validerEmailCsv(s) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim());
@@ -1121,6 +1163,9 @@
     parseCsv: parseCsv,
     validerPdfFichier: validerPdfFichier,
     PDF_MAX: PDF_MAX,
+    BROCHURES: BROCHURES,
+    BROCHURE_IDS: BROCHURE_IDS,
+    brochureSuggeree: brochureSuggeree,
     /* Exposé pour que l’espace sache qu’aucun envoi ne part d’ici. */
     envoi: function () { return false; }
   };

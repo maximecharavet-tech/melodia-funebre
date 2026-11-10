@@ -12,7 +12,7 @@
     },
     "api/prospect-mail.js": {
       "maxDuration": 30,
-      "includeFiles": "{documents/melodia-brochure-professionnels.pdf,assets/data/modeles-julie.json}"
+      "includeFiles": "{documents/melodia-brochure-*.pdf,assets/data/modeles-julie.json}"
     },
     "api/prospect-webhook.js": {
       "maxDuration": 30
