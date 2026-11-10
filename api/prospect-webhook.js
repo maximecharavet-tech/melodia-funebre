@@ -11,8 +11,11 @@
 //   RESEND_WEBHOOK_SECRET    secret d'endpoint Resend (whsec_…)
 // ═══════════════════════════════════════════════════════════════
 
-import { evenementVersStatut, rangerStatut, verifierSignatureResend } from './_prospect-outils.js';
+import { createRequire } from 'module';
 import { entetesService } from './_courrier.js';
+
+const require = createRequire(import.meta.url);
+const { evenementVersStatut, rangerStatut, verifierSignatureResend } = require('../lib/prospect-outils.cjs');
 
 export const config = { api: { bodyParser: false } };
 

@@ -48,16 +48,22 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { readFile } from 'fs/promises';
+import { createRequire } from 'module';
 import {
   SITE, gabarit, carteVisite, envoyer, envoyerLot, valideEmail,
   expediteurProspection, boiteMaison, origineAutorisee, entetesOrigine, tropSouvent,
   entetesService
 } from './_courrier.js';
-import { estModeleJulie, composerModele } from './_modeles-prospect.js';
-import {
+
+/* Les utilitaires purs sont en CJS : on les charge depuis cette route
+   d'entrée (vraiment ESM), pas depuis un module interne que Vercel
+   compile autrement. */
+const require = createRequire(import.meta.url);
+const { estModeleJulie, composerModele } = require('../lib/modeles-prospect.cjs');
+const {
   BROCHURE_CHEMIN, BROCHURE_NOM, BROCHURE_URL,
   pdfDepuisBase64, nomPiecePropre, avecBrochure
-} from './_prospect-outils.js';
+} = require('../lib/prospect-outils.cjs');
 
 const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
 /* La clé « anon » est publique par construction (elle est dans le source
