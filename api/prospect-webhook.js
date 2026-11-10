@@ -11,7 +11,7 @@
 //   RESEND_WEBHOOK_SECRET    secret d'endpoint Resend (whsec_…)
 // ═══════════════════════════════════════════════════════════════
 
-import { evenementVersStatut, rangerStatut, verifierSignatureResend } from './_prospect-outils.js';
+import { evenementVersStatut, rangerStatut, verifierSignatureResend, interpreterLectureJournal } from './_prospect-outils.js';
 import { entetesService } from './_courrier.js';
 
 export const config = { api: { bodyParser: false } };
@@ -55,17 +55,23 @@ export default async function handler(req, res) {
   if (!resendId || !statut) return res.status(200).json({ ok: true, ignore: true });
 
   const service = entetesService({ 'Content-Type': 'application/json', Prefer: 'return=representation' });
-  if (!service) return res.status(503).json({ error: 'Journal inaccessible.', code: 'NO_SERVICE' });
+  if (!service) {
+    const brut = String(process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+    if (brut) return res.status(503).json({ error: 'Clé de service invalide.', code: 'BAD_SERVICE_KEY' });
+    return res.status(503).json({ error: 'Journal inaccessible.', code: 'NO_SERVICE' });
+  }
 
   try {
     const url = SB_URL + '/rest/v1/envois_prospect?select=id,statut,ouvert_nb,clique_nb,ouvert_le,clique_le,delivre_le,rejete_le&resend_id=eq.' + encodeURIComponent(resendId);
     const lu = await fetch(url, { headers: service });
     if (!lu.ok) {
       const texte = await lu.text();
-      if (lu.status === 404 || /42P01|PGRST205|envois_prospect/i.test(texte)) {
+      const lec = interpreterLectureJournal(lu.status, texte);
+      if (lec.absent) {
         return res.status(200).json({ ok: true, ignore: true, note: 'Journal absent (migration 20261103_08 à appliquer).' });
       }
-      return res.status(502).json({ error: 'Lecture du journal impossible.' });
+      console.error('[prospect-webhook] lecture journal', lu.status, String(texte || '').slice(0, 200));
+      return res.status(502).json({ error: 'Lecture du journal impossible.', code: 'JOURNAL_READ' });
     }
     const lignes = await lu.json();
     if (!Array.isArray(lignes) || !lignes.length) return res.status(200).json({ ok: true, ignore: true });
