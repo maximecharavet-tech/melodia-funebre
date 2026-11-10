@@ -4,6 +4,7 @@
 const crypto = require('crypto');
 const o = require('../lib/prospect-outils.cjs');
 const pack = require('../assets/js/modeles-julie.js');
+const packJson = require('../assets/data/modeles-julie.json');
 const modeles = require('../lib/modeles-prospect.cjs');
 
 function run() {
@@ -29,6 +30,8 @@ function run() {
   test('7 modèles Julie', ids.length === 7, 'trouvés : ' + ids.join(', '));
   const attendus = ['pf-premier-contact', 'pf-relance-j4', 'pf-relance-j10', 'pf-apres-appel', 'pf-partenariat', 'pf-brochure', 'pf-merci'];
   test('ids stables', JSON.stringify(ids) === JSON.stringify(attendus));
+  test('JSON et UMD alignés', JSON.stringify(pack.modeles.map((m) => m.id + m.objet + m.texte)) === JSON.stringify(packJson.modeles.map((m) => m.id + m.objet + m.texte)));
+
   const compose = modeles.composerModele('pf-premier-contact', { nom: 'Marie Dupont', societe: 'Pompes Dupont', ville: 'Lyon' });
   test('composerModele sujet', !!(compose && compose.sujet.indexOf('Pompes Dupont') !== -1 && compose.sujet.indexOf('{') === -1));
   test('composerModele texte', !!(compose && compose.texte.indexOf('Marie Dupont') !== -1 && compose.texte.indexOf('Lyon') !== -1));
