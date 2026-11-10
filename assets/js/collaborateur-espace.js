@@ -14,7 +14,7 @@
   var JULIE = 'julie@melodia-funebre.fr';
   var lireProspects = function () { return []; };
   var aller = function () {};
-  var pretEtat = { id: 'seq-1', layout: '', siret: '', vars: {}, pisteId: '', creerFiche: false, dest: '' };
+  var pretEtat = { id: 'pf-premier-contact', layout: '', siret: '', vars: {}, pisteId: '', creerFiche: false, dest: '', brochure: true, apercuFmt: 'desktop', piece: null };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -540,13 +540,13 @@
     var rendu = o.rendu;
     if (!rendu) return;
     if (rendu.manquants && rendu.manquants.length) { dire('À remplir avant l’envoi : ' + rendu.manquants.join(', ') + '.'); return; }
-    if (rendu.sansMusique) { dire('Choisissez un morceau du catalogue avant d’envoyer.'); return; }
+    if (rendu.sansMusique && !(o.modele && o.modele.categorie === 'julie')) { dire('Choisissez un morceau du catalogue avant d’envoyer.'); return; }
     var texte = texteEnvoi(rendu);
     if (/\{\{?[A-Za-zÀ-ÿ_]/.test(texte + ' ' + rendu.sujet + ' ' + (rendu.titre || ''))) {
       dire('Le message contient encore des variables vides (entre accolades) : complétez-les avant d’envoyer.');
       return;
     }
-    if (!window.confirm('Envoyer ce courriel à ' + dest + ' ?')) return;
+    if (!window.confirm((o.mode === 'test' ? 'S’envoyer ce courriel de test à ' : 'Envoyer ce courriel à ') + dest + ' ?')) return;
     var fiche = ficheParEmail(dest);
     var b = o.bouton;
     b.disabled = true;
@@ -554,23 +554,34 @@
     b.textContent = 'Envoi en cours…';
     dire('Envoi en cours à ' + dest + '…');
     var corps = {
-      mode: 'envoi',
-      modele: (o.modele && o.modele.nom) || rendu.sujet,
-      envois: [{ to: dest, ref: fiche ? fiche.siret : '', sujet: rendu.sujet, titre: rendu.titre || '', texte: texte }],
+      mode: o.mode || 'envoi',
+      modele: (o.modele && o.modele.id) || (o.modele && o.modele.nom) || rendu.sujet,
+      joindreBrochure: o.joindreBrochure !== false,
+      envois: [{
+        to: dest,
+        ref: fiche ? fiche.siret : '',
+        nom: o.nom || '',
+        societe: o.societe || '',
+        ville: o.ville || '',
+        sujet: rendu.sujet,
+        titre: rendu.titre || '',
+        texte: texte
+      }],
       signature: C.signature ? C.signature() : {},
       lienTexte: rendu.bouton ? rendu.bouton.texte : '',
       lienUrl: rendu.bouton ? rendu.bouton.url : '',
       visuel: rendu.visuel || '',
       visuelAlt: rendu.visuelAlt || ''
     };
+    if (o.pieceBase64) { corps.pieceBase64 = o.pieceBase64; corps.pieceNom = o.pieceNom || 'piece.pdf'; }
     return C.appeler(corps).then(function (r) {
       var parti = r.ok && r.d && r.d.envoyes && r.d.envoyes.length;
       if (!parti) { dire(messageEchecEnvoi(r)); return; }
       var q = texteQuotaEnvoi(r.d.quota);
-      dire('Courriel envoyé à ' + dest + ', avec les images.' + (q ? ' ' + q + '.' : '') + (fiche ? ' Noté sur la fiche ' + fiche.nom + '.' : ''));
+      dire((corps.mode === 'test' ? 'Test envoyé à ' : 'Courriel envoyé à ') + dest + ', avec les images.' + (q ? ' ' + q + '.' : '') + (fiche && corps.mode !== 'test' ? ' Noté sur la fiche ' + fiche.nom + '.' : ''));
       var u = utilisateur();
       if (u.email) noterGeste(u.email, 'mails');
-      if (fiche && window.MelodiaProspects && window.MelodiaProspects.enregistrer) {
+      if (fiche && corps.mode !== 'test' && window.MelodiaProspects && window.MelodiaProspects.enregistrer) {
         var journal = (fiche.journal || []).concat([{
           le: new Date().toISOString(),
           quoi: 'Courriel envoyé',
@@ -1009,33 +1020,20 @@
     }
   }
 
+
   function vuePret() {
     appliquerPrefillPret();
     var M = window.MelodiaMails;
     if (!M) return '<p class="form-msg err" style="display:block;">La bibliothèque de mails n’est pas chargée.</p>';
-    var u = utilisateur();
     var liste = M.modelesPret();
     var m = modelePretCourant() || liste[0];
     if (m && !pretEtat.id) pretEtat.id = m.id;
     var fiche = ficheParSiret(pretEtat.siret);
-    var seq = fiche && M.prochaineSequence ? M.prochaineSequence(fiche) : null;
-    var obj = objectifMails(u.email);
-    var fait = compteurMailsJour(u.email);
-    var hist = lire(u.email, 'historique_mails', []);
-    if (!Array.isArray(hist)) hist = [];
-    var prospects = (lireProspects() || []).filter(function (p) { return p.email; });
-    var optionsProspects = prospects.map(function (p) {
-      return '<option value="' + esc(p.siret) + '"' + (p.siret === pretEtat.siret ? ' selected' : '') + '>' +
-        esc(p.nom) + (p.ville ? ' · ' + esc(p.ville) : '') + '</option>';
-    }).join('');
-    var premiumOn = pretEtat.layout ? pretEtat.layout === 'premium' : !!(m && m.layout === 'premium');
-    return banniereEnvoi('Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail. Les images utilisent les adresses du site.') +
+    var brochureOn = pretEtat.brochure !== false;
+    return banniereEnvoi('Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail.') +
       '<div class="col-pret-entete">' +
-        '<p class="col-pret-objectif"><span id="pret-compteur">' + fait + ' / ' + obj + '</span> mails aujourd’hui · ' +
-        '<label class="col-pret-obj-l">Objectif <input class="field-input col-pret-obj-i" id="pret-objectif" type="number" min="1" max="99" value="' + obj + '"></label></p>' +
-        (seq ? '<p class="col-aide">Prochain : Séquence ' + seq.num + ' — le ' + esc(seq.le.split('-').reverse().join('/')) +
-          ' <button type="button" class="btn btn-outline btn-sm" id="pret-seq">Ouvrir la séquence</button></p>' : '') +
-        (fiche ? '<p class="col-aide">Fiche liée : <strong>' + esc(fiche.nom) + '</strong> · <a href="#prospects" class="col-lien-btn" data-aller-fiche="' + esc(fiche.siret) + '">Voir la fiche</a></p>' : '') +
+        '<p class="col-pret-objectif" id="pret-quota">Quota du jour : en cours de lecture…</p>' +
+        (fiche ? '<p class="col-aide">Fiche liée : <strong>' + esc(fiche.nom) + '</strong></p>' : '') +
       '</div>' +
       '<div class="col-mails col-pret">' +
         '<div class="col-mails-liste">' +
@@ -1045,45 +1043,55 @@
           }).join('') + '</ul>' +
         '</div>' +
         '<div class="col-mails-edit">' +
-          '<div class="col-pret-layout">' +
-            '<span class="field-label">Mise en page</span>' +
-            '<button type="button" class="col-filtre' + (!premiumOn ? ' est-on' : '') + '" data-pret-layout="standard">Standard</button>' +
-            '<button type="button" class="col-filtre' + (premiumOn ? ' est-on' : '') + '" data-pret-layout="premium">Premium</button>' +
-          '</div>' +
+          '<p class="panel-note">' + esc(m.quand) + ' Choisissez un modèle, indiquez le nom et l’e-mail : le reste se remplit tout seul.</p>' +
           '<div class="col-champs">' +
-            '<div class="field"><label class="field-label" for="pret-prospect">Rattacher une fiche du portefeuille</label>' +
-              '<select class="field-select" id="pret-prospect"><option value="">— Saisie libre —</option>' + optionsProspects + '</select></div>' +
             '<div class="field"><label class="field-label" for="pret-dirigeant">Nom du contact</label>' +
-              '<input class="field-input" id="pret-dirigeant" list="pret-noms" value="' + esc((pretEtat.vars && pretEtat.vars.dirigeant) || '') + '" placeholder="Prénom ou nom"></div>' +
-            '<datalist id="pret-noms">' + prospects.map(function (p) {
-              return '<option value="' + esc(p.dirigeant || p.nom) + '">' + esc(p.nom) + '</option>';
-            }).join('') + '</datalist>' +
-            '<div class="field"><label class="field-label" for="pret-email">Email</label>' +
-              '<input class="field-input" id="pret-email" type="email" value="' + esc(pretEtat.dest || (fiche && fiche.email) || '') + '" placeholder="contact@agence.fr"></div>' +
+              '<input class="field-input" id="pret-dirigeant" value="' + esc((pretEtat.vars && pretEtat.vars.dirigeant) || '') + '" placeholder="Marie Dupont" autocomplete="name"></div>' +
+            '<div class="field"><label class="field-label" for="pret-email">E-mail</label>' +
+              '<input class="field-input" id="pret-email" type="email" value="' + esc(pretEtat.dest || (fiche && fiche.email) || '') + '" placeholder="contact@agence.fr" autocomplete="email"></div>' +
             '<div class="field-row">' +
               '<div class="field"><label class="field-label" for="pret-agence">Agence <span class="col-opt">(facultatif)</span></label>' +
-                '<input class="field-input" id="pret-agence" value="' + esc((pretEtat.vars && pretEtat.vars.agence) || '') + '"></div>' +
+                '<input class="field-input" id="pret-agence" value="' + esc((pretEtat.vars && pretEtat.vars.agence) || '') + '" placeholder="Nom de la maison"></div>' +
               '<div class="field"><label class="field-label" for="pret-ville">Ville <span class="col-opt">(facultatif)</span></label>' +
-                '<input class="field-input" id="pret-ville" value="' + esc((pretEtat.vars && pretEtat.vars.ville) || '') + '"></div>' +
+                '<input class="field-input" id="pret-ville" value="' + esc((pretEtat.vars && pretEtat.vars.ville) || '') + '" placeholder="Ville"></div>' +
             '</div>' +
-            (pretEtat.siret ? '' : '<label class="col-case"><input type="checkbox" id="pret-creer"' + (pretEtat.creerFiche ? ' checked' : '') + '> Créer la fiche à l’enregistrement</label>') +
-            '<div class="field"><label class="field-label" for="pret-piste">Exemple musical</label>' +
-              '<select class="field-select" id="pret-piste"><option value="">Chargement…</option></select></div>' +
           '</div>' +
+          '<label class="col-case"><input type="checkbox" id="pret-brochure"' + (brochureOn ? ' checked' : '') + '> Joindre la brochure professionnelle (PDF)</label>' +
+          '<div class="field"><label class="field-label" for="pret-pdf">PDF personnel <span class="col-opt">(facultatif, 2,5 Mo maximum)</span></label>' +
+            '<input class="field-input" id="pret-pdf" type="file" accept="application/pdf,.pdf">' +
+            '<p class="col-aide" id="pret-pdf-etat">La brochure officielle de 1 Mo est jointe par défaut. Un PDF personnel remplace ou s’ajoute, dans la limite technique du serveur (2,5 Mo).</p></div>' +
           '<div class="col-actions">' +
             boutonEnvoiDirect('pret-envoyer') +
-            '<button type="button" class="btn ' + (M.ENVOI_ACTIF ? 'btn-outline' : 'btn-gold') + ' btn-sm" id="pret-copier">Copier le mail</button>' +
-            '<button type="button" class="btn btn-outline btn-sm" id="pret-objet">Copier l’objet</button>' +
-            '<button type="button" class="btn btn-outline btn-sm" id="pret-gmail">Ouvrir dans Gmail</button>' +
-            '<a class="btn btn-ghost btn-sm" id="pret-mailto" href="#">mailto</a>' +
+            (M.ENVOI_ACTIF ? '<button type="button" class="btn btn-outline btn-sm" id="pret-test">M’envoyer un test</button>' : '') +
+            '<button type="button" class="btn btn-outline btn-sm" id="pret-copier">Copier le mail</button>' +
           '</div>' +
           '<p class="col-aide" id="pret-etat" role="status"></p>' +
           '<p class="col-aide" id="pret-envoi" role="status" aria-live="polite"></p>' +
-          '<iframe class="col-apercu" id="pret-apercu" title="Aperçu du courriel" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
-          (hist.length ? '<div class="col-pret-hist"><div class="field-label">Derniers mails préparés</div><ul>' +
-            hist.slice(0, 8).map(function (h, i) {
-              return '<li><button type="button" class="col-lien-btn" data-pret-rouvrir="' + i + '">' + esc(h.quand + ' — ' + h.modele) + '</button></li>';
-            }).join('') + '</ul></div>' : '') +
+          '<div class="col-apercu-barre" role="group" aria-label="Format de l’aperçu">' +
+            '<button type="button" class="col-filtre' + (pretEtat.apercuFmt !== 'mobile' ? ' est-on' : '') + '" data-apercu-fmt="desktop">Ordinateur</button>' +
+            '<button type="button" class="col-filtre' + (pretEtat.apercuFmt === 'mobile' ? ' est-on' : '') + '" data-apercu-fmt="mobile">Mobile</button>' +
+          '</div>' +
+          '<div class="col-apercu-cadre' + (pretEtat.apercuFmt === 'mobile' ? ' est-mobile' : ' est-desktop') + '" id="pret-cadre">' +
+            '<iframe class="col-apercu" id="pret-apercu" title="Aperçu du courriel" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>' +
+          '</div>' +
+          '<details class="col-lot">' +
+            '<summary>Envoi groupé (CSV ou liste)</summary>' +
+            '<p class="col-aide">Colonne : nom, e-mail, société, ville. L’e-mail suffit. Les doublons et les adresses invalides sont écartés. Le quota de 30 courriels par jour s’applique.</p>' +
+            '<div class="field"><label class="field-label" for="pret-csv">Fichier CSV</label>' +
+              '<input class="field-input" id="pret-csv" type="file" accept=".csv,text/csv,text/plain,.txt"></div>' +
+            '<div class="field"><label class="field-label" for="pret-liste">Ou collez une liste</label>' +
+              '<textarea class="field-input col-lot-liste" id="pret-liste" rows="5" placeholder="Marie Dupont, marie@agence.fr, Pompes Dupont, Lyon"></textarea></div>' +
+            '<p class="col-aide" id="pret-lot-etat" role="status"></p>' +
+            '<div id="pret-lot-apercu" class="col-lot-apercu"></div>' +
+            '<button type="button" class="btn btn-gold btn-sm" id="pret-lot-envoyer">Envoyer le lot</button>' +
+          '</details>' +
+          '<div class="col-suivi">' +
+            '<h3 class="col-suivi-t">Suivi des envois</h3>' +
+            '<p class="col-aide" id="pret-suivi-note">Chargement du journal…</p>' +
+            '<div class="col-suivi-table-wrap"><table class="col-suivi-table" id="pret-suivi"><thead><tr>' +
+              '<th>Date</th><th>Destinataire</th><th>Modèle</th><th>Statut</th>' +
+              '</tr></thead><tbody></tbody></table></div>' +
+          '</div>' +
         '</div>' +
       '</div>';
   }
@@ -1091,7 +1099,9 @@
   function varsPret(racine) {
     return {
       dirigeant: ((racine.querySelector('#pret-dirigeant') || {}).value || '').trim(),
+      nom: ((racine.querySelector('#pret-dirigeant') || {}).value || '').trim(),
       agence: ((racine.querySelector('#pret-agence') || {}).value || '').trim(),
+      societe: ((racine.querySelector('#pret-agence') || {}).value || '').trim(),
       ville: ((racine.querySelector('#pret-ville') || {}).value || '').trim()
     };
   }
@@ -1100,23 +1110,32 @@
     var M = window.MelodiaMails;
     var m = modelePretCourant();
     if (!M || !m) return null;
-    var select = racine.querySelector('#pret-piste');
-    var piste = catalogue && select ? (catalogue.filter(function (p) { return p.id === select.value; })[0] || null) : null;
-    var layout = (pretEtat.layout ? pretEtat.layout === 'premium' : m.layout === 'premium') ? 'premium' : 'standard';
     var u = utilisateur();
     return M.composer({
       modele: m,
       vars: varsPret(racine),
-      piste: piste,
+      piste: null,
       exemple: true,
       signature: m.signatureFixe || signatureDe(u.email, u),
       absolu: !!absolu,
-      layout: layout
+      layout: 'premium'
     });
   }
 
-  /* sansFiche : après un envoi direct, la fiche est déjà notée par
-     envoyerDirect (« Courriel envoyé ») et aucune fiche n'est créée. */
+  function libelleStatut(s) {
+    return ({
+      envoye: 'Envoyé', delivre: 'Délivré', ouvert: 'Ouvert',
+      clique: 'Cliqué', rejete: 'Rejeté', plainte: 'Signalé', differe: 'Différé'
+    })[s] || s || '—';
+  }
+
+  function formaterQuand(iso) {
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleString('fr-FR', { timeZone: 'Europe/Paris', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return String(iso); }
+  }
+
   function majApresPreparation(racine, rendu, sansFiche) {
     var m = modelePretCourant();
     if (!m || !rendu) return;
@@ -1163,172 +1182,283 @@
     }).catch(function () {});
   }
 
+
   function brancherPret(racine) {
     var M = window.MelodiaMails;
-    var catalogue = [];
+    var C = window.MelodiaCampagne;
     var timer = null;
-    function relire() {
-      var rendu = renduPret(racine, catalogue, false);
+    var lotLu = { ok: [], erreurs: [], ignores: 0 };
+
+    function quotaTexte(q) {
+      if (!q) return 'Quota du jour indisponible pour le moment.';
+      return 'Quota du jour : ' + (q.utilise || 0) + ' / ' + (q.max || 30) + ' envoyés' +
+        (q.restant ? ' · ' + q.restant + ' restant' + (q.restant > 1 ? 's' : '') : ' · quota atteint, reprise demain') +
+        (q.persistant ? '' : ' (journal non appliqué : le compteur est provisoire)');
+    }
+    function lireQuota() {
+      if (!C || !C.appeler) return;
+      C.appeler({ mode: 'quota' }).then(function (r) {
+        var z = racine.querySelector('#pret-quota');
+        if (z) z.textContent = quotaTexte(r.ok && r.d && r.d.quota);
+      });
+    }
+    function lireJournal() {
+      var note = racine.querySelector('#pret-suivi-note');
+      var corps = racine.querySelector('#pret-suivi tbody');
+      if (!C || !C.appeler) {
+        if (note) note.textContent = 'Suivi indisponible hors session.';
+        return;
+      }
+      C.appeler({ mode: 'journal' }).then(function (r) {
+        if (!r.ok || !r.d) {
+          if (note) note.textContent = 'Suivi indisponible pour le moment.';
+          return;
+        }
+        if (r.d.note) { if (note) note.textContent = r.d.note; }
+        else if (note) note.textContent = (r.d.lignes && r.d.lignes.length)
+          ? r.d.lignes.length + ' envoi' + (r.d.lignes.length > 1 ? 's' : '') + ' récents.'
+          : 'Aucun envoi enregistré pour le moment.';
+        if (!corps) return;
+        var lignes = r.d.lignes || [];
+        if (!lignes.length) { corps.innerHTML = '<tr><td colspan="4">—</td></tr>'; return; }
+        corps.innerHTML = lignes.map(function (l) {
+          return '<tr><td>' + esc(formaterQuand(l.envoye_le)) + '</td><td>' + esc(l.destinataire || '') +
+            (l.societe ? '<br><span class="col-opt">' + esc(l.societe) + '</span>' : '') + '</td><td>' +
+            esc(l.modele || l.sujet || '') + '</td><td><span class="col-statut col-statut-' + esc(l.statut || 'envoye') + '">' +
+            esc(libelleStatut(l.statut)) +
+            (l.ouvert_nb ? ' · ' + l.ouvert_nb + ' ouv.' : '') +
+            (l.clique_nb ? ' · ' + l.clique_nb + ' clic' : '') +
+            '</span></td></tr>';
+        }).join('');
+      });
+    }
+    function relireClient() {
+      var rendu = renduPret(racine, [], false);
       var iframe = racine.querySelector('#pret-apercu');
       var etat = racine.querySelector('#pret-etat');
       if (!rendu || !iframe) return null;
       iframe.srcdoc = rendu.html;
-      if (etat) {
-        var msgs = [];
-        if (rendu.manquants.length) msgs.push('À remplir : ' + rendu.manquants.map(function (k) {
-          return (M.CHAMPS[k] && M.CHAMPS[k].label) || k;
-        }).join(', ') + '.');
-        if (rendu.sansMusique) msgs.push('Aucun morceau du catalogue : choisissez-en un dans la liste.');
-        if (!msgs.length) msgs.push('Aperçu à jour.');
-        etat.textContent = msgs.join(' ');
-      }
-      var ml = racine.querySelector('#pret-mailto');
-      var dest = (racine.querySelector('#pret-email') || {}).value || '';
-      if (ml) {
-        var url = M.mailto(dest, rendu.sujet, rendu.texte);
-        ml.href = url;
-        ml.title = url.length > 1900 ? MSG_MAILTO_LONG : '';
-      }
+      if (etat) etat.textContent = 'Aperçu à jour.';
       return rendu;
     }
-    function planifier() {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(relire, 220);
+    function relireServeur() {
+      var rendu = relireClient();
+      if (!rendu || !C || !C.appeler) return;
+      var v = varsPret(racine);
+      var dest = ((racine.querySelector('#pret-email') || {}).value || '').trim();
+      var m = modelePretCourant();
+      C.appeler({
+        mode: 'apercu',
+        modele: m && m.id,
+        joindreBrochure: !!(racine.querySelector('#pret-brochure') || { checked: true }).checked,
+        envois: [{ to: dest, nom: v.nom, societe: v.societe, ville: v.ville, sujet: rendu.sujet, titre: rendu.titre, texte: rendu.texte }],
+        visuel: rendu.visuel || '',
+        visuelAlt: rendu.visuelAlt || '',
+        lienTexte: rendu.bouton ? rendu.bouton.texte : '',
+        lienUrl: rendu.bouton ? rendu.bouton.url : '',
+        signature: C.signature ? C.signature() : {}
+      }).then(function (r) {
+        var iframe = racine.querySelector('#pret-apercu');
+        if (r.ok && r.d && r.d.html && iframe) iframe.srcdoc = r.d.html;
+      });
     }
+    function planifier() {
+      relireClient();
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(relireServeur, 280);
+    }
+    function champsEnvoi() {
+      var v = varsPret(racine);
+      var piece = pretEtat.piece;
+      return {
+        dest: ((racine.querySelector('#pret-email') || {}).value || '').trim(),
+        nom: v.nom,
+        societe: v.societe,
+        ville: v.ville,
+        joindreBrochure: !!(racine.querySelector('#pret-brochure') || { checked: true }).checked,
+        pieceBase64: piece && piece.base64,
+        pieceNom: piece && piece.nom
+      };
+    }
+    function dessinerLot() {
+      var z = racine.querySelector('#pret-lot-etat');
+      var liste = racine.querySelector('#pret-lot-apercu');
+      var n = lotLu.ok.length, e = lotLu.erreurs.length, i = lotLu.ignores;
+      if (z) {
+        z.textContent = n
+          ? (n + ' destinataire' + (n > 1 ? 's' : '') + ' prêt' + (n > 1 ? 's' : '') +
+            (e ? ' · ' + e + ' ligne' + (e > 1 ? 's' : '') + ' écartée' + (e > 1 ? 's' : '') : '') +
+            (i ? ' · ' + i + ' doublon' + (i > 1 ? 's' : '') : '') + '.')
+          : (e ? e + ' ligne' + (e > 1 ? 's' : '') + ' invalide' + (e > 1 ? 's' : '') + '.' : 'Aucune adresse reconnue.');
+      }
+      if (liste) {
+        liste.innerHTML = lotLu.ok.slice(0, 12).map(function (l) {
+          return '<div>' + esc(l.nom || '—') + ' · ' + esc(l.email) + (l.societe ? ' · ' + esc(l.societe) : '') + '</div>';
+        }).join('') + (n > 12 ? '<div class="col-opt">… et ' + (n - 12) + ' de plus</div>' : '');
+      }
+    }
+    function lireListe(texte) {
+      lotLu = M.parseCsv ? M.parseCsv(texte) : { ok: [], erreurs: [], ignores: 0 };
+      dessinerLot();
+    }
+
     var zone = racine.querySelector('.col-pret') || racine;
     zone.addEventListener('click', function (e) {
       var mod = e.target.closest && e.target.closest('[data-pret-modele]');
       if (mod) {
         pretEtat.id = mod.getAttribute('data-pret-modele');
         pretEtat.vars = varsPret(racine);
+        pretEtat.dest = ((racine.querySelector('#pret-email') || {}).value || '').trim();
         aller('pret');
         return;
       }
-      var lay = e.target.closest && e.target.closest('[data-pret-layout]');
-      if (lay) {
-        pretEtat.layout = lay.getAttribute('data-pret-layout');
-        relire();
-        Array.prototype.forEach.call(racine.querySelectorAll('[data-pret-layout]'), function (b) {
-          b.classList.toggle('est-on', b.getAttribute('data-pret-layout') === pretEtat.layout);
+      var fmt = e.target.closest && e.target.closest('[data-apercu-fmt]');
+      if (fmt) {
+        pretEtat.apercuFmt = fmt.getAttribute('data-apercu-fmt');
+        var cadre = racine.querySelector('#pret-cadre');
+        if (cadre) {
+          cadre.classList.toggle('est-mobile', pretEtat.apercuFmt === 'mobile');
+          cadre.classList.toggle('est-desktop', pretEtat.apercuFmt !== 'mobile');
+        }
+        Array.prototype.forEach.call(racine.querySelectorAll('[data-apercu-fmt]'), function (b) {
+          b.classList.toggle('est-on', b.getAttribute('data-apercu-fmt') === pretEtat.apercuFmt);
         });
       }
-      var rouv = e.target.closest && e.target.closest('[data-pret-rouvrir]');
-      if (rouv) {
-        var u = utilisateur();
-        var hist = lire(u.email, 'historique_mails', []);
-        var h = hist[Number(rouv.getAttribute('data-pret-rouvrir'))];
-        if (h) {
-          pretEtat.id = h.id;
-          pretEtat.siret = h.siret || '';
-          pretEtat.vars = h.vars || {};
-          pretEtat.layout = h.layout || 'standard';
-          pretEtat.dest = h.dest || '';
-          aller('pret');
-        }
+    });
+    zone.addEventListener('input', function (e) {
+      if (e.target && e.target.id === 'pret-liste') lireListe(e.target.value);
+      if (e.target && (e.target.id === 'pret-dirigeant' || e.target.id === 'pret-email' || e.target.id === 'pret-agence' || e.target.id === 'pret-ville')) {
+        pretEtat.vars = varsPret(racine);
+        pretEtat.dest = ((racine.querySelector('#pret-email') || {}).value || '').trim();
+        planifier();
       }
     });
-    zone.addEventListener('input', planifier);
     zone.addEventListener('change', function (e) {
-      if (e.target.id === 'pret-prospect') {
-        var siret = e.target.value;
-        pretEtat.siret = siret;
-        var f = ficheParSiret(siret);
-        if (f) {
-          racine.querySelector('#pret-dirigeant').value = f.dirigeant || '';
-          racine.querySelector('#pret-agence').value = f.nom || '';
-          racine.querySelector('#pret-ville').value = f.ville || '';
-          racine.querySelector('#pret-email').value = f.email || '';
-        }
+      if (e.target && e.target.id === 'pret-brochure') {
+        pretEtat.brochure = !!e.target.checked;
+        planifier();
       }
-      if (e.target.id === 'pret-objectif') {
-        var u = utilisateur();
-        var v = Number(e.target.value);
-        if (v > 0) ecrire(u.email, 'objectif_mails', v);
-      }
-      planifier();
     });
-    var seqBtn = racine.querySelector('#pret-seq');
-    if (seqBtn) seqBtn.addEventListener('click', function () {
-      var f = ficheParSiret(pretEtat.siret);
-      var s = f && M.prochaineSequence(f);
-      if (s) { pretEtat.id = s.id; aller('pret'); }
+
+    var pdf = racine.querySelector('#pret-pdf');
+    if (pdf) pdf.addEventListener('change', function () {
+      var f = pdf.files && pdf.files[0];
+      var etat = racine.querySelector('#pret-pdf-etat');
+      pretEtat.piece = null;
+      if (!f) { if (etat) etat.textContent = 'Aucun PDF personnel.'; return; }
+      var verif = M.validerPdfFichier ? M.validerPdfFichier(f) : Promise.resolve({ ok: false, motif: 'Contrôle indisponible.' });
+      verif.then(function (v) {
+        if (!v.ok) { if (etat) etat.textContent = v.motif; pdf.value = ''; return; }
+        var reader = new FileReader();
+        reader.onload = function () {
+          var r = String(reader.result || '');
+          var b64 = r.indexOf(',') >= 0 ? r.split(',')[1] : r;
+          pretEtat.piece = { nom: f.name, base64: b64 };
+          if (etat) etat.textContent = 'PDF personnel prêt : ' + f.name + ' (' + Math.round(f.size / 1024) + ' Ko).';
+        };
+        reader.readAsDataURL(f);
+      });
     });
-    M.chargerCatalogue().then(function (liste) {
-      catalogue = liste || [];
-      var select = racine.querySelector('#pret-piste');
-      var m = modelePretCourant();
-      if (!select || !m) return;
-      var pref = M.pisteParTitre(m.piste);
-      var choisi = pretEtat.pisteId || (pref && pref.id) || (catalogue[0] && catalogue[0].id);
-      select.innerHTML = catalogue.map(function (p) {
-        return '<option value="' + esc(p.id) + '"' + (p.id === choisi ? ' selected' : '') + '>' + esc(p.titre) + '</option>';
-      }).join('');
-      relire();
+
+    var csv = racine.querySelector('#pret-csv');
+    if (csv) csv.addEventListener('change', function () {
+      var f = csv.files && csv.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        var zoneListe = racine.querySelector('#pret-liste');
+        if (zoneListe) zoneListe.value = String(reader.result || '');
+        lireListe(String(reader.result || ''));
+      };
+      reader.readAsText(f, 'utf-8');
     });
-    function actionCopie(fn) {
-      var rendu = renduPret(racine, catalogue, true);
-      if (!rendu) return;
-      fn(rendu);
-    }
+
+    planifier();
+    lireQuota();
+    lireJournal();
+
     var copier = racine.querySelector('#pret-copier');
     if (copier) copier.addEventListener('click', function () {
-      actionCopie(function (rendu) {
-        M.copierMailHtml(rendu.html, rendu.texte).then(function (ok) {
-          toast(ok ? 'Mail copié (HTML et texte).' : 'Copie impossible.');
-          if (ok) majApresPreparation(racine, rendu);
-        });
+      var rendu = renduPret(racine, [], true);
+      if (!rendu) return;
+      M.copierMailHtml(rendu.html, rendu.texte).then(function (ok) {
+        toast(ok ? 'Mail copié (HTML et texte).' : 'Copie impossible.');
+        if (ok) majApresPreparation(racine, rendu);
       });
     });
-    var objet = racine.querySelector('#pret-objet');
-    if (objet) objet.addEventListener('click', function () {
-      actionCopie(function (rendu) {
-        copierTexte(rendu.sujet).then(function (ok) { toast(ok ? 'Objet copié.' : 'Copie impossible.'); });
-      });
-    });
-    /* Un lien Gmail ou mailto ne peut porter que du texte : le corps
-       HTML (bandeau, visuels, bouton, signature) passe par le
-       presse-papiers, copié AVANT d'ouvrir la fenêtre, dans le geste.
-       Le corps prérempli reste vide pour ne pas doubler le message ;
-       si la copie échoue, on retombe sur le texte seul. */
-    var gmail = racine.querySelector('#pret-gmail');
-    if (gmail) gmail.addEventListener('click', function () {
-      actionCopie(function (rendu) {
-        var dest = (racine.querySelector('#pret-email') || {}).value || '';
-        var ok = M.copierMailSync(rendu.html, rendu.texte);
-        window.open(M.gmailCompose(dest, rendu.sujet, ok ? '' : rendu.texte), '_blank', 'noopener');
-        toast(ok ? 'Mail copié : dans Gmail, cliquez dans le corps et collez (Ctrl+V / ⌘V).' : 'Copie HTML impossible : Gmail s’ouvre avec le texte seul.');
-        majApresPreparation(racine, rendu);
-      });
-    });
-    var mlien = racine.querySelector('#pret-mailto');
-    if (mlien) mlien.addEventListener('click', function () {
-      actionCopie(function (rendu) {
-        var dest = (racine.querySelector('#pret-email') || {}).value || '';
-        var ok = M.copierMailSync(rendu.html, rendu.texte);
-        var url = M.mailto(dest, rendu.sujet, ok ? '' : rendu.texte);
-        if (url.length > 1900) {
-          mlien.href = '#';
-          var etatP = racine.querySelector('#pret-envoi');
-          if (etatP) etatP.textContent = MSG_MAILTO_LONG;
-          toast(MSG_MAILTO_LONG);
-          return;
-        }
-        mlien.href = url;
-        toast(ok ? 'Mail copié : dans la messagerie, collez dans le corps (Ctrl+V / ⌘V).' : 'Copie HTML impossible : texte seul.');
-      });
-    });
-    var envoiP = racine.querySelector('#pret-envoyer');
-    if (envoiP) envoiP.addEventListener('click', function () {
-      var rendu = renduPret(racine, catalogue, true);
+
+    function lancer(mode) {
+      var rendu = renduPret(racine, [], true);
       if (!rendu) return;
       var m = modelePretCourant();
+      var c = champsEnvoi();
       envoyerDirect({
-        bouton: envoiP,
+        bouton: mode === 'test' ? racine.querySelector('#pret-test') : racine.querySelector('#pret-envoyer'),
         etat: racine.querySelector('#pret-envoi'),
-        dest: (racine.querySelector('#pret-email') || {}).value || '',
+        dest: c.dest,
         rendu: rendu,
         modele: m,
-        apres: function () { majApresPreparation(racine, rendu, true); }
+        mode: mode,
+        nom: c.nom,
+        societe: c.societe,
+        ville: c.ville,
+        joindreBrochure: c.joindreBrochure,
+        pieceBase64: c.pieceBase64,
+        pieceNom: c.pieceNom,
+        apres: function () {
+          if (mode !== 'test') majApresPreparation(racine, rendu, true);
+          lireQuota();
+          lireJournal();
+        }
+      });
+    }
+    var envoiP = racine.querySelector('#pret-envoyer');
+    if (envoiP) envoiP.addEventListener('click', function () { lancer('envoi'); });
+    var testP = racine.querySelector('#pret-test');
+    if (testP) testP.addEventListener('click', function () { lancer('test'); });
+
+    var lotBtn = racine.querySelector('#pret-lot-envoyer');
+    if (lotBtn) lotBtn.addEventListener('click', function () {
+      if (!envoiDirectDispo()) { toast('Envoi direct indisponible.'); return; }
+      if (!lotLu.ok.length) { toast('Aucune adresse valide à envoyer.'); return; }
+      var m = modelePretCourant();
+      var rendu = renduPret(racine, [], true);
+      if (!rendu) return;
+      var c = champsEnvoi();
+      if (!window.confirm('Envoyer « ' + m.nom + ' » à ' + lotLu.ok.length + ' destinataire' + (lotLu.ok.length > 1 ? 's' : '') + ' ?')) return;
+      lotBtn.disabled = true;
+      lotBtn.textContent = 'Envoi en cours…';
+      var etat = racine.querySelector('#pret-lot-etat');
+      var corps = {
+        mode: 'envoi',
+        modele: m.id,
+        joindreBrochure: c.joindreBrochure,
+        envois: lotLu.ok.map(function (l) {
+          return { to: l.email, nom: l.nom, societe: l.societe, ville: l.ville };
+        }),
+        signature: C.signature ? C.signature() : {}
+      };
+      C.appeler(corps).then(function (r) {
+        var parti = r.ok && r.d && r.d.envoyes && r.d.envoyes.length;
+        var q = r.d && r.d.quota ? texteQuotaEnvoi(r.d.quota) : '';
+        var refuses = (r.d && r.d.refuses) || [];
+        if (!parti) {
+          if (etat) etat.textContent = messageEchecEnvoi(r);
+          toast(messageEchecEnvoi(r));
+          return;
+        }
+        var msg = r.d.envoyes.length + ' courriel' + (r.d.envoyes.length > 1 ? 's' : '') + ' envoyé' + (r.d.envoyes.length > 1 ? 's' : '') +
+          (refuses.length ? ' · ' + refuses.length + ' écarté' + (refuses.length > 1 ? 's' : '') : '') +
+          (q ? ' · ' + q : '') + '.';
+        if (etat) etat.textContent = msg;
+        toast(msg);
+        lireQuota();
+        lireJournal();
+      }).catch(function () {
+        if (etat) etat.textContent = 'Le serveur ne répond pas.';
+      }).then(function () {
+        lotBtn.disabled = false;
+        lotBtn.textContent = 'Envoyer le lot';
       });
     });
   }
