@@ -1,0 +1,22 @@
+[package]
+name = "console-julie-wasm"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Console Julie v2 — logique pure (score, délivrabilité, CSV, dédoublonnage, créneau, séquences) compilée en WebAssembly."
+
+[lib]
+name = "julie_v2"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

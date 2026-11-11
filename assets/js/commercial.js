@@ -245,6 +245,12 @@
     window.scrollTo(0, 0);
   }
   window.go = go;
+  /* Console v2 : les vues Julie (Ma journée, Pipeline, Composer…) s'inscrivent
+     ici, dans le même routeur, sans toucher aux vues existantes. */
+  window.MelodiaConsole = {
+    ajouterVue: function (id, def) { VUES[id] = def; },
+    courante: function () { return vueCourante; }
+  };
   window.addEventListener('hashchange', function () {
     var h = vueHash();
     if (VUES[h] && h !== vueCourante) go(h);
@@ -1816,7 +1822,8 @@
     }
     await charger();
     var demarrage = vueHash();
-    go(VUES[demarrage] ? demarrage : 'accueil');
+    go(VUES[demarrage] ? demarrage : (VUES.journee ? 'journee' : 'accueil'));
+    window.MelodiaConsole.demarree = true;
     /* Le compteur de messages non lus doit vivre dès l'ouverture :
        sans cela, on ne sait qu'on a du courrier qu'en cliquant dessus. */
     if (window.MelodiaIntranet && window.MelodiaIntranet.majBadgeMessages) {

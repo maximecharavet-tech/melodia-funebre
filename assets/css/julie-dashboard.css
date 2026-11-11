@@ -1,0 +1,270 @@
+/*!
+ * julie-dashboard.css — Console Julie v2 (PASS 2 · tableau de bord)
+ *
+ * Styles de la vue `#accueil` remplacée par `MelodiaJulieDashboard`.
+ * Aucun token redéfini. `prefers-reduced-motion` neutralise les animations
+ * d’entrée du composant.
+ *
+ * License: internal.
+ */
+
+.jv2-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* ─── KPI ─────────────────────────────────────────────────────────── */
+.jv2-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.jv2-kpi {
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(201, 168, 76, 0.14);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  transition: border-color 0.25s var(--ease-out);
+}
+.jv2-kpi:hover { border-color: rgba(201, 168, 76, 0.32); }
+
+.jv2-kpi-label {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--or-patina, #97803c);
+}
+.jv2-kpi-valeur {
+  font-family: var(--ff-m, monospace);
+  font-size: 1.85rem;
+  color: var(--ivory, #f4f1ea);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.jv2-kpi-unite {
+  font-family: var(--ff-b, sans-serif);
+  font-size: 0.8rem;
+  color: var(--ash, #8e8878);
+}
+.jv2-kpi-bas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+.jv2-spark {
+  width: 120px;
+  height: 32px;
+  overflow: visible;
+}
+.jv2-spark path {
+  fill: none;
+  stroke: var(--or, #c9a84c);
+  stroke-width: 1.5;
+  opacity: 0.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.jv2-kpi-delta {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+.jv2-kpi-delta-haut { color: #4ade80; }
+.jv2-kpi-delta-bas  { color: #e08a8a; }
+
+/* ─── Grille graphique + tracker ──────────────────────────────────── */
+.jv2-dash-grille {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+/* ─── Graphique d’aire ────────────────────────────────────────────── */
+.jv2-chart {
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(201, 168, 76, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.012);
+}
+.jv2-chart-label {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--or-patina, #97803c);
+  margin-bottom: 0.6rem;
+}
+.jv2-chart-svg {
+  width: 100%;
+  height: 220px;
+  display: block;
+}
+.jv2-chart-aire-envois  { fill: rgba(201, 168, 76, 0.16); }
+.jv2-chart-aire-ouverts { fill: rgba(227, 201, 119, 0.10); }
+.jv2-chart-aire-clics   { fill: rgba(244, 241, 234, 0.06); }
+.jv2-chart-ligne-envois  { fill: none; stroke: var(--or, #c9a84c); stroke-width: 1.5; }
+.jv2-chart-ligne-ouverts { fill: none; stroke: var(--or-bright, #e3c977); stroke-width: 1.2; opacity: 0.85; }
+.jv2-chart-ligne-clics   { fill: none; stroke: var(--ivory, #f4f1ea); stroke-width: 1; opacity: 0.5; }
+.jv2-chart-legende {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 0.55rem;
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  color: var(--ash, #8e8878);
+}
+.jv2-chart-legende i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+}
+.jv2-dot-envois  { background: var(--or, #c9a84c); }
+.jv2-dot-ouverts { background: var(--or-bright, #e3c977); }
+.jv2-dot-clics   { background: var(--ivory, #f4f1ea); }
+
+/* ─── Tracker 30 jours ────────────────────────────────────────────── */
+.jv2-tracker {
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(201, 168, 76, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.012);
+}
+.jv2-tracker-label {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--or-patina, #97803c);
+  margin-bottom: 0.6rem;
+}
+.jv2-tracker-grille {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+}
+.jv2-tracker-case {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: rgba(201, 168, 76, 0.06);
+  transition: transform 0.15s var(--ease-out);
+}
+.jv2-tracker-case:hover { transform: scale(1.15); }
+.jv2-tracker-n1 { background: rgba(201, 168, 76, 0.18); }
+.jv2-tracker-n2 { background: rgba(201, 168, 76, 0.38); }
+.jv2-tracker-n3 { background: rgba(201, 168, 76, 0.60); }
+.jv2-tracker-n4 { background: var(--or-bright, #e3c977); }
+
+/* ─── Bar lists ───────────────────────────────────────────────────── */
+.jv2-dash-barlists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.jv2-barlist {
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(201, 168, 76, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.012);
+}
+.jv2-barlist-titre {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--or-patina, #97803c);
+  margin-bottom: 0.6rem;
+}
+.jv2-barlist ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.jv2-barlist li {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--bone, #c4bba6);
+}
+.jv2-bl-label {
+  font-family: var(--ff-b, sans-serif);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jv2-bl-barre {
+  height: 4px;
+  background: rgba(201, 168, 76, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.jv2-bl-barre i {
+  display: block;
+  height: 100%;
+  background: var(--or-grad, linear-gradient(135deg, #97803c 0%, #e3c977 45%, #c9a84c 100%));
+  border-radius: 2px;
+  transition: width 0.6s var(--ease-out);
+}
+.jv2-bl-valeur {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  color: var(--or-patina, #97803c);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── État vide ───────────────────────────────────────────────────── */
+.jv2-dash-vide {
+  padding: 3rem 2rem;
+  text-align: center;
+  border: 1px dashed rgba(201, 168, 76, 0.24);
+  border-radius: 12px;
+}
+.jv2-dash-vide-titre {
+  font-family: var(--ff-d, serif);
+  font-size: 1.5rem;
+  color: var(--ivory, #f4f1ea);
+  margin-bottom: 0.4rem;
+}
+.jv2-dash-vide-sous {
+  font-family: var(--ff-b, sans-serif);
+  color: var(--ash, #8e8878);
+  margin-bottom: 1rem;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .jv2-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .jv2-dash-grille { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .jv2-kpis { grid-template-columns: 1fr; }
+  .jv2-chart-svg { height: 170px; }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .jv2-kpi,
+  .jv2-tracker-case,
+  .jv2-bl-barre i {
+    transition: none !important;
+  }
+  .jv2-tracker-case:hover { transform: none; }
+}

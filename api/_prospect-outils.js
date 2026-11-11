@@ -26,6 +26,36 @@ const BROCHURES = {
     label: 'Brochure Crématoriums',
     chemin: 'documents/melodia-brochure-crematoriums.pdf',
     nom: 'Melodia-Funebre-Brochure-Crematoriums.pdf'
+  },
+  'pompes-funebres-v2': {
+    id: 'pompes-funebres-v2',
+    label: 'Brochure Pompes funèbres — nouvelle édition',
+    chemin: 'documents/melodia-brochure-pompes-funebres-v2.pdf',
+    nom: 'Melodia-Funebre-Brochure-Pompes-funebres-nouvelle-edition.pdf'
+  },
+  'marbriers-v2': {
+    id: 'marbriers-v2',
+    label: 'Brochure Marbriers — nouvelle édition',
+    chemin: 'documents/melodia-brochure-marbriers-v2.pdf',
+    nom: 'Melodia-Funebre-Brochure-Marbriers-nouvelle-edition.pdf'
+  },
+  'crematoriums-v2': {
+    id: 'crematoriums-v2',
+    label: 'Brochure Crématoriums — nouvelle édition',
+    chemin: 'documents/melodia-brochure-crematoriums-v2.pdf',
+    nom: 'Melodia-Funebre-Brochure-Crematoriums-nouvelle-edition.pdf'
+  },
+  'prestige-offrande': {
+    id: 'prestige-offrande',
+    label: 'Brochure prestige « L’Offrande » — pompes funèbres',
+    chemin: 'documents/melodia-brochure-prestige-offrande.pdf',
+    nom: 'Melodia-Funebre-Prestige-L-Offrande.pdf'
+  },
+  'prestige-ecoute': {
+    id: 'prestige-ecoute',
+    label: 'Brochure prestige « L’Écoute » — professionnels',
+    chemin: 'documents/melodia-brochure-prestige-ecoute.pdf',
+    nom: 'Melodia-Funebre-Prestige-L-Ecoute.pdf'
   }
 };
 const BROCHURE_IDS = Object.keys(BROCHURES);
@@ -59,13 +89,18 @@ function varsNormalisees(v) {
     civilite: civilite(nom),
     agence: societe || 'votre maison',
     ville_rel: ville ? ' à ' + ville : '',
-    lien_brochure: BROCHURE_URL
+    lien_brochure: BROCHURE_URL,
+    /* Phrase d'accroche personnalisée (console v2) : une ligne, sans balise. */
+    accroche: String(v.accroche || '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 300)
   };
 }
 
 function remplir(texte, vars) {
   const v = varsNormalisees(vars);
-  return String(texte || '').replace(/\{([^{}]+)\}/g, (m, k) => {
+  /* Sans accroche, sa ligne disparaît avec son paragraphe vide. */
+  let t = String(texte || '');
+  if (!v.accroche) t = t.replace(/\n*\{accroche\}\n*/g, (m) => (m.split('\n').length > 2 ? '\n\n' : ''));
+  return t.replace(/\{([^{}]+)\}/g, (m, k) => {
     if (Object.prototype.hasOwnProperty.call(v, k)) return String(v[k] == null ? '' : v[k]);
     return m;
   });
