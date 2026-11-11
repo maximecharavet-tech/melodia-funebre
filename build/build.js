@@ -187,6 +187,26 @@ console.log('  consoles marquées      ' + marquees + ' / ' + CONSOLES.length);
 {
   const modele = fs.readFileSync(path.join(__dirname, 'sw-modele.js'), 'utf8');
 
+  /* La console Pro n'est pas dans la coquille (elle ne concerne pas les
+     familles), mais un changement de ses fichiers doit, lui aussi, changer
+     la version du travailleur : sans cela, l'ancien cache des actifs
+     garderait sa copie hors ligne d'une console périmée. */
+  function empreintePro() {
+    const h = crypto.createHash('sha1');
+    const dossiers = ['assets/js/pro', 'assets/js/pro/vues'];
+    const fichiers = ['pro.html', 'pro.webmanifest', 'assets/css/pro.css', 'assets/i18n/pro.fr.json',
+      'assets/js/vendor/melodia_pro.wasm', 'assets/js/vendor/melodia-pro-glue.js'];
+    for (const d of dossiers) {
+      const abs = path.join(RACINE, d);
+      if (fs.existsSync(abs)) for (const f of fs.readdirSync(abs).sort()) if (/\.js$/.test(f)) fichiers.push(d + '/' + f);
+    }
+    for (const f of fichiers) {
+      const abs = path.join(RACINE, f);
+      if (fs.existsSync(abs)) h.update(f).update(fs.readFileSync(abs));
+    }
+    return h.digest('hex');
+  }
+
   /* La coquille : les pages publiques et ce qu'il faut pour les
      afficher. Ni les consoles, ni l'espace des familles, ni les pages
      mémoriales — elles montrent des données qui changent. */
@@ -249,6 +269,7 @@ console.log('  consoles marquées      ' + marquees + ' / ' + CONSOLES.length);
     .update(liste.join('|'))
     .update(fs.readFileSync(path.join(RACINE, 'index.html')))
     .update(modele)
+    .update(empreintePro())
     .digest('hex').slice(0, 10);
 
   const sortie = modele

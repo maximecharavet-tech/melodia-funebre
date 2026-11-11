@@ -1,0 +1,167 @@
+{
+  "date": "2026-11-11T21:58:57.338Z",
+  "total": 40,
+  "reussis": 40,
+  "resultats": [
+    {
+      "nom": "[1440] la console s’ouvre en démonstration, sous la CSP de /pro",
+      "ok": true
+    },
+    {
+      "nom": "[1440] un numéro de téléphone saisi est repéré et signalé",
+      "ok": true
+    },
+    {
+      "nom": "[1440] récapitulatif PDF du questionnaire",
+      "ok": true
+    },
+    {
+      "nom": "[1440] essai accordé, paroles proposées",
+      "ok": true
+    },
+    {
+      "nom": "[1440] la description musicale ne nomme pas l’artiste aimé",
+      "ok": true
+    },
+    {
+      "nom": "[1440] statut « livré » après la validation maison simulée",
+      "ok": true
+    },
+    {
+      "nom": "[1440] le studio annonce la taille du module et le contraste",
+      "ok": true
+    },
+    {
+      "nom": "[1440] export SVG (graveur) (71 Ko)",
+      "ok": true
+    },
+    {
+      "nom": "[1440] export PNG 300 dpi (195 Ko)",
+      "ok": true
+    },
+    {
+      "nom": "[1440] export PNG 600 dpi (507 Ko)",
+      "ok": true
+    },
+    {
+      "nom": "[1440] export PDF imprimable (150 Ko)",
+      "ok": true
+    },
+    {
+      "nom": "[1440] le PNG exporté se relit avec un décodeur QR indépendant",
+      "ok": true
+    },
+    {
+      "nom": "[1440] gabarit « Plaque 8 cm » en PDF",
+      "ok": true
+    },
+    {
+      "nom": "[1440] gabarit « Planche A4 (12) » en PDF",
+      "ok": true
+    },
+    {
+      "nom": "[1440] gabarit « Marque-page » en PDF",
+      "ok": true
+    },
+    {
+      "nom": "[1440] aperçu de la page mémorial",
+      "ok": true
+    },
+    {
+      "nom": "[1440] pack promotionnel PDF (4 pages, co-brandé)",
+      "ok": true
+    },
+    {
+      "nom": "[1440] aucune erreur JavaScript",
+      "ok": true
+    },
+    {
+      "nom": "[1024] la console s’ouvre en démonstration, sous la CSP de /pro",
+      "ok": true
+    },
+    {
+      "nom": "[1024] un numéro de téléphone saisi est repéré et signalé",
+      "ok": true
+    },
+    {
+      "nom": "[1024] essai accordé, paroles proposées",
+      "ok": true
+    },
+    {
+      "nom": "[1024] la description musicale ne nomme pas l’artiste aimé",
+      "ok": true
+    },
+    {
+      "nom": "[1024] statut « livré » après la validation maison simulée",
+      "ok": true
+    },
+    {
+      "nom": "[1024] le studio annonce la taille du module et le contraste",
+      "ok": true
+    },
+    {
+      "nom": "[1024] aperçu de la page mémorial",
+      "ok": true
+    },
+    {
+      "nom": "[1024] aucune erreur JavaScript",
+      "ok": true
+    },
+    {
+      "nom": "[390] la console s’ouvre en démonstration, sous la CSP de /pro",
+      "ok": true
+    },
+    {
+      "nom": "[390] un numéro de téléphone saisi est repéré et signalé",
+      "ok": true
+    },
+    {
+      "nom": "[390] essai accordé, paroles proposées",
+      "ok": true
+    },
+    {
+      "nom": "[390] la description musicale ne nomme pas l’artiste aimé",
+      "ok": true
+    },
+    {
+      "nom": "[390] statut « livré » après la validation maison simulée",
+      "ok": true
+    },
+    {
+      "nom": "[390] le studio annonce la taille du module et le contraste",
+      "ok": true
+    },
+    {
+      "nom": "[390] aperçu de la page mémorial",
+      "ok": true
+    },
+    {
+      "nom": "[390] aucune erreur JavaScript",
+      "ok": true
+    },
+    {
+      "nom": "[390] page mémorial publique /m/<jeton> (repli pro)",
+      "ok": true
+    },
+    {
+      "nom": "[390] mémorial en noindex",
+      "ok": true
+    },
+    {
+      "nom": "[390] partage WhatsApp, SMS, courriel",
+      "ok": true
+    },
+    {
+      "nom": "[390] co-branding discret de l’agence",
+      "ok": true
+    },
+    {
+      "nom": "[390] compteur d’ouvertures appelé",
+      "ok": true
+    },
+    {
+      "nom": "[1024] sans session : accueil sobre, poster fixe si mouvement réduit",
+      "ok": true
+    }
+  ]
+}

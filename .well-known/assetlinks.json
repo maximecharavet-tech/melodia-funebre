@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "fr.melodiafunebre.pro",
+      "sha256_cert_fingerprints": ["EMPREINTE_SHA256_DU_CERTIFICAT_A_COMPLETER_PAR_MAXIME"]
+    }
+  }
+]

@@ -379,11 +379,23 @@
 
     /* Partager : l'adresse de cette page, rien d'autre. Le lien est le
        même que celui du QR — c'est ce que les familles s'envoient. */
+    /* WhatsApp, SMS et courriel en plus du bouton : c'est par là que les
+       familles se transmettent la page, rarement par un « partage » système. */
+    var lien = encodeURIComponent(location.href);
+    var objet = encodeURIComponent('En mémoire de ' + (m.nom || ''));
     h += '<div class="hom-partage">' +
       '<button type="button" class="btn btn-outline btn-sm" id="hom-partager">Partager cette page</button>' +
+      '<a class="btn btn-outline btn-sm" href="https://wa.me/?text=' + objet + '%20' + lien + '" rel="noopener" target="_blank">WhatsApp</a>' +
+      '<a class="btn btn-outline btn-sm" href="sms:?&amp;body=' + objet + '%20' + lien + '">SMS</a>' +
+      '<a class="btn btn-outline btn-sm" href="mailto:?subject=' + objet + '&amp;body=' + lien + '">Courriel</a>' +
       '<span class="hom-partage-dit" id="hom-partage-dit" hidden>Lien copié</span></div>';
 
     h += '<p class="hom-signe">Un hommage composé pour lui seul par <a href="/">Melodia Funèbre</a></p>';
+    /* Dossiers des agences partenaires : leur nom, discrètement, si elles l'ont choisi. */
+    if (m._pro && m.cobranding && m.cobranding.nom) {
+      h += '<p class="hom-signe">' + (m.cobranding.logo ? '<img src="' + esc(m.cobranding.logo) + '" alt="" height="24" style="height:24px;width:auto;display:inline-block;vertical-align:middle;margin-right:.4rem">' : '') +
+        'Avec ' + esc(m.cobranding.nom) + '</p>';
+    }
     h += '</article>';
 
     ecrire(h);
@@ -425,6 +437,54 @@
     });
   }
 
+  /* ─── Les mémoriaux des agences partenaires (console /pro) ───
+     Ils vivent dans pro_qr et sont servis par /api/pro/memorial, qui ne
+     rend une page que publiée, livrée, et visible (code compris). On ne
+     les cherche qu'après la fiche historique : rien ne change pour elle. */
+  async function chargerPro(j, code) {
+    var r = await fetch('/api/pro/memorial?j=' + encodeURIComponent(j) + (code ? '&code=' + encodeURIComponent(code) : ''));
+    var d = null;
+    try { d = await r.json(); } catch (e) { d = null; }
+    if (r.status === 403) return { codeFaux: true };
+    if (!r.ok || !d || d.ok === false) return null;
+    if (d.code_requis) return { codeRequis: true };
+    return {
+      _pro: true,
+      nom: [d.prenom, d.nom].filter(Boolean).join(' '),
+      ne_le: (d.dates || [])[0] || '', parti_le: (d.dates || [])[1] || '',
+      message: d.mot_famille || '',
+      portrait_url: d.photo || '',
+      pistes: d.audio ? [{ titre: d.titre || 'Hommage', url: d.audio }] : [],
+      paroles: d.paroles || '',
+      photos: [], agence: '',
+      cobranding: d.cobranding || null
+    };
+  }
+
+  function demanderCode(j, faux) {
+    messageSimple('Page protégée', (faux ? 'Ce code ne correspond pas. ' : '') +
+      'La famille a protégé cette page par un code. Il figure sur le faire-part ou la carte remise avec l’hommage.' +
+      '<form id="hom-code" style="margin-top:1.2rem"><label for="hom-code-champ">Code d’accès</label><br>' +
+      '<input id="hom-code-champ" autocomplete="off" style="font-size:1.2rem;padding:.6rem;margin:.4rem 0;min-height:44px" required> ' +
+      '<button class="btn btn-primary" type="submit" style="min-height:44px">Ouvrir</button></form>');
+    var form = document.getElementById('hom-code');
+    if (!form) return;
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var p = await chargerPro(j, document.getElementById('hom-code-champ').value.trim());
+      if (p && p._pro) rendre(p); else demanderCode(j, true);
+    });
+  }
+
+  /* Compteur d'ouvertures anonyme : un total par page, aucune adresse IP. */
+  function compterOuverture(j) {
+    try {
+      var corps = JSON.stringify({ j: j });
+      if (navigator.sendBeacon) navigator.sendBeacon('/api/pro/scan', corps);
+      else fetch('/api/pro/scan', { method: 'POST', body: corps, keepalive: true });
+    } catch (e) { /* jamais bloquant */ }
+  }
+
   /* ─── Aller chercher la fiche ─── */
   async function charger() {
     var j = jeton();
@@ -446,6 +506,11 @@
       if (!r.ok) throw new Error('reseau');
       var d = await r.json();
       var m = Array.isArray(d) ? d[0] : d;
+      if (!m && /^[0-9A-HJKMNP-TV-Z]{10,12}$/.test(j)) {
+        var pro = await chargerPro(j);
+        if (pro && pro.codeRequis) return demanderCode(j, false);
+        if (pro && pro._pro) { compterOuverture(j); return rendre(pro); }
+      }
       if (!m) {
         /* On ne dit pas si le jeton n'existe pas ou si la page a été
            retirée : c'est la même phrase dans les deux cas, sans quoi

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Melodia Pro</string>
+    <string name="title_activity_main">Melodia Pro</string>
+    <string name="package_name">fr.melodiafunebre.pro</string>
+    <string name="custom_url_scheme">fr.melodiafunebre.pro</string>
+</resources>

@@ -33,6 +33,7 @@
     <button class="side-item" data-v="plaques"><span class="ico">▦</span>Plaques à QR code</button>
     <button class="side-item" data-v="messagerie"><span class="ico">✉</span>Écrire à la maison<span class="side-badge" id="badge-msg" style="display:none;">0</span></button>
     <button class="side-item" data-v="compte"><span class="ico">◎</span>Mon compte</button>
+    <a class="side-item" href="/pro" style="text-decoration:none"><span class="ico">✦</span>Console Pro (nouvelle)</a>
     <div class="side-foot">
       <div class="side-user">
         <div class="side-avatar" id="u-initial">—</div>
@@ -123,7 +124,7 @@ async function boot() {
 }
 
 document.querySelectorAll('.side-item').forEach(function(b){
-  b.addEventListener('click', function(){ go(b.dataset.v); document.getElementById('side').classList.remove('open'); });
+  b.addEventListener('click', function(){ if (!b.dataset.v) return; /* lien vers /pro */ go(b.dataset.v); document.getElementById('side').classList.remove('open'); });
 });
 
 function go(v) {

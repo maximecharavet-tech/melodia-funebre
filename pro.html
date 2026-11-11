@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Melodia Funèbre Pro — console des professionnels</title>
+<meta name="description" content="La console des agences partenaires de Melodia Funèbre : dossiers, questionnaire, composition, QR codes et pages mémorial.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#040407">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Melodia Pro">
+<link rel="manifest" href="/pro.webmanifest">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/img/icons/icon-48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/icons/icon-180.png">
+<link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/pro.css">
+</head>
+<body>
+<a class="evitement" href="#vue">Aller au contenu</a>
+<div class="coquille">
+  <aside class="laterale" aria-label="Navigation principale">
+    <a class="marque" href="#/journee">
+      <img src="/assets/img/logo-melodia-160.webp" alt="" width="40" height="40">
+      <span><b>Melodia Funèbre</b><small>Pro</small></span>
+    </a>
+    <nav id="nav-laterale" aria-label="Sections"></nav>
+    <div class="pied">
+      <div id="qui" class="petit">—</div>
+      <div class="rangee" style="margin-top:.6rem">
+        <a class="petit" href="/dashboard-partenaire">Ancien espace partenaire</a>
+      </div>
+    </div>
+  </aside>
+  <div class="principal">
+    <div id="bandeau" class="bandeau-demo" hidden></div>
+    <header class="entete">
+      <label class="recherche">
+        <span class="sr">Rechercher un dossier</span>
+        <input id="recherche" type="search" placeholder="Rechercher un dossier  ( / )" autocomplete="off">
+      </label>
+      <div class="org">
+        <label class="sr" for="choix-org">Agence</label>
+        <select id="choix-org" hidden></select>
+        <a class="btn btn-or" href="#/nouveau" id="btn-nouveau" title="Nouveau dossier (N)">✚ <span>Nouveau dossier</span></a>
+      </div>
+    </header>
+    <main id="vue" class="vue" tabindex="-1" aria-live="polite" aria-busy="true">
+      <div class="pile" aria-hidden="true">
+        <div class="squelette" style="height:2.2rem;width:40%"></div>
+        <div class="squelette" style="height:7rem"></div>
+        <div class="squelette" style="height:7rem"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<nav class="onglets-bas" id="nav-bas" aria-label="Sections principales"></nav>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<div id="annonce" class="sr" aria-live="assertive"></div>
+<noscript><p class="vue">La console Melodia Funèbre Pro a besoin de JavaScript.</p></noscript>
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/vendor/melodia-pro-glue.js"></script>
+<script type="module" src="/assets/js/pro/app.js"></script>
+</body>
+</html>

@@ -17,6 +17,10 @@
     "api/prospect-webhook.js": {
       "maxDuration": 30
     },
+    "api/pro/*.js": {
+      "maxDuration": 30,
+      "includeFiles": "assets/js/vendor/{melodia_pro.wasm,melodia-pro-glue.js}"
+    },
     "api/*.js": {
       "maxDuration": 30
     }
@@ -380,6 +384,132 @@
         {
           "key": "Content-Security-Policy-Report-Only",
           "value": "default-src 'self'; script-src 'self' https://www.paypal.com https://www.sandbox.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://www.paypal.com https://www.sandbox.paypal.com https://vitals.vercel-insights.com; font-src 'self'; frame-src https://www.paypal.com https://www.sandbox.paypal.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/pro",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(self), geolocation=(), interest-cohort=(), payment=(self \"https://js.stripe.com\" \"https://checkout.stripe.com\")"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/pro.html",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/pro.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(js/pro|i18n)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/css/pro.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/js/vendor/melodia(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/m/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, noimageindex"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/api/pro/memorial",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(img|video)/pro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
         }
       ]
     }

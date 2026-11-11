@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "console-pro",
+  "description": "La console distante (melodia-funebre.fr/pro) peut enregistrer un fichier et imprimer un PDF — rien d'autre.",
+  "windows": ["main"],
+  "remote": { "urls": ["https://melodia-funebre.fr/*"] },
+  "permissions": [
+    "core:default",
+    "dialog:allow-save",
+    "allow-enregistrer-fichier",
+    "allow-imprimer-pdf"
+  ]
+}

@@ -318,24 +318,35 @@ pub fn svg(o: &Options, r: &Rendu, encre: (u8, u8, u8), fond: (u8, u8, u8), oeil
             false
         }
     };
-    let mut modules = String::new();
-    let mut yeux_sombres = String::new();
-    let mut yeux_clairs = String::new();
+    // Le SVG suit EXACTEMENT l'ordre de peinture de la liste de formes (celle
+    // que les tests rastérisent et font relire par rqrr) : on regroupe les
+    // formes consécutives de même couleur en un seul chemin. Une première
+    // version regroupait par catégorie (« tous les yeux sombres », puis
+    // « tous les yeux clairs ») : l'anneau clair recouvrait alors le carré
+    // central de chaque œil, et le code n'était plus lisible. C'est un
+    // décodeur indépendant (jsQR, dans les essais de bout en bout) qui l'a vu.
+    let mut corps = String::new();
+    let mut couleur_courante = String::new();
+    let mut chemin_courant = String::new();
+    let mut vider = |corps: &mut String, couleur: &str, d: &mut String| {
+        if !d.is_empty() {
+            corps.push_str(&format!("<path fill=\"{}\" d=\"{}\"/>", couleur, d));
+            d.clear();
+        }
+    };
     for f in r.formes.iter().skip(1) {
         let sombre = matches!(f, Forme::Rect(.., true) | Forme::Cercle(.., true));
         if Some(f) == r.formes.last() && r.logo_zone.is_some() && !sombre {
-            continue; // le coussin du logo est écrit à part
+            continue; // le coussin du logo est écrit à part, avec l'image
         }
-        if est_oeil(f) {
-            if sombre {
-                yeux_sombres.push_str(&chemin(f));
-            } else {
-                yeux_clairs.push_str(&chemin(f));
-            }
-        } else if sombre {
-            modules.push_str(&chemin(f));
+        let c = if !sombre { hex(fond) } else if est_oeil(f) { hex(oeil) } else { hex(encre) };
+        if c != couleur_courante {
+            vider(&mut corps, &couleur_courante, &mut chemin_courant);
+            couleur_courante = c;
         }
+        chemin_courant.push_str(&chemin(f));
     }
+    vider(&mut corps, &couleur_courante, &mut chemin_courant);
     let dims = match o.taille_mm {
         Some(mm) if mm > 0.0 => format!(" width=\"{}mm\" height=\"{}mm\"", n(mm), n(mm)),
         _ => String::new(),
@@ -349,9 +360,7 @@ pub fn svg(o: &Options, r: &Rendu, encre: (u8, u8, u8), fond: (u8, u8, u8), oeil
         s = s.replacen("role=", "shape-rendering=\"crispEdges\" role=", 1);
     }
     s.push_str(&format!("<rect width=\"{c}\" height=\"{c}\" fill=\"{}\"/>", hex(fond), c = n(r.cote)));
-    s.push_str(&format!("<path fill=\"{}\" d=\"{}\"/>", hex(encre), modules));
-    s.push_str(&format!("<path fill=\"{}\" d=\"{}\"/>", hex(oeil), yeux_sombres));
-    s.push_str(&format!("<path fill=\"{}\" d=\"{}\"/>", hex(fond), yeux_clairs));
+    s.push_str(&corps);
     if let Some((zx, zy, t)) = r.logo_zone {
         s.push_str(&format!(
             "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" rx=\"0.6\" fill=\"{}\"/>",
@@ -550,6 +559,36 @@ mod tests {
                 }
             }
         }
+    }
+
+    /// Relit le SVG lui-même (style carré) : chaque chemin « M x y h w v h h-w z »
+    /// est peint dans l'ordre du document, puis l'image est décodée par rqrr.
+    /// C'est ce test qui manquait quand l'œil était recouvert dans le SVG.
+    #[test]
+    fn le_svg_lui_meme_se_lit() {
+        let o = Options { texte: URL.into(), modules: "carre".into(), yeux: "carre".into(), ..Default::default() };
+        let r = dessiner(&o).unwrap();
+        let s = svg(&o, &r, (0, 0, 0), (255, 255, 255), (0, 0, 0));
+        let px = 8.0;
+        let t = (r.cote * px) as usize;
+        let mut img = vec![255u8; t * t];
+        for morceau in s.split("<path fill=\"").skip(1) {
+            let sombre = morceau.starts_with("#000000");
+            let d = morceau.split("d=\"").nth(1).unwrap().split('"').next().unwrap();
+            for carre in d.split('z').filter(|x| !x.is_empty()) {
+                let n: Vec<f64> = carre.replace('M', "").replace(['h', 'v'], " ").split_whitespace().map(|x| x.parse().unwrap()).collect();
+                let (x, y, w, hh) = (n[0], n[1], n[2], n[3]);
+                for py in (y * px) as usize..((y + hh) * px) as usize {
+                    for pxx in (x * px) as usize..((x + w) * px) as usize {
+                        img[py * t + pxx] = if sombre { 0 } else { 255 };
+                    }
+                }
+            }
+        }
+        let mut prep = rqrr::PreparedImage::prepare_from_greyscale(t, t, |x, y| img[y * t + x]);
+        let g = prep.detect_grids();
+        assert!(!g.is_empty(), "aucune grille dans le SVG");
+        assert_eq!(g[0].decode().expect("SVG illisible").1, URL);
     }
 
     #[test]

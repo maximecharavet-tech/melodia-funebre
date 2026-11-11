@@ -1,0 +1,37 @@
+[package]
+name = "melodia-pro-desktop"
+version = "0.1.0"
+description = "Melodia Funèbre Pro — application Windows (Tauri 2)"
+edition = "2021"
+publish = false
+license = "UNLICENSED"
+
+[lib]
+name = "melodia_pro_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+# MIT OR Apache-2.0
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# MIT OR Apache-2.0
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
+# Mises à jour : préparées, désactivées. À activer quand Maxime aura généré la
+# paire de clés de signature (voir docs/pro-app/PLATEFORMES.md).
+tauri-plugin-updater = { version = "2", optional = true }
+
+[features]
+default = []
+updater = ["dep:tauri-plugin-updater"]
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
