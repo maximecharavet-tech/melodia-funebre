@@ -134,4 +134,4 @@ Procédure : `docs/pro-app/ASSETS.md`.
 
 ## 10. Pull request
 
-Lien : _ajouté à l'ouverture de la PR_.
+Lien : https://github.com/maximecharavet-tech/melodia-funebre/pull/27 (non fusionnée, non déployée).
