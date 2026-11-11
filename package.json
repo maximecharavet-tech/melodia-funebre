@@ -19,6 +19,9 @@
     "video": "node build/video.js",
     "indexnow": "node scripts/indexnow.js",
     "build:wasm": "bash scripts/build-wasm.sh",
-    "test:julie": "for t in lib/julie/*.test.cjs; do node --test $t || exit 1; done"
+    "test:julie": "for t in lib/julie/*.test.cjs; do node --test $t || exit 1; done",
+    "test:pro": "node --test tests/pro/*.test.mjs",
+    "test:sql": "node scripts/prouver-migrations.mjs",
+    "test:e2e": "node tests/e2e/pro.e2e.mjs"
   }
 }

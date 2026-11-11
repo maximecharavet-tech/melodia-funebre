@@ -1,0 +1,24 @@
+{
+  "appId": "fr.melodiafunebre.pro",
+  "appName": "Melodia Pro",
+  "webDir": "www",
+  "server": {
+    "url": "https://melodia-funebre.fr/pro",
+    "androidScheme": "https",
+    "allowNavigation": ["melodia-funebre.fr", "*.melodia-funebre.fr", "checkout.stripe.com"],
+    "errorPath": "hors-ligne.html"
+  },
+  "android": {
+    "backgroundColor": "#040407",
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 600,
+      "backgroundColor": "#040407",
+      "showSpinner": false
+    }
+  }
+}

@@ -1003,11 +1003,26 @@
      D'abord notre fonction serveur (Mistral, puis OpenAI en secours) ;
      si elle n'a pas de clé ou ne répond pas — site servi en statique,
      par exemple —, Pollinations, gratuit et sans clé. */
+  /* Les trois routes de génération exigent désormais un jeton de session
+     et un rôle maison (11/11/2026) : sans lui, n'importe quel site pouvait
+     dépenser les crédits des fournisseurs. Le jeton est renouvelé s'il
+     expire dans moins de deux minutes. */
+  async function entetesIA(json) {
+    var s = LS.get('melodia_session', null);
+    if (s && s.refresh_token && s.expires_at && (s.expires_at - Math.floor(Date.now() / 1000)) < 120) {
+      try { s = await renouveler(); } catch (e) { s = LS.get('melodia_session', null); }
+    }
+    var h = {};
+    if (json) h['Content-Type'] = 'application/json';
+    if (s && s.access_token) h.Authorization = 'Bearer ' + s.access_token;
+    return h;
+  }
+
   window.MelodiaAI = {
     async lyrics(brief) {
       try {
         var s = await fetch('/api/generate-lyrics', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: await entetesIA(true),
           body: JSON.stringify({
             prenom: brief.defunt, traits: brief.traits, metier: brief.metier,
             habitude: brief.habitude, anecdote: brief.anecdote, style: brief.style
@@ -1078,7 +1093,7 @@
     async music(payload) {
       var r = await fetch('/api/generate-music', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await entetesIA(true),
         body: JSON.stringify({
           title: payload.title || 'Hommage Melodia',
           lyrics: payload.lyrics || '',
@@ -1102,7 +1117,7 @@
     /** Etat d'une composition en cours (kind : 'song' ou 'instrumental') */
     async musicStatus(taskId, kind) {
       var r = await fetch('/api/music-status?taskId=' + encodeURIComponent(taskId)
-        + '&kind=' + encodeURIComponent(kind || 'song'));
+        + '&kind=' + encodeURIComponent(kind || 'song'), { headers: await entetesIA(false) });
       var d = null;
       try { d = await r.json(); } catch (e) { d = {}; }
       if (!r.ok) throw new Error(d.error || 'Suivi indisponible.');

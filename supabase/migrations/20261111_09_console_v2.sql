@@ -171,7 +171,6 @@ create index if not exists envois_prospect_seq_idx
 -- On étend la fonction existante si elle existe, sinon on la crée.
 do $$
 declare
-  src text;
   has_fn boolean;
 begin
   select exists (
@@ -188,10 +187,18 @@ begin
     $f$;
   else
     -- On remplace par une version qui expose toujours console_v2:true.
-    select pg_get_functiondef(p.oid) into src
-      from pg_proc p
+    -- Correctif du 11/11/2026 : la version d'origine appelait
+    -- melodia_capacites_base() sans l'avoir jamais créée — la migration
+    -- échouait dès que melodia_capacites() existait (cas de la production).
+    -- On conserve donc l'ancienne fonction sous ce nom, une seule fois :
+    -- rejouée, la migration retrouve _base et ne renomme plus rien.
+    if not exists (
+      select 1 from pg_proc p
       join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname = 'public' and p.proname = 'melodia_capacites' limit 1;
+      where n.nspname = 'public' and p.proname = 'melodia_capacites_base'
+    ) then
+      execute 'alter function public.melodia_capacites() rename to melodia_capacites_base';
+    end if;
     execute $f$
       create or replace function public.melodia_capacites()
       returns jsonb language sql stable security definer as $body$

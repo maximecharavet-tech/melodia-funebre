@@ -1,0 +1,5 @@
+# Les PDF sont binaires : une conversion de fins de ligne fausserait leur table xref.
+*.pdf binary
+*.wasm binary
+# Script exécuté sous Linux par Gradle.
+apps/android/android/gradlew text eol=lf

@@ -22,6 +22,10 @@ await db.exec(`
   create schema if not exists auth;
   create schema if not exists app;
   create schema if not exists storage;
+  create or replace function auth.uid() returns uuid
+    language sql stable as $$
+      select nullif(coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb ->> 'sub', '')::uuid;
+    $$;
   create or replace function auth.jwt() returns jsonb
     language sql stable as $$
       select coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb;
@@ -104,6 +108,11 @@ await db.exec(`
   );
   create table public.demandes (id text primary key, email text not null default '');
   create table public.publications (id text primary key, cree_par text not null default '');
+  create table storage.buckets (
+    id text primary key,
+    name text,
+    public boolean default false
+  );
   create table storage.objects (
     id bigint generated always as identity primary key,
     bucket_id text,
@@ -132,6 +141,11 @@ await db.exec(`
   create or replace function app.est_maison() returns boolean
     language sql stable security definer set search_path = public as $$
       select coalesce(app.mon_role() in ('master', 'commercial'), false) $$;
+  -- La migration 09 s'appuie sur les alias public.* qui existent en production.
+  create or replace function public.est_master() returns boolean
+    language sql stable as $$ select app.est_master() $$;
+  create or replace function public.est_maison() returns boolean
+    language sql stable as $$ select app.est_maison() $$;
   insert into public.roles (email, role) values
     ('julie@example.test', 'commercial'),
     ('fondateur@example.test', 'master');
@@ -166,6 +180,11 @@ await db.exec(`
   grant usage on all sequences in schema storage to anon, authenticated;
   grant execute on all functions in schema app to anon, authenticated;
   grant execute on all functions in schema auth to anon, authenticated;
+  -- Comme Supabase : les tables créées ensuite reçoivent ces droits par défaut,
+  -- et le service role contourne la RLS.
+  alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
+  alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
+  alter role service_role bypassrls;
 `);
 
 const fichiers = readdirSync('supabase/migrations').filter((f) => f.endsWith('.sql')).sort();
@@ -224,4 +243,104 @@ dire('== capacites ==');
 r = await db.query('select public.melodia_capacites() as c');
 dire(JSON.stringify(r.rows));
 
+// ═══ Melodia Pro (migration 10) : RLS et colonnes réservées au service ═══
+const preuves = [];
+function preuve(nom, condition, detail) {
+  preuves.push({ nom, ok: !!condition });
+  dire((condition ? '  OK  ' : '  KO  ') + nom + (detail ? '  — ' + detail : ''));
+}
+
+dire('\n== PRO : migration 10 rejouée (idempotence) ==');
+try {
+  await db.exec(readFileSync('supabase/migrations/20261112_10_pro_app.sql', 'utf8'));
+  preuve('migration 10 rejouée sans erreur', true);
+} catch (e) { preuve('migration 10 rejouée sans erreur', false, e.message); }
+
+const A = '11111111-1111-1111-1111-111111111111';
+const B = '22222222-2222-2222-2222-222222222222';
+const L = '33333333-3333-3333-3333-333333333333';
+const ORG_A = 'aaaaaaaa-0000-0000-0000-000000000001';
+const ORG_B = 'bbbbbbbb-0000-0000-0000-000000000002';
+const DOS_A = 'dddddddd-0000-0000-0000-00000000000a';
+await db.exec(`
+  grant select, insert, update, delete on all tables in schema public to service_role;
+  grant usage on all sequences in schema public to service_role;
+  insert into public.pro_orgs (id, nom, siret, statut) values
+    ('${ORG_A}', 'Agence A', '73282932000074', 'valide'),
+    ('${ORG_B}', 'Agence B', '44300000000002', 'valide');
+  insert into public.pro_members (org_id, user_id, email, role) values
+    ('${ORG_A}', '${A}', 'a@agence-a.test', 'owner'),
+    ('${ORG_B}', '${B}', 'b@agence-b.test', 'owner'),
+    ('${ORG_A}', '${L}', 'l@agence-a.test', 'lecture');
+  insert into public.pro_dossiers (id, org_id, reference, prenom_affiche) values
+    ('${DOS_A}', '${ORG_A}', 'MF-AAAAAA', 'Jeanne'),
+    ('dddddddd-0000-0000-0000-00000000000b', '${ORG_B}', 'MF-BBBBBB', 'Louis');
+  insert into public.pro_qr (dossier_id, jeton) values ('${DOS_A}', '7K3M9QXT2BZZ');
+  insert into public.pro_stripe_events (event_id, type) values ('evt_preuve', 'checkout.session.completed');
+`);
+
+async function commeMembre(sub, email, sql) {
+  await db.exec('set role authenticated');
+  const claims = JSON.stringify({ sub, email }).replace(/'/g, "''");
+  await db.exec(`select set_config('request.jwt.claims', '${claims}', false)`);
+  try { const x = await db.query(sql); return { ok: true, rows: x.rows, n: x.affectedRows }; }
+  catch (e) { return { ok: false, erreur: e.message }; }
+  finally { await db.exec('reset role'); }
+}
+
+dire('== PRO : cloisonnement des agences ==');
+r = await commeMembre(A, 'a@agence-a.test', 'select reference from public.pro_dossiers order by 1');
+preuve('agence A ne voit que ses dossiers', r.ok && r.rows.length === 1 && r.rows[0].reference === 'MF-AAAAAA', JSON.stringify(r.rows || r.erreur));
+r = await commeMembre(B, 'b@agence-b.test', `select count(*)::int as n from public.pro_dossiers where org_id = '${ORG_A}'`);
+preuve('agence B ne voit aucun dossier de A', r.ok && r.rows[0].n === 0);
+r = await commeMembre(B, 'b@agence-b.test', `update public.pro_dossiers set titre = 'pirate' where id = '${DOS_A}'`);
+preuve('agence B ne peut pas retoucher un dossier de A', r.ok ? r.n === 0 : true, r.ok ? r.n + ' ligne(s)' : r.erreur);
+r = await commeMembre(B, 'b@agence-b.test', 'select count(*)::int as n from public.pro_qr');
+preuve('agence B ne voit pas le QR de A', r.ok && r.rows[0].n === 0);
+
+dire('== PRO : colonnes réservées au service ==');
+r = await commeMembre(A, 'a@agence-a.test', `update public.pro_dossiers set paid = true where id = '${DOS_A}'`);
+preuve('un membre ne peut pas passer paid = true', !r.ok, r.erreur);
+r = await commeMembre(A, 'a@agence-a.test', `update public.pro_dossiers set status = 'paye' where id = '${DOS_A}'`);
+preuve('un membre ne peut pas changer le statut', !r.ok, r.erreur);
+r = await commeMembre(A, 'a@agence-a.test', `update public.pro_dossiers set audio_url = 'x' where id = '${DOS_A}'`);
+preuve('un membre ne peut pas poser audio_url', !r.ok, r.erreur);
+r = await commeMembre(A, 'a@agence-a.test', `insert into public.pro_dossiers (org_id, reference, status, paid) values ('${ORG_A}', 'MF-PIRATE', 'paye', true)`);
+preuve('un membre ne peut pas créer un dossier déjà payé', !r.ok, r.erreur);
+r = await commeMembre(A, 'a@agence-a.test', `update public.pro_dossiers set titre = 'Pour Jeanne' where id = '${DOS_A}'`);
+preuve('un membre peut retoucher le titre de son dossier', r.ok && r.n === 1, r.ok ? '' : r.erreur);
+r = await commeMembre(A, 'a@agence-a.test', 'update public.pro_qr set actif = true');
+preuve('un membre ne peut pas publier le mémorial directement', !r.ok, r.erreur);
+r = await commeMembre(L, 'l@agence-a.test', `insert into public.pro_dossiers (org_id, reference) values ('${ORG_A}', 'MF-LECTUR')`);
+preuve('un membre en lecture seule ne crée pas de dossier', !r.ok, r.erreur);
+r = await commeMembre(A, 'a@agence-a.test', 'select count(*)::int as n from public.pro_stripe_events');
+preuve('aucun membre ne lit les événements Stripe', r.ok && r.rows[0].n === 0);
+await db.exec(`insert into public.pro_jobs (dossier_id, type, version, derniere_erreur) values ('${DOS_A}', 'musique', 1, 'detail interne du fournisseur')`);
+r = await commeMembre(A, 'a@agence-a.test', 'select count(*)::int as n from public.pro_jobs');
+preuve('une agence ne lit pas la file de travaux (détails internes, marque blanche)', r.ok && r.rows[0].n === 0);
+r = await commeMembre(A, 'a@agence-a.test', 'select count(*)::int as n from public.pro_settings');
+preuve('une agence ne lit pas les réglages maison', r.ok && r.rows[0].n === 0);
+r = await commeMembre(A, 'a@agence-a.test', "select public.pro_compter_scan('7K3M9QXT2BZZ')");
+preuve('le compteur de scans n’est pas appelable par un membre', !r.ok, r.erreur);
+
+dire('== PRO : service role ==');
+await db.exec('set role service_role');
+try {
+  const s1 = await db.query(`update public.pro_dossiers set status = 'paye', paid = true where id = '${DOS_A}'`);
+  preuve('le service role encaisse (paid = true)', s1.affectedRows === 1);
+} catch (e) { preuve('le service role encaisse (paid = true)', false, e.message); }
+finally { await db.exec('reset role'); }
+
+r = await db.query(`select cle, valeur from public.pro_settings where cle in ('essai_par_org', 'essai_duree_s', 'plafond_jour_cents') order by cle`);
+preuve('réglages : essai 1 / 150 s décidés, plafond TBD (NULL)',
+  JSON.stringify(r.rows) === JSON.stringify([{ cle: 'essai_duree_s', valeur: '150' }, { cle: 'essai_par_org', valeur: '1' }, { cle: 'plafond_jour_cents', valeur: null }]),
+  JSON.stringify(r.rows));
+r = await db.query('select count(*)::int as n from public.pro_offers where price_cents is not null');
+preuve('aucun tarif agence inventé (price_cents NULL)', r.rows[0].n === 0);
+r = await db.query("select count(*)::int as n from pg_tables where schemaname = 'public' and tablename like 'pro\\_%' and not rowsecurity");
+preuve('RLS activée sur toutes les tables pro_*', r.rows[0].n === 0, r.rows[0].n + ' table(s) sans RLS');
+
+const ko = preuves.filter((p) => !p.ok).length;
+dire(`\nPRO : ${preuves.length - ko} / ${preuves.length} preuves`);
 console.log('\n---FIN---');
+if (ko) process.exitCode = 1;

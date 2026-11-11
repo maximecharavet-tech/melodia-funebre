@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-11T22:11:39.739Z",
+  "resultats": [
+    {
+      "page": "console /pro (démonstration)",
+      "appareil": "mobile",
+      "performance": 91,
+      "accessibilite": 100,
+      "bonnes_pratiques": 96,
+      "a11y_a_revoir": []
+    },
+    {
+      "page": "console /pro (démonstration)",
+      "appareil": "desktop",
+      "performance": 71,
+      "accessibilite": 100,
+      "bonnes_pratiques": 96,
+      "a11y_a_revoir": []
+    },
+    {
+      "page": "page mémorial (exemple)",
+      "appareil": "mobile",
+      "performance": 67,
+      "accessibilite": 100,
+      "bonnes_pratiques": 100,
+      "a11y_a_revoir": [
+        "label-content-name-mismatch"
+      ]
+    },
+    {
+      "page": "page mémorial (exemple)",
+      "appareil": "desktop",
+      "performance": 57,
+      "accessibilite": 100,
+      "bonnes_pratiques": 100,
+      "a11y_a_revoir": [
+        "label-content-name-mismatch"
+      ]
+    }
+  ]
+}

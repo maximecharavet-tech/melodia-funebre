@@ -37,7 +37,11 @@ const files = [
   'assets/img/icons/icon-48.png', 'assets/img/icons/icon-32.png',
   'assets/img/icons/icon-180.png', 'assets/img/icons/maskable-512.png',
   'api/generate-music.js', 'api/music-status.js', 'api/music-config.js', 'api/generate-lyrics.js',
-  'vercel.json', 'robots.txt', 'sitemap.xml'
+  'vercel.json', 'robots.txt', 'sitemap.xml',
+  /* Melodia Funèbre Pro (console /pro) */
+  'pro.html', 'pro.webmanifest', 'assets/css/pro.css', 'assets/i18n/pro.fr.json', 'assets/js/pro/app.js', 'assets/js/pro/donnees.js',
+  'assets/js/vendor/melodia_pro.wasm', 'assets/js/vendor/melodia-pro-glue.js', 'lib/pro/socle.mjs', 'lib/pro/noyau.mjs',
+  'api/pro/checkout.js', 'api/pro/stripe-webhook.js', 'api/pro/memorial.js', '.well-known/assetlinks.json'
 ];
 
 /* Les hommages étaient listés à la main, et la liste avait pris du
@@ -618,6 +622,15 @@ for (const p of pages) {
     }
   }
 }
+
+/* Le manifeste de la console Pro non plus. */
+try {
+  const man = JSON.parse(fs.readFileSync('pro.webmanifest', 'utf8'));
+  for (const ic of [...(man.icons || []), ...(man.screenshots || [])]) {
+    const f = ic.src.replace(/^\//, '').replace(/\?.*$/, '');
+    if (!fs.existsSync(f)) { console.error('  ICÔNE MANQUANTE (pro)', ic.src); ok = false; }
+  }
+} catch (e) { console.error('  pro.webmanifest illisible :', e.message); ok = false; }
 
 /* Le manifeste ne doit pas référencer d'icône absente. */
 try {

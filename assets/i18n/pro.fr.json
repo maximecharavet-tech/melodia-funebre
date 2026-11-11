@@ -1,0 +1,61 @@
+{
+  "nav": {
+    "journee": "Ma journée",
+    "dossiers": "Dossiers",
+    "nouveau": "Nouveau dossier",
+    "qr": "QR & impressions",
+    "bibliotheque": "Bibliothèque",
+    "facturation": "Facturation",
+    "equipe": "Équipe",
+    "parametres": "Paramètres",
+    "aide": "Aide",
+    "admin": "Admin maison",
+    "groupe_travail": "Travail",
+    "groupe_agence": "Agence",
+    "groupe_maison": "Maison"
+  },
+  "statut": {
+    "brouillon": "Brouillon",
+    "complet": "Questionnaire complet",
+    "en_attente_paiement": "En attente de paiement",
+    "paye": "Réglé",
+    "essai_accorde": "Essai accordé",
+    "paroles_en_cours": "Paroles en écriture",
+    "paroles_a_valider": "Paroles à relire",
+    "musique_en_cours": "Composition en cours",
+    "controle_maison": "Écoute par la maison",
+    "livre": "Livré",
+    "revision_demandee": "Révision demandée",
+    "echec": "Reprise par la maison",
+    "annule": "Annulé",
+    "rembourse": "Remboursé"
+  },
+  "etapes": ["La personne", "Sa vie", "La musique", "La cérémonie", "Le message", "Consentements", "Offre"],
+  "commun": {
+    "enregistre": "Enregistré",
+    "enregistrement": "Enregistrement…",
+    "hors_ligne": "Hors ligne : vos saisies sont gardées sur cet appareil et partiront au retour du réseau.",
+    "annuler": "Annuler",
+    "confirmer": "Confirmer",
+    "fermer": "Fermer",
+    "suivant": "Étape suivante",
+    "precedent": "Étape précédente",
+    "erreur": "Une erreur est survenue. Réessayez dans un instant.",
+    "non_configure": "Ce service n’est pas encore configuré.",
+    "tarif_tbd": "Tarif à fixer par la maison",
+    "signature": "Composé par Melodia Funèbre",
+    "accroche": "Chaque vie mérite sa chanson."
+  },
+  "vide": {
+    "dossiers": "Aucun dossier pour l’instant. Le premier commence par un questionnaire de quelques minutes, à remplir seul ou avec la famille.",
+    "bibliotheque": "Les chansons livrées se rangeront ici, prêtes à être réécoutées ou partagées avec les familles.",
+    "qr": "Les QR codes apparaissent ici dès qu’une chanson est livrée."
+  },
+  "connexion": {
+    "titre": "Bienvenue dans la console Melodia Funèbre Pro",
+    "texte": "Connectez-vous avec le compte de votre agence pour retrouver vos dossiers.",
+    "bouton": "Se connecter",
+    "demo": "Découvrir en démonstration",
+    "demo_bandeau": "Démonstration : rien n’est envoyé, rien n’est facturé. Les données restent sur cet appareil."
+  }
+}

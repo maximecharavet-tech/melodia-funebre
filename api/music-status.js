@@ -3,6 +3,8 @@
 // GET /api/music-status?taskId=xxx&kind=song|instrumental
 // ═══════════════════════════════════════════════════════════════
 
+import { garder } from '../lib/pro/garde.mjs';
+
 const TIMEOUT_MS = 20000;
 const DEFAUT_URL = 'https://api.mureka.ai';
 
@@ -43,10 +45,8 @@ function extraireTitres(rec) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Cache-Control', 'no-store');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  const utilisateur = await garder(req, res, { methodes: 'GET', nom: 'suivi', max: 120 });
+  if (!utilisateur) return;
   if (req.method !== 'GET') return res.status(405).json({ error: 'GET uniquement' });
 
   const base = (process.env.MUREKA_API_URL || DEFAUT_URL).replace(/\/+$/, '');
