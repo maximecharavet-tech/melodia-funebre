@@ -18,7 +18,7 @@ const db = new PGlite();
 const log = [];
 function dire(t) { log.push(t); console.log(t); }
 
-await db.exec(`
+const AMORCE = `
   create schema if not exists auth;
   create schema if not exists app;
   create schema if not exists storage;
@@ -185,7 +185,8 @@ await db.exec(`
   alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
   alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
   alter role service_role bypassrls;
-`);
+`;
+await db.exec(AMORCE);
 
 const fichiers = readdirSync('supabase/migrations').filter((f) => f.endsWith('.sql')).sort();
 for (const f of fichiers) {
@@ -339,6 +340,58 @@ r = await db.query('select count(*)::int as n from public.pro_offers where price
 preuve('aucun tarif agence inventé (price_cents NULL)', r.rows[0].n === 0);
 r = await db.query("select count(*)::int as n from pg_tables where schemaname = 'public' and tablename like 'pro\\_%' and not rowsecurity");
 preuve('RLS activée sur toutes les tables pro_*', r.rows[0].n === 0, r.rows[0].n + ' table(s) sans RLS');
+
+// ═══ Migration 11 : base « comme la production » ═══
+// La production n'a PAS les alias public.est_master() / public.est_maison()
+// (c'est ce qui a fait échouer 09 le 11/11/2026). On rejoue donc tout sur
+// une base neuve sans ces alias : 09 doit échouer, 11 doit passer.
+dire('\n== CONSOLE V2 : base sans alias public.est_* (comme la production) ==');
+const prod = new PGlite();
+const AMORCE_PROD = AMORCE.replace(/create or replace function public\.est_\w+\(\)[^;]*?\$\$[^$]*\$\$;/g, '');
+preuve('amorce de production : alias public.est_* retirés', !/public\.est_/.test(AMORCE_PROD));
+await prod.exec(AMORCE_PROD);
+await prod.exec(`insert into public.roles (email, role) values ('agence@example.test', 'partner')`);
+for (const f of fichiers.filter((x) => !/_09_|_11_/.test(x))) await prod.exec(readFileSync('supabase/migrations/' + f, 'utf8'));
+try {
+  await prod.exec('begin;\n' + readFileSync('supabase/migrations/20261111_09_console_v2.sql', 'utf8') + '\ncommit;');
+  preuve('09 échoue comme en production (public.est_master absent)', false, 'elle est passée');
+} catch (e) {
+  await prod.exec('rollback');
+  preuve('09 échoue comme en production (public.est_master absent)', /est_master|est_maison/.test(e.message), e.message);
+}
+let t = await prod.query("select count(*)::int as n from information_schema.tables where table_schema = 'public' and table_name in ('sequences','taches','objectifs_jour','sequence_inscriptions')");
+preuve('après l’échec de 09, schéma inchangé (rollback)', t.rows[0].n === 0, t.rows[0].n + ' table(s)');
+const M11 = readFileSync('supabase/migrations/20261113_11_console_v2_app.sql', 'utf8');
+preuve('11 ne cite aucun helper public.est_* hors commentaires', !/^[^-\n]*public\.est_/m.test(M11));
+for (const passe of ['appliquée', 'rejouée (idempotence)']) {
+  try { await prod.exec(M11); preuve('11 ' + passe + ' sans erreur', true); }
+  catch (e) { preuve('11 ' + passe + ' sans erreur', false, e.message); }
+}
+async function prodComme(email, sql) {
+  await prod.exec('set role authenticated');
+  await prod.exec(`select set_config('request.jwt.claims', '${JSON.stringify({ email })}', false)`);
+  try { const q = await prod.query(sql); return { ok: true, rows: q.rows, n: q.affectedRows }; }
+  catch (e) { return { ok: false, erreur: e.message }; }
+  finally { await prod.exec('reset role'); }
+}
+t = await prodComme('julie@example.test', "insert into public.sequences (owner, nom) values ('julie@example.test', 'Relance douce')");
+preuve('le commercial crée sa séquence', t.ok, t.erreur);
+t = await prodComme('julie@example.test', "insert into public.taches (owner, prospect_siret) values ('julie@example.test', '123')");
+preuve('le commercial crée sa tâche', t.ok, t.erreur);
+t = await prodComme('julie@example.test', "insert into public.sequences (owner, nom) values ('autre@example.test', 'x')");
+preuve('le commercial ne crée rien au nom d’un autre', !t.ok);
+t = await prodComme('agence@example.test', "insert into public.sequences (owner, nom) values ('agence@example.test', 'x')");
+preuve('un partenaire ne crée pas de séquence', !t.ok);
+t = await prodComme('fondateur@example.test', "insert into public.sequences (owner, nom) values ('julie@example.test', 'Pour Julie')");
+preuve('le fondateur crée une séquence pour un commercial', t.ok, t.erreur);
+t = await prodComme('agence@example.test', 'select count(*)::int as n from public.sequences');
+preuve('un partenaire ne lit aucune séquence', t.ok && t.rows[0].n === 0);
+t = await prodComme('fondateur@example.test', 'select count(*)::int as n from public.sequences');
+preuve('le fondateur lit toutes les séquences', t.ok && t.rows[0].n === 2, JSON.stringify(t.rows || t.erreur));
+t = await prod.query('select public.melodia_capacites() as c');
+preuve('melodia_capacites().console_v2 = true', t.rows[0].c && t.rows[0].c.console_v2 === true, JSON.stringify(t.rows[0].c));
+t = await prodComme('julie@example.test', 'select count(*)::int as n from public.orders');
+preuve('S1 tient toujours : le commercial ne lit pas les commandes', t.ok && t.rows[0].n === 0);
 
 const ko = preuves.filter((p) => !p.ok).length;
 dire(`\nPRO : ${preuves.length - ko} / ${preuves.length} preuves`);
