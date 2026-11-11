@@ -1029,9 +1029,40 @@
       label: 'Brochure Crématoriums',
       chemin: 'documents/melodia-brochure-crematoriums.pdf',
       nom: 'Melodia-Funebre-Brochure-Crematoriums.pdf'
+    },
+    'pompes-funebres-v2': {
+      id: 'pompes-funebres-v2',
+      label: 'Brochure Pompes funèbres — nouvelle édition',
+      chemin: 'documents/melodia-brochure-pompes-funebres-v2.pdf',
+      nom: 'Melodia-Funebre-Brochure-Pompes-funebres-nouvelle-edition.pdf'
+    },
+    'marbriers-v2': {
+      id: 'marbriers-v2',
+      label: 'Brochure Marbriers — nouvelle édition',
+      chemin: 'documents/melodia-brochure-marbriers-v2.pdf',
+      nom: 'Melodia-Funebre-Brochure-Marbriers-nouvelle-edition.pdf'
+    },
+    'crematoriums-v2': {
+      id: 'crematoriums-v2',
+      label: 'Brochure Crématoriums — nouvelle édition',
+      chemin: 'documents/melodia-brochure-crematoriums-v2.pdf',
+      nom: 'Melodia-Funebre-Brochure-Crematoriums-nouvelle-edition.pdf'
+    },
+    'prestige-offrande': {
+      id: 'prestige-offrande',
+      label: 'Brochure prestige « L’Offrande » — pompes funèbres',
+      chemin: 'documents/melodia-brochure-prestige-offrande.pdf',
+      nom: 'Melodia-Funebre-Prestige-L-Offrande.pdf'
+    },
+    'prestige-ecoute': {
+      id: 'prestige-ecoute',
+      label: 'Brochure prestige « L’Écoute » — professionnels',
+      chemin: 'documents/melodia-brochure-prestige-ecoute.pdf',
+      nom: 'Melodia-Funebre-Prestige-L-Ecoute.pdf'
     }
   };
-  var BROCHURE_IDS = ['professionnels', 'pompes-funebres', 'marbriers', 'crematoriums'];
+  var BROCHURE_IDS = ['professionnels', 'pompes-funebres', 'marbriers', 'crematoriums',
+    'pompes-funebres-v2', 'marbriers-v2', 'crematoriums-v2', 'prestige-offrande', 'prestige-ecoute'];
 
   function brochureSuggeree(contexte) {
     var c = contexte || {};

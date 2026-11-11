@@ -86,11 +86,18 @@ function run() {
   test('journal Invalid API key', (() => { const r = o.interpreterLectureJournal(401, '{"message":"Invalid API key","hint":"Double check your Supabase `anon` or `service_role` API key."}'); return r.ok === false && r.absent === false; })());
   test('journal permission denied n’est pas une table absente', o.interpreterLectureJournal(401, '{"code":"42501","message":"permission denied for table envois_prospect"}').absent === false);
 
-  test('catalogue 4 brochures', o.BROCHURE_IDS && o.BROCHURE_IDS.length === 4 &&
+  test('catalogue 9 brochures', o.BROCHURE_IDS && o.BROCHURE_IDS.length === 9 &&
     o.BROCHURES['pompes-funebres'] && o.BROCHURES.marbriers && o.BROCHURES.crematoriums);
   test('libellé Pompes funèbres', o.BROCHURES['pompes-funebres'].label === 'Brochure Pompes funèbres');
   test('libellé Marbriers', o.BROCHURES.marbriers.label === 'Brochure Marbriers');
   test('libellé Crématoriums', o.BROCHURES.crematoriums.label === 'Brochure Crématoriums');
+  test('nouvelles éditions ajoutées sans remplacer',
+    o.BROCHURES['pompes-funebres'].chemin === 'documents/melodia-brochure-pompes-funebres.pdf' &&
+    o.BROCHURES['pompes-funebres-v2'].chemin === 'documents/melodia-brochure-pompes-funebres-v2.pdf' &&
+    o.BROCHURES['marbriers-v2'] && o.BROCHURES['crematoriums-v2'] &&
+    o.BROCHURES['prestige-offrande'] && o.BROCHURES['prestige-ecoute']);
+  const nouvelles = o.resoudreBrochures(['prestige-offrande', 'prestige-ecoute', 'marbriers-v2']);
+  test('brochures prestige acceptées', nouvelles.ok && nouvelles.ids.join(',') === 'prestige-offrande,prestige-ecoute,marbriers-v2');
   test('orthographe Melodia Funèbre absente des libellés fautifs',
     !Object.keys(o.BROCHURES).some((id) => /Mélodia|Mélodie|Funebre(?!-)/.test(o.BROCHURES[id].label)));
 
@@ -133,14 +140,21 @@ function run() {
   test('console : libellés identiques',
     srcMails.indexOf('Brochure Pompes funèbres') !== -1 &&
     srcMails.indexOf('Brochure Marbriers') !== -1 &&
-    srcMails.indexOf('Brochure Crématoriums') !== -1);
+    srcMails.indexOf('Brochure Crématoriums') !== -1 &&
+    srcMails.indexOf('Brochure prestige « L’Offrande » — pompes funèbres') !== -1 &&
+    srcMails.indexOf('Brochure prestige « L’Écoute » — professionnels') !== -1);
 
   const fsPdf = require('fs');
   ['documents/melodia-brochure-pompes-funebres.pdf',
    'documents/melodia-brochure-marbriers.pdf',
-   'documents/melodia-brochure-crematoriums.pdf'].forEach((f) => {
+   'documents/melodia-brochure-crematoriums.pdf',
+   'documents/melodia-brochure-pompes-funebres-v2.pdf',
+   'documents/melodia-brochure-marbriers-v2.pdf',
+   'documents/melodia-brochure-crematoriums-v2.pdf',
+   'documents/melodia-brochure-prestige-offrande.pdf',
+   'documents/melodia-brochure-prestige-ecoute.pdf'].forEach((f) => {
     const buf = fsPdf.readFileSync(require('path').join(__dirname, '..', f));
-    test('PDF ' + f, buf.slice(0, 5).toString() === '%PDF-' && buf.length > 100 * 1024 && buf.length < 3 * 1024 * 1024);
+    test('PDF ' + f, buf.slice(0, 5).toString() === '%PDF-' && buf.length > 100 * 1024 && buf.length < (/-v2|prestige/.test(f) ? 2 : 3) * 1024 * 1024);
   });
 
   return ok;
