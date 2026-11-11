@@ -1,15 +1,15 @@
 // File de travaux, plafond quotidien, pipeline complet simulé, mémorial, audio en marque blanche.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { tick } from '../../lib/pro/moteur.mjs';
-import { retirerBalises, poserBalises, traceFournisseur } from '../../lib/pro/audio.mjs';
-import dossiers from '../../lib/pro/routes/dossiers.mjs';
-import music from '../../lib/pro/routes/music.mjs';
-import admin from '../../lib/pro/routes/admin.mjs';
-import qr from '../../lib/pro/routes/qr.mjs';
-import memorial from '../../lib/pro/routes/memorial.mjs';
-import exporter from '../../lib/pro/routes/export.mjs';
-import invitations from '../../lib/pro/routes/invitations.mjs';
+import { tick } from '../../lib/pro/moteur.cjs';
+import { retirerBalises, poserBalises, traceFournisseur } from '../../lib/pro/audio.cjs';
+import dossiers from '../../lib/pro/routes/dossiers.cjs';
+import music from '../../lib/pro/routes/music.cjs';
+import admin from '../../lib/pro/routes/admin.cjs';
+import qr from '../../lib/pro/routes/qr.cjs';
+import memorial from '../../lib/pro/routes/memorial.cjs';
+import exporter from '../../lib/pro/routes/export.cjs';
+import invitations from '../../lib/pro/routes/invitations.cjs';
 import { base, contexte, utilisateur, fauxReseau, creerDossier, ORG_A } from './aide.mjs';
 
 const ENV = { MISTRAL_API_KEY: 'cle-simulee', MUREKA_API_KEY: 'cle-simulee' };

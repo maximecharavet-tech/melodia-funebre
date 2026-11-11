@@ -2,7 +2,7 @@
 //!
 //! Même contrat que `console-julie-wasm` : aucun `wasm-bindgen`. Le même fichier
 //! `.wasm` est chargé par le navigateur (`assets/js/vendor/melodia-pro-glue.js`)
-//! et par les fonctions Node (`lib/pro/noyau.mjs`) : une seule source de vérité
+//! et par les fonctions Node (`lib/pro/noyau.cjs`) : une seule source de vérité
 //! pour les règles (prix, statut, essai, nettoyage du prompt, QR).
 //!
 //! Chaque export prend `(ptr, len)` d'une chaîne JSON et rend un pointeur sur

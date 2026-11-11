@@ -6,7 +6,7 @@
 // adresse d'API, ni indice de clé dans la réponse — elle est publique.
 // ═══════════════════════════════════════════════════════════════
 
-import { poserCors } from '../lib/pro/socle.mjs';
+import { poserCors } from '../lib/pro/socle.cjs';
 
 export default async function handler(req, res) {
   poserCors(req, res, 'GET');

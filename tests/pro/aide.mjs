@@ -1,8 +1,8 @@
 // Outils communs des tests de la console Pro : base en mémoire, faux
 // utilisateurs, fausse réponse HTTP, et un faux réseau qui simule Stripe,
 // le parolier et le service de composition. AUCUN appel réel ne sort.
-import { depotMemoire } from '../../lib/pro/depot.mjs';
-import { limiteMemoire } from '../../lib/pro/socle.mjs';
+import { depotMemoire } from '../../lib/pro/depot.cjs';
+import { limiteMemoire } from '../../lib/pro/socle.cjs';
 
 export const ORG_A = 'org-a';
 export const ORG_B = 'org-b';
@@ -134,7 +134,7 @@ export function fauxReseau(routes) {
 }
 
 export async function creerDossier(ctx, jeton = 'jeton-a', org = ORG_A, q = questionnaireComplet()) {
-  const { default: dossiers } = await import('../../lib/pro/routes/dossiers.mjs');
+  const { default: dossiers } = await import('../../lib/pro/routes/dossiers.cjs');
   const u = utilisateur(ctx.depot, jeton);
   const c = await dossiers({ methode: 'POST', corps: { action: 'creer', org_id: org }, query: {}, utilisateur: u }, ctx);
   const id = c.json.dossier.id;

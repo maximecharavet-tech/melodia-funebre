@@ -11,7 +11,7 @@
 // alors sur Pollinations (voir MelodiaAI.lyrics dans auth.js).
 // ═══════════════════════════════════════════════════════════════
 
-import { garder } from '../lib/pro/garde.mjs';
+import { garder } from '../lib/pro/garde.cjs';
 
 const FOURNISSEURS = [
   {

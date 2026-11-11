@@ -1,5 +1,5 @@
-// /api/pro/portal — voir lib/pro/routes/portal.mjs
-import { servir } from '../../lib/pro/socle.mjs';
-import portal from '../../lib/pro/routes/portal.mjs';
+// /api/pro/portal — voir lib/pro/routes/portal.cjs
+import { servir } from '../../lib/pro/socle.cjs';
+import portal from '../../lib/pro/routes/portal.cjs';
 
 export default servir(portal, { methodes: 'POST', limite: [10, 60000] });

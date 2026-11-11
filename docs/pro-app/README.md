@@ -13,8 +13,8 @@ musicale, puis reçoit la chanson, son QR code et sa page mémorial.
 | Données navigateur | `assets/js/pro/donnees.js` (adaptateur API + démonstration locale), `memoire.js` (IndexedDB), `i18n.js` + `assets/i18n/pro.fr.json` |
 | Impressions | `assets/js/pro/gabarits.js` (12 supports), `pdf.js` (écrivain PDF maison), `pack.js` (pack promotionnel co-brandé) |
 | Noyau Rust | `melodia-pro-wasm/` → `assets/js/vendor/melodia_pro.wasm` (167 Ko), colle `assets/js/vendor/melodia-pro-glue.js` (navigateur **et** Node) |
-| Serveur | `api/pro/*.js` (enveloppes), `lib/pro/socle.mjs` (CORS, JWT, rôles, limites, audit, transitions), `lib/pro/routes/*.mjs`, `lib/pro/moteur.mjs` (file de travaux), `lib/pro/fournisseurs.mjs` (serveur seulement), `lib/pro/paiement.mjs`, `lib/pro/audio.mjs` |
-| Routes historiques sécurisées | `api/generate-lyrics.js`, `api/generate-music.js`, `api/music-status.js` (garde `lib/pro/garde.mjs`), `api/music-config.js` (marque blanche) |
+| Serveur | `api/pro/*.js` (enveloppes), `lib/pro/socle.cjs` (CORS, JWT, rôles, limites, audit, transitions), `lib/pro/routes/*.cjs`, `lib/pro/moteur.cjs` (file de travaux), `lib/pro/fournisseurs.cjs` (serveur seulement), `lib/pro/paiement.cjs`, `lib/pro/audio.cjs` |
+| Routes historiques sécurisées | `api/generate-lyrics.js`, `api/generate-music.js`, `api/music-status.js` (garde `lib/pro/garde.cjs`), `api/music-config.js` (marque blanche) |
 | Base | `supabase/migrations/20261112_10_pro_app.sql` (non appliquée) |
 | Mémorial public | `hommage.html` + `assets/js/hommage.js` (repli sur `/api/pro/memorial`, code d'accès, partage, compteur) |
 | Applications | `apps/android/` (Capacitor), `apps/desktop/` (Tauri 2) — voir `PLATEFORMES.md` |

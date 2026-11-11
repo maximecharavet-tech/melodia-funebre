@@ -1,5 +1,5 @@
-// /api/pro/dossiers — voir lib/pro/routes/dossiers.mjs
-import { servir } from '../../lib/pro/socle.mjs';
-import dossiers from '../../lib/pro/routes/dossiers.mjs';
+// /api/pro/dossiers — voir lib/pro/routes/dossiers.cjs
+import { servir } from '../../lib/pro/socle.cjs';
+import dossiers from '../../lib/pro/routes/dossiers.cjs';
 
 export default servir(dossiers, { methodes: 'GET, POST', limite: [120, 60000] });

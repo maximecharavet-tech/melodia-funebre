@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { statSync } from 'node:fs';
-import { noyau } from '../../lib/pro/noyau.mjs';
+import { noyau } from '../../lib/pro/noyau.cjs';
 
 test('le noyau pèse moins de 200 Ko', () => {
   assert.ok(statSync('assets/js/vendor/melodia_pro.wasm').size <= 200 * 1024);
