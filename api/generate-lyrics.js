@@ -11,6 +11,8 @@
 // alors sur Pollinations (voir MelodiaAI.lyrics dans auth.js).
 // ═══════════════════════════════════════════════════════════════
 
+import { garder } from '../lib/pro/garde.mjs';
+
 const FOURNISSEURS = [
   {
     nom: 'mistral',
@@ -73,10 +75,8 @@ async function appeler(f, cle, prompt) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  const utilisateur = await garder(req, res, { methodes: 'POST', nom: 'paroles', max: 20 });
+  if (!utilisateur) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST uniquement' });
 
   const disponibles = FOURNISSEURS.filter((f) => f.cle());
