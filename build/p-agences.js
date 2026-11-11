@@ -7,7 +7,7 @@ const FAQ_B2B = [
   { q: "Devons-nous avancer de l'argent ou acheter un stock ?", a: "Non. Aucun investissement, aucun stock, aucun abonnement, aucun minimum. Vous ne payez que sur les hommages effectivement commandés par vos familles." },
   { q: "Qui parle à la famille ?", a: "Vous restez l'interlocuteur de la famille. Vous pouvez soit saisir le brief vous-même en trois minutes depuis votre espace, soit nous transmettre le contact pour que nous menions l'entretien de cinq minutes à votre place, en votre nom." },
   { q: "Que se passe-t-il si la famille n'est pas satisfaite ?", a: "Nous reprenons la composition à nos frais. Si la famille refuse malgré tout l'œuvre, elle n'est pas facturée — et votre agence n'avance rien. Le risque commercial est intégralement de notre côté." },
-  { q: "Combien de temps pour démarrer ?", a: "Vingt minutes. Vous créez votre compte partenaire, vous recevez le kit de présentation, et la première composition est offerte pour que vous puissiez la présenter à une famille avant tout engagement." },
+  { q: "Combien de temps pour démarrer ?", a: "Vingt minutes. Vous ouvrez le compte de l'agence, vous recevez le kit de présentation, et un essai gratuit vous est offert — un extrait composé de deux minutes trente — pour que vous puissiez le faire écouter à une famille avant tout engagement." },
   { q: "Y a-t-il une exclusivité territoriale ?", a: "Nous limitons volontairement le nombre d'agences partenaires par bassin de population, pour que le service reste un vrai facteur de différenciation. Demandez à être rappelé pour connaître la disponibilité de votre secteur." }
 ];
 
@@ -59,8 +59,23 @@ module.exports = {
   file: 'professionnels.html',
   title: "Hommage musical pour pompes funèbres : devenir partenaire | Melodia Funèbre",
   desc: "Solution d'hommage musical pour les pompes funèbres : page hommage, QR code, 60 % de marge, aucun investissement. Demandez une démonstration.",
-  jsonld: [P.jsonldFil('Pour les professionnels', '/professionnels')],
-  scripts: ['assets/js/partenariat.js'],
+  /* La page B2B n'avait qu'un fil d'Ariane. Elle déclare désormais la
+     maison, le service tel qu'il est proposé aux agences, et les
+     questions qu'elle affiche — exactement celles-là. */
+  jsonld: [P.jsonldOrg, {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    serviceType: 'Hommage musical personnalisé proposé par les pompes funèbres à leurs familles',
+    provider: { '@id': 'https://melodia-funebre.fr/#organisation' },
+    audience: { '@type': 'BusinessAudience', audienceType: 'Pompes funèbres, marbriers, crématoriums' },
+    areaServed: { '@type': 'Country', name: 'France' },
+    url: 'https://melodia-funebre.fr/professionnels'
+  }, {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ_B2B.map((q) => ({ '@type': 'Question', name: q.q, acceptedAnswer: { '@type': 'Answer', text: q.a } }))
+  }, P.jsonldFil('Pour les professionnels', '/professionnels')],
+  scripts: ['assets/js/partenariat.js', 'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js', 'assets/js/lumiere-3d.js'],
   body: `
   <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
     <div class="orn-rosace-hote" data-orn-rosace="agences" data-orn-traits="3"></div>
@@ -92,6 +107,36 @@ module.exports = {
         <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num"><span data-count="0" data-suffix="€">0€</span></div><div class="stat-label">Investissement</div></div>
         <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num"><span data-count="24" data-suffix="h">24h</span></div><div class="stat-label">Livraison</div></div>
         <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num"><span data-count="5" data-suffix="min">5min</span></div><div class="stat-label">Brief famille</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LA CONSOLE DES AGENCES ═══
+       La console /pro existait, avec une démonstration ouverte à tous,
+       et aucune page publique n'y menait. Une agence qui veut se faire
+       une idée seule, un dimanche soir, a désormais sa porte : la
+       démonstration (sans compte), puis l'ouverture du compte de
+       l'agence, validé par la maison. -->
+  <section class="section" id="console">
+    <div class="wrap">
+      <div class="grid-2 console-pro-bloc">
+        <div class="reveal">
+          <div class="eyebrow">La console des agences</div>
+          <h2 class="h-xl">Essayez seul,<br><em>avant de nous parler.</em></h2>
+          <span class="filet-or" data-filet aria-hidden="true"></span>
+          <ul class="liste-sobre" data-recueil>
+            <li data-recueil-item>Le questionnaire famille en sept étapes, rempli avec elle ou à sa place.</li>
+            <li data-recueil-item>Un essai gratuit par agence : un extrait composé de deux minutes trente.</li>
+            <li data-recueil-item>Le suivi de chaque dossier, la page de souvenir et son QR code.</li>
+            <li data-recueil-item>Votre logo sur les documents remis aux familles.</li>
+          </ul>
+          <div class="hero-actions" style="margin-top:2rem;">
+            <a href="/pro?demo=1" class="btn btn-gold btn-lg">Voir la démonstration</a>
+            <a href="/compte?retour=%2Fpro" class="btn btn-outline btn-lg">Ouvrir le compte de l'agence</a>
+          </div>
+          <p class="note" style="margin-top:1.2rem;">Démonstration sans compte, avec des dossiers fictifs. Chaque compte d'agence est vérifié par la maison avant le premier essai.</p>
+        </div>
+        <div class="lumiere-3d" data-lumiere-3d role="img" aria-label="Une médaille sombre cerclée d'un filet d'or, qu'une lumière chaude effleure"></div>
       </div>
     </div>
   </section>
@@ -148,7 +193,7 @@ module.exports = {
         <div class="card card-lift reveal"><div class="card-icon">${ICON.ecran}</div><h3 class="h-lg">Une solution digitale</h3><p>Un espace partenaire, pas un classeur. Vous saisissez le brief en trois minutes, vous suivez l'avancement, vous faites écouter le catalogue en rendez-vous et vous retrouvez votre récapitulatif de fin de mois. Rien à installer : cela s'ouvre dans le navigateur, y compris sur le téléphone du conseiller.</p></div>
         <div class="card card-lift reveal"><div class="card-icon">${ICON.qr}</div><h3 class="h-lg">Le QR code</h3><p>L'hommage ne s'arrête pas au jour de la cérémonie. Un code à faire graver sur la plaque ou le monument ouvre une page où l'œuvre se joue, avec les mots de la famille et ses photos. Un petit-enfant qui passera au cimetière dans quinze ans entendra la chanson de son grand-père.</p></div>
         <div class="card card-lift reveal"><div class="card-icon">${ICON.phone}</div><h3 class="h-lg">L'accompagnement de la famille</h3><p>Cinq questions, cinq minutes : nous menons l'entretien, ou vous le menez vous-même. La famille garde ensuite son espace, où elle écoute, télécharge, ajoute ses photos et publie sa page quand elle le décide. Si l'œuvre ne touche pas, elle est reprise à nos frais.</p></div>
-        <div class="card card-lift reveal"><div class="card-icon">${ICON.euro}</div><h3 class="h-lg">Un vrai partenariat</h3><p>Vous conservez 60 % du montant payé par la famille, soit 179 € nets sur une offre Prestige. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée. La première composition est offerte, et vous parlez au fondateur — pas à une plateforme.</p></div>
+        <div class="card card-lift reveal"><div class="card-icon">${ICON.euro}</div><h3 class="h-lg">Un vrai partenariat</h3><p>Vous conservez 60 % du montant payé par la famille, soit 179 € nets sur une offre Prestige. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée. Un essai gratuit par agence, et vous parlez au fondateur — pas à une plateforme.</p></div>
       </div>      </div>
     </div>
   </section>
