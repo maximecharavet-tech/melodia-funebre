@@ -1,0 +1,3 @@
+# Fichiers produits par la compilation Tauri
+/target/
+/gen/schemas

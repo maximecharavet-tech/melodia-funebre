@@ -1,1 +1,0 @@
-{"console-pro":{"identifier":"console-pro","description":"La console distante (melodia-funebre.fr/pro) peut enregistrer un fichier et imprimer un PDF — rien d'autre.","remote":{"urls":["https://melodia-funebre.fr/*"]},"local":true,"windows":["main"],"permissions":["core:default","dialog:allow-save","allow-enregistrer-fichier","allow-imprimer-pdf"]}}
