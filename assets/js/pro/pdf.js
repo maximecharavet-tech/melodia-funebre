@@ -206,7 +206,7 @@ export class Pdf {
     const xref = pos;
     ecrire(`xref\n0 ${num + 1}\n0000000000 65535 f \n`);
     for (let i = 1; i <= num; i++) ecrire(String(offsets[i]).padStart(10, '0') + ' 00000 n \n');
-    ecrire(`trailer\n<< /Size ${num + 1} /Root ${catalogue} 0 R /Info << /Producer (Melodia Funebre) /Creator (Melodia Funebre Pro) >> >>\nstartxref\n${xref}\n%%EOF\n`);
+    ecrire(`trailer\n<< /Size ${num + 1} /Root ${catalogue} 0 R /Info << /Producer (Melodia Fun\\350bre) /Creator (Melodia Fun\\350bre Pro) >> >>\nstartxref\n${xref}\n%%EOF\n`);
     return new Blob(morceaux, { type: 'application/pdf' });
   }
 }

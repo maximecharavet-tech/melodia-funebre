@@ -155,9 +155,12 @@ test('code maître : sans variable d’environnement, rien ne passe', async () =
 test('code maître : la valeur n’apparaît ni dans le client ni dans le noyau', async () => {
   const fs = await import('node:fs');
   const fichiers = ['assets/js/vendor/melodia_pro.wasm', 'assets/js/vendor/melodia-pro-glue.js'];
-  for (const d of ['assets/js/pro']) {
-    if (fs.existsSync(d)) for (const f of fs.readdirSync(d)) fichiers.push(d + '/' + f);
+  for (const d of ['assets/js/pro', 'assets/js/pro/vues', 'assets/i18n']) {
+    if (fs.existsSync(d)) for (const f of fs.readdirSync(d)) if (fs.statSync(d + '/' + f).isFile()) fichiers.push(d + '/' + f);
   }
+  // auth.js n'est pas balayé : il réserve depuis longtemps l'identifiant de connexion
+  // « mastermax07 », sans rapport avec le code promo (qui n'est jamais dans le client).
+  fichiers.push('pro.html', 'assets/js/hommage.js');
   for (const f of fichiers) {
     if (!fs.existsSync(f)) continue;
     assert.doesNotMatch(fs.readFileSync(f).toString('latin1'), /mastermax/i, f);

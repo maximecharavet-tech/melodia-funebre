@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = '62b92f7406';
+const VERSION = 'c7192546cb';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -94,6 +94,8 @@ const PRECHARGE = [
    exactement la raison pour laquelle les pages mémoriales y figurent
    déjà. Et le studio ne doit pas servir une version gardée de côté
    à quelqu'un qui vient déposer son mot. */
+/* Les ressources de la console Pro, servies réseau d'abord (voir plus bas). */
+const PRO = /^\/(?:assets\/js\/pro\/|assets\/css\/pro\.css|assets\/i18n\/|assets\/js\/vendor\/melodia[-_]pro|assets\/img\/pro\/|pro\.webmanifest)/;
 const JAMAIS = /\/(api|rest|auth|pour|carte)\/|supabase\.co|\/m\/|\/a\/|un-mot-pour-toi|hommage\.html|dashboard-|espace\.html|compte\.html|\/espace(?:$|\?|\/)|\/compte(?:$|\?|\/)|config\.js/;
 
 self.addEventListener('install', (e) => {
@@ -172,6 +174,28 @@ self.addEventListener('fetch', (e) => {
          morceau de fichier, pas le fichier. */
       if (rep.ok && rep.status === 200) { c.put(req, rep.clone()); bornerSons(); }
       return rep;
+    })());
+    return;
+  }
+
+  /* ─── La console Pro (/pro) : réseau d'abord ───
+     Ses modules ES se chargent sans empreinte : un « import » ne porte pas
+     de « ?v= ». Servis « cache d'abord » comme le reste, ils resteraient
+     figés jusqu'au prochain changement de l'accueil — une correction de la
+     console ne parviendrait pas à qui l'a déjà ouverte, c'est-à-dire
+     exactement la panne que la règle 1 interdit. On sert donc le réseau,
+     et la copie gardée seulement hors ligne. Les appels /api/pro restent
+     dans JAMAIS : ni données de dossier ni réponse d'API en cache. */
+  if (PRO.test(url.pathname) && !/[?&]v=/.test(url.search)) {
+    e.respondWith((async () => {
+      const c = await caches.open(ACTIFS);
+      try {
+        const rep = await fetch(req);
+        if (rep.ok) c.put(req, rep.clone());
+        return rep;
+      } catch (err) {
+        return (await c.match(req)) || Response.error();
+      }
     })());
     return;
   }

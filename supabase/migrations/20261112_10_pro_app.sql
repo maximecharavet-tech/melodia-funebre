@@ -417,9 +417,11 @@ drop policy if exists "pro_tracks_lecture" on public.pro_tracks;
 create policy "pro_tracks_lecture" on public.pro_tracks for select to authenticated
   using ((valide_maison and app.pro_dossier_org(dossier_id) in (select app.mes_orgs())) or app.est_maison());
 
+-- File de travaux : maison seule. Ses erreurs internes peuvent nommer un
+-- fournisseur (marque blanche) ; l'agence suit l'état via pro_dossiers.status.
 drop policy if exists "pro_jobs_lecture" on public.pro_jobs;
 create policy "pro_jobs_lecture" on public.pro_jobs for select to authenticated
-  using (app.pro_dossier_org(dossier_id) in (select app.mes_orgs()) or app.est_maison());
+  using (app.est_maison());
 
 drop policy if exists "pro_payments_lecture" on public.pro_payments;
 create policy "pro_payments_lecture" on public.pro_payments for select to authenticated

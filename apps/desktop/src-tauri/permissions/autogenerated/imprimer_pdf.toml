@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-imprimer-pdf"
+description = "Enables the imprimer_pdf command without any pre-configured scope."
+commands.allow = ["imprimer_pdf"]
+
+[[permission]]
+identifier = "deny-imprimer-pdf"
+description = "Denies the imprimer_pdf command without any pre-configured scope."
+commands.deny = ["imprimer_pdf"]

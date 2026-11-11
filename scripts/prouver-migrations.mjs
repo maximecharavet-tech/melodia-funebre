@@ -315,6 +315,9 @@ r = await commeMembre(L, 'l@agence-a.test', `insert into public.pro_dossiers (or
 preuve('un membre en lecture seule ne crée pas de dossier', !r.ok, r.erreur);
 r = await commeMembre(A, 'a@agence-a.test', 'select count(*)::int as n from public.pro_stripe_events');
 preuve('aucun membre ne lit les événements Stripe', r.ok && r.rows[0].n === 0);
+await db.exec(`insert into public.pro_jobs (dossier_id, type, version, derniere_erreur) values ('${DOS_A}', 'musique', 1, 'detail interne du fournisseur')`);
+r = await commeMembre(A, 'a@agence-a.test', 'select count(*)::int as n from public.pro_jobs');
+preuve('une agence ne lit pas la file de travaux (détails internes, marque blanche)', r.ok && r.rows[0].n === 0);
 r = await commeMembre(A, 'a@agence-a.test', 'select count(*)::int as n from public.pro_settings');
 preuve('une agence ne lit pas les réglages maison', r.ok && r.rows[0].n === 0);
 r = await commeMembre(A, 'a@agence-a.test', "select public.pro_compter_scan('7K3M9QXT2BZZ')");
