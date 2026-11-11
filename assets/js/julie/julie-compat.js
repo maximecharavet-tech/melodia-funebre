@@ -2,7 +2,7 @@
  * julie-compat.js — Console Julie v2 : petites passerelles vers l'existant.
  * Ajoute, sans rien modifier d'auth.js, les deux méthodes attendues par les
  * vues v2 : MelodiaProspects.noter (journal d'un prospect) et
- * MelodiaAuth.quota (quota du jour lu sur /api/prospect-mail, mode « quota »).
+ * MelodiaAuth.quota (compteur du jour lu sur /api/prospect-mail, mode « quota »).
  * Aucune dépendance. License: internal.
  */
 (function () {
@@ -30,9 +30,13 @@
         var d = r.ok ? await r.json() : null;
         var qt = d && d.quota;
         if (qt && typeof qt === 'object') {
-          var max = Number(qt.max || qt.limite || 30);
           var util = Number(qt.utilise != null ? qt.utilise : (qt.envoyes != null ? qt.envoyes : 0));
-          q = { utilise: util, max: max, restant: Math.max(0, max - util) };
+          if (qt.illimite || qt.bloque === false) {
+            q = { utilise: util, illimite: true, bloque: false, conseil: qt.conseil || '', max: null, restant: null };
+          } else {
+            var max = Number(qt.max || qt.limite || 30);
+            q = { utilise: util, max: max, restant: Math.max(0, max - util) };
+          }
         }
       } catch (_) { /* hors ligne : quota par défaut */ }
       cache = { t: Date.now(), q: q };

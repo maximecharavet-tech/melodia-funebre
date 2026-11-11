@@ -101,12 +101,14 @@ précise des problèmes détectés : mots à risque, longueur du sujet, nombre d
 liens, variables non résolues, présence du désabonnement. Les adresses sont
 aussi vérifiées (syntaxe, MX, déjà contactée).
 
-## Votre signature et votre quota
+## Votre signature et le compteur d’envois
 
-Le quota d’envoi reste **30 courriels par jour** (compté sur le jour de Paris).
-Le fondateur a 100. Les tests comptent séparément (10 par jour). Sans clé
-d’envoi configurée côté serveur, la console retombe sur le lien `mailto:` —
-rien n’est perdu en silence.
+Plus de plafond applicatif bloquant. La console affiche le nombre de courriels
+déjà partis aujourd’hui (jour de Paris), à titre indicatif. Le forfait Resend
+gratuit reste limité à **100 courriels par jour** et **3 000 par mois** (tous
+envois du compte confondus) : ce plafond-là ne peut être levé que par une
+offre payante. Sans clé d’envoi configurée côté serveur, la console retombe
+sur le lien `mailto:` — rien n’est perdu en silence.
 
 ## Ce qu’il faut vérifier avant d’utiliser en production
 

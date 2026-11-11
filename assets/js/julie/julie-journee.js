@@ -8,7 +8,7 @@
  *   4. À enrichir            (email / site / dirigeant manquants)
  *   5. Plus tard             (prévu cette semaine)
  *
- * En-tête : « Bonjour Julie », date, citation calme, anneau d'objectif, quota.
+ * En-tête : « Bonjour Julie », date, citation calme, anneau d'objectif, compteur d'envois.
  *
  * Dépend de : window.MelodiaJulie (julie-core.js), window.MelodiaProspects
  * (auth.js), window.MelodiaJulieWasm (via julie-core). Aucune dépendance npm.
@@ -141,10 +141,11 @@
 
   // ─── Rendu : en-tête ─────────────────────────────────────────────────
   async function enteteHTML(data) {
-    var quota = data.quota || { utilise: 0, max: 30, restant: 30 };
+    var quota = data.quota || { utilise: 0, illimite: true };
     var objectif = data.objectif || { mails: 30, appels: 5, relances: 3 };
     var faits = data.faits || { mails: 0, appels: 0, relances: 0 };
-    var pct = quota.max > 0 ? Math.min(100, Math.round((quota.utilise / quota.max) * 100)) : 0;
+    var illimite = !!(quota.illimite || quota.bloque === false);
+    var pct = (!illimite && quota.max > 0) ? Math.min(100, Math.round((quota.utilise / quota.max) * 100)) : 0;
 
     return '' +
       '<div class="jv2-entete">' +
@@ -155,11 +156,14 @@
         '</div>' +
         '<div class="jv2-entete-droite">' +
           anneauObjectifHTML(objectif, faits) +
-          '<div class="jv2-quota" title="Quota d’envoi du jour">' +
-            '<div class="jv2-quota-label">Quota</div>' +
-            '<div class="jv2-quota-chiffres"><span class="mono">' + quota.utilise + '</span><span class="jv2-quota-sep">/</span><span class="mono">' + quota.max + '</span></div>' +
-            '<div class="jv2-quota-barre"><span style="width:' + pct + '%"></span></div>' +
-            '<div class="jv2-quota-reste">' + quota.restant + ' restant' + (quota.restant === 1 ? '' : 's') + '</div>' +
+          '<div class="jv2-quota" title="Envois du jour">' +
+            '<div class="jv2-quota-label">Envois</div>' +
+            (illimite
+              ? '<div class="jv2-quota-chiffres"><span class="mono">' + (quota.utilise || 0) + '</span></div>' +
+                '<div class="jv2-quota-reste">aujourd’hui</div>'
+              : '<div class="jv2-quota-chiffres"><span class="mono">' + quota.utilise + '</span><span class="jv2-quota-sep">/</span><span class="mono">' + quota.max + '</span></div>' +
+                '<div class="jv2-quota-barre"><span style="width:' + pct + '%"></span></div>' +
+                '<div class="jv2-quota-reste">' + quota.restant + ' restant' + (quota.restant === 1 ? '' : 's') + '</div>') +
           '</div>' +
         '</div>' +
       '</div>';
@@ -258,9 +262,9 @@
   }
 
   // ─── Rendu : section nouveaux ────────────────────────────────────────
-  function sectionNouveauxHTML(items, resteQuota) {
+  function sectionNouveauxHTML(items) {
     if (!items.length) return '';
-    var limite = Math.min(items.length, Math.max(0, resteQuota || 0, 10));
+    var limite = Math.min(items.length, 10);
     var selection = items.slice(0, limite);
     var rows = selection.map(function (p) {
       var n = normalise(p);
@@ -350,13 +354,12 @@
 
   // ─── Rendu principal ─────────────────────────────────────────────────
   function vueHTML(data) {
-    var reste = (data.quota && data.quota.restant) || 0;
     return '' +
       '<div class="jv2">' +
         data.entete +
         sectionTraiterHTML(data.traiter) +
         sectionRelancesHTML(data.relances) +
-        sectionNouveauxHTML(data.nouveaux, reste) +
+        sectionNouveauxHTML(data.nouveaux) +
         sectionEnrichirHTML(data.enrichir) +
         sectionPlusTardHTML(data.plusTard) +
       '</div>' +
@@ -386,7 +389,7 @@
     var enrichir = enrichis.filter(aEnrichir);
     var plusTard = enrichis.filter(function (p) { return plusTardCheck(p, isoJour); });
 
-    var quota = { utilise: 0, max: 30, restant: 30 };
+    var quota = { utilise: 0, illimite: true };
     try {
       if (window.MelodiaAuth && typeof window.MelodiaAuth.quota === 'function') {
         var q = await Promise.resolve(window.MelodiaAuth.quota());

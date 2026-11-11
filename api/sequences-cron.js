@@ -12,14 +12,15 @@
  *     le client (Rust Wasm côté navigateur, ici on réimplémente une version
  *     minimale pour rester sans dépendance npm) ;
  *   · Passe par /api/prospect-mail en interne — jamais Resend directement.
- *     Cela garantit le respect du quota, du dédoublonnage (`DEJA_ENVOYE`),
+ *     Cela garantit le respect du dédoublonnage (`DEJA_ENVOYE`),
  *     du STOP, du rôle, et l'écriture dans `envois_prospect` ;
  *   · idempotence : on écrit `prochaine_le` avant l'envoi, puis on avance
  *     l'étape après un envoi réussi. En cas de crash entre les deux, la
  *     prochaine exécution retrouve l'étape déjà avancée (au pire un envoi
  *     manqué, jamais un doublon) ;
- *   · plafond dur : 30 envois par collaborateur et par jour (le quota de
- *     /api/prospect-mail reste seul juge en dernier ressort) ;
+ *   · pas de plafond applicatif d'envoi : /api/prospect-mail ne bloque
+ *     plus sur un quota quotidien. Un garde-fou anti-emballement reste
+ *     ci-dessous (tâches préparées, l'envoi auto n'est pas activé) ;
  *   · sortie si oppose, rejete, a_repondu, statut terminal, ou si la
  *     dernière lecture du journal est un rejet/plainte.
  *
@@ -43,7 +44,7 @@ import { origineAutorisee, entetesOrigine, entetesService, tropSouvent } from '.
 
 export const config = { runtime: 'nodejs', maxDuration: 60 };
 
-const MAX_PAR_COLLAB = 30;
+const MAX_PAR_COLLAB = 500;
 
 function refus(res, code, status, message) {
   res.statusCode = status;

@@ -3,7 +3,7 @@
  * Choix du prospect, du modèle, de la disposition (_courrier-v2), de
  * l'accroche ({accroche}, suggérée par /api/prospect-ia) et des brochures ;
  * aperçu serveur + note de délivrabilité (MelodiaJulieApercu). L'envoi passe
- * toujours par « Mail prêt à envoyer » : quotas, STOP, suivi d'ouverture et
+ * toujours par « Mail prêt à envoyer » : STOP, suivi d'ouverture et
  * pièces jointes restent ceux de /api/prospect-mail. License: internal.
  */
 (function () {
@@ -56,7 +56,7 @@
           BROCHURES.map(function (b) { return '<label class="jv2-compo-piece"><input type="checkbox" data-jc-brochure="' + b[0] + '"> <span>' + esc(b[1]) + '</span></label>'; }).join('') +
         '</fieldset>' +
         '<div class="jv2-compo-actions"><button type="button" class="btn" data-jc="preparer">Préparer l’envoi →</button>' +
-          '<span class="jv2-compo-aide">L’envoi se fait dans « Mail prêt à envoyer » (quota, STOP et suivi inclus).</span></div>' +
+          '<span class="jv2-compo-aide">L’envoi se fait dans « Mail prêt à envoyer » (STOP et suivi inclus).</span></div>' +
       '</section>' +
       '<section class="jv2-compo-apercu" id="jc-apercu"></section>' +
     '</div>';

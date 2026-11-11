@@ -24,8 +24,12 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { cleServiceValide } from './_prospect-outils.js';
+import { htmlPiedProspection } from './_desabonnement.js';
 
 const TIMEOUT_MS = 15000;
+const PAUSE_RESEND_MS = 500; /* ~2 req/s, sous la limite Resend (10/s) */
+const REESSAIS_429 = 3;
+let dernierAppelResend = 0;
 
 export const SITE = (process.env.SITE_URL || 'https://melodia-funebre.fr').replace(/\/+$/, '');
 
@@ -247,9 +251,7 @@ export function gabarit(o) {
     : '';
 
   const pied = o.pied === 'prospection'
-    ? 'Vous recevez ce message dans un cadre strictement professionnel, parce que votre ' +
-      'établissement exerce dans les services funéraires. Pour ne plus être contacté, répondez ' +
-      '<b style="color:#5c5749;">STOP</b> à ce courriel : votre adresse est retirée immédiatement et définitivement.'
+    ? htmlPiedProspection(o.unsub || (SITE + '/api/prospect-stop'))
     : 'Ce message vous est adressé au titre de la commande passée auprès de Melodia Funèbre. ' +
       'Vous pouvez répondre directement à ce courriel : il arrive dans notre boîte, une personne le lit.';
 
@@ -341,45 +343,72 @@ export function gabarit(o) {
  * pas faire échouer l'action qui l'a déclenché (une commande enregistrée
  * reste enregistrée même si son accusé de réception se perd).
  */
-export async function envoyer(charge) {
+
+function attendre(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+async function respecterDebitResend() {
+  const attente = dernierAppelResend + PAUSE_RESEND_MS - Date.now();
+  if (attente > 0) await attendre(attente);
+  dernierAppelResend = Date.now();
+}
+
+/**
+ * Appel Resend avec cadence ~2 req/s et nouvelles tentatives sur 429.
+ */
+async function appelerResend(chemin, corps, timeoutMs) {
   const cle = process.env.RESEND_API_KEY;
   if (!cle) return { ok: false, status: 503, code: 'NOT_CONFIGURED', error: 'RESEND_API_KEY absente.' };
-
-  const ctrl = new AbortController();
-  const minuteur = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      signal: ctrl.signal,
-      headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' },
-      body: JSON.stringify(charge)
-    });
-    const brut = await r.text();
-    let data; try { data = JSON.parse(brut); } catch (e) { data = null; }
-
-    if (!r.ok) {
-      /* Le motif exact vaut mieux qu'un code : une adresse d'expédition
-         non vérifiée chez Resend est la cause la plus fréquente. */
-      return {
+  let dernier = null;
+  for (let essai = 0; essai <= REESSAIS_429; essai++) {
+    await respecterDebitResend();
+    const ctrl = new AbortController();
+    const minuteur = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const r = await fetch('https://api.resend.com' + chemin, {
+        method: 'POST',
+        signal: ctrl.signal,
+        headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' },
+        body: JSON.stringify(corps)
+      });
+      const brut = await r.text();
+      let data; try { data = JSON.parse(brut); } catch (e) { data = null; }
+      if (r.status === 429 && essai < REESSAIS_429) {
+        const ra = Number(r.headers && r.headers.get && r.headers.get('retry-after'));
+        const pause = (Number.isFinite(ra) && ra > 0 ? ra * 1000 : PAUSE_RESEND_MS * Math.pow(2, essai + 1));
+        await attendre(Math.min(8000, pause));
+        continue;
+      }
+      if (!r.ok) {
+        return {
+          ok: false,
+          status: r.status === 429 ? 429 : (r.status === 401 || r.status === 403 ? r.status : 502),
+          code: r.status === 401 || r.status === 403 ? 'BAD_KEY' : (r.status === 429 ? 'RATE_LIMIT' : 'SEND_FAILED'),
+          error: 'Le service d\'envoi a répondu ' + r.status + '.',
+          motif: (data && (data.message || data.name)) || brut.slice(0, 300)
+        };
+      }
+      return { ok: true, data };
+    } catch (err) {
+      const coupe = err.name === 'AbortError';
+      dernier = {
         ok: false,
-        status: r.status === 429 ? 429 : (r.status === 401 || r.status === 403 ? r.status : 502),
-        code: r.status === 401 || r.status === 403 ? 'BAD_KEY' : (r.status === 429 ? 'RATE_LIMIT' : 'SEND_FAILED'),
-        error: 'Le service d\'envoi a répondu ' + r.status + '.',
-        motif: (data && (data.message || data.name)) || brut.slice(0, 300)
+        status: coupe ? 504 : 500,
+        code: coupe ? 'TIMEOUT' : 'FETCH_FAILED',
+        error: coupe ? 'Le service d\'envoi n\'a pas répondu.' : 'Envoi impossible : ' + err.message
       };
+      if (coupe || essai === REESSAIS_429) return dernier;
+      await attendre(PAUSE_RESEND_MS * Math.pow(2, essai + 1));
+    } finally {
+      clearTimeout(minuteur);
     }
-    return { ok: true, id: (data && data.id) || null };
-  } catch (err) {
-    const coupe = err.name === 'AbortError';
-    return {
-      ok: false,
-      status: coupe ? 504 : 500,
-      code: coupe ? 'TIMEOUT' : 'FETCH_FAILED',
-      error: coupe ? 'Le service d\'envoi n\'a pas répondu.' : 'Envoi impossible : ' + err.message
-    };
-  } finally {
-    clearTimeout(minuteur);
   }
+  return dernier || { ok: false, status: 500, code: 'FETCH_FAILED', error: 'Envoi impossible.' };
+}
+
+export async function envoyer(charge) {
+  const r = await appelerResend('/emails', charge, TIMEOUT_MS);
+  if (!r.ok) return r;
+  return { ok: true, id: (r.data && r.data.id) || null };
 }
 
 /**
@@ -387,37 +416,12 @@ export async function envoyer(charge) {
  * Renvoie { ok, ids } ou { ok:false, ... } comme envoyer().
  */
 export async function envoyerLot(charges) {
-  const cle = process.env.RESEND_API_KEY;
-  if (!cle) return { ok: false, status: 503, code: 'NOT_CONFIGURED', error: 'RESEND_API_KEY absente.' };
-  const ctrl = new AbortController();
-  const minuteur = setTimeout(() => ctrl.abort(), TIMEOUT_MS * 2);
-  try {
-    const r = await fetch('https://api.resend.com/emails/batch', {
-      method: 'POST', signal: ctrl.signal,
-      headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' },
-      body: JSON.stringify(charges)
-    });
-    const brut = await r.text();
-    let data; try { data = JSON.parse(brut); } catch (e) { data = null; }
-    if (!r.ok) {
-      return {
-        ok: false,
-        status: r.status === 429 ? 429 : (r.status === 401 || r.status === 403 ? r.status : 502),
-        code: r.status === 401 || r.status === 403 ? 'BAD_KEY' : (r.status === 429 ? 'RATE_LIMIT' : 'SEND_FAILED'),
-        error: 'Le service d\'envoi a répondu ' + r.status + '.',
-        motif: (data && (data.message || data.name)) || brut.slice(0, 300)
-      };
-    }
-    const liste = (data && (data.data || data)) || [];
-    return { ok: true, ids: Array.isArray(liste) ? liste.map((x) => x && x.id) : [] };
-  } catch (err) {
-    const coupe = err.name === 'AbortError';
-    return { ok: false, status: coupe ? 504 : 500, code: coupe ? 'TIMEOUT' : 'FETCH_FAILED',
-             error: coupe ? 'Le service d\'envoi n\'a pas répondu.' : 'Envoi impossible : ' + err.message };
-  } finally {
-    clearTimeout(minuteur);
-  }
+  const r = await appelerResend('/emails/batch', charges, TIMEOUT_MS * 2);
+  if (!r.ok) return r;
+  const liste = (r.data && (r.data.data || r.data)) || [];
+  return { ok: true, ids: Array.isArray(liste) ? liste.map((x) => x && x.id) : [] };
 }
+
 
 /**
  * Le site est-il bien à l'origine de cet appel ?
