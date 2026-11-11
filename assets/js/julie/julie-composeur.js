@@ -16,7 +16,10 @@
     ['marbriers', 'Marbriers'], ['crematoriums', 'Crématoriums'],
     ['pompes-funebres-v2', 'Pompes funèbres — nouvelle édition'], ['marbriers-v2', 'Marbriers — nouvelle édition'],
     ['crematoriums-v2', 'Crématoriums — nouvelle édition'], ['prestige-offrande', 'Prestige « L’Offrande »'],
-    ['prestige-ecoute', 'Prestige « L’Écoute »']
+    ['prestige-ecoute', 'Prestige « L’Écoute »'],
+    ['prestige-art', 'Prestige — Œuvre d’art (pompes funèbres)'],
+    ['souvenirs-qui-resonnent', 'Souvenirs qui résonnent (familles)'],
+    ['ceremonie', 'Cérémonie (pompes funèbres & officiants)']
   ];
   var DISPOSITIONS = [['editorial', 'Éditoriale (actuelle)'], ['lettre', 'Lettre — sobre, très délivrable'], ['carte', 'Carte — portrait de Julie']];
   var etat = { prospects: [], siret: '', modele: 'pf-premier-contact', layout: 'editorial', accroche: '', brochures: ['professionnels'] };

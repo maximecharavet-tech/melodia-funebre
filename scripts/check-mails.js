@@ -86,7 +86,7 @@ function run() {
   test('journal Invalid API key', (() => { const r = o.interpreterLectureJournal(401, '{"message":"Invalid API key","hint":"Double check your Supabase `anon` or `service_role` API key."}'); return r.ok === false && r.absent === false; })());
   test('journal permission denied n’est pas une table absente', o.interpreterLectureJournal(401, '{"code":"42501","message":"permission denied for table envois_prospect"}').absent === false);
 
-  test('catalogue 9 brochures', o.BROCHURE_IDS && o.BROCHURE_IDS.length === 9 &&
+  test('catalogue 12 brochures', o.BROCHURE_IDS && o.BROCHURE_IDS.length === 12 &&
     o.BROCHURES['pompes-funebres'] && o.BROCHURES.marbriers && o.BROCHURES.crematoriums);
   test('libellé Pompes funèbres', o.BROCHURES['pompes-funebres'].label === 'Brochure Pompes funèbres');
   test('libellé Marbriers', o.BROCHURES.marbriers.label === 'Brochure Marbriers');
@@ -95,9 +95,15 @@ function run() {
     o.BROCHURES['pompes-funebres'].chemin === 'documents/melodia-brochure-pompes-funebres.pdf' &&
     o.BROCHURES['pompes-funebres-v2'].chemin === 'documents/melodia-brochure-pompes-funebres-v2.pdf' &&
     o.BROCHURES['marbriers-v2'] && o.BROCHURES['crematoriums-v2'] &&
-    o.BROCHURES['prestige-offrande'] && o.BROCHURES['prestige-ecoute']);
+    o.BROCHURES['prestige-offrande'] && o.BROCHURES['prestige-ecoute'] &&
+    o.BROCHURES['prestige-art'] && o.BROCHURES['souvenirs-qui-resonnent'] && o.BROCHURES.ceremonie);
   const nouvelles = o.resoudreBrochures(['prestige-offrande', 'prestige-ecoute', 'marbriers-v2']);
   test('brochures prestige acceptées', nouvelles.ok && nouvelles.ids.join(',') === 'prestige-offrande,prestige-ecoute,marbriers-v2');
+  const surreal = o.resoudreBrochures(['prestige-art', 'souvenirs-qui-resonnent', 'ceremonie']);
+  test('brochures surréalistes acceptées', surreal.ok && surreal.ids.join(',') === 'prestige-art,souvenirs-qui-resonnent,ceremonie');
+  test('libellé Prestige œuvre d’art', o.BROCHURES['prestige-art'].label === 'Brochure prestige — Œuvre d’art (pompes funèbres)');
+  test('libellé Souvenirs qui résonnent', o.BROCHURES['souvenirs-qui-resonnent'].label === 'Brochure Souvenirs qui résonnent (familles)');
+  test('libellé Cérémonie', o.BROCHURES.ceremonie.label === 'Brochure Cérémonie (pompes funèbres & officiants)');
   test('orthographe Melodia Funèbre absente des libellés fautifs',
     !Object.keys(o.BROCHURES).some((id) => /Mélodia|Mélodie|Funebre(?!-)/.test(o.BROCHURES[id].label)));
 
@@ -142,7 +148,10 @@ function run() {
     srcMails.indexOf('Brochure Marbriers') !== -1 &&
     srcMails.indexOf('Brochure Crématoriums') !== -1 &&
     srcMails.indexOf('Brochure prestige « L’Offrande » — pompes funèbres') !== -1 &&
-    srcMails.indexOf('Brochure prestige « L’Écoute » — professionnels') !== -1);
+    srcMails.indexOf('Brochure prestige « L’Écoute » — professionnels') !== -1 &&
+    srcMails.indexOf('Brochure prestige — Œuvre d’art (pompes funèbres)') !== -1 &&
+    srcMails.indexOf('Brochure Souvenirs qui résonnent (familles)') !== -1 &&
+    srcMails.indexOf('Brochure Cérémonie (pompes funèbres & officiants)') !== -1);
 
   const fsPdf = require('fs');
   ['documents/melodia-brochure-pompes-funebres.pdf',
@@ -152,9 +161,14 @@ function run() {
    'documents/melodia-brochure-marbriers-v2.pdf',
    'documents/melodia-brochure-crematoriums-v2.pdf',
    'documents/melodia-brochure-prestige-offrande.pdf',
-   'documents/melodia-brochure-prestige-ecoute.pdf'].forEach((f) => {
+   'documents/melodia-brochure-prestige-ecoute.pdf',
+   'documents/melodia-brochure-prestige-art.pdf',
+   'documents/melodia-brochure-souvenirs-qui-resonnent.pdf',
+   'documents/melodia-brochure-ceremonie.pdf'].forEach((f) => {
     const buf = fsPdf.readFileSync(require('path').join(__dirname, '..', f));
-    test('PDF ' + f, buf.slice(0, 5).toString() === '%PDF-' && buf.length > 100 * 1024 && buf.length < (/-v2|prestige/.test(f) ? 2 : 3) * 1024 * 1024);
+    const plafond = /prestige-art|souvenirs-qui-resonnent|ceremonie/.test(f) ? 4
+      : (/-v2|prestige/.test(f) ? 2 : 3);
+    test('PDF ' + f, buf.slice(0, 5).toString() === '%PDF-' && buf.length > 100 * 1024 && buf.length < plafond * 1024 * 1024);
   });
 
   return ok;
