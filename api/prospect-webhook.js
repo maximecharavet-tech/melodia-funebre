@@ -96,6 +96,15 @@ export default async function handler(req, res) {
         body: JSON.stringify(patch)
       });
     }));
+    /* Plainte ou désinscription : on marque l'opposition pour ne plus relancer. */
+    if (statut === 'plainte') {
+      const dest = [].concat(data.to || data.recipients || []).map((x) => String(x || '').toLowerCase().trim()).filter(Boolean);
+      await Promise.all(dest.map((adr) => fetch(SB_URL + '/rest/v1/prospects?email=ilike.' + encodeURIComponent(adr), {
+        method: 'PATCH',
+        headers: service,
+        body: JSON.stringify({ oppose: true })
+      }).catch(() => null)));
+    }
     return res.status(200).json({ ok: true, statut, id: resendId });
   } catch (e) {
     return res.status(500).json({ error: 'Mise à jour impossible.' });

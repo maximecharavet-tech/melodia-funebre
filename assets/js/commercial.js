@@ -1173,18 +1173,13 @@
         var c = charge();
         var r = await C.appeler({ mode: 'test', modele: m.nom, envois: [c], lienTexte: c.lienTexte, lienUrl: c.lienUrl, signature: C.signature() });
         b.disabled = false;
-        $('cp-etat').textContent = r.ok ? 'Test envoyé dans votre boîte' + (r.d.quota ? ' (' + r.d.quota.utilise + ' / ' + r.d.quota.max + ' tests aujourd’hui).' : '.')
+        $('cp-etat').textContent = r.ok ? 'Test envoyé dans votre boîte' + (r.d.quota ? ' (' + (r.d.quota.utilise || 0) + ' aujourd’hui).' : '.')
           : (r.d.code === 'NOT_CONFIGURED' ? 'Envoi direct non branché : utilisez votre messagerie.' : (r.d.error || 'Test impossible.'));
       });
-      /* Le quota du jour, sous les yeux avant d'envoyer : 30 par jour. */
+      /* Compteur du jour, indicatif : plus de blocage applicatif. */
       if (C.quota) C.quota().then(function (q) {
         if (!q || !document.body.contains(fond)) return;
         $('cp-etat').textContent = C.texteQuota(q) + '.';
-        if (!q.restant) {
-          $('cp-envoyer').disabled = true;
-          $('cp-envoyer').textContent = 'Quota du jour atteint';
-          $('cp-etat').textContent = 'Quota du jour atteint (' + q.utilise + ' / ' + q.max + ') : l’envoi direct reprend demain. Vous pouvez encore ouvrir le message dans votre messagerie.';
-        }
       });
     } else {
       $('cp-test').hidden = true;
@@ -1213,7 +1208,7 @@
           envoiDirect = true;
           apresEnvoi(p, m, 'Courriel envoyé', 'Modèle « ' + m.nom + ' »');
           if (window.melodiaToast) window.melodiaToast('Courriel envoyé à ' + p.email + '.' +
-            (d.quota ? ' ' + d.quota.utilise + ' / ' + d.quota.max + ' envoyés aujourd’hui.' : ''));
+            (d.quota ? ' ' + (d.quota.utilise || 0) + ' envoyé' + ((d.quota.utilise || 0) > 1 ? 's' : '') + ' aujourd’hui.' : ''));
           fermer();
           return;
         }

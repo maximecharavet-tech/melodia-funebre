@@ -37,6 +37,7 @@ import {
   carteVisite,
   DISQUE_OR
 } from './_courrier.js';
+import { htmlPiedProspection } from './_desabonnement.js';
 
 export const LAYOUTS = ['lettre', 'editorial', 'carte'];
 
@@ -80,17 +81,14 @@ function boutonBulletproof({ texte, url, bg, fg, bord }) {
     '<!--<![endif]-->';
 }
 
-function piedLegal(signature) {
+function piedLegal(signature, unsub) {
   var nom = esc((signature && signature.nom) || 'Julie Serve');
   var email = esc((signature && signature.email) || 'julie@melodia-funebre.fr');
   return '' +
     '<div style="font-family:Arial,sans-serif;font-size:11px;line-height:1.6;color:#8e8878;text-align:center;padding:0 12px;">' +
       esc('Melodia Funèbre — Chaque vie mérite sa chanson.') + '<br>' +
       nom + ' · ' + email + ' · ' + esc(SITE.replace(/^https?:\/\//, '')) + '<br>' +
-      '<span style="color:#8e8878;">' +
-        'Vous recevez ce message parce que vous dirigez un établissement funéraire, ' +
-        'marbrier ou un crématorium. Répondez « STOP » pour ne plus être contacté.' +
-      '</span>' +
+      '<div style="margin-top:8px;text-align:center;">' + htmlPiedProspection(unsub) + '</div>' +
     '</div>';
 }
 
@@ -98,7 +96,7 @@ function piedLegal(signature) {
  * Coquille commune : <!doctype>, preheader, table 600px, conditions MSO,
  * meta dark-mode.
  */
-function squelette({ titre, preheader, bgPage, bgCard, texte, corps }) {
+function squelette({ titre, preheader, bgPage, bgCard, texte, corps, unsub }) {
   var t = esc(titre || 'Melodia Funèbre');
   var p = esc(preheader || '');
   return '' +
@@ -142,7 +140,7 @@ function squelette({ titre, preheader, bgPage, bgCard, texte, corps }) {
             'border-radius:8px;overflow:hidden;color:' + esc(texte) + ';">' +
             corps +
           '</table>' +
-          '<div style="max-width:600px;margin:16px auto 0;">' + piedLegal({}) + '</div>' +
+          '<div style="max-width:600px;margin:16px auto 0;">' + piedLegal({}, unsub) + '</div>' +
         '</td></tr>' +
       '</table>' +
     '</body>' +
@@ -189,7 +187,8 @@ function layoutLettre(o) {
     bgPage: '#ebe6db',
     bgCard: '#f4f1ea',
     texte: '#17150f',
-    corps: corps
+    corps: corps,
+    unsub: o.unsub
   });
 }
 
@@ -248,7 +247,8 @@ function layoutEditorial(o) {
     bgPage: '#040407',
     bgCard: '#0d0d14',
     texte: '#f4f1ea',
-    corps: corps
+    corps: corps,
+    unsub: o.unsub
   });
 }
 
@@ -306,7 +306,8 @@ function layoutCarte(o) {
     bgPage: '#ebe6db',
     bgCard: '#f4f1ea',
     texte: '#17150f',
-    corps: corps
+    corps: corps,
+    unsub: o.unsub
   });
 }
 

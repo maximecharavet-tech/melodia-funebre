@@ -470,7 +470,7 @@
     var M = window.MelodiaMails;
     if (M && M.ENVOI_ACTIF) {
       return '<p class="col-banniere-etat">Envoi direct actif : depuis Mes prospects, cochez les fiches puis « Écrire à la sélection ». ' +
-        'Jusqu’à 30 courriels par jour, avec les visuels. Ici, « ✉ Envoyer directement » envoie ce courriel tel qu’affiché ; copier le message ou l’ouvrir dans votre messagerie reste possible.</p>';
+        'Les courriels partent avec les visuels. Ici, « ✉ Envoyer directement » envoie ce courriel tel qu’affiché ; copier le message ou l’ouvrir dans votre messagerie reste possible.</p>';
     }
     return '<p class="col-banniere-etat">' + esc(repli) + '</p>';
   }
@@ -511,7 +511,7 @@
     var q = d.quota;
     if (r.status === 401 || d.code === 'NON_CONNECTE') return 'Session expirée : reconnectez-vous, puis renvoyez. Rien n’est parti.';
     if (r.status === 403 && d.code === 'INTERDIT') return 'Votre compte n’a pas le droit d’envoyer : l’envoi direct est réservé aux comptes commercial et fondateur. Utilisez « Copier » en attendant.';
-    if (d.code === 'QUOTA') return 'Quota du jour atteint' + (q ? ' (' + q.utilise + ' / ' + q.max + ')' : '') + ' : les envois reprennent demain. Rien n’est parti.';
+    if (d.code === 'QUOTA') return 'L’envoi a été refusé par le service (plafond du prestataire atteint, ou limite temporaire). Réessayez plus tard.';
     if (d.code === 'RATE_LIMIT') return 'Trop d’envois en peu de temps : réessayez dans quelques minutes.';
     if (d.code === 'ENVOI_DESACTIVE' || d.code === 'NOT_CONFIGURED') return 'Envoi direct indisponible pour le moment : copiez le mail à la place.';
     if (d.code === 'ORIGINE') return 'Envoi refusé : ouvrez la console depuis melodia-funebre.fr.';
@@ -1116,7 +1116,7 @@
     var suggeree = brochureSuggereePret(fiche);
     return banniereEnvoi('Rien ne part automatiquement : vous copiez le message ou l’ouvrez dans Gmail.') +
       '<div class="col-pret-entete">' +
-        '<p class="col-pret-objectif" id="pret-quota">Quota du jour : en cours de lecture…</p>' +
+        '<p class="col-pret-objectif" id="pret-quota">Envois du jour : en cours de lecture…</p>' +
         (fiche ? '<p class="col-aide">Fiche liée : <strong>' + esc(fiche.nom) + '</strong></p>' : '') +
       '</div>' +
       '<div class="col-mails col-pret">' +
@@ -1161,7 +1161,7 @@
           '<div class="col-pieces" id="pret-pieces" aria-live="polite"></div>' +
           '<details class="col-lot">' +
             '<summary>Envoi groupé (CSV ou liste)</summary>' +
-            '<p class="col-aide">Colonne : nom, e-mail, société, ville. L’e-mail suffit. Les doublons et les adresses invalides sont écartés. Le quota de 30 courriels par jour s’applique.</p>' +
+            '<p class="col-aide">Colonne : nom, e-mail, société, ville. L’e-mail suffit. Les doublons et les adresses invalides sont écartés. Les doublons du jour et les adresses en opposition sont écartés.</p>' +
             '<div class="field"><label class="field-label" for="pret-csv">Fichier CSV</label>' +
               '<input class="field-input" id="pret-csv" type="file" accept=".csv,text/csv,text/plain,.txt"></div>' +
             '<div class="field"><label class="field-label" for="pret-liste">Ou collez une liste</label>' +
@@ -1276,9 +1276,13 @@
     var lotLu = { ok: [], erreurs: [], ignores: 0 };
 
     function quotaTexte(q) {
-      if (!q) return 'Quota du jour indisponible pour le moment.';
-      return 'Quota du jour : ' + (q.utilise || 0) + ' / ' + (q.max || 30) + ' envoyés' +
-        (q.restant ? ' · ' + q.restant + ' restant' + (q.restant > 1 ? 's' : '') : ' · quota atteint, reprise demain') +
+      if (!q) return 'Compteur du jour indisponible pour le moment.';
+      if (q.illimite || q.bloque === false) {
+        var n = q.utilise || 0;
+        return n + ' courriel' + (n > 1 ? 's' : '') + ' envoyé' + (n > 1 ? 's' : '') + ' aujourd’hui' + (q.conseil ? ' · ' + q.conseil : '');
+      }
+      return 'Envois du jour : ' + (q.utilise || 0) + ' / ' + (q.max || 30) + ' envoyés' +
+        (q.restant ? ' · ' + q.restant + ' restant' + (q.restant > 1 ? 's' : '') : ' · limite atteinte') +
         (q.persistant ? '' : ' (journal non appliqué : le compteur est provisoire)');
     }
     function lireQuota() {

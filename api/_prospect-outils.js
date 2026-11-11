@@ -310,6 +310,7 @@ function evenementVersStatut(type) {
     case 'email.clicked': return 'clique';
     case 'email.bounced': return 'rejete';
     case 'email.complained': return 'plainte';
+    case 'email.unsubscribed': return 'plainte';
     case 'email.delivery_delayed': return 'differe';
     default: return null;
   }

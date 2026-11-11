@@ -22,9 +22,9 @@
    · l'envoi se fait par petits lots de dix, l'un après l'autre avec
      une courte pause (Resend gratuit : 2 requêtes par seconde), avec une
      barre de progression et un compte rendu ligne à ligne ;
-   · le quota du jour (30 courriels par collaborateur, jour de Paris)
-     est affiché et respecté : au-delà, le bouton se limite à ce qui
-     reste, et le serveur refuse le surplus de toute façon ;
+   · le compteur du jour est affiché, à titre indicatif. Plus de
+     plafond applicatif bloquant. Le forfait Resend gratuit reste
+     limité à 100 courriels par jour et 3 000 par mois (compte entier) ;
    · une agence qui a déjà reçu CE modèle aujourd'hui est écartée ;
    · chaque fiche envoyée avance d'étape, note l'envoi dans son journal
      et reçoit sa prochaine relance.
@@ -44,7 +44,7 @@
   var RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var pause = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
 
-  /* Le jour de Paris, « AAAA-MM-JJ » : la borne du quota et des doublons. */
+  /* Le jour de Paris, « AAAA-MM-JJ » : la borne des doublons du jour. */
   function jourParis(d) {
     try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d || new Date()); }
     catch (e) { return (d || new Date()).toISOString().slice(0, 10); }
@@ -70,6 +70,10 @@
   }
   function texteQuota(q) {
     if (!q) return '';
+    if (q.illimite || q.bloque === false) {
+      var n = q.utilise || 0;
+      return n + ' envoyé' + (n > 1 ? 's' : '') + ' aujourd’hui' + (q.conseil ? ' · ' + q.conseil : '');
+    }
     return q.utilise + ' / ' + q.max + ' envoyés aujourd’hui' + (q.restant ? ' · ' + q.restant + ' restant' + (q.restant > 1 ? 's' : '') : ' · quota atteint, reprise demain');
   }
   var SEPT_JOURS = 7 * 86400000;
@@ -251,31 +255,21 @@
 
     function retenues() { return lignes.filter(function (l) { return l.inclus; }); }
 
-    /* Combien partiront vraiment : la sélection, rognée au quota. */
-    function aEnvoyer() {
-      var r = retenues();
-      return etat.quota ? r.slice(0, etat.quota.restant) : r;
-    }
+    /* Toute la sélection part : plus de rognage sur un quota applicatif. */
+    function aEnvoyer() { return retenues(); }
     function dessinerQuota() {
       var q = etat.quota, z = $('cmp-quota');
       if (!z) return;
       z.textContent = texteQuota(q);
-      z.className = 'cmp-etat' + (q && !q.restant ? ' mal' : (q && retenues().length > q.restant ? ' attention' : ''));
+      z.className = 'cmp-etat';
     }
     function dessinerListe() {
       var n = retenues().length;
       var k = aEnvoyer().length;
-      var q = etat.quota;
       $('cmp-compte').textContent = n + ' sur ' + lignes.length;
       $('cmp-sous').textContent = n + ' agence' + (n > 1 ? 's' : '') + ' recevront chacune un message à leur nom';
-      $('cmp-envoyer').textContent = q && !q.restant ? 'Quota du jour atteint'
-        : (k ? 'Envoyer à ' + k + ' agence' + (k > 1 ? 's' : '') + (k < n ? ' (sur ' + n + ')' : '') : 'Aucun destinataire');
+      $('cmp-envoyer').textContent = k ? 'Envoyer à ' + k + ' agence' + (k > 1 ? 's' : '') : 'Aucun destinataire';
       $('cmp-envoyer').disabled = !k;
-      if (q && n > q.restant) {
-        dire(q.restant
-          ? 'Quota : il reste ' + q.restant + ' envoi' + (q.restant > 1 ? 's' : '') + ' aujourd’hui. Seules les ' + q.restant + ' premières agences cochées partiront ; les autres attendront demain.'
-          : 'Quota du jour atteint (' + q.utilise + ' / ' + q.max + ') : les envois reprennent demain.', 'attention');
-      }
       dessinerQuota();
       $('cmp-liste').innerHTML = lignes.map(function (l, k) {
         var id = 'cmp-d' + k;
@@ -366,7 +360,7 @@
       var res = await appeler(Object.assign({ mode: 'test', modele: modeles[etat.cle].nom, envois: [courrielPour(l)], signature: signature() }, lien()));
       b.disabled = false;
       if (res.ok) dire('Test envoyé à ' + (utilisateur().email || 'votre adresse') + ', avec le message de « ' + l.v.nom + ' »' +
-        (res.d.quota ? ' (' + res.d.quota.utilise + ' / ' + res.d.quota.max + ' tests aujourd’hui)' : '') + '.', 'bon');
+        (res.d.quota ? ' (' + (res.d.quota.utilise || 0) + ' test' + ((res.d.quota.utilise || 0) > 1 ? 's' : '') + ' aujourd’hui)' : '') + '.', 'bon');
       else if (res.d.code === 'NOT_CONFIGURED' || res.d.code === 'ENVOI_DESACTIVE') repli(r);
       else dire(erreur(res), 'mal');
     });
@@ -375,8 +369,7 @@
       var r = aEnvoyer();
       if (!r.length) return;
       var ecartees = retenues().length - r.length;
-      if (!confirm('Envoyer ' + r.length + ' courriel' + (r.length > 1 ? 's' : '') + ' personnalisé' + (r.length > 1 ? 's' : '') + ' ?' +
-        (ecartees ? '\n' + ecartees + ' agence' + (ecartees > 1 ? 's' : '') + ' au-delà du quota du jour attendront demain.' : ''))) return;
+      if (!confirm('Envoyer ' + r.length + ' courriel' + (r.length > 1 ? 's' : '') + ' personnalisé' + (r.length > 1 ? 's' : '') + ' ?')) return;
       fond.dataset.envoi = '1';
       var bouton = this; bouton.disabled = true; $('cmp-test').disabled = true;
       var prog = $('cmp-prog'), barre = prog.firstChild; prog.hidden = false;
@@ -390,7 +383,7 @@
         if (res.d && res.d.quota) { etat.quota = res.d.quota; dessinerQuota(); }
         if (!res.ok) {
           if (res.d.code === 'NOT_CONFIGURED' || res.d.code === 'ENVOI_DESACTIVE') { arret = 'repli'; break; }
-          /* Un lot refusé en entier (quota, session, service) : on n'insiste
+          /* Un lot refusé en entier (session, service) : on n'insiste
              pas sur les suivants, chaque fiche restante est listée. */
           arret = erreur(res);
           var motifs = {};
@@ -421,7 +414,7 @@
       corps.innerHTML = '<div class="cmp-rapport">' +
         '<div class="cmp-r-chiffres"><div><b>' + partis.length + '</b><span>envoyé' + (partis.length > 1 ? 's' : '') + '</span></div>' +
           '<div><b class="' + (refus.length ? 'mal' : '') + '">' + refus.length + '</b><span>non parti' + (refus.length > 1 ? 's' : '') + '</span></div>' +
-          (attente.length ? '<div><b>' + attente.length + '</b><span>pour demain (quota)</span></div>' : '') + '</div>' +
+          (attente.length ? '<div><b>' + attente.length + '</b><span>non envoyés</span></div>' : '') + '</div>' +
         (etat.quota ? '<p class="gr-note">' + esc(texteQuota(etat.quota)) + '.</p>' : '') +
         (partis.length ? '<p class="gr-note">Chaque fiche envoyée est passée à l’étape suivante, l’envoi est noté dans son journal, et sa relance est prévue dans sept jours.</p>' : '') +
         '<ul class="cmp-liste">' +
@@ -432,7 +425,7 @@
             return '<li class="cmp-ligne exclu"><span class="cmp-nom">' + esc(x.l.v.nom) + '</span><span class="cmp-mail">' + esc(x.l.p.email || '') + '</span><span class="cmp-motif fixe">' + esc(x.motif) + '</span></li>';
           }).join('') +
           attente.map(function (l) {
-            return '<li class="cmp-ligne exclu"><span class="cmp-nom">' + esc(l.v.nom) + '</span><span class="cmp-mail">' + esc(l.p.email) + '</span><span class="cmp-motif">Quota du jour atteint : à envoyer demain</span></li>';
+            return '<li class="cmp-ligne exclu"><span class="cmp-nom">' + esc(l.v.nom) + '</span><span class="cmp-mail">' + esc(l.p.email) + '</span><span class="cmp-motif">Non envoyé</span></li>';
           }).join('') +
         '</ul>' +
       '</div>';

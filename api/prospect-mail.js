@@ -12,10 +12,12 @@
 //           ce que le collaborateur voit est exactement ce qui part.
 //   test    l'envoie au seul collaborateur connecté, objet « [Test] ».
 //   envoi   un ou plusieurs destinataires (50 au plus par appel), en
-//           un seul appel au service d'envoi. 30 par jour (jour de
-//           Paris) pour un collaborateur, 100 pour le fondateur.
-//   quota   ce qui reste à envoyer aujourd'hui, sans rien envoyer.
-//   Chaque réponse de test/envoi porte quota: {utilise, max, restant}.
+//           un seul appel au service d'envoi. Plus de plafond
+//           applicatif bloquant : le compteur du jour reste affiché.
+//           Le forfait Resend gratuit (100/jour, 3 000/mois) reste
+//           le seul plafond dur, côté prestataire.
+//   quota   le nombre d'envois déjà partis aujourd'hui, sans rien
+//           envoyer. Chaque réponse porte quota: {utilise, illimite}.
 //
 // ─── QUI A LE DROIT D'ENVOYER ───
 // Cette route envoyait n'importe quel texte à n'importe quelle adresse,
@@ -53,6 +55,7 @@ import {
   expediteurProspection, boiteMaison, origineAutorisee, entetesOrigine, tropSouvent,
   entetesService
 } from './_courrier.js';
+import { urlDesabo, entetesDesabonnement, textePiedProspection, normaliserEmail } from './_desabonnement.js';
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
 import { gabaritV2, layoutValide } from './_courrier-v2.js';
 import {
@@ -70,15 +73,14 @@ const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const ROLES_PERMIS = ['commercial', 'master'];
 const LOT_MAX = 50;
 
-/* ─── Quota quotidien (jour de Paris) ───
-   Un collaborateur « commercial » envoie au plus 30 courriels de
-   prospection par jour ; le fondateur 100 (le plafond gratuit de
-   Resend). Les tests comptent à part : 10 par jour. Le compte se lit
-   dans public.envois_prospect (migration 20261103_08). Sans cette table
-   ou sans clé de service utilisable, le plafond tient par appel et par
-   instance : moins sûr, mais jamais un envoi illimité. */
-const QUOTA = { commercial: 30, master: 100 };
-const QUOTA_TEST = 10;
+/* ─── Compteur du jour (jour de Paris) ───
+   Plus de plafond applicatif bloquant. On continue de compter les
+   envois dans public.envois_prospect pour l'affichage. Les anciens
+   écrans lisent encore max/restant : on leur envoie une valeur assez
+   haute pour ne jamais bloquer le bouton. Le forfait Resend gratuit
+   (100/jour, 3 000/mois, tous envois du compte) reste un plafond du
+   prestataire, non retirable sans offre payante. */
+const COMPAT_AFFICHAGE = 9999;
 
 /* Visuel de campagne en .webp : Outlook n'affiche pas le WebP. On
    sert la copie JPG déjà rangée dans /assets/img/courriel/. */
@@ -266,8 +268,30 @@ async function journaliser(email, mode, lignes) {
 }
 
 function quotaDe(role, mode, utilise, persistant) {
-  const max = mode === 'test' ? QUOTA_TEST : (QUOTA[role] || 0);
-  return { utilise, max, restant: Math.max(0, max - utilise), mode, persistant };
+  return {
+    utilise,
+    max: COMPAT_AFFICHAGE,
+    restant: COMPAT_AFFICHAGE,
+    illimite: true,
+    bloque: false,
+    conseil: 'Le forfait Resend gratuit est limité à 100 courriels par jour et 3 000 par mois, tous envois du compte confondus.',
+    mode,
+    persistant
+  };
+}
+
+async function estDesabonne(email) {
+  const adr = normaliserEmail(email);
+  if (!adr) return false;
+  const service = entetesService();
+  if (!service) return false;
+  try {
+    const url = SB_URL + '/rest/v1/prospects?select=email,oppose&oppose=eq.true&email=ilike.' + encodeURIComponent(adr) + '&limit=5';
+    const r = await fetch(url, { headers: service });
+    if (!r.ok) return false;
+    const l = await r.json();
+    return Array.isArray(l) && l.some((x) => normaliserEmail(x && x.email) === adr);
+  } catch (e) { return false; }
 }
 
 /* ─── L'expéditeur : « Julie Serve <julie@contact.melodia-funebre.fr> » ───
@@ -383,17 +407,20 @@ export default async function handler(req, res) {
   /* Console v2 : « lettre » ou « carte » passent par _courrier-v2.js ;
      sans choix (ou « editorial »), le gabarit historique reste la règle. */
   const layout = layoutValide(d.layout) && String(d.layout).toLowerCase() !== 'editorial' ? String(d.layout).toLowerCase() : '';
-  const habiller = (e, sig) => layout ? gabaritV2({
-    layout, sujet: e.sujet, preheader: e.texte.replace(/\s+/g, ' ').slice(0, 140), texte: e.texte,
-    visuel: e.visuel || visuel, visuelAlt: e.visuelAlt || visuelAlt,
-    lienTexte: e.lienTexte || lien.lienTexte, lienUrl: e.lienUrl || lien.lienUrl, signature: sig
-  }) : gabarit({
-    sujet: e.sujet, titre: e.titre, texte: e.texte,
-    apercu: e.texte.replace(/\s+/g, ' ').slice(0, 140),
-    lienTexte: e.lienTexte || lien.lienTexte, lienUrl: e.lienUrl || lien.lienUrl,
-    visuel: e.visuel || visuel, visuelAlt: e.visuelAlt || visuelAlt,
-    banniere: true, signature: sig, pied: 'prospection', cartesEcoute: true
-  });
+  const habiller = (e, sig) => {
+    const unsub = (e.to && valideEmail(e.to)) ? urlDesabo(e.to) : (SITE + '/api/prospect-stop');
+    return layout ? gabaritV2({
+      layout, sujet: e.sujet, preheader: e.texte.replace(/\s+/g, ' ').slice(0, 140), texte: e.texte,
+      visuel: e.visuel || visuel, visuelAlt: e.visuelAlt || visuelAlt,
+      lienTexte: e.lienTexte || lien.lienTexte, lienUrl: e.lienUrl || lien.lienUrl, signature: sig, unsub
+    }) : gabarit({
+      sujet: e.sujet, titre: e.titre, texte: e.texte,
+      apercu: e.texte.replace(/\s+/g, ' ').slice(0, 140),
+      lienTexte: e.lienTexte || lien.lienTexte, lienUrl: e.lienUrl || lien.lienUrl,
+      visuel: e.visuel || visuel, visuelAlt: e.visuelAlt || visuelAlt,
+      banniere: true, signature: sig, pied: 'prospection', cartesEcoute: true, unsub
+    });
+  };
   const signature = (nom, email) => ({
     nom: String(sigEntree.nom || nom || 'Melodia Funèbre').slice(0, 80),
     role: String(sigEntree.role || '').slice(0, 90),
@@ -490,19 +517,13 @@ export default async function handler(req, res) {
     }
   }
   const quota = quotaDe(qui.role, modeQuota, deja.lignes.length, deja.persistant);
-  if (quota.restant <= 0) {
-    return json(res, 429, {
-      error: mode === 'test'
-        ? 'Vous avez envoyé vos ' + quota.max + ' tests du jour. Reprenez demain.'
-        : 'Quota du jour atteint : ' + quota.utilise + ' / ' + quota.max + ' courriels envoyés aujourd’hui. Reprenez demain.',
-      code: 'QUOTA', quota
-    });
-  }
 
   if (envois.length > LOT_MAX) {
     return json(res, 400, { error: 'Au plus ' + LOT_MAX + ' destinataires par envoi.', code: 'LOT_TROP_GRAND' });
   }
-  if (await tropSouvent('envoi:' + qui.email, 60, 60 * 60 * 1000)) {
+  /* Anti-abus uniquement (appels, pas courriels) : 300 requêtes/heure.
+     La cadence Resend (~2 req/s + nouvel essai sur 429) est dans _courrier.js. */
+  if (await tropSouvent('envoi:' + qui.email, 300, 60 * 60 * 1000)) {
     return json(res, 429, { error: 'Trop d\'envois cette heure-ci. Réessayez plus tard.', code: 'RATE_LIMIT' });
   }
 
@@ -516,7 +537,6 @@ export default async function handler(req, res) {
      objet). Les doublons du lot lui-même sont écartés aussi. */
   const cleEnvoi = (to, m, sujet) => String(to || '').toLowerCase() + '|' + (m || ('objet:' + sujet));
   const vus = new Set(mode === 'test' ? [] : deja.lignes.map((l) => cleEnvoi(l.destinataire, l.modele, l.sujet)));
-  let place = quota.restant;
   const dansLot = new Set();
 
   if (piecePerso && envois.length > 3) {
@@ -526,22 +546,22 @@ export default async function handler(req, res) {
     ? await piecesJointes(brochures, piecePerso, envois.length > 3)
     : [];
 
-  envois.forEach((brut, idx) => {
-    const e = appliquerModele(brut, modele, brochures, liensBrochure);
+  for (let idx = 0; idx < envois.length; idx++) {
+    const e = appliquerModele(envois[idx], modele, brochures, liensBrochure);
     envois[idx] = e;
     if (mode === 'test') { e.to = qui.email; if (e.sujet && e.sujet.indexOf('[Test] ') !== 0) e.sujet = '[Test] ' + e.sujet; }
     const motif = defautDe(e, true);
-    if (motif) { refuses.push({ to: e.to, ref: e.ref, motif }); return; }
+    if (motif) { refuses.push({ to: e.to, ref: e.ref, motif }); continue; }
     if (mode !== 'test') {
       const cle = cleEnvoi(e.to, modele, e.sujet);
       const adr = String(e.to).toLowerCase();
-      if (dansLot.has(adr)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Adresse en double dans cet envoi.', code: 'DOUBLON' }); return; }
-      if (vus.has(cle)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Déjà envoyé aujourd’hui avec ce modèle.', code: 'DEJA_ENVOYE' }); return; }
+      if (dansLot.has(adr)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Adresse en double dans cet envoi.', code: 'DOUBLON' }); continue; }
+      if (vus.has(cle)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Déjà envoyé aujourd’hui avec ce modèle.', code: 'DEJA_ENVOYE' }); continue; }
+      if (await estDesabonne(e.to)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Cette adresse a demandé à ne plus être contactée.', code: 'DESABONNE' }); continue; }
       dansLot.add(adr);
     }
-    if (place <= 0) { refuses.push({ to: e.to, ref: e.ref, motif: 'Quota du jour atteint (' + quota.max + ' par jour).', code: 'QUOTA' }); return; }
-    place -= 1;
     retenus.push(e);
+    const unsub = urlDesabo(e.to);
     const charge = {
       from: de,
       to: [e.to],
@@ -549,16 +569,14 @@ export default async function handler(req, res) {
       html: habiller(e, sig),
       text: e.texte + '\n\n—\n' + sig.nom + (sig.role ? '\n' + sig.role : '') + '\n' + qui.email + '\n' + SITE +
             (brochures.length ? '\nBrochures :\n' + brochures.map((b) => b.label + ' : ' + liensBrochure[b.id]).join('\n') : '') +
-            '\n\nPour ne plus être contacté, répondez STOP à ce courriel.',
+            '\n\n' + textePiedProspection(unsub),
       reply_to: qui.email,
-      /* Les messageries proposent alors un bouton « Se désabonner » :
-         l'agence qui ne veut plus de nous le dit en un geste, plutôt que
-         de nous signaler comme indésirables. */
-      headers: { 'List-Unsubscribe': '<mailto:' + qui.email + '?subject=STOP>' }
+      /* Bouton « Se désabonner » (RFC 8058, un clic) + lien mailto STOP. */
+      headers: entetesDesabonnement(e.to, qui.email)
     };
     if (atts.length) charge.attachments = atts;
     charges.push(charge);
-  });
+  }
 
   if (!charges.length) return json(res, 400, { error: refuses[0] ? refuses[0].motif : 'Rien à envoyer.', code: 'RIEN', refuses, quota });
 
@@ -585,7 +603,7 @@ export default async function handler(req, res) {
     refuses,
     quota: quotaDe(qui.role, modeQuota, utilise, deja.persistant && persiste),
     note: deja.persistant && persiste ? undefined
-      : 'Journal des envois indisponible : le quota est tenu pour cet appel seulement (migration 20261103_08 à appliquer).',
+      : 'Journal des envois indisponible : le compteur du jour n\'est pas persisté (migration 20261103_08 à appliquer).',
     envoye_le: new Date().toISOString()
   });
 }
