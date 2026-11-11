@@ -307,3 +307,4 @@
 .jv2-compo .jv2-apercu-actions { flex-wrap: wrap; }
 .jv2-compo .jv2-apercu-actions .btn { white-space: normal; flex: 1 1 auto; }
 @media (max-width: 1280px) { .jv2-compo .jv2-apercu { grid-template-columns: 1fr; } }
+@media (max-width: 980px) { .jv2-compo { grid-template-columns: minmax(0, 1fr); } .jv2-compo-2 { grid-template-columns: 1fr; } .jv2-compo .jv2-apercu-iframe { height: 620px; } }
