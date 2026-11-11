@@ -54,6 +54,7 @@ import {
   entetesService
 } from './_courrier.js';
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
+import { gabaritV2, layoutValide } from './_courrier-v2.js';
 import {
   BROCHURE_CHEMIN, BROCHURE_NOM, BROCHURE_URL,
   pdfDepuisBase64, nomPiecePropre, avecBrochure,
@@ -307,7 +308,8 @@ function lire(e) {
     ref: String((e && (e.ref || e.siret)) || '').slice(0, 40),
     nom: String((e && (e.nom || e.dirigeant)) || '').trim().slice(0, 120),
     societe: String((e && (e.societe || e.agence)) || '').trim().slice(0, 160),
-    ville: String((e && e.ville) || '').trim().slice(0, 80)
+    ville: String((e && e.ville) || '').trim().slice(0, 80),
+    accroche: String((e && e.accroche) || '').slice(0, 300)
   };
 }
 
@@ -316,7 +318,7 @@ function lire(e) {
 function appliquerModele(e, modeleId, brochures, liensBrochure) {
   if (estModeleJulie(modeleId)) {
     const c = composerModele(modeleId, {
-      nom: e.nom, societe: e.societe, ville: e.ville, email: e.to
+      nom: e.nom, societe: e.societe, ville: e.ville, email: e.to, accroche: e.accroche
     }, { brochures: brochures.map((b) => b.id), liensBrochure });
     return Object.assign({}, e, {
       sujet: c.sujet,
@@ -378,7 +380,14 @@ export default async function handler(req, res) {
     piecePerso = { filename: nomPiecePropre(d.pieceNom), content: v.buf.toString('base64') };
   }
   const sigEntree = (d.signature && typeof d.signature === 'object') ? d.signature : {};
-  const habiller = (e, sig) => gabarit({
+  /* Console v2 : « lettre » ou « carte » passent par _courrier-v2.js ;
+     sans choix (ou « editorial »), le gabarit historique reste la règle. */
+  const layout = layoutValide(d.layout) && String(d.layout).toLowerCase() !== 'editorial' ? String(d.layout).toLowerCase() : '';
+  const habiller = (e, sig) => layout ? gabaritV2({
+    layout, sujet: e.sujet, preheader: e.texte.replace(/\s+/g, ' ').slice(0, 140), texte: e.texte,
+    visuel: e.visuel || visuel, visuelAlt: e.visuelAlt || visuelAlt,
+    lienTexte: e.lienTexte || lien.lienTexte, lienUrl: e.lienUrl || lien.lienUrl, signature: sig
+  }) : gabarit({
     sujet: e.sujet, titre: e.titre, texte: e.texte,
     apercu: e.texte.replace(/\s+/g, ' ').slice(0, 140),
     lienTexte: e.lienTexte || lien.lienTexte, lienUrl: e.lienUrl || lien.lienUrl,

@@ -17,6 +17,8 @@
     "pdf:relire": "node scripts/relire-pdf.js",
     "partage": "node build/partage-images.js",
     "video": "node build/video.js",
-    "indexnow": "node scripts/indexnow.js"
+    "indexnow": "node scripts/indexnow.js",
+    "build:wasm": "bash scripts/build-wasm.sh",
+    "test:julie": "for t in lib/julie/*.test.cjs; do node --test $t || exit 1; done"
   }
 }

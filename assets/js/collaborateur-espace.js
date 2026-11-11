@@ -558,12 +558,14 @@
       modele: (o.modele && o.modele.id) || (o.modele && o.modele.nom) || rendu.sujet,
       joindreBrochure: o.joindreBrochure !== false,
       brochures: Array.isArray(o.brochures) ? o.brochures : undefined,
+      layout: pretEtat.dispositionV2 || undefined,
       envois: [{
         to: dest,
         ref: fiche ? fiche.siret : '',
         nom: o.nom || '',
         societe: o.societe || '',
         ville: o.ville || '',
+        accroche: pretEtat.accroche || '',
         sujet: rendu.sujet,
         titre: rendu.titre || '',
         texte: texte
@@ -1185,7 +1187,8 @@
       nom: ((racine.querySelector('#pret-dirigeant') || {}).value || '').trim(),
       agence: ((racine.querySelector('#pret-agence') || {}).value || '').trim(),
       societe: ((racine.querySelector('#pret-agence') || {}).value || '').trim(),
-      ville: ((racine.querySelector('#pret-ville') || {}).value || '').trim()
+      ville: ((racine.querySelector('#pret-ville') || {}).value || '').trim(),
+      accroche: pretEtat.accroche || ''
     };
   }
 
@@ -1334,9 +1337,10 @@
       C.appeler({
         mode: 'apercu',
         modele: m && m.id,
+        layout: pretEtat.dispositionV2 || undefined,
         brochures: lireBrochuresCochees(racine),
         joindreBrochure: lireBrochuresCochees(racine).length > 0,
-        envois: [{ to: dest, nom: v.nom, societe: v.societe, ville: v.ville, sujet: rendu.sujet, titre: rendu.titre, texte: rendu.texte }],
+        envois: [{ to: dest, nom: v.nom, societe: v.societe, ville: v.ville, accroche: v.accroche, sujet: rendu.sujet, titre: rendu.titre, texte: rendu.texte }],
         visuel: rendu.visuel || '',
         visuelAlt: rendu.visuelAlt || '',
         lienTexte: rendu.bouton ? rendu.bouton.texte : '',
@@ -1721,7 +1725,8 @@
       if (o && o.aller) aller = o.aller;
     },
     prefillPret: function (o) {
-      Object.assign(pretEtat, o || {});
+      /* L'accroche ne vaut que pour la fiche préparée : jamais reportée sur une autre. */
+      Object.assign(pretEtat, { accroche: '', dispositionV2: '' }, o || {});
     },
     rendre: function (nom) {
       var fn = VUES[nom];

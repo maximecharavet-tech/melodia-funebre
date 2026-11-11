@@ -1,0 +1,194 @@
+/*!
+ * julie-apercu.css — Console Julie v2 (PASS 2 · aperçu)
+ *
+ * Panneau d’aperçu : cadre d’appareil, iframe sandboxée, note de délivrabilité.
+ * Aucun token redéfini. `prefers-reduced-motion` neutralise les animations.
+ *
+ * License: internal.
+ */
+
+.jv2-apercu {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.2rem;
+  align-items: start;
+}
+
+.jv2-apercu-colonne {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+/* ─── Barre d’onglets ─────────────────────────────────────────────── */
+.jv2-apercu-barre {
+  display: inline-flex;
+  border: 1px solid rgba(201, 168, 76, .22);
+  border-radius: 8px;
+  overflow: hidden;
+  align-self: flex-start;
+}
+.jv2-apercu-tab {
+  background: none;
+  border: none;
+  padding: .4rem .8rem;
+  color: var(--bone, #c4bba6);
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .2s var(--ease-out), color .2s var(--ease-out);
+}
+.jv2-apercu-tab:hover {
+  background: rgba(201, 168, 76, .08);
+  color: var(--or-bright, #e3c977);
+}
+.jv2-apercu-tab[aria-pressed="true"] {
+  background: rgba(201, 168, 76, .16);
+  color: var(--or-bright, #e3c977);
+}
+
+/* ─── Cadre d’appareil ────────────────────────────────────────────── */
+.jv2-apercu-appareil {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: .8rem 0;
+}
+.jv2-apercu-cadre {
+  position: relative;
+  border-radius: 14px;
+  background: #0b0b11;
+  padding: 12px 12px 16px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .55), inset 0 0 0 1px rgba(201, 168, 76, .18);
+}
+.jv2-apercu-cadre-ombre {
+  position: absolute;
+  inset: auto 14px -8px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 70%);
+  z-index: -1;
+}
+.jv2-apercu-iframe {
+  width: 640px;
+  max-width: 100%;
+  height: 560px;
+  border: 0;
+  border-radius: 6px;
+  background: #f4f1ea;
+  display: block;
+  transition: width .3s var(--ease-out), filter .2s var(--ease-out);
+}
+
+/* ─── Aperçu texte brut ──────────────────────────────────────────── */
+.jv2-apercu-texte {
+  padding: 1rem 1.2rem;
+  background: var(--ink-2, #08080d);
+  border: 1px solid rgba(201, 168, 76, .18);
+  border-radius: 8px;
+  color: var(--bone, #c4bba6);
+  font-family: var(--ff-m, monospace);
+  font-size: .8rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 560px;
+  overflow: auto;
+}
+
+/* ─── Panneau latéral ────────────────────────────────────────────── */
+.jv2-apercu-panneau {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(201, 168, 76, .18);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .02);
+}
+.jv2-apercu-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+}
+.jv2-apercu-score-ring {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+.jv2-apercu-score-ring svg {
+  display: block;
+  width: 60px;
+  height: 60px;
+}
+.jv2-apercu-score-arc {
+  transition: stroke-dashoffset .6s var(--ease-out);
+}
+.jv2-apercu-score-note {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--ivory, #f4f1ea);
+}
+.jv2-apercu-score-label {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  color: var(--ash, #8e8878);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+.jv2-apercu-liste ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+.jv2-apercu-liste li {
+  font-family: var(--ff-b, sans-serif);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.jv2-apercu-pb { color: #e08a8a; }
+.jv2-apercu-ok { color: var(--bone, #c4bba6); }
+.jv2-apercu-actions {
+  display: flex;
+  gap: .4rem;
+  align-items: center;
+}
+.jv2-apercu-actions .btn { flex: 1; }
+.jv2-apercu-meta {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  color: var(--ash, #8e8878);
+  line-height: 1.4;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .jv2-apercu {
+    grid-template-columns: 1fr;
+  }
+  .jv2-apercu-panneau {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .jv2-apercu-panneau > * { flex: 1 1 200px; }
+}
+
+/* ─── Reduced motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .jv2-apercu-tab,
+  .jv2-apercu-iframe,
+  .jv2-apercu-score-arc {
+    transition: none !important;
+  }
+}

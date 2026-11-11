@@ -588,6 +588,10 @@
       vars.lien_brochure = SITE + '/documents/melodia-brochure-professionnels.pdf';
     }
     var brut = modele.texte;
+    /* {accroche} (console v2) : phrase personnalisée, ou ligne retirée. */
+    var accJ = String(vars.accroche || '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 300);
+    vars.accroche = accJ;
+    if (!accJ) brut = String(brut || '').replace(/\n*\{accroche\}\n*/g, function (m) { return m.split('\n').length > 2 ? '\n\n' : ''; });
     var texte = remplir(brut, vars);
     if (!String((o.vars && o.vars.famille) || '').trim()) {
       texte = texte.replace(/\{famille\}/g, '');

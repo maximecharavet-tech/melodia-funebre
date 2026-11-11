@@ -4,6 +4,8 @@ const fs = require('fs');
 const files = [
   'index.html', 'processus.html', 'demos.html', 'rites.html', 'offres.html', 'professionnels.html',
   'contact.html', 'qui-sommes-nous.html', 'hyper-ai-engine.html', 'application.html', 'sw.js', 'assets/js/application.js', 'rejoindre.html', 'compte.html', 'espace.html', 'dashboard-partenaire.html', 'dashboard-master.html', 'dashboard-commercial.html',
+  /* Console Julie v2 */
+  'assets/js/vendor/julie_v2.wasm', 'assets/js/vendor/julie-wasm-glue.js', 'assets/js/vendor/julie-fallback.js', 'assets/js/julie/julie-core.js', 'assets/js/julie/julie-compat.js', 'assets/js/julie/julie-motion.js', 'assets/js/julie/julie-journee.js', 'assets/js/julie/julie-pipeline.js', 'assets/js/julie/julie-sequences.js', 'assets/js/julie/julie-csv.js', 'assets/js/julie/julie-dashboard.js', 'assets/js/julie/julie-apercu.js', 'assets/js/julie/julie-composeur.js', 'assets/js/julie/julie-onboarding.js', 'assets/js/julie/julie-mobile.js', 'assets/js/julie/julie-bridge.js', 'assets/css/julie.css', 'assets/css/julie-motion.css', 'assets/css/julie-dashboard.css', 'assets/css/julie-apercu.css', 'assets/css/julie-ui.css', 'api/_courrier-v2.js', 'api/prospect-ia.js', 'api/prospect-doublon.js',
   'chanson-hommage.html', 'qr-code-memorial.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
   'assets/css/style.css', 'assets/css/dashboard.css',

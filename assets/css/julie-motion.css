@@ -1,0 +1,200 @@
+/*!
+ * julie-motion.css — Console Julie v2 (PASS 2 · mouvement)
+ *
+ * Feuille additive. Consomme les tokens existants (--ease, --ease-out,
+ * --or, --or-bright, --ink-2, --ivory, --ash, --ff-*). Ne redéfinit rien.
+ * Toutes les animations n’utilisent que transform / opacity / filter.
+ * `prefers-reduced-motion: reduce` bascule en fondu d’opacité uniquement.
+ *
+ * License: internal.
+ */
+
+/* ─── Séquence d’arrivée ──────────────────────────────────────────── */
+@keyframes jv2-logo-sheen {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes jv2-mot-blur {
+  0%   { opacity: 0; filter: blur(8px); transform: translateY(4px); }
+  60%  { opacity: 1; filter: blur(1px); transform: translateY(1px); }
+  100% { opacity: 1; filter: blur(0);   transform: translateY(0); }
+}
+@keyframes jv2-cascade {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes jv2-skel-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.jv2-anim-logo {
+  position: relative;
+  display: inline-block;
+}
+.jv2-anim-logo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(227, 201, 119, 0.28) 45%,
+    rgba(227, 201, 119, 0.42) 50%,
+    rgba(227, 201, 119, 0.28) 55%,
+    transparent 100%);
+  background-size: 200% 100%;
+  -webkit-mask-image: linear-gradient(#000, #000);
+  mask-image: linear-gradient(#000, #000);
+  mix-blend-mode: screen;
+  animation: jv2-logo-sheen 1.1s var(--ease-out) 1 both;
+}
+
+.jv2-mot {
+  display: inline-block;
+  animation: jv2-mot-blur 0.5s var(--ease-out) both;
+}
+
+.jv2-anim-cascade {
+  animation: jv2-cascade 0.55s var(--ease-out) both;
+}
+
+/* ─── Skeletons ───────────────────────────────────────────────────── */
+.jv2-skel {
+  height: 2rem;
+  border-radius: 6px;
+  margin-bottom: 0.55rem;
+  background: linear-gradient(90deg,
+    rgba(201, 168, 76, 0.03) 0%,
+    rgba(201, 168, 76, 0.09) 50%,
+    rgba(201, 168, 76, 0.03) 100%);
+  background-size: 200% 100%;
+  animation: jv2-skel-shimmer 1.4s linear infinite;
+}
+
+/* ─── Toasts ──────────────────────────────────────────────────────── */
+.jv2-toasts {
+  position: fixed;
+  top: 1.2rem;
+  right: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 9999;
+  pointer-events: none;
+  max-width: min(380px, calc(100vw - 2rem));
+}
+.jv2-toast {
+  background: var(--ink-2, #08080d);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  color: var(--ivory, #f4f1ea);
+  font-family: var(--ff-b, sans-serif);
+  font-size: 0.85rem;
+  line-height: 1.35;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+  pointer-events: auto;
+  will-change: transform, opacity;
+}
+.jv2-toast-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+.jv2-toast-ok    { border-color: rgba(74, 222, 128, 0.45); }
+.jv2-toast-err   { border-color: rgba(224, 138, 138, 0.55); }
+.jv2-toast-warn  { border-color: rgba(251, 191, 36, 0.5); }
+
+/* ─── Morphing du bouton d’envoi ──────────────────────────────────── */
+.btn[data-etat="encours"] {
+  opacity: 0.7;
+  cursor: progress;
+}
+.btn[data-etat="ok"] {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.4);
+  color: #4ade80;
+}
+.btn[data-etat="erreur"] {
+  background: rgba(224, 138, 138, 0.12);
+  border-color: rgba(224, 138, 138, 0.4);
+  color: #e08a8a;
+}
+
+/* ─── Survol magnétique ───────────────────────────────────────────── */
+.btn,
+.jv2-side-item,
+.side-item {
+  transition: transform 0.2s var(--ease-out);
+  will-change: transform;
+}
+.btn:active {
+  transform: scale(0.985);
+}
+
+/* ─── View Transitions (API native si dispo) ──────────────────────── */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root) {
+    animation: jv2-vt-out 0.32s var(--ease-out) both;
+  }
+  ::view-transition-new(root) {
+    animation: jv2-vt-in 0.32s var(--ease-out) both;
+  }
+  @keyframes jv2-vt-out {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-8px); }
+  }
+  @keyframes jv2-vt-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ─── Repli : cross-fade + 8 px quand l’API n’est pas dispo ───────── */
+.jv2-repli-entree {
+  animation: jv2-repli-in 0.32s var(--ease-out) both;
+}
+.jv2-repli-sortie {
+  animation: jv2-repli-out 0.32s var(--ease-out) both;
+}
+@keyframes jv2-repli-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes jv2-repli-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ─── Respect de prefers-reduced-motion ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .jv2-anim-logo::after { animation: none !important; display: none; }
+  .jv2-mot, .jv2-anim-cascade, .jv2-skel {
+    animation: none !important;
+  }
+  .jv2-toast {
+    transition: opacity 0.12s linear;
+    transform: none;
+  }
+  .jv2-toast-in { transform: none; }
+  .btn, .jv2-side-item, .side-item {
+    transition: none !important;
+  }
+  .btn:active { transform: none; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+  .jv2-repli-entree,
+  .jv2-repli-sortie {
+    animation: none !important;
+  }
+  .btn[data-etat="encours"],
+  .btn[data-etat="ok"],
+  .btn[data-etat="erreur"] {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,309 @@
+/*!
+ * julie-ui.css — Console Julie v2 (PASS 2 · sidebar, onboarding, mobile)
+ *
+ * Styles additifs pour :
+ *   · le sidebar regroupé (raccourcis kbd, repli icône seule) ;
+ *   · la carte d’onboarding 3 étapes ;
+ *   · la barre d’onglets mobile et les actions de balayage.
+ *
+ * Aucun token redéfini. `prefers-reduced-motion` neutralise les animations.
+ *
+ * License: internal.
+ */
+
+/* ─── Sidebar regroupé ────────────────────────────────────────────── */
+.side-item.jv2-side-reorg {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+.jv2-kbd {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  color: var(--ash, #8e8878);
+  border: 1px solid rgba(201, 168, 76, .18);
+  border-radius: 3px;
+  padding: 0 .3rem;
+  opacity: 0;
+  transition: opacity .2s var(--ease-out);
+}
+.side-item:hover .jv2-kbd,
+.side-item.active .jv2-kbd {
+  opacity: .85;
+}
+.jv2-side-repli {
+  position: sticky;
+  bottom: 0;
+  align-self: flex-end;
+  margin-top: auto;
+  background: none;
+  border: 1px solid rgba(201, 168, 76, .18);
+  color: var(--or-patina, #97803c);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: border-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+.jv2-side-repli:hover {
+  border-color: var(--or, #c9a84c);
+  color: var(--or-bright, #e3c977);
+}
+
+/* Mode réduit : icônes seules (largeur des boutons 40px) */
+.side.jv2-side-reduit {
+  width: 68px !important;
+}
+.side.jv2-side-reduit .side-eyebrow,
+.side.jv2-side-reduit .jv2-kbd,
+.side.jv2-side-reduit .side-item > span:not([aria-hidden]) {
+  display: none;
+}
+.side.jv2-side-reduit .side-item {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 0;
+}
+.side.jv2-side-reduit .side-item::before {
+  content: attr(data-vue);
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background: var(--or-soft, rgba(201, 168, 76, .07));
+  border-radius: 4px;
+  font-size: 0;
+}
+
+/* ─── Onboarding ──────────────────────────────────────────────────── */
+.jv2-onboarding {
+  position: relative;
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1.4rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(201, 168, 76, .06), rgba(255, 255, 255, 0));
+  border: 1px solid rgba(201, 168, 76, .22);
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.4rem;
+  align-items: center;
+  overflow: hidden;
+  transition: opacity .4s var(--ease-out), transform .4s var(--ease-out);
+}
+.jv2-onboarding.jv2-onboarding-dissolution {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.jv2-onboarding-visuel {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 76, .2);
+  aspect-ratio: 4 / 5;
+}
+.jv2-onboarding-titre {
+  font-family: var(--ff-d, serif);
+  font-size: 1.3rem;
+  color: var(--ivory, #f4f1ea);
+  margin-bottom: .4rem;
+}
+.jv2-onboarding-sous {
+  font-family: var(--ff-b, sans-serif);
+  color: var(--ash, #8e8878);
+  font-size: .88rem;
+  margin-bottom: 1rem;
+}
+.jv2-etapes-onboarding {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.jv2-etape-onboarding {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: .6rem;
+  align-items: center;
+  padding: .55rem .7rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .02);
+  border: 1px solid rgba(201, 168, 76, .12);
+  transition: border-color .25s var(--ease-out);
+}
+.jv2-etape-onboarding[data-etat="fait"] {
+  border-color: rgba(74, 222, 128, .35);
+  background: rgba(74, 222, 128, .05);
+}
+.jv2-etape-rond {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(201, 168, 76, .4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--or-patina, #97803c);
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+}
+.jv2-etape-onboarding[data-etat="fait"] .jv2-etape-rond {
+  border-color: #4ade80;
+  color: #4ade80;
+}
+.jv2-etape-texte {
+  font-family: var(--ff-b, sans-serif);
+  font-size: .85rem;
+  color: var(--bone, #c4bba6);
+}
+.jv2-etape-action {
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  padding: .15rem .55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(201, 168, 76, .28);
+  background: none;
+  color: var(--or-patina, #97803c);
+  cursor: pointer;
+  transition: border-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+.jv2-etape-action:hover {
+  border-color: var(--or-bright, #e3c977);
+  color: var(--or-bright, #e3c977);
+}
+.jv2-onboarding-fermer {
+  position: absolute;
+  top: .6rem;
+  right: .8rem;
+  background: none;
+  border: none;
+  color: var(--ash, #8e8878);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: .2rem .4rem;
+}
+.jv2-onboarding-fermer:hover { color: var(--ivory, #f4f1ea); }
+
+/* ─── Barre d’onglets mobile ─────────────────────────────────────── */
+.jv2-mobile-tabs {
+  display: none;
+}
+@media (max-width: 640px) {
+  .jv2-mobile-tabs {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ink-2, #08080d);
+    border-top: 1px solid rgba(201, 168, 76, .22);
+    z-index: 80;
+    padding: .35rem 0 env(safe-area-inset-bottom, .35rem);
+  }
+  .jv2-mobile-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--ash, #8e8878);
+    font-family: var(--ff-b, sans-serif);
+    font-size: 0.8rem;
+    padding: .4rem 0;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .15rem;
+    transition: color .2s var(--ease-out);
+  }
+  .jv2-mobile-tab[aria-current="page"] {
+    color: var(--or-bright, #e3c977);
+  }
+  .jv2-mobile-tab-icone {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: currentColor;
+    opacity: .55;
+  }
+  .jv2-mobile-tab[aria-current="page"] .jv2-mobile-tab-icone {
+    opacity: 1;
+  }
+  /* Padding bas pour ne pas masquer le contenu sous la barre */
+  .dash-main {
+    padding-bottom: 76px;
+  }
+}
+
+/* ─── Swipe actions (mobile) ─────────────────────────────────────── */
+.jv2-carte[data-jv2-swipe] {
+  touch-action: pan-y;
+}
+.jv2-swipe-hint {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--ff-m, monospace);
+  font-size: 0.8rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s var(--ease-out);
+}
+.jv2-swipe-hint.jv2-swipe-droite {
+  left: 8px;
+  color: #4ade80;
+}
+.jv2-swipe-hint.jv2-swipe-gauche {
+  right: 8px;
+  color: #e08a8a;
+}
+.jv2-carte.jv2-carte-swipe-droite .jv2-swipe-hint.jv2-swipe-droite,
+.jv2-carte.jv2-carte-swipe-gauche .jv2-swipe-hint.jv2-swipe-gauche {
+  opacity: 1;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .jv2-kbd,
+  .jv2-side-repli,
+  .jv2-etape-onboarding,
+  .jv2-etape-action,
+  .jv2-onboarding,
+  .jv2-mobile-tab,
+  .jv2-swipe-hint {
+    transition: none !important;
+  }
+}
+
+/* ─── Composer (julie-composeur.js) ─────────────────────────────────── */
+.jv2-compo { display: grid; grid-template-columns: minmax(300px, 420px) 1fr; gap: 1.6rem; align-items: start; }
+.jv2-compo-form { position: sticky; top: 1rem; display: flex; flex-direction: column; gap: .55rem; padding: 1.6rem; }
+.jv2-compo-eyebrow { color: var(--or-patina); letter-spacing: .18em; text-transform: uppercase; font-size: .8rem; }
+.jv2-compo-titre { font-family: var(--ff-d); font-weight: 300; font-size: 1.7rem; line-height: 1.15; color: var(--ivory); margin: 0 0 .6rem; }
+.jv2-compo-titre em { color: var(--or-bright); font-style: italic; }
+.jv2-compo-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.jv2-compo-var { color: var(--or); font-size: .8rem; margin-left: .3rem; }
+.jv2-compo textarea.field-input { resize: vertical; min-height: 4.6rem; line-height: 1.5; }
+.jv2-compo-ia, .jv2-compo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; }
+.jv2-compo-aide { color: var(--ash); font-size: .82rem; line-height: 1.4; }
+.jv2-compo-pieces { border: 1px solid var(--line); border-radius: 4px; padding: .7rem .9rem .8rem; margin: .4rem 0; display: grid; gap: .35rem; }
+.jv2-compo-pieces legend { padding: 0 .35rem; }
+.jv2-compo-piece { display: flex; gap: .55rem; align-items: center; color: var(--bone); font-size: .88rem; cursor: pointer; transition: color .2s; }
+.jv2-compo-piece:hover { color: var(--ivory); }
+.jv2-compo-piece input { accent-color: var(--or); }
+.jv2-compo-actions .btn { transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s; }
+.jv2-compo-actions .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px -10px rgba(201,168,76,.55); }
+@media (max-width: 980px) { .jv2-compo { grid-template-columns: 1fr; } .jv2-compo-form { position: static; } }
+@media (prefers-reduced-motion: reduce) { .jv2-compo-actions .btn { transition: none; } }
+.jv2-compo { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); }
+.jv2-compo .jv2-apercu { grid-template-columns: minmax(0, 1fr) 250px; gap: 1rem; }
+.jv2-compo .jv2-apercu-iframe { height: 760px; }
+.jv2-compo .jv2-apercu-actions { flex-wrap: wrap; }
+.jv2-compo .jv2-apercu-actions .btn { white-space: normal; flex: 1 1 auto; }
+@media (max-width: 1280px) { .jv2-compo .jv2-apercu { grid-template-columns: 1fr; } }
