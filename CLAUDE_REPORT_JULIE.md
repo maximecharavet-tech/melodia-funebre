@@ -125,3 +125,52 @@ aucun secret / DNS / réglage Vercel ou GitHub n'a été touché.**
 ## 6. Rappel
 Rien n'est fusionné ni déployé ; la migration 12 est un fichier, non appliquée ; aucune variable
 d'environnement ajoutée ou modifiée ; les PR #29 et #30 n'ont pas été touchées.
+
+---
+
+# Pass 2 — PDF premium supplémentaires (console Julie)
+
+## 7. Les quatre PDF (A4, noir / ivoire / or, polices embarquées via `fontes()`)
+| Fichier (`documents/`) | Pages | Taille | Générateur |
+|---|---|---|---|
+| `melodia-presentation-agences-partenaires.pdf` | 6 | 2,3 Mo | `build/pdf-extra-agences.js` |
+| `melodia-offre-pro.pdf` | 6 | 1,7 Mo | `build/pdf-extra-offre-pro.js` |
+| `melodia-plaquette-ecoute-prestige.pdf` | 7 | 2,3 Mo | `build/pdf-extra-ecoute-prestige.js` |
+| `melodia-fiche-contact-julie-serve.pdf` | 2 | 1,0 Mo | `build/pdf-extra-contact.js` |
+
+- Socle commun : `build/pdf-extra-commun.js` (charte, QR, **verso avec la carte**). Aucun PDF existant n'est écrasé.
+- **Reproductible** : `npm run pdf` les régénère tous ; `node build/pdf.js extra` (ou `agences`, `offre-pro`, `ecoute-prestige`, `contact`) un par un. Pipeline inchangé (HTML + Chromium + polices base64).
+- Visuels : dérivés allégés (redimensionnés, jamais recadrés) dans `assets/pdf-extra/opt/`, produits par `scripts/optimiser-pdf-extra.py` (Pillow, à lancer seulement si on change un original). Les originaux restent intacts. But : chaque PDF < 2,5 Mo (limite pièce jointe).
+- **Console** : onglet *Kit* (4 nouvelles lignes, téléchargement), et cases « brochures jointes aux mails » (ids `presentation-agences`, `offre-pro`, `ecoute-prestige`, `fiche-contact-julie`, côté serveur `api/_prospect-outils.js`, `lib/prospect-outils.cjs` et client `collaborateur-mails.js`). `vercel.json` : le `includeFiles` de `api/prospect-mail.js` embarque ces 4 fichiers (fichier du dépôt, pas un réglage Vercel). Envoi et dédup non touchés.
+
+## 8. Carte de Julie Serve — sur CHAQUE PDF
+`carte-julie-serve` (PNG original passé en JPEG q93 pleine définition 1659×948, jamais recadrée ni recouverte) :
+- agences partenaires : p. 6 (verso), 170 mm de large ; offre Pro : p. 6 ; Écoutez prestige : p. 7 ;
+- fiche contact : p. 1 (carte au centre de la page). Coordonnées + 2 QR (mailto, site) sous la carte.
+Test automatique : `tests/api/pdf-extra.test.mjs` vérifie la présence de la carte dans chacun.
+
+## 9. Visuels utilisés (`assets/pdf-extra/`)
+colombe-vitrail (couv. agences), plaque-qr (couv. Pro, légende « photographie illustrative »), piano-lac (couv. Écoutez), souvenirs-violon (p. 2 Écoutez, affiche entière), violon-detail, fleurs, partition, bougies, colombe-detail, carte-julie-serve, disque d'or **CSS du site** (`cssDisque()` de `pdf-ecoute.js`, haute résolution). Non utilisés : lockup/monogramme (les couvertures portent déjà le logo), ceremonie, lys, gramophone, arches, salon-tourne-disque, crépuscule (retiré : logo fantôme intégré + visage coupé).
+QR fonctionnels générés (encodeur du site) vers : `/ecouter`, `/ecouter/<titre>`, `/professionnels`, `/pro`, `/m/demo`, `mailto:julie@melodia-funebre.fr`. Les QR des photos ne sont jamais présentés comme scannables.
+
+## 10. Contrôle visuel
+Previews 150 dpi, une PNG par page : `documents/preview-pdf-extra/` (21 fichiers). Corrigé après lecture : visage/logo fantôme du bandeau crépuscule (remplacé) ; bandeau qui débordait en bas de page (Pro p. 3) ; notes de bas de page collées au cadre ; pages à moitié vides (blocs ajoutés, visuels agrandis) ; « 179,4 € » → « 179,40 € » ; citation coupée par un « » orphelin (espaces insécables) ; carte QR « Écouter en ligne » écrasée ; affiche violon trop petite ; formulations non étayées retirées (crématoriums/officiants).
+
+## 11. Tests
+| Commande | Résultat |
+|---|---|
+| `node --test tests/api/pdf-extra.test.mjs` (8 : catalogue serveur/console/kit/vercel.json, taille, carte, pas de Mureka/MASTERMAX) | vert |
+| `npm run check` (après `npm run pages` pour les empreintes de cache des 2 JS modifiés) | vert |
+| `npm run test:julie` | vert |
+| `npm test` | 178 / 179 — seul échec : `tests/pro/pipeline.test.mjs` « pipeline complet simulé », **préexistant** (cf. §4) |
+`cargo test`, `test:sql` : non lancés (ni Rust ni migration touchés).
+
+## 12. Décisions pour Maxime
+1. **Fond perdu** : les PDF sont au format A4 net, images pleine page jusqu'au bord, texte/QR/carte à ≥ 14 mm. Pas de fond perdu 3 mm ni de traits de coupe : à demander si imprimeur.
+2. **Marges de crématoriums / marbriers / officiants** : le 60 % publié concerne les agences de pompes funèbres ; les PDF le disent et renvoient vers Julie pour les autres métiers. À trancher.
+3. **Pas de numéro de téléphone** (aucun n'est publié) : seulement e-mail et site.
+4. Les previews pèsent ~16 Mo ; supprimables du dépôt après relecture.
+5. `plaque-qr.jpg` sert de couverture Pro : son QR est illustratif (mentionné).
+
+## 13. Rappel
+Rien n'est fusionné ni déployé ; aucune migration, variable d'environnement, DNS ou réglage GitHub/Vercel touchés ; `main` non poussé.

@@ -40,7 +40,7 @@ function html(d) {
         <p style="margin-top:4mm;">Chaque musique de cette plaquette est <strong class="ivoire">composée par Melodia Funèbre</strong> à partir de ce qu’une famille a raconté. Elles sont publiées sur le site : vous pouvez les entendre avant de décider.</p>
         <div style="margin-top:10mm;display:flex;justify-content:center;">${disque('M', 260)}</div>
         <p class="fine" style="text-align:center;margin-top:5mm;">Le disque d’or de Melodia Funèbre</p>
-        <div class="carte2" style="margin-top:12mm;display:flex;gap:6mm;align-items:center;padding:5mm;">${qr(SITE + '/ecouter', 28, 'QR code vers les pages d’écoute')}<div><h3 style="font-size:13pt;">Écouter en ligne</h3><p style="font-size:8.6pt;"><a href="${SITE}/ecouter">${SITE_COURT}/ecouter</a></p></div></div>
+        <div class="carte2" style="margin-top:12mm;display:flex;gap:6mm;align-items:center;padding:5mm;">${qr(SITE + '/ecouter', 24, 'QR code vers les pages d’écoute')}<div><h3 style="font-size:12pt;white-space:nowrap;">Écouter en ligne</h3><p style="font-size:7.6pt;white-space:nowrap;"><a href="${SITE}/ecouter">${SITE_COURT}/ecouter</a></p></div></div>
       </div>
       <div class="cadre-photo" style="width:96mm;flex:none;align-self:flex-start;margin-top:2mm;"><img style="height:auto;object-fit:contain" src="${img('visuel-souvenirs-violon.jpg')}" alt="Affiche « Des souvenirs qui résonnent toujours » : un violoniste au coucher du soleil"></div>
     </div>
