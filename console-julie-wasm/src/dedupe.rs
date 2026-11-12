@@ -213,6 +213,32 @@ pub fn cle_envoi_json(input: &str) -> String {
     }
 }
 
+// ─── Fenêtre de 60 jours ──────────────────────────────────────────────
+// Même règle que fenetreEnvoi() dans api/_envoi-unique.js et que la fonction
+// SQL reserver_envois : un envoi bloque le renvoi jusqu'à précédent + 60 jours
+// (borne exclue : à 60 jours pile, le renvoi est permis).
+
+const FENETRE_MS: i64 = 60 * 24 * 3600 * 1000;
+
+#[derive(Deserialize)]
+struct FenetreIn {
+    precedent_ms: i64,
+    maintenant_ms: i64,
+}
+
+pub fn fenetre_envoi_json(input: &str) -> String {
+    match serde_json::from_str::<FenetreIn>(input) {
+        Ok(f) => {
+            let renvoi = f.precedent_ms + FENETRE_MS;
+            let bloque = f.maintenant_ms < renvoi;
+            let restant = renvoi - f.maintenant_ms;
+            let jours = if bloque { (restant + 86_399_999) / 86_400_000 } else { 0 };
+            serde_json::json!({ "bloque": bloque, "renvoi_ms": renvoi, "jours_restants": jours }).to_string()
+        }
+        Err(e) => serde_json::json!({ "error": e.to_string() }).to_string(),
+    }
+}
+
 // ─── Suggestion de domaine ────────────────────────────────────────────
 
 const DOMAINES: &[&str] = &[
@@ -317,6 +343,19 @@ mod tests {
             cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":1}"#),
             cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":2}"#)
         );
+    }
+
+    #[test]
+    fn fenetre_60_jours_frontiere() {
+        let j: i64 = 86_400_000;
+        let p: i64 = 1_800_000_000_000;
+        let f = |m: i64| fenetre_envoi_json(&format!(r#"{{"precedent_ms":{},"maintenant_ms":{}}}"#, p, m));
+        assert!(f(p).contains("\"bloque\":true"), "{}", f(p));
+        assert!(f(p + 59 * j).contains("\"bloque\":true"));
+        assert!(f(p + 60 * j - 1).contains("\"bloque\":true"));
+        assert!(f(p + 60 * j).contains("\"bloque\":false"));
+        assert!(f(p + 59 * j).contains("\"jours_restants\":1"));
+        assert!(f(p).contains(&format!("\"renvoi_ms\":{}", p + 60 * j)));
     }
 
     #[test]

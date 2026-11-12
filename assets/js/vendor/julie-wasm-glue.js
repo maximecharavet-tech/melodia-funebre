@@ -136,6 +136,10 @@
     envoiCle: function (o) {
       return avec(function () { return appelle('envoi_cle', o); }, 'envoi_cle', o);
     },
+    /* Fenêtre de 60 jours d'un précédent envoi : { bloque, renvoi_ms, jours_restants }. */
+    envoiFenetre: function (o) {
+      return avec(function () { return appelle('envoi_fenetre', o); }, 'envoi_fenetre', o);
+    },
     domaineSuggere: function (domaine) {
       return avec(function () { return appelle('domaine_suggere', { domaine: domaine }); }, 'domaine_suggere', { domaine: domaine });
     },
