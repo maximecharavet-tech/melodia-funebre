@@ -11,7 +11,7 @@ import dossiers from '../../lib/pro/routes/dossiers.cjs';
 import { base, contexte, reponse, requete, utilisateur, fauxReseau, creerDossier, questionnaireComplet, ORG_A, ORG_B } from './aide.mjs';
 
 const SECRET = 'whsec_test_simule';
-const ENV = { STRIPE_SECRET_KEY: 'sk_test_simule', STRIPE_WEBHOOK_SECRET: SECRET, PRO_CODE_MAITRE: 'MASTERMAX' };
+const ENV = { STRIPE_SECRET_KEY: 'sk_test_simule', STRIPE_WEBHOOK_SECRET: SECRET, PRO_CODE_MAITRE: 'CLEFTEMOIN' }; // valeur témoin, sans rapport avec la vraie
 const hWebhook = servir(webhook, { methodes: 'POST', public: true, brut: true });
 
 async function completer(ctx, id, jeton = 'jeton-a') {
@@ -129,7 +129,7 @@ test('promo : code Stripe valide, expiré, épuisé, inconnu', async () => {
 test('code maître : accepté pour le propriétaire, toutes graphies', async () => {
   const ctx = contexte(base(), ENV);
   const u = utilisateur(ctx.depot, 'jeton-maitre');
-  for (const code of ['MASTERMAX', 'mastermax', 'master max', ' Master-Max ']) {
+  for (const code of ['CLEFTEMOIN', 'cleftemoin', 'clef temoin', ' Clef-Temoin ']) {
     const r = await promo({ corps: { code }, utilisateur: u }, ctx);
     assert.equal(r.json.valide, true, code);
     assert.equal(r.json.type, 'maitre');
@@ -140,7 +140,7 @@ test('code maître : accepté pour le propriétaire, toutes graphies', async () 
 test('code maître : une agence obtient la même réponse qu’un code inconnu (pas d’oracle)', async () => {
   const ctx = contexte(base(), Object.assign({}, ENV, { STRIPE_SECRET_KEY: '' }));
   const u = utilisateur(ctx.depot, 'jeton-a');
-  const r1 = await promo({ corps: { code: 'MASTERMAX' }, utilisateur: u }, ctx);
+  const r1 = await promo({ corps: { code: 'CLEFTEMOIN' }, utilisateur: u }, ctx);
   const r2 = await promo({ corps: { code: 'ZZZZZZZZ' }, utilisateur: u }, ctx);
   assert.deepEqual(r1, r2);
   assert.ok(ctx.depot.tables.pro_audit.some((a) => a.action === 'code_maitre_refuse'));
@@ -148,7 +148,7 @@ test('code maître : une agence obtient la même réponse qu’un code inconnu (
 
 test('code maître : sans variable d’environnement, rien ne passe', async () => {
   const ctx = contexte(base(), { STRIPE_SECRET_KEY: '' });
-  const r = await promo({ corps: { code: 'MASTERMAX' }, utilisateur: utilisateur(ctx.depot, 'jeton-maitre') }, ctx);
+  const r = await promo({ corps: { code: 'CLEFTEMOIN' }, utilisateur: utilisateur(ctx.depot, 'jeton-maitre') }, ctx);
   assert.equal(r.json.valide, false);
 });
 
@@ -158,12 +158,11 @@ test('code maître : la valeur n’apparaît ni dans le client ni dans le noyau'
   for (const d of ['assets/js/pro', 'assets/js/pro/vues', 'assets/i18n']) {
     if (fs.existsSync(d)) for (const f of fs.readdirSync(d)) if (fs.statSync(d + '/' + f).isFile()) fichiers.push(d + '/' + f);
   }
-  // auth.js n'est pas balayé : il réserve depuis longtemps l'identifiant de connexion
-  // « mastermax07 », sans rapport avec le code promo (qui n'est jamais dans le client).
-  fichiers.push('pro.html', 'assets/js/hommage.js');
+  // auth.js est balayé depuis la v3 : l'ancien identifiant réservé n'y figure plus.
+  fichiers.push('pro.html', 'assets/js/hommage.js', 'assets/js/auth.js');
   for (const f of fichiers) {
     if (!fs.existsSync(f)) continue;
-    assert.doesNotMatch(fs.readFileSync(f).toString('latin1'), /mastermax/i, f);
+    assert.doesNotMatch(fs.readFileSync(f).toString('latin1'), /clef[\s-]*temoin/i, f);
   }
 });
 
@@ -175,7 +174,7 @@ test('checkout : code maître → payé à 0 € sans appeler Stripe', async () 
   await completer(ctx, id, 'jeton-maitre');
   const net = fauxReseau([]);
   try {
-    const r = await checkout({ corps: { dossier_id: id, code: 'master max' }, utilisateur: utilisateur(ctx.depot, 'jeton-maitre') }, ctx);
+    const r = await checkout({ corps: { dossier_id: id, code: 'clef temoin' }, utilisateur: utilisateur(ctx.depot, 'jeton-maitre') }, ctx);
     assert.equal(r.status, 200, JSON.stringify(r.json));
     assert.equal(r.json.gratuit, true);
     assert.equal(net.appels.length, 0);

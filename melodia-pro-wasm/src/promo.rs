@@ -6,8 +6,8 @@
 
 use serde_json::{json, Value};
 
-/// Majuscules, sans espaces ni tirets bas : « master max » et « Master-Max »
-/// ne diffèrent pas de « MASTERMAX » pour la comparaison au code maître.
+/// Majuscules, sans espaces ni tirets bas : « clef temoin » et « Clef-Temoin »
+/// ne diffèrent pas de « CLEFTEMOIN » pour la comparaison au code maître.
 pub fn normaliser_strict(code: &str) -> String {
     code.chars()
         .filter(|c| !c.is_whitespace() && *c != '-' && *c != '_' && *c != '.')
@@ -45,9 +45,9 @@ mod tests {
 
     #[test]
     fn insensible_a_la_casse_et_aux_espaces() {
-        assert_eq!(normaliser_strict("master max"), "MASTERMAX");
-        assert_eq!(normaliser_strict(" MasterMax "), "MASTERMAX");
-        assert_eq!(normaliser_strict("master-max"), "MASTERMAX");
+        assert_eq!(normaliser_strict("clef temoin"), "CLEFTEMOIN");
+        assert_eq!(normaliser_strict(" ClefTemoin "), "CLEFTEMOIN");
+        assert_eq!(normaliser_strict("clef-temoin"), "CLEFTEMOIN");
     }
 
     #[test]

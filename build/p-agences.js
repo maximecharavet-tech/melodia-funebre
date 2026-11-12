@@ -209,7 +209,7 @@ module.exports = {
         <li data-recueil-item><span class="flux-n" aria-hidden="true">2</span><b>La maison facture votre agence</b><span>40 % de ce prix, réglés depuis la console, dossier par dossier.</span></li>
         <li data-recueil-item><span class="flux-n" aria-hidden="true">3</span><b>Votre agence garde 60 %</b><span>sans stock, sans abonnement, sans minimum de commandes.</span></li>
       </ol>
-      <div class="compare-wrap reveal" style="margin-top:2.4rem;">
+      <div class="compare-wrap flux-wrap reveal" style="margin-top:2.4rem;">
         <table class="compare flux-table">
           <caption class="hors-vue">Répartition du prix public entre l'agence et la maison, pour chaque offre</caption>
           <thead><tr><th scope="col">Offre</th><th scope="col">Prix public</th><th scope="col" class="col-hl">Votre agence garde</th><th scope="col">Part de la maison</th></tr></thead>

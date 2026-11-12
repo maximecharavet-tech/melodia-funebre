@@ -19,9 +19,9 @@
      de Supabase. Mort, mais pas inoffensif — un config.js vidé par un
      retour en arrière ou une variable d'environnement manquante
      l'aurait ranimé, et la console maître se serait ouverte avec deux
-     mots qu'on lit sur GitHub. On garde la réservation du nom, on
-     jette la clé. */
-  var MASTER_ID = 'mastermax07';
+     mots qu'on lit sur GitHub. On a jeté la clé ; la réservation de
+     l'ancien identifiant est remplacée (v3) par un contrôle de format
+     d'adresse, qui l'écarte de toute façon sans l'écrire ici. */
 
   var LS = {
     get: function (k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } },
@@ -271,7 +271,7 @@
       var email = (data.email || '').trim().toLowerCase();
       if (!data.name || !email || !data.password) throw new Error('Tous les champs marqués * sont requis.');
       if (data.password.length < 8) throw new Error('Le mot de passe doit contenir au moins 8 caractères.');
-      if (email === MASTER_ID) throw new Error('Cet identifiant est réservé.');
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error('Adresse email invalide.');
       if (HAS_SB) {
         var d = await sb('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: email, password: data.password, data: { name: data.name, role: (data.agence ? 'partner' : 'client'), agence: data.agence || '', ville: data.ville || '', tel: data.tel || '' } }) });
         if (d.access_token) poserSession(d);
@@ -999,10 +999,11 @@
     }
   };
 
-  /* ═══ IA — paroles + direction musicale ═══
-     D'abord notre fonction serveur (Mistral, puis OpenAI en secours) ;
-     si elle n'a pas de clé ou ne répond pas — site servi en statique,
-     par exemple —, Pollinations, gratuit et sans clé. */
+  /* ═══ Paroles + direction musicale ═══
+     Uniquement par notre fonction serveur. Le repli côté navigateur vers
+     un service tiers gratuit a été retiré en v3 : il envoyait le prénom
+     et l'anecdote d'un défunt hors de tout contrat de traitement, et
+     nommait des fournisseurs dans un fichier lisible par tous. */
   /* Les trois routes de génération exigent désormais un jeton de session
      et un rôle maison (11/11/2026) : sans lui, n'importe quel site pouvait
      dépenser les crédits des fournisseurs. Le jeton est renouvelé s'il
@@ -1032,27 +1033,8 @@
           var o1 = await s.json();
           if (o1 && o1.lyrics) return { title: o1.title, lyrics: o1.lyrics, style_prompt: o1.style_prompt || '', provider: o1.provider };
         }
-      } catch (e) { /* on passe au secours */ }
-      return this._lyricsPollinations(brief);
-    },
-
-    async _lyricsPollinations(brief) {
-      var p ='Tu es un parolier français spécialisé dans les hommages funéraires respectueux et émouvants, et un directeur artistique musical.\n\n'
-        + 'Défunt : ' + brief.defunt + ' · Traits : ' + (brief.traits || '-') + ' · Métier/passion : ' + (brief.metier || '-')
-        + ' · Habitude : ' + (brief.habitude || '-') + ' · Anecdote : ' + (brief.anecdote || '-') + ' · Style : ' + (brief.style || 'Chanson française') + '\n\n'
-        + 'Réponds UNIQUEMENT en JSON strict sans backticks : {"title":"titre poétique 3-5 mots","lyrics":"[Couplet 1]\\n4 vers\\n\\n[Refrain]\\n4 vers\\n\\n[Couplet 2]\\n4 vers","style_prompt":"description EN ANGLAIS pour Mureka : genre, voix, instruments, tempo BPM, ambiance, 15-25 mots"}\n'
-        + 'Paroles : ton respectueux jamais pleurnichard, images concrètes de sa vraie vie, zéro cliché, vers chantables de 8-10 syllabes, rimes, le prénom apparaît au moins 2 fois.';
-      var r = await fetch('https://text.pollinations.ai/openai', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'openai', messages: [{ role: 'user', content: p }], temperature: 0.85 })
-      });
-      if (!r.ok) throw new Error('Service IA momentanément indisponible (' + r.status + ').');
-      var d = await r.json();
-      var raw = ((d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '').replace(/```json|```/g, '').trim();
-      var a = raw.indexOf('{'), b = raw.lastIndexOf('}');
-      if (a < 0 || b < 0) throw new Error('Réponse illisible — relancez.');
-      var o = JSON.parse(raw.slice(a, b + 1));
-      return { title: o.title || ('Hommage à ' + brief.defunt), lyrics: (o.lyrics || '').replace(/\\n/g, '\n'), style_prompt: o.style_prompt || '', provider: 'pollinations' };
+      } catch (e) { /* réseau coupé : message ci-dessous */ }
+      throw new Error('La rédaction est momentanément indisponible. Réessayez dans quelques minutes.');
     },
 
     /* ═══ Visuel d'accompagnement (Pollinations, sans clé) ═══
@@ -1076,7 +1058,7 @@
         '?width=1024&height=1024&nologo=true&seed=' + g;
     },
 
-    /* ═══ Composition musicale via l'API Mureka ═══
+    /* ═══ Composition musicale ═══
        Le circuit passe par nos fonctions serveur : la cle n'atteint
        jamais le navigateur. */
 
@@ -1127,7 +1109,7 @@
     /**
      * Interroge le service jusqu'a obtention des titres.
      * onTick(etat) est appele a chaque passage pour l'affichage.
-     * Mureka met typiquement 30 a 120 secondes.
+     * Une composition prend typiquement 30 à 120 secondes.
      */
     async musicPoll(taskId, onTick, options) {
       var opt = options || {};

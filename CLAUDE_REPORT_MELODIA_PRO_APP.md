@@ -89,7 +89,7 @@ Le 71 « bureau » vient d'un temps de blocage simulé de 2,6 s sur ce poste ; m
 | Prix codé en dur | tarifs agence `NULL` en base et en démonstration ; seuls les prix publics famille (149/299/499 €) figurent, en `prix_public_cents` | OK (preuve PGlite). |
 | Migration non idempotente | rejouée deux fois sans erreur | Prouvé. |
 | Service worker figé | les modules ES de `/pro` (sans empreinte) auraient été servis « cache d'abord » | **Corrigé** : branche réseau d'abord pour la console, version du SW calculée aussi sur ses fichiers. |
-| Code maître | la valeur « MASTERMAX » se devine (elle figure dans la décision et ressemble à l'identifiant réservé `mastermax07`) | Elle ne vaut **que** pour un compte maison `master` ; pour tout autre compte la réponse est celle d'un code inconnu. Recommandation : choisir quand même une valeur longue et aléatoire pour `PRO_CODE_MAITRE`. |
+| Code maître | la valeur du code maître se devine (elle figure dans la décision et ressemblait à un ancien identifiant réservé) | Elle ne vaut **que** pour un compte maison `master` ; pour tout autre compte la réponse est celle d'un code inconnu. Recommandation : choisir quand même une valeur longue et aléatoire pour `PRO_CODE_MAITRE`. |
 | Fichiers PDF corrompus sur Windows | sans octet nul, Git traitait les PDF comme du texte (CRLF) | **Corrigé** : `.gitattributes` (`*.pdf binary`). |
 
 ## 6. Défauts préexistants trouvés

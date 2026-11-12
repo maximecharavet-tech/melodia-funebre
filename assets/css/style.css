@@ -6175,6 +6175,9 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 .paiement-option > :last-child { margin-top: auto; }
 .paiement-titre { font-family: var(--ff-d); font-size: 1.25rem; font-weight: 500; color: #f2efe8; }
 .paiement-texte { font-size: 0.88rem; color: var(--bone); line-height: 1.6; margin: 0; }
+/* Le bouton PayPal.me est un inline-flex : dans une colonne étroite, ses
+   morceaux de texte se rangeaient en trois colonnes. Bloc centré. */
+.paiement-option .btn { display: block; white-space: normal; letter-spacing: 0.12em; padding-left: 1rem; padding-right: 1rem; }
 @media (max-width: 720px) { .paiement-choix { grid-template-columns: 1fr; } }
 
 /* ─── 2b. Comment circule l'argent ─── */
@@ -6189,8 +6192,9 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 .flux-argent li + li { border-left: 1px solid var(--line-soft); }
 .flux-argent b { font-family: var(--ff-d); font-size: 1.3rem; font-weight: 500; color: #f2efe8; }
-.flux-n { font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.18em; color: var(--or-patina); }
-.flux-table { max-width: 62rem; margin: 0 auto; }
+.flux-n { font-family: var(--ff-m); font-size: 0.78rem; letter-spacing: 0.18em; color: var(--or-patina); }
+.flux-wrap { max-width: 62rem; margin-left: auto; margin-right: auto; }
+.flux-table { width: 100%; }
 .flux-table td, .flux-table th { font-variant-numeric: tabular-nums; }
 @media (max-width: 760px) {
   .flux-argent { grid-template-columns: 1fr; }

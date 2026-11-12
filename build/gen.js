@@ -244,7 +244,7 @@ ${p.metas || ''}
 <meta name="format-detection" content="telephone=no">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="${versionne('assets/css/style.css')}">
+<link rel="stylesheet" href="${versionne('assets/css/style.min.css')}">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */

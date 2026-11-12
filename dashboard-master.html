@@ -316,7 +316,7 @@ async function majEtatMusique() {
   try {
     var cfg = await window.MelodiaAI.musicConfig();
     c.innerHTML = cfg.configured
-      ? '<span style="color:var(--green);">API ' + esc(cfg.engine || 'Mureka') + ' active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
+      ? '<span style="color:var(--green);">API ' + esc(cfg.engine || 'de composition') + ' active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
       : '<span style="color:var(--or);">Manuelle</span> — Suno, votre abonnement';
   } catch (e) { c.textContent = 'Indéterminé'; }
 }
@@ -991,7 +991,7 @@ function vSysteme() {
     '</tbody></table></div>' +
     '<div class="panel"><div class="panel-title">Passer en <em>automatique</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Phase 2, quand le volume le justifiera</div>' +
     '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
-    '<p><b style="color:var(--or);">I.</b> Choisir un service musical avec API (Mureka, ElevenLabs Music…)</p>' +
+    '<p><b style="color:var(--or);">I.</b> Choisir un service musical doté d'une API</p>' +
     '<p><b style="color:var(--or);">II.</b> Renseigner les variables sur Vercel</p>' +
     '<p><b style="color:var(--or);">III.</b> Activer la composition automatique</p>' +
     '<p style="color:var(--ash); font-size:0.85rem; margin-top:1rem;">Les fonctions serveur sont déjà écrites dans le dossier <code style="color:var(--or);">/api</code>. Tant que le volume reste inférieur à dix hommages par jour, le mode manuel garantit une qualité supérieure.</p>' +
