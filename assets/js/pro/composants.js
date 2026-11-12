@@ -22,19 +22,18 @@ export function calme() {
 
 const decelerer = (x) => 1 - Math.pow(1 - x, 3);
 
-/** Nombre qui monte jusqu'à sa valeur. Le texte lu par les lecteurs d'écran est la valeur finale. */
+/** Nombre qui monte jusqu'à sa valeur. Les lecteurs d'écran lisent la valeur finale, pas la montée. */
 export function compteur(valeur, { suffixe = '', duree = 700, decimales = 0 } = {}) {
   const fmt = (v) => new Intl.NumberFormat('fr-FR', { minimumFractionDigits: decimales, maximumFractionDigits: decimales }).format(v) + suffixe;
-  const el = h('span', { 'aria-label': fmt(valeur) }, fmt(valeur));
-  if (calme() || !isFinite(valeur) || valeur === 0) return el;
-  el.textContent = fmt(0);
-  el.setAttribute('role', 'text');
+  if (calme() || !isFinite(valeur) || valeur === 0) return h('span', null, fmt(valeur));
+  const visible = h('span', { 'aria-hidden': 'true' }, fmt(0));
+  const el = h('span', null, visible, h('span', { class: 'sr' }, fmt(valeur)));
   const t0 = performance.now();
   const pas = (t) => {
-    if (!el.isConnected && t - t0 > 60) { el.textContent = fmt(valeur); return; }
+    if (!el.isConnected && t - t0 > 60) { visible.textContent = fmt(valeur); return; }
     const x = Math.min(1, (t - t0) / duree);
-    el.textContent = fmt(valeur * decelerer(x));
-    if (x < 1) requestAnimationFrame(pas); else el.textContent = fmt(valeur);
+    visible.textContent = fmt(valeur * decelerer(x));
+    if (x < 1) requestAnimationFrame(pas); else visible.textContent = fmt(valeur);
   };
   requestAnimationFrame(pas);
   return el;
