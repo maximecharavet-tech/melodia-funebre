@@ -1081,11 +1081,17 @@
       label: 'Brochure Cérémonie (pompes funèbres & officiants)',
       chemin: 'documents/melodia-brochure-ceremonie.pdf',
       nom: 'Melodia-Funebre-Ceremonie-Pompes-funebres-Officiants.pdf'
+    },
+    'ecoute-exemples': {
+      id: 'ecoute-exemples',
+      label: 'Écoutez — exemples de musiques du site (disque d’or, liens et QR)',
+      chemin: 'documents/melodia-brochure-ecoute-exemples.pdf',
+      nom: 'Melodia-Funebre-Ecoutez-exemples-de-musiques.pdf'
     }
   };
   var BROCHURE_IDS = ['professionnels', 'pompes-funebres', 'marbriers', 'crematoriums',
     'pompes-funebres-v2', 'marbriers-v2', 'crematoriums-v2', 'prestige-offrande', 'prestige-ecoute',
-    'prestige-art', 'souvenirs-qui-resonnent', 'ceremonie'];
+    'prestige-art', 'souvenirs-qui-resonnent', 'ceremonie', 'ecoute-exemples'];
 
   function brochureSuggeree(contexte) {
     var c = contexte || {};

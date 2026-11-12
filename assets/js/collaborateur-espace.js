@@ -792,6 +792,7 @@
 
   /* ─── Kit ─── */
   var KIT = [
+    { t: 'Écoutez — exemples de musiques (disque d’or)', f: '/documents/melodia-brochure-ecoute-exemples.pdf', d: 'Les musiques déjà sur le site, avec liens et QR d’écoute. Joignable à un mail.' },
     { t: 'Brochure partenaire', f: '/documents/melodia-brochure-partenaire.pdf', d: 'À remettre ou à envoyer à une agence.' },
     { t: 'Manuel de vente', f: '/api/document?fichier=manuel', doc: 'manuel', nom: 'melodia-manuel-de-vente.pdf', d: 'Document interne : script, objections, séquence.' },
     { t: 'Plan LinkedIn', f: '/api/document?fichier=linkedin', doc: 'linkedin', nom: 'melodia-plan-linkedin.pdf', d: 'Document interne.' },

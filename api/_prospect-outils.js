@@ -74,6 +74,12 @@ const BROCHURES = {
     label: 'Brochure Cérémonie (pompes funèbres & officiants)',
     chemin: 'documents/melodia-brochure-ceremonie.pdf',
     nom: 'Melodia-Funebre-Ceremonie-Pompes-funebres-Officiants.pdf'
+  },
+  'ecoute-exemples': {
+    id: 'ecoute-exemples',
+    label: 'Écoutez — exemples de musiques du site (disque d’or, liens et QR)',
+    chemin: 'documents/melodia-brochure-ecoute-exemples.pdf',
+    nom: 'Melodia-Funebre-Ecoutez-exemples-de-musiques.pdf'
   }
 };
 const BROCHURE_IDS = Object.keys(BROCHURES);
