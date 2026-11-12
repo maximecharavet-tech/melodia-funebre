@@ -93,15 +93,18 @@ test('aucun avis fabriqué : ni note, ni témoignage d’agence anonyme, ni aggr
 
 test('prix publics : 149 / 299 / 499 €, et le partage 60/40 affiché en découle', () => {
   const blocs = [...lire('offres.html').matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
-    .map((m) => JSON.parse(m[1]));
+    .map((m) => JSON.parse(m[1]))
+    .flatMap((b) => (Array.isArray(b) ? b : [b]))
+    .flatMap((b) => (b['@graph'] ? b['@graph'] : [b]));
   const prix = blocs.filter((b) => b['@type'] === 'Service').flatMap((b) => b.offers || []).map((o) => o.price).sort();
   assert.deepEqual(prix, ['149', '299', '499']);
   const pro = lire('professionnels.html');
   for (const p of [149, 299, 499]) {
     const agence = (p * 0.6).toFixed(2).replace('.', ',');
     const maison = (p * 0.4).toFixed(2).replace('.', ',');
-    assert.ok(pro.includes(agence + ' €'), `part agence ${agence} € absente`);
-    assert.ok(pro.includes(maison + ' €'), `part maison ${maison} € absente`);
+    // La génération pose une espace insécable avant « € » : on accepte toutes les espaces.
+    assert.match(pro, new RegExp(agence + '[\\s\\u00a0\\u202f]€'), `part agence ${agence} € absente`);
+    assert.match(pro, new RegExp(maison + '[\\s\\u00a0\\u202f]€'), `part maison ${maison} € absente`);
   }
   // Aucun autre tarif famille que les trois publics dans le comparatif.
   assert.doesNotMatch(lire('offres.html'), /Le plus choisi/);
