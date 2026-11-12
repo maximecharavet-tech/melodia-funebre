@@ -393,6 +393,50 @@ preuve('melodia_capacites().console_v2 = true', t.rows[0].c && t.rows[0].c.conso
 t = await prodComme('julie@example.test', 'select count(*)::int as n from public.orders');
 preuve('S1 tient toujours : le commercial ne lit pas les commandes', t.ok && t.rows[0].n === 0);
 
+// ═══ Migration 12 : un même courriel ne part jamais deux fois ═══
+dire('\n== ENVOIS : clé d\'idempotence (migration 12) ==');
+const M12 = readFileSync('supabase/migrations/20261114_12_envois_idempotence.sql', 'utf8');
+try { await db.exec(M12); preuve('12 rejouée (idempotence) sans erreur', true); }
+catch (e) { preuve('12 rejouée (idempotence) sans erreur', false, e.message); }
+const ligne = (cle, dest, st) => `insert into public.envois_prospect (collaborateur, destinataire, modele, statut, cle_idempotence)
+  values ('julie@example.test', '${dest}', 'pf-contact', '${st || 'reserve'}', ${cle ? "'" + cle + "'" : 'null'})`;
+await db.exec('delete from public.envois_prospect');
+await db.exec(ligne('foo@bar.com|m:pf-contact', 'foo@bar.com'));
+try { await db.exec(ligne('foo@bar.com|m:pf-contact', 'Foo@Bar.com')); preuve('le même couple destinataire + modèle est refusé par la base', false, 'accepté'); }
+catch (e) { preuve('le même couple destinataire + modèle est refusé par la base', /unique|duplicate/i.test(e.message), e.message); }
+r = await db.query(`insert into public.envois_prospect (collaborateur, destinataire, modele, cle_idempotence)
+  values ('julie@example.test', 'foo@bar.com', 'pf-contact', 'foo@bar.com|m:pf-contact')
+  on conflict (cle_idempotence) do nothing returning id`);
+preuve('ON CONFLICT DO NOTHING : la seconde réservation ne renvoie aucune ligne', r.rows.length === 0);
+try { await db.exec(ligne('Foo@Bar.com|m:pf-contact', 'foo@bar.com')); preuve('une clé non normalisée (majuscules) est refusée', false, 'acceptée'); }
+catch (e) { preuve('une clé non normalisée (majuscules) est refusée', /minuscules|check/i.test(e.message), e.message); }
+await db.exec(ligne('foo@bar.com|m:pf-contact#e1', 'foo@bar.com'));
+preuve('une autre étape du même modèle est permise', true);
+await db.exec(ligne('autre@bar.com|m:pf-contact', 'autre@bar.com'));
+preuve('un autre destinataire, même modèle : permis', true);
+await db.exec(ligne(null, 'foo@bar.com', 'envoye'));
+await db.exec(ligne(null, 'foo@bar.com', 'envoye'));
+preuve('les envois de test (clé NULL) restent répétables', true);
+await db.exec("update public.envois_prospect set statut = 'echec', cle_idempotence = null where cle_idempotence = 'foo@bar.com|m:pf-contact'");
+r = await db.query(`insert into public.envois_prospect (collaborateur, destinataire, modele, cle_idempotence)
+  values ('julie@example.test', 'foo@bar.com', 'pf-contact', 'foo@bar.com|m:pf-contact') on conflict (cle_idempotence) do nothing returning id`);
+preuve('après un échec net (clé libérée), un nouvel essai est permis', r.rows.length === 1);
+try { await db.exec("insert into public.envois_prospect (collaborateur, destinataire, statut) values ('a','b','n-importe-quoi')"); preuve('statut inconnu refusé', false); }
+catch (e) { preuve('statut inconnu refusé', true); }
+// Reprise de l'existant : deux anciens envois identiques → une seule clé.
+const M12b = new PGlite();
+await M12b.exec(AMORCE);
+for (const f of fichiers.filter((x) => /_0[0-8]_|_10_/.test(x))) await M12b.exec(readFileSync('supabase/migrations/' + f, 'utf8'));
+await M12b.exec(`insert into public.envois_prospect (collaborateur, destinataire, modele, sujet, mode, envoye_le) values
+  ('j','Dup@X.fr','pf-contact','a','envoi','2026-11-01'),('j','dup@x.fr','pf-contact','a','envoi','2026-11-02'),
+  ('j','t@x.fr','','Objet  Libre','envoi','2026-11-02'),('j','t@x.fr','pf-contact','a','test','2026-11-02')`);
+try { await M12b.exec(M12); preuve('12 sur un journal existant avec doublons historiques : passe', true); }
+catch (e) { preuve('12 sur un journal existant avec doublons historiques : passe', false, e.message); }
+r = await M12b.query("select count(*)::int as n, count(cle_idempotence)::int as k from public.envois_prospect");
+preuve('doublons historiques conservés mais une seule clé par couple', r.rows[0].n === 4 && r.rows[0].k === 2, JSON.stringify(r.rows[0]));
+r = await M12b.query("select cle_idempotence from public.envois_prospect where cle_idempotence like 't@x.fr%'");
+preuve('reprise : objet normalisé comme en JS (minuscules, espaces simples)', r.rows[0] && r.rows[0].cle_idempotence === 't@x.fr|o:objet libre', JSON.stringify(r.rows));
+
 const ko = preuves.filter((p) => !p.ok).length;
 dire(`\nPRO : ${preuves.length - ko} / ${preuves.length} preuves`);
 console.log('\n---FIN---');

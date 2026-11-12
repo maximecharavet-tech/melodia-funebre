@@ -56,6 +56,8 @@ import {
   entetesService
 } from './_courrier.js';
 import { urlDesabo, entetesDesabonnement, textePiedProspection, normaliserEmail } from './_desabonnement.js';
+import { cleEnvoi, creerStoreMemoire, creerStoreSupabase, envoyerUnique, ligneAncienne } from './_envoi-unique.js';
+import { timingSafeEqual } from 'crypto';
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
 import { gabaritV2, layoutValide } from './_courrier-v2.js';
 import {
@@ -176,7 +178,30 @@ async function lireLigne(table, colonnes, email, jeton) {
   return null;
 }
 
+/* Appel interne de /api/sequences-cron : jamais sans SEQUENCES_AUTO === 'true',
+   ni sans le secret CRON_SECRET (comparaison à temps constant). Le cron
+   nomme le collaborateur propriétaire de l'inscription ; son rôle est relu
+   en base comme pour une session ordinaire — aucun privilège de plus. */
+function appelCronValide(req) {
+  if (process.env.SEQUENCES_AUTO !== 'true') return null;
+  const secret = process.env.CRON_SECRET;
+  if (!secret) return null;
+  const h = req.headers || {};
+  const bearer = String(h.authorization || h.Authorization || '');
+  const a = Buffer.from(bearer), b = Buffer.from('Bearer ' + secret);
+  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
+  const owner = normaliserEmail(h['x-melodia-sequence-owner']);
+  return owner || null;
+}
+
 async function demandeur(req) {
+  const proprietaire = appelCronValide(req);
+  if (proprietaire) {
+    const r = await lireLigne('roles', 'role', proprietaire, '');
+    const f = await lireLigne('collaborateurs', 'nom,name', proprietaire, '');
+    return { email: proprietaire, role: (r && r.role) || null, cron: true,
+      nom: String((f && (f.nom || f.name)) || proprietaire.split('@')[0]).slice(0, 120) };
+  }
   const entete = req.headers.authorization || req.headers.Authorization || '';
   const jeton = entete.startsWith('Bearer ') ? entete.slice(7) : '';
   if (!jeton) return null;
@@ -232,7 +257,7 @@ async function envoisDuJour(email, mode) {
   if (service && !journalAbsent) {
     try {
       const url = SB_URL + '/rest/v1/envois_prospect?select=destinataire,modele,sujet' +
-        '&collaborateur=eq.' + encodeURIComponent(email) + '&mode=eq.' + mode +
+        '&collaborateur=eq.' + encodeURIComponent(email) + '&mode=eq.' + mode + '&statut=neq.echec' +
         '&envoye_le=gte.' + encodeURIComponent(debutJourParis().toISOString()) + '&limit=1000';
       const r = await fetch(url, { headers: service });
       if (r.ok) {
@@ -280,18 +305,46 @@ function quotaDe(role, mode, utilise, persistant) {
   };
 }
 
-async function estDesabonne(email) {
-  const adr = normaliserEmail(email);
-  if (!adr) return false;
+/* ─── Le magasin d'idempotence ───
+   Un seul par instance : la base (clé unique) est la vraie source de
+   vérité ; la mémoire ne sert que de repli (voir _envoi-unique.js). */
+const memoireEnvois = creerStoreMemoire();
+let storeEnvois = null;
+function magasinEnvois() {
   const service = entetesService();
-  if (!service) return false;
-  try {
-    const url = SB_URL + '/rest/v1/prospects?select=email,oppose&oppose=eq.true&email=ilike.' + encodeURIComponent(adr) + '&limit=5';
-    const r = await fetch(url, { headers: service });
-    if (!r.ok) return false;
-    const l = await r.json();
-    return Array.isArray(l) && l.some((x) => normaliserEmail(x && x.email) === adr);
-  } catch (e) { return false; }
+  if (!service) return memoireEnvois;
+  if (!storeEnvois) storeEnvois = creerStoreSupabase({ url: SB_URL, entetes: () => entetesService() || {}, repli: memoireEnvois });
+  return storeEnvois;
+}
+/* Pour les tests : repart d'un état neuf. */
+export function reinitialiserMagasinEnvois() { storeEnvois = null; memoireEnvois.lignes.clear(); journalAbsent = false; }
+
+/* Adresses à ne plus contacter : désabonnées (prospects.oppose), rejetées
+   (prospects.rejete), ou dont un envoi précédent a rebondi / été signalé
+   (envois_prospect.statut = rejete | plainte). Une requête par source,
+   pour tout le lot. */
+function adresseSure(a) { return String(a || '').toLowerCase().replace(/[^a-z0-9@._+-]/g, ''); }
+async function adressesBloquees(adresses) {
+  const liste = [...new Set((adresses || []).map(adresseSure).filter(Boolean))];
+  const bloque = new Map();
+  const service = entetesService();
+  if (!liste.length || !service) return bloque;
+  const ou = '(' + liste.map((a) => 'email.ilike.' + a).join(',') + ')';
+  const lire = async (url) => { try { const r = await fetch(url, { headers: service }); return r.ok ? await r.json() : null; } catch (e) { return null; } };
+  let pros = await lire(SB_URL + '/rest/v1/prospects?select=email,oppose,rejete&or=' + encodeURIComponent(ou) + '&limit=1000');
+  if (pros === null) pros = await lire(SB_URL + '/rest/v1/prospects?select=email,oppose&or=' + encodeURIComponent(ou) + '&limit=1000');
+  (Array.isArray(pros) ? pros : []).forEach((p) => {
+    const a = normaliserEmail(p && p.email);
+    if (p && p.oppose) bloque.set(a, 'DESABONNE');
+    else if (p && p.rejete && !bloque.has(a)) bloque.set(a, 'REJETE');
+  });
+  const rebonds = await lire(SB_URL + '/rest/v1/envois_prospect?select=destinataire&statut=in.(rejete,plainte)&destinataire=in.(' +
+    liste.map((a) => '"' + a + '"').join(',') + ')&limit=1000');
+  (Array.isArray(rebonds) ? rebonds : []).forEach((l) => {
+    const a = normaliserEmail(l && l.destinataire);
+    if (!bloque.has(a)) bloque.set(a, 'REJETE');
+  });
+  return bloque;
 }
 
 /* ─── L'expéditeur : « Julie Serve <julie@contact.melodia-funebre.fr> » ───
@@ -374,7 +427,7 @@ export default async function handler(req, res) {
   }
 
   const d = (req.body && typeof req.body === 'object') ? req.body : {};
-  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
+  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'deja'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
   /* Le modèle choisi : il sert à ne pas renvoyer le même courrier au
      même destinataire le même jour. À défaut, l'objet en tient lieu. */
   const modele = String(d.modele || '').trim().slice(0, 80);
@@ -496,7 +549,7 @@ export default async function handler(req, res) {
     }
     try {
       const url = SB_URL + '/rest/v1/envois_prospect?select=id,destinataire,sujet,modele,mode,societe,piece_jointe,resend_id,statut,ouvert_nb,clique_nb,envoye_le,delivre_le,ouvert_le,clique_le,rejete_le,dernier_evenement' +
-        '&collaborateur=eq.' + encodeURIComponent(qui.email) +
+        '&collaborateur=eq.' + encodeURIComponent(qui.email) + '&statut=neq.echec' +
         '&order=envoye_le.desc&limit=80';
       const r = await fetch(url, { headers: service });
       if (!r.ok) {
@@ -516,6 +569,15 @@ export default async function handler(req, res) {
         note: 'Journal des envois indisponible.' });
     }
   }
+  /* ─── « Déjà envoyé ? » : pour griser l'envoi dans la console ─── */
+  if (mode === 'deja') {
+    const liste = envois.filter((x) => valideEmail(x.to));
+    const cles = liste.map((x) => cleEnvoi({ destinataire: x.to, modele, campagne: String(d.campagne || '').trim().slice(0, 80),
+      etape: d.etape != null && d.etape !== '' ? Number(d.etape) : null, sujet: x.sujet }));
+    const pris = await magasinEnvois().dejaEnvoyes(cles, liste.map((x) => x.to));
+    return json(res, 200, { ok: true, mode, deja: liste.map((x, i) => ({
+      to: x.to, ref: x.ref, deja: !!pris[cles[i]], statut: pris[cles[i]] || null })) });
+  }
   const quota = quotaDe(qui.role, modeQuota, deja.lignes.length, deja.persistant);
 
   if (envois.length > LOT_MAX) {
@@ -530,14 +592,11 @@ export default async function handler(req, res) {
   const sig = signature(qui.nom, qui.email);
   const de = expediteurDe(qui, exp);
   const refuses = [];
-  const charges = [];
-  const retenus = [];
-
-  /* Déjà parti aujourd'hui : même destinataire, même modèle (ou même
-     objet). Les doublons du lot lui-même sont écartés aussi. */
-  const cleEnvoi = (to, m, sujet) => String(to || '').toLowerCase() + '|' + (m || ('objet:' + sujet));
-  const vus = new Set(mode === 'test' ? [] : deja.lignes.map((l) => cleEnvoi(l.destinataire, l.modele, l.sujet)));
+  const lignes = [];
   const dansLot = new Set();
+  const campagne = String(d.campagne || '').trim().slice(0, 80);
+  const etape = d.etape != null && d.etape !== '' && Number.isFinite(Number(d.etape)) ? Math.max(0, Math.floor(Number(d.etape))) : null;
+  const sequenceId = d.sequence_id != null && Number.isFinite(Number(d.sequence_id)) ? Number(d.sequence_id) : null;
 
   if (piecePerso && envois.length > 3) {
     return json(res, 400, { error: 'La pièce jointe personnelle est limitée à 3 destinataires à la fois.', code: 'PIECE_LOT' });
@@ -546,6 +605,13 @@ export default async function handler(req, res) {
     ? await piecesJointes(brochures, piecePerso, envois.length > 3)
     : [];
 
+  /* Adresses à ne pas contacter : une lecture pour tout le lot. */
+  const bloquees = mode === 'test' ? new Map() : await adressesBloquees(envois.map((x) => x.to));
+  const MOTIFS = {
+    DESABONNE: 'Cette adresse a demandé à ne plus être contactée.',
+    REJETE: 'Cette adresse a rebondi ou signalé un message : elle n’est plus contactée.'
+  };
+
   for (let idx = 0; idx < envois.length; idx++) {
     const e = appliquerModele(envois[idx], modele, brochures, liensBrochure);
     envois[idx] = e;
@@ -553,14 +619,12 @@ export default async function handler(req, res) {
     const motif = defautDe(e, true);
     if (motif) { refuses.push({ to: e.to, ref: e.ref, motif }); continue; }
     if (mode !== 'test') {
-      const cle = cleEnvoi(e.to, modele, e.sujet);
-      const adr = String(e.to).toLowerCase();
+      const adr = normaliserEmail(e.to);
       if (dansLot.has(adr)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Adresse en double dans cet envoi.', code: 'DOUBLON' }); continue; }
-      if (vus.has(cle)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Déjà envoyé aujourd’hui avec ce modèle.', code: 'DEJA_ENVOYE' }); continue; }
-      if (await estDesabonne(e.to)) { refuses.push({ to: e.to, ref: e.ref, motif: 'Cette adresse a demandé à ne plus être contactée.', code: 'DESABONNE' }); continue; }
+      const b = bloquees.get(adr);
+      if (b) { refuses.push({ to: e.to, ref: e.ref, motif: MOTIFS[b], code: b }); continue; }
       dansLot.add(adr);
     }
-    retenus.push(e);
     const unsub = urlDesabo(e.to);
     const charge = {
       from: de,
@@ -575,35 +639,85 @@ export default async function handler(req, res) {
       headers: entetesDesabonnement(e.to, qui.email)
     };
     if (atts.length) charge.attachments = atts;
-    charges.push(charge);
+    lignes.push({
+      e, charge,
+      cle: mode === 'test' ? null : cleEnvoi({ destinataire: e.to, modele, campagne, etape, sujet: e.sujet }),
+      meta: {
+        collaborateur: qui.email, mode: modeQuota, destinataire: normaliserEmail(e.to),
+        sujet: e.sujet.slice(0, 200), modele, ref: e.ref, societe: e.societe || '',
+        piece_jointe: atts.map((a) => a.filename).filter(Boolean).join(', '),
+        campagne, sequence_id: sequenceId, etape
+      }
+    });
   }
 
-  if (!charges.length) return json(res, 400, { error: refuses[0] ? refuses[0].motif : 'Rien à envoyer.', code: 'RIEN', refuses, quota });
+  if (!lignes.length) return json(res, 400, { error: refuses[0] ? refuses[0].motif : 'Rien à envoyer.', code: 'RIEN', refuses, quota });
 
   /* La maison voit ce qui part en son nom. Pour un lot, une seule copie
      — la première — plutôt que cinquante dans la boîte du fondateur. */
   const maison = boiteMaison();
-  if (maison.length && mode === 'envoi') charges[0].bcc = maison;
+  if (maison.length && mode === 'envoi') lignes[0].charge.bcc = maison;
 
-  const r = charges.length === 1 ? await envoyer(charges[0]) : await envoyerLot(charges);
-  if (!r.ok) return json(res, r.status, { error: r.error, code: r.code, motif: r.motif, refuses, quota });
+  const expedier = (charges, cleIdem) => (charges.length === 1
+    ? envoyer(charges[0], { idempotence: cleIdem })
+    : envoyerLot(charges, { idempotence: cleIdem }));
 
-  const ids = r.ids || [r.id];
-  const persiste = await journaliser(qui.email, modeQuota, retenus.map((e, i) => ({
-    destinataire: e.to.toLowerCase(), sujet: e.sujet.slice(0, 200), modele, ref: e.ref,
-    societe: e.societe || '', piece_jointe: atts.map((a) => a.filename).filter(Boolean).join(', '),
-    statut: 'envoye', resend_id: ids[i] || null
-  })));
-  const utilise = quota.utilise + retenus.length;
+  /* ─── Test : à soi-même, répétable, hors idempotence ─── */
+  if (mode === 'test') {
+    const r = await expedier(lignes.map((l) => l.charge), null);
+    if (!r.ok) return json(res, r.status, { error: r.error, code: r.code, motif: r.motif, refuses, quota });
+    const ids = r.ids || [r.id];
+    const persiste = await journaliser(qui.email, 'test', lignes.map((l, i) => Object.assign(ligneAncienne(l.meta), {
+      statut: 'envoye', resend_id: ids[i] || null })));
+    return json(res, 200, {
+      ok: true, mode, expediteur: de,
+      envoyes: lignes.map((l, i) => ({ to: l.e.to, ref: l.e.ref, id: ids[i] || null })),
+      refuses, quota: quotaDe(qui.role, 'test', quota.utilise + lignes.length, deja.persistant && persiste),
+      envoye_le: new Date().toISOString()
+    });
+  }
+
+  /* ─── Envoi : réserver, envoyer, confirmer — jamais deux fois ─── */
+  const magasin = magasinEnvois();
+  let out;
+  try {
+    out = await envoyerUnique({ store: magasin, lignes, envoyer: expedier });
+  } catch (err) {
+    return json(res, 503, {
+      error: 'Le journal des envois est injoignable : rien n’est parti, par prudence (pas de risque de doublon). Réessayez dans un instant.',
+      code: 'JOURNAL_INDISPONIBLE', refuses, quota
+    });
+  }
+  out.doublons.forEach((x) => refuses.push({
+    to: x.ligne.e.to, ref: x.ligne.e.ref, code: x.deja === 'lot' ? 'DOUBLON' : 'DEJA_ENVOYE',
+    motif: x.deja === 'lot' ? 'Adresse en double dans cet envoi.'
+      : x.deja === 'reserve' || x.deja === 'incertain'
+        ? 'Un envoi à cette adresse est en cours ou à vérifier : pas de second envoi.'
+        : 'Déjà envoyé à cette adresse avec ce modèle.'
+  }));
+  if (out.echec) {
+    const f = out.echec;
+    if (f.incertain) {
+      return json(res, 504, {
+        error: 'Le service d’envoi n’a pas répondu à temps : on ne sait pas si le message est parti. Par prudence il est bloqué contre un second envoi — vérifiez dans Resend avant de décider.',
+        code: 'ENVOI_INCERTAIN', incertain: true, refuses, quota
+      });
+    }
+    return json(res, f.status || 502, { error: f.error, code: f.code, motif: f.motif, retentable: true, refuses, quota });
+  }
+  if (!out.envoyes.length) {
+    return json(res, 409, { error: refuses[0] ? refuses[0].motif : 'Déjà envoyé.', code: 'DEJA_ENVOYE', refuses, quota });
+  }
+  const utilise = quota.utilise + out.envoyes.length;
   return json(res, 200, {
     ok: true,
     mode,
     expediteur: de,
-    envoyes: retenus.map((e, i) => ({ to: e.to, ref: e.ref, id: ids[i] || null })),
+    envoyes: out.envoyes.map((x) => ({ to: x.ligne.e.to, ref: x.ligne.e.ref, id: x.id })),
     refuses,
-    quota: quotaDe(qui.role, modeQuota, utilise, deja.persistant && persiste),
-    note: deja.persistant && persiste ? undefined
-      : 'Journal des envois indisponible : le compteur du jour n\'est pas persisté (migration 20261103_08 à appliquer).',
+    quota: quotaDe(qui.role, modeQuota, utilise, magasin.persistant),
+    note: magasin.persistant ? undefined
+      : 'Journal des envois non verrouillé en base : appliquez la migration 20261114_12 (garantie anti-doublon entre instances).',
     envoye_le: new Date().toISOString()
   });
 }
