@@ -385,7 +385,11 @@ function lire(e) {
     titre: String((e && e.titre) || '').slice(0, 160),
     ref: String((e && (e.ref || e.siret)) || '').slice(0, 40),
     nom: String((e && (e.nom || e.dirigeant)) || '').trim().slice(0, 120),
-    societe: String((e && (e.societe || e.agence)) || '').trim().slice(0, 160),
+    /* Champs de fusion (envoi groupé) : prénom, nom de famille, civilité brute. */
+    prenom: String((e && e.prenom) || '').trim().slice(0, 80),
+    nomFamille: String((e && e.nom_famille) || '').trim().slice(0, 80),
+    civ: String((e && e.civilite) || '').trim().slice(0, 20),
+    societe: String((e && (e.societe || e.agence || e.organisation)) || '').trim().slice(0, 160),
     ville: String((e && e.ville) || '').trim().slice(0, 80),
     accroche: String((e && e.accroche) || '').slice(0, 300)
   };
@@ -396,7 +400,8 @@ function lire(e) {
 function appliquerModele(e, modeleId, brochures, liensBrochure) {
   if (estModeleJulie(modeleId)) {
     const c = composerModele(modeleId, {
-      nom: e.nom, societe: e.societe, ville: e.ville, email: e.to, accroche: e.accroche
+      nom: e.nom, prenom: e.prenom, nomFamille: e.nomFamille, civ: e.civ,
+      societe: e.societe, ville: e.ville, email: e.to, accroche: e.accroche
     }, { brochures: brochures.map((b) => b.id), liensBrochure });
     return Object.assign({}, e, {
       sujet: c.sujet,
@@ -498,6 +503,7 @@ export default async function handler(req, res) {
     }
     return json(res, 200, {
       ok: true,
+      sujet: e.sujet,
       html: habiller(e, signature('', email)),
       pieces: brochures.map((b) => ({ id: b.id, label: b.label, nom: b.nom, url: liensBrochure[b.id] }))
     });
