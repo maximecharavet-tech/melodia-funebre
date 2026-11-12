@@ -59,6 +59,7 @@ import { urlDesabo, entetesDesabonnement, textePiedProspection, normaliserEmail 
 import { cleEnvoi, creerStoreMemoire, creerStoreSupabase, envoyerUnique, ligneAncienne, libelleDeja, STATUTS_REELS } from './_envoi-unique.js';
 import { timingSafeEqual } from 'crypto';
 import { gererSequences } from './_sequences-serveur.js';
+import { gererLots, creerStoreLotsMemoire, creerStoreLotsSupabase } from './_lot-envoi.js';
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
 import { gabaritV2, layoutValide } from './_courrier-v2.js';
 import {
@@ -317,8 +318,48 @@ function magasinEnvois() {
   if (!storeEnvois) storeEnvois = creerStoreSupabase({ url: SB_URL, entetes: () => entetesService() || {}, repli: memoireEnvois });
   return storeEnvois;
 }
+/* ─── Les lots d'envoi groupé (file persistée, migration 13) ─── */
+const memoireLots = creerStoreLotsMemoire();
+let storeLots = null;
+function magasinLots() {
+  const service = entetesService();
+  if (!service) return memoireLots;
+  if (!storeLots) storeLots = creerStoreLotsSupabase({ url: SB_URL, entetes: () => entetesService() || {}, repli: memoireLots });
+  return storeLots;
+}
+
+/* Ce que Resend a déjà reçu : jour et mois de Paris, TOUS envois du compte
+   (courriels, tests, séquences). « echec » n'a rien consommé ; « reserve »
+   et « incertain » comptent par prudence. */
+export function debutMoisParis(maintenant) {
+  const t = maintenant || new Date();
+  const p = {};
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit' }).formatToParts(t).forEach((x) => { p[x.type] = x.value; });
+  return debutJourParis(new Date(Date.UTC(+p.year, +p.month - 1, 1, 12)));
+}
+async function compterResend() {
+  const jour0 = debutJourParis(), mois0 = debutMoisParis();
+  const service = entetesService();
+  if (service && !journalAbsent) {
+    try {
+      const url = SB_URL + '/rest/v1/envois_prospect?select=envoye_le&statut=neq.echec&envoye_le=gte.' + encodeURIComponent(mois0.toISOString()) + '&limit=5000';
+      const r = await fetch(url, { headers: service });
+      if (r.ok) {
+        const l = await r.json();
+        const lignes = Array.isArray(l) ? l : [];
+        return { jour: lignes.filter((x) => new Date(x.envoye_le) >= jour0).length, mois: lignes.length };
+      }
+    } catch (e) { /* repli mémoire */ }
+  }
+  const vus = [...memoireEnvois.lignes.values()].map((x) => x.t).filter((t) => t >= mois0.getTime());
+  return { jour: vus.filter((t) => t >= jour0.getTime()).length, mois: vus.length };
+}
+
 /* Pour les tests : repart d'un état neuf. */
-export function reinitialiserMagasinEnvois() { storeEnvois = null; memoireEnvois.lignes.clear(); journalAbsent = false; }
+export function reinitialiserMagasinEnvois() {
+  storeEnvois = null; storeLots = null; memoireEnvois.lignes.clear();
+  memoireLots.lots.clear(); memoireLots.items.clear(); journalAbsent = false;
+}
 
 /* Adresses à ne plus contacter : désabonnées (prospects.oppose), rejetées
    (prospects.rejete), ou dont un envoi précédent a rebondi / été signalé
@@ -433,7 +474,7 @@ export default async function handler(req, res) {
   }
 
   const d = (req.body && typeof req.body === 'object') ? req.body : {};
-  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'deja', 'automatisation', 'sequence_enregistrer', 'sequence_sortie'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
+  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'deja', 'automatisation', 'sequence_enregistrer', 'sequence_sortie', 'lot_creer', 'lot_traiter', 'lot_etat', 'lot_reprendre', 'lot_annuler'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
   /* Le modèle choisi : il sert à ne pas renvoyer le même courrier à la
      même adresse dans les 60 jours. À défaut, l'objet en tient lieu. */
   const modele = String(d.modele || '').trim().slice(0, 80);
@@ -537,6 +578,24 @@ export default async function handler(req, res) {
   /* ─── Séquences : état de l'automatisation, inscription, sortie ─── */
   if (mode === 'automatisation' || mode === 'sequence_enregistrer' || mode === 'sequence_sortie') {
     return gererSequences(mode, d, qui, (code, corps) => json(res, code, corps));
+  }
+
+  /* ─── Envoi groupé : lots, file, progression ─── */
+  if (mode.indexOf('lot_') === 0) {
+    /* Chaque mail repasse par CE gestionnaire (mode « envoi », un destinataire) :
+       session et rôle relus, désabonnés écartés, idempotence sur 60 jours. */
+    const envoyerUn = async (corps, opts) => {
+      const reqI = { method: 'POST', headers: req.headers, body: corps, __lotInterne: true, __copieMaison: !!(opts && opts.premier) };
+      const resI = { statusCode: 200, corps: null, setHeader() {}, end() { return resI; } };
+      resI.status = (c) => { resI.statusCode = c; return resI; };
+      resI.json = (o) => { resI.corps = o; return resI; };
+      await handler(reqI, resI);
+      return { status: resI.statusCode, corps: resI.corps || {} };
+    };
+    return gererLots(mode, d, qui, {
+      store: magasinLots(), envoyerUn, quota: compterResend, repondre: (code, corps) => json(res, code, corps),
+      pauseMs: req.__pauseLot
+    });
   }
 
   /* ─── Quota du jour, sans rien envoyer ─── */
@@ -671,7 +730,8 @@ export default async function handler(req, res) {
   /* La maison voit ce qui part en son nom. Pour un lot, une seule copie
      — la première — plutôt que cinquante dans la boîte du fondateur. */
   const maison = boiteMaison();
-  if (maison.length && mode === 'envoi') lignes[0].charge.bcc = maison;
+  /* Lot : une seule copie pour tout le lot (le premier mail), pas une par destinataire. */
+  if (maison.length && mode === 'envoi' && (!req.__lotInterne || req.__copieMaison)) lignes[0].charge.bcc = maison;
 
   const expedier = (charges, cleIdem) => (charges.length === 1
     ? envoyer(charges[0], { idempotence: cleIdem })

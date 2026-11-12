@@ -12,7 +12,8 @@ export function monterFauxServeur(opts = {}) {
     colonneIdempotence: opts.colonneIdempotence !== false,
     prospects: opts.prospects || [], inscriptions: opts.inscriptions || [], sequences: opts.sequences || [],
     taches: [], patches: [], role: opts.role || 'commercial', delaiBase: opts.delaiBase ?? 4,
-    journalEnPanne: false
+    journalEnPanne: false,
+    lots: [], lotItems: [], tablesLotsAbsentes: false, seqLot: 0, seqLotItem: 0
   };
   const pause = (ms) => new Promise((r) => setTimeout(r, ms));
   const rep = (status, corps) => ({
@@ -96,6 +97,46 @@ export function monterFauxServeur(opts = {}) {
         return rep(200, etat.inscriptions.filter((x) => ['active', 'pause'].includes(x.statut)));
       }
       return rep(200, etat.inscriptions.filter((x) => x.statut === 'active' && new Date(x.prochaine_le) <= new Date(u.searchParams.get('prochaine_le').replace('lte.', ''))));
+    }
+    if (u.pathname === '/rest/v1/lots_envoi' || u.pathname === '/rest/v1/lots_envoi_items') {
+      if (etat.tablesLotsAbsentes) return rep(404, { code: 'PGRST205', message: "Could not find the table 'public.lots_envoi'" });
+      const items = u.pathname.endsWith('_items');
+      const table = items ? etat.lotItems : etat.lots;
+      const filtre = (l) => {
+        for (const [k, v] of u.searchParams) {
+          if (['select', 'order', 'limit'].includes(k)) continue;
+          const [op, val] = [v.slice(0, v.indexOf('.')), v.slice(v.indexOf('.') + 1)];
+          const x = l[k];
+          if (op === 'eq' && String(x) !== val) return false;
+          if (op === 'in' && !val.slice(1, -1).split(',').includes(String(x))) return false;
+          if (op === 'lt' && !(x && new Date(x).getTime() < new Date(val).getTime())) return false;
+        }
+        return true;
+      };
+      await pause(1);
+      if (methode === 'POST') {
+        const lignes = Array.isArray(corps) ? corps : [corps];
+        const out = [];
+        for (const l of lignes) {
+          if (!items && l.statut === 'en_cours' && etat.lots.some((x) => x.statut === 'en_cours' && x.proprietaire === l.proprietaire)) return rep(409, { code: '23505', message: 'duplicate key value violates unique constraint' });
+          const ligne = items
+            ? Object.assign({ id: ++etat.seqLotItem, statut: 'attente', code: '', detail: '', retentable: false, precedent: null, renvoi: null, resend_id: null, traite_le: null }, l)
+            : Object.assign({ id: ++etat.seqLot, statut: 'en_cours', note: '', created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, l);
+          table.push(ligne); out.push(ligne);
+        }
+        return /return=representation/.test(init.headers?.Prefer || '') ? rep(201, out) : rep(201, '');
+      }
+      if (methode === 'PATCH') {
+        const touches = table.filter(filtre);
+        touches.forEach((l) => Object.assign(l, corps));
+        return /return=representation/.test(init.headers?.Prefer || '') ? rep(200, touches) : rep(204, '');
+      }
+      let liste = table.filter(filtre);
+      const ordre = u.searchParams.get('order');
+      if (ordre === 'rang.asc') liste.sort((a, b) => a.rang - b.rang);
+      if (ordre === 'id.desc') liste.sort((a, b) => b.id - a.id);
+      const lim = Number(u.searchParams.get('limit') || 0); if (lim) liste = liste.slice(0, lim);
+      return rep(200, liste.map((l) => ({ ...l })));
     }
     if (u.pathname === '/rest/v1/taches') { if (methode === 'POST') etat.taches.push(corps); return rep(201, ''); }
     if (u.pathname === '/rest/v1/envois_prospect') {
