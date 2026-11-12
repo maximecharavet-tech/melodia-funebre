@@ -82,6 +82,10 @@ async function fabriquer(quoi) {
     lot.push([require('./pdf-brochure.js'), { margin: { top: 0, right: 0, bottom: 0, left: 0 } }]);
   }
   if (tout || quoi === 'ecoute') lot.push([require('./pdf-ecoute.js'), { margin: { top: 0, right: 0, bottom: 0, left: 0 } }]);
+  const ZERO = { margin: { top: 0, right: 0, bottom: 0, left: 0 } };
+  for (const cle of ['agences', 'offre-pro', 'ecoute-prestige', 'contact']) {
+    if (tout || quoi === cle || quoi === 'extra') lot.push([require('./pdf-extra-' + cle + '.js'), ZERO]);
+  }
   if (tout || quoi === 'manuel') lot.push([require('./pdf-manuel.js'), enFlux('Manuel de vente')]);
   if (tout || quoi === 'linkedin') lot.push([require('./pdf-linkedin.js'), enFlux('Plan LinkedIn')]);
   if (tout || quoi === 'social') lot.push([require('./pdf-social.js'), enFlux('Plan réseaux sociaux')]);
@@ -106,8 +110,8 @@ async function fabriquer(quoi) {
 }
 
 const quoi = (process.argv[2] || '').toLowerCase();
-if (quoi && ['manuel', 'brochure', 'linkedin', 'social', 'ecoute'].indexOf(quoi) === -1) {
-  console.error('  Usage : node build/pdf.js [brochure|manuel|linkedin|social|ecoute]');
+if (quoi && ['manuel', 'brochure', 'linkedin', 'social', 'ecoute', 'extra', 'agences', 'offre-pro', 'ecoute-prestige', 'contact'].indexOf(quoi) === -1) {
+  console.error('  Usage : node build/pdf.js [brochure|manuel|linkedin|social|ecoute|extra|agences|offre-pro|ecoute-prestige|contact]');
   process.exit(1);
 }
 fabriquer(quoi).catch(e => { console.error('  ' + e.message); process.exit(1); });

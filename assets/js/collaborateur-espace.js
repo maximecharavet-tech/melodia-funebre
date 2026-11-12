@@ -798,6 +798,10 @@
   /* ─── Kit ─── */
   var KIT = [
     { t: 'Écoutez — exemples de musiques (disque d’or)', f: '/documents/melodia-brochure-ecoute-exemples.pdf', d: 'Les musiques déjà sur le site, avec liens et QR d’écoute. Joignable à un mail.' },
+    { t: 'Présentation agences partenaires', f: '/documents/melodia-presentation-agences-partenaires.pdf', d: 'Plaquette premium pour pompes funèbres, crématoriums, marbriers, officiants. Joignable à un mail.' },
+    { t: 'Offre Pro', f: '/documents/melodia-offre-pro.pdf', d: 'Questionnaire, composition, QR, plaque, mémorial : l’offre professionnelle expliquée. Joignable à un mail.' },
+    { t: 'Plaquette Écoutez prestige', f: '/documents/melodia-plaquette-ecoute-prestige.pdf', d: 'Six musiques mises en scène, disque d’or, liens et QR d’écoute. Joignable à un mail.' },
+    { t: 'Fiche contact Julie Serve', f: '/documents/melodia-fiche-contact-julie-serve.pdf', d: 'La carte de visite de Julie, ses coordonnées et trois QR. Joignable à un mail.' },
     { t: 'Brochure partenaire', f: '/documents/melodia-brochure-partenaire.pdf', d: 'À remettre ou à envoyer à une agence.' },
     { t: 'Manuel de vente', f: '/api/document?fichier=manuel', doc: 'manuel', nom: 'melodia-manuel-de-vente.pdf', d: 'Document interne : script, objections, séquence.' },
     { t: 'Plan LinkedIn', f: '/api/document?fichier=linkedin', doc: 'linkedin', nom: 'melodia-plan-linkedin.pdf', d: 'Document interne.' },

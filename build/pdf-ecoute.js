@@ -117,4 +117,4 @@ function html() {
   <style>${css}</style></head><body>${couverture}${corps}</body></html>`;
 }
 
-module.exports = { html, fichier: 'melodia-brochure-ecoute-exemples.pdf', catalogue, limace };
+module.exports = { html, fichier: 'melodia-brochure-ecoute-exemples.pdf', catalogue, limace, qrSvg, cssDisque, disque, esc, SITE };

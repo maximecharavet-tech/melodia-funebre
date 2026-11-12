@@ -80,6 +80,30 @@ const BROCHURES = {
     label: 'Écoutez — exemples de musiques du site (disque d’or, liens et QR)',
     chemin: 'documents/melodia-brochure-ecoute-exemples.pdf',
     nom: 'Melodia-Funebre-Ecoutez-exemples-de-musiques.pdf'
+  },
+  'presentation-agences': {
+    id: 'presentation-agences',
+    label: 'Présentation agences partenaires (pompes funèbres, crématoriums, marbriers, officiants)',
+    chemin: 'documents/melodia-presentation-agences-partenaires.pdf',
+    nom: 'Melodia-Funebre-Presentation-agences-partenaires.pdf'
+  },
+  'offre-pro': {
+    id: 'offre-pro',
+    label: 'Offre Pro — questionnaire, composition, QR, plaque, mémorial',
+    chemin: 'documents/melodia-offre-pro.pdf',
+    nom: 'Melodia-Funebre-Offre-Pro.pdf'
+  },
+  'ecoute-prestige': {
+    id: 'ecoute-prestige',
+    label: 'Plaquette Écoutez prestige (disque d’or, extraits, liens et QR)',
+    chemin: 'documents/melodia-plaquette-ecoute-prestige.pdf',
+    nom: 'Melodia-Funebre-Plaquette-Ecoutez-prestige.pdf'
+  },
+  'fiche-contact-julie': {
+    id: 'fiche-contact-julie',
+    label: 'Fiche contact Julie Serve (carte de visite)',
+    chemin: 'documents/melodia-fiche-contact-julie-serve.pdf',
+    nom: 'Melodia-Funebre-Fiche-contact-Julie-Serve.pdf'
   }
 };
 const BROCHURE_IDS = Object.keys(BROCHURES);
