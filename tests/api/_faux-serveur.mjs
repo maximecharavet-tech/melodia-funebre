@@ -43,8 +43,18 @@ export function monterFauxServeur(opts = {}) {
     }
     if (u.pathname === '/rest/v1/sequences') return rep(200, etat.sequences);
     if (u.pathname === '/rest/v1/sequence_inscriptions') {
-      if (methode === 'PATCH') { etat.patches.push({ table: 'sequence_inscriptions', q: u.search, corps }); return rep(204, ''); }
-      return rep(200, etat.inscriptions);
+      if (methode === 'PATCH') {
+        etat.patches.push({ table: 'sequence_inscriptions', q: u.search, corps });
+        await pause(1);
+        const id = Number(u.searchParams.get('id')?.replace('eq.', ''));
+        const l = etat.inscriptions.find((x) => x.id === id);
+        const exige = u.searchParams.get('prochaine_le');
+        const st = u.searchParams.get('statut');
+        const ok = l && (!exige || new Date(exige.replace('eq.', '')).getTime() === new Date(l.prochaine_le).getTime()) && (!st || st.replace('eq.', '') === l.statut);
+        if (ok) Object.assign(l, corps);
+        return /return=representation/.test(init.headers?.Prefer || '') ? rep(200, ok ? [l] : []) : rep(204, '');
+      }
+      return rep(200, etat.inscriptions.filter((x) => x.statut === 'active' && new Date(x.prochaine_le) <= new Date(u.searchParams.get('prochaine_le').replace('lte.', ''))));
     }
     if (u.pathname === '/rest/v1/taches') { if (methode === 'POST') etat.taches.push(corps); return rep(201, ''); }
     if (u.pathname === '/rest/v1/envois_prospect') {
