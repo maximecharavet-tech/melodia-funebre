@@ -5,7 +5,10 @@ import { prix } from '../i18n.js';
 export async function rendre(el, ctx) {
   const s = ctx.me.services || {};
   el.append(h('p', { class: 'surtitre' }, 'Agence'), titre(1, 'La', 'facturation'),
-    h('p', { class: 'discret' }, 'Les compositions sont réglées par l’agence. Les tarifs sont fixés par la maison ; tant qu’un tarif n’est pas arrêté, il apparaît comme tel.'));
+    h('p', { class: 'discret' }, 'Les compositions sont réglées par l’agence. Les tarifs sont fixés par la maison ; tant qu’un tarif n’est pas arrêté, il apparaît comme tel.'),
+    // Repère v3 : relie ce que l'agence règle ici à la promesse publique
+    // (« 60 % pour l'agence »), sans afficher aucun montant non fixé.
+    h('p', { class: 'petit' }, 'Repère : la famille règle à votre agence le prix public de l’offre (149, 299 ou 499 €) ; la part de la maison, réglée ici, en représente 40 %. Votre agence garde 60 %.'));
   el.append(h('div', { class: 'grille', style: { margin: '1.2rem 0' } }, (ctx.me.offres || []).map((o) => h('div', { class: 'carte' },
     h('h3', null, o.nom), h('p', { class: 'petit' }, o.description), h('p', { class: 'mono' }, prix(o.prix_cents))))));
   if (s.mention_tva) el.append(h('p', { class: 'petit' }, s.mention_tva));

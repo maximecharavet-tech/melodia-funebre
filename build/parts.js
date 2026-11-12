@@ -49,7 +49,6 @@ function testimonials() {
         <div class="carousel-track">
 ${TESTIS.map(t => `          <div class="carousel-slide">
             <div class="card testi">
-              <div class="testi-stars" aria-label="5 étoiles sur 5">★★★★★</div>
               <p class="testi-text">« ${esc(t.t)} »</p>
               <div class="testi-who">${esc(t.w)}</div>
             </div>

@@ -63,3 +63,7 @@ npx esbuild entree-three.js --bundle --minify --format=esm --target=es2020
 ```
 
 Un en-tête `/*! … */` rappelle la licence MIT en tête de chaque fichier servi.
+
+## v3 (12/11/2026)
+
+Aucun code tiers ajouté. La minification de la feuille de style (`build/css-min.js`) est écrite pour ce dépôt, sans dépendance. Motion et three.js restent ceux de la v2 ; three.js n'est plus chargé sur `/professionnels` (photo réelle à la place de la médaille), il reste sur l'accueil aux mêmes conditions.

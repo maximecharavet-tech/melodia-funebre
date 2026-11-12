@@ -130,9 +130,8 @@
     if (n === 1) {
       if (!state.defunt.trim()) { fail($('#o-defunt'), 'Ce prénom nous sert à écrire la chanson.'); ok = false; }
     }
-    if (n === 2) {
-      if (!state.traits.trim()) { fail($('#o-traits'), 'Trois mots suffisent.'); ok = false; }
-    }
+    /* Étape 2 (portrait) : facultative depuis la v3, l'entretien la
+       recueille de toute façon. */
     if (n === 4) {
       if (!state.name.trim()) { fail($('#o-name'), 'Indiquez votre nom.'); ok = false; }
       if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(state.email.trim())) { fail($('#o-email'), 'Adresse email invalide.'); ok = false; }
@@ -233,6 +232,14 @@
   $$('[data-wz-prev]', wizard).forEach(function (b) {
     b.addEventListener('click', function () { show(idx - 1); });
   });
+  /* Saut direct vers une étape plus loin (« tout raconter au téléphone ») :
+     on valide l'étape en cours, et seulement vers l'avant. */
+  $$('[data-wz-goto]', wizard).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var cible = parseInt(b.getAttribute('data-wz-goto'), 10);
+      if (!isNaN(cible) && cible > idx && validate(idx)) show(cible);
+    });
+  });
   /* Entrée passe à l'étape suivante, sauf dans les zones de texte long */
   wizard.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' || e.target.tagName === 'TEXTAREA') return;
@@ -259,6 +266,7 @@
        pour que le compositeur dispose du brief entier. */
     var lignes = [];
     if (state.anecdote) lignes.push(state.anecdote);
+    if (!state.traits.trim() && !state.anecdote.trim()) lignes.push('PORTRAIT : à recueillir pendant l\'entretien téléphonique (étape passée par la famille).');
     var extra = [];
     if (state.age) extra.push('Âge : ' + state.age);
     if (state.lien) extra.push('Lien avec la famille : ' + state.lien);

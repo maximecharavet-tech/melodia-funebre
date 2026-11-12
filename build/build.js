@@ -62,6 +62,18 @@ if (fs.existsSync(fichierContenu)) {
   }
 }
 
+/* ─── Feuille de style minifiée (v3) ───
+   Produite AVANT les pages : son empreinte « ?v= » est calculée sur le
+   fichier minifié, que les pages chargent. La source reste style.css. */
+{
+  const { minifier, ENTETE } = require('./css-min.js');
+  const source = fs.readFileSync(path.join(RACINE, 'assets/css/style.css'), 'utf8');
+  const min = ENTETE + minifier(source);
+  const cible = path.join(RACINE, 'assets/css/style.min.css');
+  if (!fs.existsSync(cible) || fs.readFileSync(cible, 'utf8') !== min) fs.writeFileSync(cible, min);
+  console.log('  style.min.css         ' + Math.round(source.length / 1024) + ' Ko → ' + Math.round(min.length / 1024) + ' Ko');
+}
+
 /* ─── Génération ─── */
 const { page: pageBrute } = require('./gen.js');
 const { fusionnee, liensVersPiliers } = require('./redirections.js');

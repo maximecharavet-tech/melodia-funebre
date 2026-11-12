@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     return res.status(503).json({
       error: 'La composition automatique n\'est pas configurée.',
       code: 'NOT_CONFIGURED',
-      hint: 'Renseignez MUREKA_API_KEY dans Vercel → Settings → Environment Variables, puis redéployez.'
+      hint: 'Réglage serveur manquant : la clé du service de composition (voir la liste des réglages de mise en production).'
     });
   }
 

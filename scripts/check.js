@@ -8,7 +8,7 @@ const files = [
   'assets/js/vendor/julie_v2.wasm', 'assets/js/vendor/julie-wasm-glue.js', 'assets/js/vendor/julie-fallback.js', 'assets/js/julie/julie-core.js', 'assets/js/julie/julie-compat.js', 'assets/js/julie/julie-motion.js', 'assets/js/julie/julie-journee.js', 'assets/js/julie/julie-pipeline.js', 'assets/js/julie/julie-sequences.js', 'assets/js/julie/julie-csv.js', 'assets/js/julie/julie-dashboard.js', 'assets/js/julie/julie-apercu.js', 'assets/js/julie/julie-composeur.js', 'assets/js/julie/julie-onboarding.js', 'assets/js/julie/julie-mobile.js', 'assets/js/julie/julie-bridge.js', 'assets/css/julie.css', 'assets/css/julie-motion.css', 'assets/css/julie-dashboard.css', 'assets/css/julie-apercu.css', 'assets/css/julie-ui.css', 'api/_courrier-v2.js', 'api/prospect-ia.js', 'api/prospect-doublon.js',
   'chanson-hommage.html', 'qr-code-memorial.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
-  'assets/css/style.css', 'assets/css/dashboard.css',
+  'assets/css/style.css', 'assets/css/style.min.css', 'assets/css/dashboard.css', 'build/css-min.js',
   'assets/js/main.js', 'assets/js/catalogue.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
   'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/intranet.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'assets/js/ornements.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
   'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js', 'api/prospect-webhook.js',

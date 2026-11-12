@@ -140,9 +140,9 @@
     var actifs = visibles(c.testimonials);
     if (!actifs.length) return;
     piste.innerHTML = actifs.map(function (t) {
+      /* Pas d'étoiles (v3) : une note que personne n'a donnée sur une
+         plateforme d'avis se lit comme un avis vérifié. Le texte suffit. */
       return '<div class="carousel-slide"><div class="card testi">' +
-        '<div class="testi-stars" aria-label="' + (t.stars || 5) + ' étoiles sur 5">' +
-          '★'.repeat(Math.max(1, Math.min(5, t.stars || 5))) + '</div>' +
         '<p class="testi-text">« ' + esc(t.text) + ' »</p>' +
         '<div class="testi-who">' + esc(t.who) + '</div>' +
       '</div></div>';

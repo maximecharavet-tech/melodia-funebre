@@ -23,7 +23,7 @@ Calqué sur `console-julie-wasm` : `cdylib`, ABI C + JSON en mémoire linéaire 
 Modules :
 - `qr` — crate `qrcode` (MIT/Apache, sans fonctionnalités par défaut) → SVG stylé : modules carrés / arrondis / points, yeux carrés / arrondis, couleurs, logo central ≤ 20 % (réserve blanche), niveau H, zone de silence ≥ 4, contrôle de contraste WCAG (refus < 4,5:1 et encre plus claire que le fond), taille physique en mm → alerte si module < 0,4 mm. Tests de décodage `rqrr` (dev-dependency) sur chaque style, rendu raster maison.
 - `prix` — centimes entiers, remises en points de base, plancher 0, TVA paramétrable (franchise 293 B par défaut), refus des prix `NULL`/TBD.
-- `promo` — format d'un code (A–Z 0–9 -, 3–40) et normalisation insensible à la casse et aux espaces (« master max » = « MASTERMAX ») ; jamais la valeur du code maître.
+- `promo` — format d'un code (A–Z 0–9 -, 3–40) et normalisation insensible à la casse et aux espaces (avec ou sans espace, en majuscules ou non) ; jamais la valeur du code maître.
 - `questionnaire` — schéma des 7 étapes, validation, complétude par étape, détection/retrait des données sensibles (téléphone, IBAN, e-mail, adresse postale, NIR).
 - `prompt` — construction déterministe de la consigne parolier et du prompt musical (≤ 500 car.), paroles bornées à 3 000 car., liste noire d'artistes (les artistes aimés ne servent qu'à déduire une ambiance, jamais cités), marque blanche (aucun nom de fournisseur).
 - `statut` — machine à états du dossier, transitions légales/illégales, acteur autorisé (agence / maison / service).

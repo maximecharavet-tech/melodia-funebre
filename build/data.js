@@ -3,16 +3,19 @@ const OFFERS = [
   { name: 'Essentiel', price: 149, desc: "L'hommage sobre et juste, pour l'essentiel du souvenir.",
     feats: ['Une œuvre originale de 2 à 3 minutes', 'Entretien téléphonique de 5 minutes', 'Paroles biographiques uniques', 'Livraison sous 24 heures', 'Fichier MP3 320 kbps', "Droits d'usage à vie"],
     muted: ['Une seule version', 'Sans révision incluse'] },
-  { name: 'Prestige', price: 299, featured: true, tag: 'Le plus choisi',
+  { name: 'Prestige', price: 299, featured: true, tag: 'Notre conseil',
     desc: "L'hommage complet : plus de choix, plus de sérénité.",
     feats: ['Tout ce que comprend Essentiel', 'Deux versions au choix', 'Une révision offerte', 'Version instrumentale seule', 'Paroles imprimables en PDF', 'Fichier WAV sans perte sur demande'], muted: [] },
   { name: 'Mémorial', price: 499, desc: "L'héritage sonore complet, transmis aux générations.",
     feats: ['Tout ce que comprend Prestige', 'Mini-album de trois titres', 'Révisions illimitées', 'Livret souvenir imprimé', 'Priorité urgence 6 heures incluse', 'Accompagnement dédié du fondateur'], muted: [] }
 ];
 
+/* Témoignages. Celui d'un « directeur d'agence — Lyon », anonyme, a été
+   retiré en v3 : la page des professionnels déclare elle-même qu'aucune
+   donnée réelle n'existe encore côté agences. Un témoignage ne revient
+   ici qu'avec un prénom, une ville et un accord écrit. */
 const TESTIS = [
   { t: "Quand la chanson de papa a commencé, toute la salle s'est mise à sourire à travers les larmes. Personne ne s'y attendait. C'était lui, c'était exactement lui.", w: 'Claire B. — fille de Maurice, Nantes' },
-  { t: "En trente ans de métier, je n'avais jamais vu une famille redemander la musique trois fois après la cérémonie. Depuis, je le propose à chaque premier rendez-vous.", w: "Directeur d'agence de pompes funèbres — Lyon" },
   { t: "Le jardin, le jasmin, ses mains dans la terre : tout y était. Nous l'avons fait écouter à ses arrière-petits-enfants. Nous la gardons comme un trésor de famille.", w: 'Famille de Monique — Avignon' },
   { t: "J'ai appelé un mardi soir, la cérémonie était le jeudi matin. La chanson est arrivée le mercredi à midi. Je ne sais toujours pas comment ils ont fait.", w: 'Thomas R. — fils de Sergio, Marseille' }
 ];
@@ -29,9 +32,9 @@ const FAQ = [
   { q: "La voix est-elle générée ou chantée ?",
     a: "La composition s'appuie sur des outils de création musicale assistée, supervisés à chaque étape par la maison : le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant livraison. Aucun hommage n'est envoyé sans avoir été écouté par un humain." },
   { q: "Peut-on écouter avant de payer ?",
-    a: "Vous pouvez écouter les {{HOMMAGES}} hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite." },
+    a: "Vous pouvez écouter les {{HOMMAGES}} hommages de démonstration sur la page Écouter. Pour les agences funéraires, une composition d'essai est offerte une fois par agence, d'environ deux minutes trente, une fois le compte vérifié : vous la faites écouter à une famille, et vous décidez ensuite." },
   { q: "Comment se passe le paiement ?",
-    a: "Par carte bancaire ou PayPal, en paiement sécurisé au moment de la commande. Vous pouvez aussi enregistrer votre commande et régler après l'entretien téléphonique. Rétractation de 14 jours dans les conditions prévues par la loi." },
+    a: "Par PayPal, en paiement sécurisé, au moment de la commande. Vous pouvez aussi enregistrer votre commande et régler après l'entretien téléphonique. Rétractation de 14 jours dans les conditions prévues par la loi." },
   { q: "Travaillez-vous avec les pompes funèbres ?",
     a: "Oui, et c'est une part importante de notre activité. Les agences partenaires conservent 60 % du montant sur chaque hommage, sans investissement ni charge technique. La page Agences comporte un simulateur de revenus." },
 

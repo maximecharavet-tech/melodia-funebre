@@ -244,7 +244,7 @@ ${p.metas || ''}
 <meta name="format-detection" content="telephone=no">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="${versionne('assets/css/style.css')}">
+<link rel="stylesheet" href="${versionne('assets/css/style.min.css')}">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -409,10 +409,22 @@ function footer() {
 </footer>`;
 }
 
-function stickyCta() {
+/* La barre du pouce, sur mobile. Elle parlait aux familles partout,
+   y compris à un dirigeant de pompes funèbres sur la page qui lui est
+   destinée (« Commander » un hommage, alors qu'il venait voir un
+   partenariat) ; et sur /offres, « Commander » renvoyait à /offres.
+   Elle suit désormais le public de la page. (v3) */
+function stickyCta(fichier) {
+  if (/^professionnels\./.test(fichier || '')) {
+    return `<div class="sticky-cta">
+  <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
+  <a href="/pro?demo=1" class="btn btn-gold">Voir la démonstration</a>
+</div>`;
+  }
+  const cible = /^offres\./.test(fichier || '') ? '#commander' : '/offres';
   return `<div class="sticky-cta">
   <button type="button" class="btn btn-outline" data-rappel>${ICON.phone} Être rappelé</button>
-  <a href="/offres" class="btn btn-gold">Commander</a>
+  <a href="${cible}" class="btn btn-gold">Commander</a>
 </div>`;
 }
 
@@ -542,7 +554,7 @@ ${p.body}
 </main>
 <div class="orn-portee-hote orn-portee-pied" data-orn-portee="${(p.file || 'page').replace(/\.html$/, '')}"></div>
 ${footer()}
-${p.sticky === false ? '' : stickyCta() + '\n'}${boutonPro(p.file || '')}
+${p.sticky === false ? '' : stickyCta(p.file) + '\n'}${boutonPro(p.file || '')}
 ${scripts.map(s => `<script src="${versionne(s)}"></script>`).join('\n')}
 ${p.inline || ''}
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.

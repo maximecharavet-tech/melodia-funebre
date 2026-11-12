@@ -81,7 +81,7 @@ export default async function handler(req, res) {
 
   const disponibles = FOURNISSEURS.filter((f) => f.cle());
   if (!disponibles.length) {
-    return res.status(503).json({ error: 'Aucune clé IA côté serveur (MISTRAL_API_KEY ou OPENAI_API_KEY)' });
+    return res.status(503).json({ error: 'Réglage serveur manquant : la clé du service de rédaction.', code: 'NOT_CONFIGURED' });
   }
 
   const brief = req.body || {};

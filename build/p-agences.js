@@ -3,11 +3,11 @@ const P = require('./parts.js');
 const MED = require('./medias.js');
 
 const FAQ_B2B = [
-  { q: "Comment sommes-nous rémunérés exactement ?", a: "Vous conservez 60 % du montant payé par la famille. Sur une offre Prestige à 299 €, votre agence garde 179,40 € et nous reverse 119,60 €. Le règlement se fait mensuellement, sur facture récapitulative." },
+  { q: "Comment sommes-nous rémunérés exactement ?", a: "Vous conservez 60 % du montant payé par la famille. Sur une offre Prestige à 299 €, votre agence garde 179,40 € ; la part de la maison, 119,60 €, se règle depuis la console de l'agence, dossier par dossier. Un export comptable mensuel récapitule l'ensemble." },
   { q: "Devons-nous avancer de l'argent ou acheter un stock ?", a: "Non. Aucun investissement, aucun stock, aucun abonnement, aucun minimum. Vous ne payez que sur les hommages effectivement commandés par vos familles." },
   { q: "Qui parle à la famille ?", a: "Vous restez l'interlocuteur de la famille. Vous pouvez soit saisir le brief vous-même en trois minutes depuis votre espace, soit nous transmettre le contact pour que nous menions l'entretien de cinq minutes à votre place, en votre nom." },
   { q: "Que se passe-t-il si la famille n'est pas satisfaite ?", a: "Nous reprenons la composition à nos frais. Si la famille refuse malgré tout l'œuvre, elle n'est pas facturée — et votre agence n'avance rien. Le risque commercial est intégralement de notre côté." },
-  { q: "Combien de temps pour démarrer ?", a: "Vingt minutes. Vous ouvrez le compte de l'agence, vous recevez le kit de présentation, et un essai gratuit vous est offert — un extrait composé de deux minutes trente — pour que vous puissiez le faire écouter à une famille avant tout engagement." },
+  { q: "Combien de temps pour démarrer ?", a: "Vingt minutes. Vous ouvrez le compte de l'agence, la maison le vérifie, puis une composition d'essai vous est offerte — une fois par agence, d'environ deux minutes trente — pour que vous puissiez la faire écouter à une famille avant tout engagement. La démonstration, elle, s'ouvre sans compte." },
   { q: "Y a-t-il une exclusivité territoriale ?", a: "Nous limitons volontairement le nombre d'agences partenaires par bassin de population, pour que le service reste un vrai facteur de différenciation. Demandez à être rappelé pour connaître la disponibilité de votre secteur." }
 ];
 
@@ -58,7 +58,7 @@ module.exports = {
      a indexé partiraient à la poubelle. */
   file: 'professionnels.html',
   title: "Hommage musical pour pompes funèbres : devenir partenaire | Melodia Funèbre",
-  desc: "Solution d'hommage musical pour les pompes funèbres : page hommage, QR code, 60 % de marge, aucun investissement. Demandez une démonstration.",
+  desc: "Hommage musical pour pompes funèbres : l'agence garde 60 % du prix payé par la famille, essai offert, page hommage et QR code. Démonstration sans compte.",
   image: '/assets/img/v2/og-professionnels.jpg',
   imageAlt: 'Bureau d\'accueil : classeur de cuir fermé et tablette éteinte sur un plateau de bois, lumière de fenêtre',
   /* La page B2B n'avait qu'un fil d'Ariane. Elle déclare désormais la
@@ -71,15 +71,26 @@ module.exports = {
     provider: { '@id': 'https://melodia-funebre.fr/#organisation' },
     audience: { '@type': 'BusinessAudience', audienceType: 'Pompes funèbres, marbriers, crématoriums' },
     areaServed: { '@type': 'Country', name: 'France' },
-    url: 'https://melodia-funebre.fr/professionnels'
+    url: 'https://melodia-funebre.fr/professionnels',
+    /* Seule offre B2B chiffrée publiquement : l'essai, gratuit. Les
+       tarifs agence ne sont pas déclarés tant qu'ils ne sont pas fixés. */
+    offers: {
+      '@type': 'Offer',
+      name: 'Composition d\'essai pour une agence',
+      description: 'Une composition offerte par agence, d\'environ deux minutes trente, après vérification du compte.',
+      price: '0',
+      priceCurrency: 'EUR',
+      eligibleCustomerType: 'https://schema.org/Business',
+      url: 'https://melodia-funebre.fr/professionnels#console'
+    }
   }, {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: FAQ_B2B.map((q) => ({ '@type': 'Question', name: q.q, acceptedAnswer: { '@type': 'Answer', text: q.a } }))
   }, P.jsonldFil('Pour les professionnels', '/professionnels')],
-  scripts: ['assets/js/partenariat.js', 'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js', 'assets/js/lumiere-3d.js'],
+  scripts: ['assets/js/partenariat.js', 'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js'],
   body: `
-  <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
+  <section class="section a-rosace hero-visuel hero-visuel-pro" style="padding-top:9rem;padding-bottom:0;">
     <div class="orn-rosace-hote" data-orn-rosace="agences" data-orn-traits="3"></div>
     <div class="wrap">
       <div class="eyebrow reveal in">Melodia Funèbre pour les professionnels du funéraire</div>
@@ -92,12 +103,16 @@ module.exports = {
            compris ce qu'il va offrir. -->
       <p class="lead-fort reveal in reveal-d2" style="margin-top:1.8rem;">Une nouvelle expérience d'hommage<br><em>pour les familles que vous accompagnez.</em></p>
       <p class="lead reveal in reveal-d2" style="margin-top:1.4rem;">Une œuvre musicale composée pour leur défunt, à partir de ce qu'elles racontent de lui. Livrée en vingt-quatre heures, diffusée en cérémonie, prolongée par une page de souvenir et son QR code. Vous présentez, nous composons, vous conservez 60 %.</p>
+      <!-- v3 : le bouton principal disait « Organiser une démonstration »
+           et menait au formulaire, juste au-dessus de la mention « aucun
+           formulaire à remplir ». Il ouvre désormais la vraie démonstration,
+           sans compte ; le rendez-vous passe en second geste. -->
       <div class="hero-actions reveal in reveal-d3" style="margin-top:2.4rem;">
-        <a href="#partenariat" class="btn btn-gold btn-lg">Organiser une démonstration</a>
-        <a href="/exemple" class="btn btn-outline btn-lg">Voir un hommage</a>
+        <a href="/pro?demo=1" class="btn btn-gold btn-lg">Voir la démonstration</a>
+        <a href="#partenariat" class="btn btn-outline btn-lg">Demander un rendez-vous</a>
       </div>
       <p class="note" style="margin-top:1.4rem;">
-        Aucun formulaire à remplir pour la démonstration · <a href="#calculateur">Simuler mes revenus</a>
+        Démonstration sans compte ni formulaire · <a href="/exemple">Voir la page que reçoit une famille</a> · <a href="#calculateur">Simuler</a>
       </p>
     </div>
   </section>
@@ -108,7 +123,7 @@ module.exports = {
         <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num"><span data-count="60" data-suffix="%">60%</span></div><div class="stat-label">Marge agence</div></div>
         <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num"><span data-count="0" data-suffix="€">0€</span></div><div class="stat-label">Investissement</div></div>
         <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num"><span data-count="24" data-suffix="h">24h</span></div><div class="stat-label">Livraison</div></div>
-        <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num"><span data-count="5" data-suffix="min">5min</span></div><div class="stat-label">Brief famille</div></div>
+        <div class="stat" style="border:1px solid var(--line-soft);border-radius:var(--radius-lg);"><div class="stat-num">2′30</div><div class="stat-label">Essai offert</div></div>
       </div>
     </div>
   </section>
@@ -128,7 +143,7 @@ module.exports = {
           <span class="filet-or" data-filet aria-hidden="true"></span>
           <ul class="liste-sobre" data-recueil>
             <li data-recueil-item>Le questionnaire famille en sept étapes, rempli avec elle ou à sa place.</li>
-            <li data-recueil-item>Un essai gratuit par agence : un extrait composé de deux minutes trente.</li>
+            <li data-recueil-item>Une composition d'essai offerte par agence, d'environ deux minutes trente.</li>
             <li data-recueil-item>Le suivi de chaque dossier, la page de souvenir et son QR code.</li>
             <li data-recueil-item>Votre logo sur les documents remis aux familles.</li>
           </ul>
@@ -138,8 +153,74 @@ module.exports = {
           </div>
           <p class="note" style="margin-top:1.2rem;">Démonstration sans compte, avec des dossiers fictifs. Chaque compte d'agence est vérifié par la maison avant le premier essai.</p>
         </div>
-        <div class="lumiere-3d" data-lumiere-3d role="img" aria-label="Une médaille sombre cerclée d'un filet d'or, qu'une lumière chaude effleure"></div>
+        <!-- v3 : la photo déjà livrée (assets/img/v2) remplace la médaille
+             3D. Une agence veut voir l'outil qu'elle ouvrira, pas un objet ;
+             l'écran est laissé noir, aucune interface n'est simulée. -->
+        <figure class="console-photo reveal">
+          <img src="assets/img/v2/console-portable.webp" width="1600" height="1000" loading="lazy" decoding="async"
+               sizes="(max-width: 900px) 92vw, 560px"
+               alt="Un ordinateur portable ouvert, écran éteint, sur un bureau de bois sombre éclairé par une lampe de laiton">
+          <figcaption>La console s'ouvre dans le navigateur, au bureau comme sur le téléphone du conseiller.</figcaption>
+        </figure>
       </div>
+      <!-- Les trois gestes de la console, illustrés par les visuels
+           d'accueil déjà livrés pour /pro (aucun nouveau visuel). -->
+      <ol class="trois-gestes">
+        <li class="geste reveal">
+          <img src="assets/img/pro/onboarding-1-questionnaire-640.webp" width="640" height="400" loading="lazy" decoding="async"
+               alt="Un carnet ouvert et un stylo sur un bureau, une tasse de thé fumante à la lueur d'une lampe">
+          <span class="geste-n" aria-hidden="true">I</span>
+          <h3>Recueillir</h3>
+          <p>Le questionnaire, rempli avec la famille ou à sa place, au clavier ou en dictée vocale.</p>
+        </li>
+        <li class="geste reveal">
+          <img src="assets/img/pro/onboarding-2-composition-640.webp" width="640" height="400" loading="lazy" decoding="async"
+               alt="Un piano droit dans la pénombre, un cahier de musique ouvert sur le pupitre">
+          <span class="geste-n" aria-hidden="true">II</span>
+          <h3>Composer</h3>
+          <p>La maison compose, relit et écoute chaque œuvre avant de vous la remettre.</p>
+        </li>
+        <li class="geste reveal">
+          <img src="assets/img/pro/onboarding-3-qr-640.webp" width="640" height="400" loading="lazy" decoding="async"
+               alt="Une stèle de granit sombre au soleil couchant, un emplacement carré réservé à la gravure, du lierre à son pied">
+          <span class="geste-n" aria-hidden="true">III</span>
+          <h3>Transmettre</h3>
+          <p>La page de souvenir et son QR code, prêts à graver sur la plaque que vous réalisez.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ COMMENT CIRCULE L'ARGENT ═══
+       v3. Le site promet « 60 % pour l'agence » ; la console fait régler
+       l'agence. Les deux tiennent ensemble à une condition, qu'on écrit
+       donc en clair : la famille paie le prix public à l'agence, la
+       maison facture à l'agence 40 % de ce prix. Les montants sont tirés
+       des trois prix publics, rien d'autre. -->
+  <section class="section section-tight" id="argent">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Sans zone grise</div>
+        <h2 class="h-xl">Comment circule<br><em>l'argent.</em></h2>
+        <span class="filet-or" data-filet="centre" aria-hidden="true"></span>
+      </div>
+      <ol class="flux-argent" data-recueil>
+        <li data-recueil-item><span class="flux-n" aria-hidden="true">1</span><b>La famille règle votre agence</b><span>au prix public de l'offre choisie : 149, 299 ou 499 €.</span></li>
+        <li data-recueil-item><span class="flux-n" aria-hidden="true">2</span><b>La maison facture votre agence</b><span>40 % de ce prix, réglés depuis la console, dossier par dossier.</span></li>
+        <li data-recueil-item><span class="flux-n" aria-hidden="true">3</span><b>Votre agence garde 60 %</b><span>sans stock, sans abonnement, sans minimum de commandes.</span></li>
+      </ol>
+      <div class="compare-wrap flux-wrap reveal" style="margin-top:2.4rem;">
+        <table class="compare flux-table">
+          <caption class="hors-vue">Répartition du prix public entre l'agence et la maison, pour chaque offre</caption>
+          <thead><tr><th scope="col">Offre</th><th scope="col">Prix public</th><th scope="col" class="col-hl">Votre agence garde</th><th scope="col">Part de la maison</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Essentiel</th><td>149 €</td><td class="col-hl">89,40 €</td><td>59,60 €</td></tr>
+            <tr><th scope="row">Prestige</th><td>299 €</td><td class="col-hl">179,40 €</td><td>119,60 €</td></tr>
+            <tr><th scope="row">Mémorial</th><td>499 €</td><td class="col-hl">299,40 €</td><td>199,60 €</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="center note reveal" style="margin-top:1rem;">TVA non applicable, art. 293 B du CGI · même taux pour les options</p>
     </div>
   </section>
 
@@ -149,7 +230,7 @@ module.exports = {
       <div class="center reveal" style="margin-bottom:3rem;">
         <div class="eyebrow">Simulateur</div>
         <h2 class="h-xl">Ce que cela<br>représente <em>pour vous.</em></h2>
-        <p class="lead" style="margin-top:1.4rem;">Déplacez les curseurs selon votre activité réelle. L'hypothèse retenue est prudente : une famille sur quatre retient l'hommage lorsqu'il lui est présenté.</p>
+        <p class="lead" style="margin-top:1.4rem;">Réglez les curseurs selon votre activité réelle. Le taux de familles qui retiennent l'hommage est le vôtre : nous n'avons pas encore de mesure à vous opposer.</p>
       </div>
       <div class="calc reveal" data-calc>
         <div class="calc-row">
@@ -164,7 +245,18 @@ module.exports = {
             <label for="calc-price">Offre habituellement présentée</label>
             <span class="calc-val" id="calc-price-val">299 €</span>
           </div>
-          <input type="range" class="calc-range" id="calc-price" min="149" max="499" value="299" step="1">
+          <select class="field-select calc-select" id="calc-price">
+            <option value="149">Essentiel — 149 €</option>
+            <option value="299" selected>Prestige — 299 €</option>
+            <option value="499">Mémorial — 499 €</option>
+          </select>
+        </div>
+        <div class="calc-row">
+          <div class="calc-head">
+            <label for="calc-taux">Familles qui retiennent l'hommage</label>
+            <span class="calc-val" id="calc-taux-val">25 %</span>
+          </div>
+          <input type="range" class="calc-range" id="calc-taux" min="5" max="60" value="25" step="5">
         </div>
         <div class="calc-out">
           <div class="calc-cell"><div class="calc-cell-num" id="calc-out-ventes">5</div><div class="calc-cell-lbl">Hommages<br>par mois</div></div>
@@ -172,11 +264,12 @@ module.exports = {
           <div class="calc-cell"><div class="calc-cell-num" id="calc-out-an">10 764 €</div><div class="calc-cell-lbl">Marge nette<br>annuelle</div></div>
         </div>
         <p class="note">
-          Estimation indicative · marge de 60 % · taux de prise retenu : 25 %<br>Ne constitue pas un engagement contractuel
+          Estimation indicative · 60 % du prix public · taux de départ 25 %, à remplacer par le vôtre<br>Ne constitue pas un engagement contractuel
         </p>
       </div>
-      <div class="center reveal" style="margin-top:2.5rem;">
-        <a href="/compte" class="btn btn-gold btn-lg">Créer mon compte partenaire</a>
+      <div class="hero-actions center reveal" style="margin-top:2.5rem;justify-content:center;">
+        <a href="/compte?retour=%2Fpro" class="btn btn-gold btn-lg">Ouvrir le compte de l'agence</a>
+        <a href="/pro?demo=1" class="btn btn-outline btn-lg">Voir la démonstration</a>
       </div>
     </div>
   </section>
@@ -211,12 +304,12 @@ ${P.chaineQR({ clair: false })}
         <h2 class="h-xl">Vingt minutes<br>pour <em>démarrer.</em></h2>
       </div>
       <div class="steps">
-        <div class="step reveal"><div class="step-dot">1</div><div class="step-body"><h3>Vous créez votre compte partenaire</h3><p>Trois minutes, aucune pièce justificative à ce stade. Vous accédez immédiatement à votre tableau de bord.</p><span class="step-time">3 minutes</span></div></div>
+        <div class="step reveal"><div class="step-dot">1</div><div class="step-body"><h3>Vous ouvrez le compte de l'agence</h3><p>Trois minutes, aucune pièce justificative à ce stade. La maison vérifie le compte avant d'ouvrir l'essai ; la démonstration, elle, est accessible tout de suite.</p><span class="step-time">3 minutes</span></div></div>
         <div class="step reveal"><div class="step-dot">2</div><div class="step-body"><h3>Vous recevez le kit de présentation</h3><p>Une plaquette à remettre aux familles, un argumentaire court, et les {{HOMMAGES}} hommages de démonstration à faire écouter en rendez-vous.</p><span class="step-time">Immédiat</span></div></div>
-        <div class="step reveal"><div class="step-dot">3</div><div class="step-body"><h3>Nous composons votre première œuvre, offerte</h3><p>Sur la prochaine famille qui vous le demande. Vous présentez un hommage réel, pas une promesse commerciale.</p><span class="step-time">24 heures</span></div></div>
+        <div class="step reveal"><div class="step-dot">3</div><div class="step-body"><h3>Nous composons votre essai, offert</h3><p>Une composition d'environ deux minutes trente, une fois par agence, pour la famille de votre choix. Vous faites écouter une œuvre réelle, pas une promesse commerciale.</p><span class="step-time">24 heures</span></div></div>
         <div class="step reveal"><div class="step-dot">4</div><div class="step-body"><h3>Vous présentez, la famille décide</h3><p>Trente secondes suffisent en rendez-vous : « Nous pouvons faire composer une chanson originale pour lui, livrée avant la cérémonie. » Puis vous faites écouter.</p><span class="step-time">30 secondes</span></div></div>
         <div class="step reveal"><div class="step-dot">5</div><div class="step-body"><h3>Vous saisissez le brief, ou vous nous passez le relais</h3><p>Trois minutes depuis votre espace, ou vous nous transmettez le contact et nous menons l'entretien en votre nom.</p><span class="step-time">3 minutes</span></div></div>
-        <div class="step reveal"><div class="step-dot">6</div><div class="step-body"><h3>Vous encaissez votre marge</h3><p>Facture récapitulative mensuelle. Vous conservez 60 %, nous facturons les 40 % restants. Aucun minimum, aucun engagement de durée.</p><span class="step-time">Mensuel</span></div></div>
+        <div class="step reveal"><div class="step-dot">6</div><div class="step-body"><h3>Vous gardez votre marge</h3><p>La famille vous règle le prix public ; vous réglez les 40 % de la maison depuis la console, et l'export mensuel récapitule tout. Aucun minimum, aucun engagement de durée.</p><span class="step-time">À chaque dossier</span></div></div>
       </div>
 ${P.afficheCampagne('poignee-de-main',
   'Deux professionnels se serrant la main dans le hall d\u2019une agence, sous le logo Melodia Fun\u00e8bre',
@@ -224,14 +317,9 @@ ${P.afficheCampagne('poignee-de-main',
     </div>
   </section>
 
-  <!-- ═══ TÉMOIGNAGE PRO ═══ -->
-  <section class="section section-light">
-    <div class="wrap-tight center reveal">
-      <div class="eyebrow" style="justify-content:center;">Ils l'ont fait</div>
-      <p style="font-family:var(--ff-d);font-style:italic;font-size:clamp(1.4rem,3vw,2.1rem);line-height:1.45;color:var(--ivory-ink);margin-top:1.6rem;">« En trente ans de métier, je n'avais jamais vu une famille redemander la musique trois fois après la cérémonie. Depuis, je le propose à chaque premier rendez-vous. »</p>
-      <div class="mono" style="margin-top:1.6rem;">Directeur d'agence de pompes funèbres — Lyon</div>
-    </div>
-  </section>
+  <!-- Témoignage d'agence retiré en v3 : anonyme, invérifiable, et
+       contredit par la section « Nous préférons ne rien inventer » plus
+       bas. Il reviendra avec un nom d'agence et un accord écrit. -->
 
   <section class="section">
     <div class="wrap-tight">
@@ -245,36 +333,8 @@ ${P.faq(FAQ_B2B)}
     </div>
   </section>
 
-  <!-- ═══ POURQUOI PROPOSER ═══
-       Six cartes, pas douze : au-delà, on ne lit plus, on survole. -->
-  <section class="section">
-    <div class="wrap">
-      <div class="center reveal" style="margin-bottom:2.8rem;">
-        <div class="eyebrow">L'intérêt pour votre agence</div>
-        <h2 class="h-xl">Pourquoi proposer<br><em>Melodia Funèbre ?</em></h2>
-      </div>
-      <div class="pq-grille">
-        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">♪</span>
-          <h3>Une expérience mémorable</h3>
-          <p>Transformez un hommage en souvenir musical durable. La famille repart avec une œuvre, pas avec un souvenir qui s'efface.</p></article>
-        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">◈</span>
-          <h3>Un service différenciant</h3>
-          <p>Proposez aux familles une expérience que les autres agences funéraires ne proposent pas. C'est souvent ce qui décide du choix d'une maison.</p></article>
-        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">✧</span>
-          <h3>Simple pour vos équipes</h3>
-          <p>Vous ne gérez aucune production musicale. Un brief de cinq minutes, ou un simple contact transmis, et nous nous occupons du reste.</p></article>
-        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">✎</span>
-          <h3>Une solution personnalisée</h3>
-          <p>Chaque hommage est créé autour de l'histoire du défunt : son métier, ses gestes, ses habitudes, ce que sa famille raconte de lui.</p></article>
-        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">◷</span>
-          <h3>Un souvenir qui reste</h3>
-          <p>La famille conserve la musique et retrouve l'hommage dans le temps. Un anniversaire, une Toussaint : l'œuvre est toujours là.</p></article>
-        <article class="pq reveal"><span class="pq-ico" aria-hidden="true">▦</span>
-          <h3>Une expérience digitale</h3>
-          <p>Page hommage, écoute en ligne et QR code à graver sur une plaque. Le numérique au service du recueillement, pas l'inverse.</p></article>
-      </div>
-    </div>
-  </section>
+  <!-- La seconde grille « Pourquoi proposer Melodia Funèbre ? » (six
+       cartes) répétait les sept raisons ci-dessus : retirée en v3. -->
 
   <!-- ═══ LE PARCOURS DE LA FAMILLE ═══ -->
   <section class="section section-light">
@@ -422,9 +482,9 @@ ${kit()}
           <h3 class="part-titre">Ce qui est convenu</h3>
           <ul class="part-liste">
             <li><b>Marge agence</b><span>60 % du montant réglé par la famille, sur chaque hommage. C'est le même taux pour les trois offres et pour les options.</span></li>
-            <li><b>Ce que cela fait</b><span>89 € nets sur l'offre Essentiel à 149 €, 179 € sur Prestige à 299 €, 299 € sur Mémorial à 499 €.</span></li>
+            <li><b>Ce que cela fait</b><span>89,40 € sur l'offre Essentiel à 149 €, 179,40 € sur Prestige à 299 €, 299,40 € sur Mémorial à 499 €.</span></li>
             <li><b>Options</b><span>Version longue, instruments rares, langue étrangère, plaque à QR code à 79 € — même taux.</span></li>
-            <li><b>Règlement</b><span>Mensuel, sur facture récapitulative. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée.</span></li>
+            <li><b>Règlement</b><span>La part de la maison (40 %) se règle depuis la console de l'agence, dossier par dossier ; un export comptable mensuel récapitule tout. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée.</span></li>
             <li><b>Exclusivité</b><span>Un nombre limité d'agences par bassin de population. La disponibilité de votre secteur se vérifie en un appel.</span></li>
           </ul>
           <p class="part-note">Ces conditions sont les mêmes pour tout le monde : il n'y a pas de grille cachée, et rien ne dépend du volume que vous ferez.</p>
@@ -432,9 +492,9 @@ ${kit()}
             <span class="eyebrow">Ce que nous fournissons</span>
             <ul>
               <li>Kit de présentation pour vos conseillers</li>
-              <li>Première composition offerte, à présenter à une famille</li>
+              <li>Une composition d'essai offerte, d'environ 2 min 30, à faire écouter à une famille</li>
               <li>Fichier de gravure pour la plaque à QR code</li>
-              <li>Accès à votre espace partenaire en ligne</li>
+              <li>La console de l'agence : dossiers, questionnaire, pages de souvenir</li>
             </ul>
           </div>
         </div>
@@ -491,8 +551,9 @@ ${kit()}
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Nous limitons le nombre d'agences partenaires par bassin de population. Un appel de trois minutes suffit à le savoir.</p>
       <div class="hero-actions">
         <button type="button" class="btn btn-gold btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
-        <a href="mailto:${MAIL}?subject=Partenariat%20agence" class="btn btn-outline btn-lg">Écrire au fondateur</a>
+        <a href="/pro?demo=1" class="btn btn-outline btn-lg">Voir la démonstration</a>
       </div>
+      <p class="note" style="margin-top:1.2rem;">Ou <a href="mailto:${MAIL}?subject=Partenariat%20agence">écrire au fondateur</a>, qui répond lui-même.</p>
     </div>
   </section>`
 };

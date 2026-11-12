@@ -56,8 +56,8 @@ module.exports = {
           <span class="porte-sur">Je suis une pompe funèbre</span>
           <span class="porte-titre">Proposer le service</span>
           <span class="porte-texte">Un hommage que vos confrères n'offrent pas encore.</span>
-          <span class="porte-meta">60 % pour l'agence · 0 € d'investissement</span>
-          <span class="porte-cta">Devenir partenaire <span aria-hidden="true">→</span></span>
+          <span class="porte-meta">60 % pour l'agence · essai offert</span>
+          <span class="porte-cta">Découvrir l'offre agences <span aria-hidden="true">→</span></span>
         </a>
       </div>
       <p class="reveal in reveal-d4 note hero-note-famille">
@@ -277,18 +277,19 @@ ${P.testimonials()}
         <div class="reveal">
           <div class="eyebrow">Pompes funèbres</div>
           <h2 class="h-xl">Un service que vos confrères<br>ne proposent <em>pas encore.</em></h2>
-          <p class="lead" style="margin-top:1.6rem;">Soixante pour cent de marge sur chaque hommage, aucun investissement, aucune charge technique. Vous présentez, la famille décide, nous composons. Votre espace partenaire suit chaque commande en temps réel.</p>
+          <p class="lead" style="margin-top:1.6rem;">Vous présentez, la famille décide, nous composons. Vous gardez soixante pour cent du prix payé par la famille, sans investissement ni charge technique. La console de l'agence suit chaque dossier, de l'entretien à la page de souvenir.</p>
           <div class="hero-actions" style="margin-top:2rem;">
             <a href="/professionnels" class="btn btn-gold">Pour les professionnels</a>
-            <a href="/professionnels#calculateur" class="btn btn-outline">${ICON.euro} Simuler mes revenus</a>
+            <a href="/pro?demo=1" class="btn btn-outline">Voir la démonstration</a>
           </div>
+          <p class="note" style="margin-top:1rem;">Démonstration sans compte · une composition d'essai offerte par agence, d'environ 2 min 30</p>
         </div>
         <div class="reveal reveal-d1">
           <div class="grid-2" style="gap:1rem;">
             <div class="card"><div class="stat-num" style="font-size:2.4rem;"><span data-count="60" data-suffix="%">60%</span></div><div class="stat-label">Marge agence</div></div>
             <div class="card"><div class="stat-num" style="font-size:2.4rem;"><span data-count="0" data-suffix="€">0€</span></div><div class="stat-label">Investissement</div></div>
             <div class="card"><div class="stat-num" style="font-size:2.4rem;"><span data-count="5" data-suffix="min">5min</span></div><div class="stat-label">Brief famille</div></div>
-            <div class="card"><div class="stat-num" style="font-size:2.4rem;">1<sup style="font-size:.9rem;">re</sup></div><div class="stat-label">Composition offerte</div></div>
+            <div class="card"><div class="stat-num" style="font-size:2.4rem;">2′30</div><div class="stat-label">Essai offert</div></div>
           </div>
         </div>
       </div>
@@ -357,7 +358,7 @@ ${P.faq(null, true)}
       <div class="lumiere-3d lumiere-3d-final" data-lumiere-3d role="img" aria-label="Une médaille sombre cerclée d'un filet d'or, qu'une lumière chaude effleure"></div>
       <h2 class="h-xl">Offrez-leur la chanson<br>qu'ils <em>méritaient.</em></h2>
       <span class="filet-or" data-filet="centre" aria-hidden="true"></span>
-      <p class="lead" style="margin:1.6rem auto 2.4rem;">Il n'y aura pas de deuxième cérémonie. Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape — et si l'œuvre ne vous touche pas, nous la reprenons.</p>
+      <p class="lead" style="margin:1.6rem auto 2.4rem;">Il n'y aura pas de deuxième cérémonie. Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape — et si l'œuvre ne vous touche pas, nous la reprenons. Vous pouvez aussi réserver l'entretien et ne régler qu'après.</p>
       <div class="hero-actions">
         <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
         <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>

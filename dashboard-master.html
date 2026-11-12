@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/img/icons/icon-48.png?v=08368217">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/style.css?v=ba9cbd1a">
+<link rel="stylesheet" href="/assets/css/style.css?v=d100e26c">
 <link rel="stylesheet" href="/assets/css/dashboard.css?v=b97bdc91">
 <link rel="stylesheet" href="/assets/css/relief.css?v=3d4a9fe9">
 <link rel="stylesheet" href="/assets/css/mobile.css?v=cb677e45">
@@ -72,9 +72,9 @@
 </div>
 
 <script src="/assets/js/config.js?v=e792fc99"></script>
-<script src="/assets/js/auth.js?v=ebda5355"></script>
+<script src="/assets/js/auth.js?v=d6109bcf"></script>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
-<script src="/assets/js/main.js?v=8f4a86c6"></script>
+<script src="/assets/js/main.js?v=eb17d642"></script>
 <script src="/assets/js/commercial-contenu.js?v=3593a3cb"></script>
 <script src="/assets/js/livraison.js?v=8816d59c"></script>
 <script src="/assets/js/atelier-music.js?v=4d8dcbf9"></script>
@@ -316,7 +316,7 @@ async function majEtatMusique() {
   try {
     var cfg = await window.MelodiaAI.musicConfig();
     c.innerHTML = cfg.configured
-      ? '<span style="color:var(--green);">API ' + esc(cfg.engine || 'Mureka') + ' active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
+      ? '<span style="color:var(--green);">API ' + esc(cfg.engine || 'de composition') + ' active</span> — ' + esc(cfg.provider) + ' · ' + esc(cfg.model)
       : '<span style="color:var(--or);">Manuelle</span> — Suno, votre abonnement';
   } catch (e) { c.textContent = 'Indéterminé'; }
 }
@@ -991,7 +991,7 @@ function vSysteme() {
     '</tbody></table></div>' +
     '<div class="panel"><div class="panel-title">Passer en <em>automatique</em></div><div class="panel-sub" style="margin-bottom:1.4rem;">Phase 2, quand le volume le justifiera</div>' +
     '<div style="font-size:0.9rem; color:var(--bone); line-height:1.9;">' +
-    '<p><b style="color:var(--or);">I.</b> Choisir un service musical avec API (Mureka, ElevenLabs Music…)</p>' +
+    '<p><b style="color:var(--or);">I.</b> Choisir un service musical doté d'une API</p>' +
     '<p><b style="color:var(--or);">II.</b> Renseigner les variables sur Vercel</p>' +
     '<p><b style="color:var(--or);">III.</b> Activer la composition automatique</p>' +
     '<p style="color:var(--ash); font-size:0.85rem; margin-top:1rem;">Les fonctions serveur sont déjà écrites dans le dossier <code style="color:var(--or);">/api</code>. Tant que le volume reste inférieur à dix hommages par jour, le mode manuel garantit une qualité supérieure.</p>' +

@@ -192,7 +192,7 @@ mêmes tests tournent dans `npm test`, en globs Node portables.
 Réglages serveur que lit le code ; **à créer par la maison dans Vercel**, jamais dans le dépôt :
 
 - Supabase : `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
-- Pro : `PRO_CODE_MAITRE` (code maître, saisie insensible à la casse, « master max » accepté),
+- Pro : `PRO_CODE_MAITRE` (code maître, saisie insensible à la casse et aux espaces),
   `PRO_CODE_MAITRE_EMAILS`, `PRO_EMPREINTE_SEL` (sel), `PRO_URL_SITE`
 - Paiement agence : `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (mode test tant que non validé)
 - Composition : `MUREKA_API_KEY` (et facultatifs `MUREKA_API_URL`, `MUREKA_MODEL`). Paroles :

@@ -15,7 +15,7 @@ test('contrat ABI : chaque export répond', async () => {
   assert.equal(k.statutTransition({ de: 'en_attente_paiement', vers: 'paye', acteur: 'agence' }).ok, false);
   assert.equal(k.prix({ prix_unitaire_cents: 14900 }).ttc_cents, 14900);
   assert.equal(k.prix({}).erreur, 'TARIF_NON_FIXE');
-  assert.equal(k.promoNormaliser({ code: 'master max' }).strict, 'MASTERMAX');
+  assert.equal(k.promoNormaliser({ code: 'clef temoin' }).strict, 'CLEFTEMOIN');
   assert.equal(k.jetonValider({ jeton: '7K3M9QXT2BZZ' }).valide, true);
   assert.deepEqual(k.questionnaireNettoyer({ texte: 'tel 06 12 34 56 78' }).retraits, ['telephone']);
 });

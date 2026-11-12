@@ -15,7 +15,7 @@ Authentication → Users → la ligne du compte → **Reset password**, ou
 depuis le site par « Mot de passe oublié ». Un mot de passe qui a été
 écrit ailleurs qu'entre vos mains n'est plus un secret.
 
-Le raccourci `mastermax07` ne fonctionne plus en production — il était
+L'ancien raccourci de connexion de démonstration ne fonctionne plus en production — il était
 écrit en clair dans un fichier public, et son mot de passe était
 identique à son identifiant. Il ne subsiste qu'en mode démo.
 

@@ -39,8 +39,8 @@ module.exports = {
           <div class="card-icon">${ICON.note}</div>
           <h2 class="h-lg">Collaborateur commercial</h2>
           <p>Vous présentez le service aux agences de pompes funèbres de votre région. Pas de porte-à-porte
-             au hasard : un annuaire, un script, des hommages réels à faire écouter, et une première
-             composition offerte à chaque agence pour qu'elle juge sur pièce.</p>
+             au hasard : un annuaire, un script, des hommages réels à faire écouter, et une composition
+             d'essai offerte à chaque agence pour qu'elle juge sur pièce.</p>
           <div class="mono" style="margin-top:1rem;">Commission sur chaque hommage · Secteur réservé</div>
         </div>
         <div class="card card-lift reveal">

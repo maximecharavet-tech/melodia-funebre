@@ -168,6 +168,11 @@
       "permanent": false
     },
     {
+      "source": "/demo",
+      "destination": "/pro?demo=1",
+      "permanent": false
+    },
+    {
       "source": "/voir-un-hommage",
       "destination": "/m/demo",
       "permanent": false
