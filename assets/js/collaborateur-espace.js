@@ -511,7 +511,11 @@
     var q = d.quota;
     if (r.status === 401 || d.code === 'NON_CONNECTE') return 'Session expirée : reconnectez-vous, puis renvoyez. Rien n’est parti.';
     if (r.status === 403 && d.code === 'INTERDIT') return 'Votre compte n’a pas le droit d’envoyer : l’envoi direct est réservé aux comptes commercial et fondateur. Utilisez « Copier » en attendant.';
-    if (d.code === 'DEJA_ENVOYE' || r.status === 409) return 'Déjà envoyé : ce courriel est déjà parti à cette adresse avec ce modèle. Pour écrire de nouveau, choisissez un autre modèle (une relance, par exemple).';
+    if (d.code === 'DEJA_ENVOYE' || r.status === 409) {
+      var dj = d.refuses && d.refuses[0];
+      return (dj && dj.motif) ? dj.motif + '. Pour écrire plus tôt, choisissez un autre modèle (une relance, par exemple).'
+        : 'Déjà envoyé à cette adresse avec ce modèle il y a moins de 60 jours. Choisissez un autre modèle (une relance, par exemple).';
+    }
     if (d.code === 'ENVOI_INCERTAIN') return 'Le service d’envoi n’a pas répondu à temps : on ne sait pas si le message est parti. Il est bloqué contre un second envoi — vérifiez dans Resend (journal des e-mails) avant de décider.';
     if (d.code === 'JOURNAL_INDISPONIBLE') return 'Le journal des envois est injoignable : rien n’est parti, par prudence. Réessayez dans un instant.';
     if (d.code === 'RIEN' && d.refuses && d.refuses[0] && (d.refuses[0].code === 'DESABONNE' || d.refuses[0].code === 'REJETE')) return d.refuses[0].motif;
@@ -1393,9 +1397,9 @@
         var x = r.ok && r.d && r.d.deja && r.d.deja[0];
         if (!x || !x.deja) { libre(); return; }
         z.hidden = false;
-        z.textContent = (x.statut === 'incertain' || x.statut === 'reserve')
-          ? 'Envoi à vérifier : un envoi à ' + c.dest + ' avec ce modèle est en cours ou n’a pas été confirmé. Aucun second envoi tant que ce n’est pas vérifié dans Resend.'
-          : 'Déjà envoyé à ' + c.dest + ' avec ce modèle. Pour le recontacter, choisissez un autre modèle (une relance, par exemple).';
+        /* « Déjà envoyé le JJ/MM — renvoi possible à partir du … » : texte du serveur,
+           qui calcule la fenêtre de 60 jours. */
+        z.textContent = x.texte || 'Déjà envoyé à ' + c.dest + ' avec ce modèle il y a moins de 60 jours.';
         btn.disabled = true; btn.setAttribute('data-deja', '1'); btn.setAttribute('aria-disabled', 'true');
       });
     }

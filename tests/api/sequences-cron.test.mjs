@@ -195,6 +195,23 @@ test('actif : pas de plafond quotidien — 31 inscriptions dues, 31 envois (au-d
   assert.equal(new Set(faux.etat.envois.map((l) => l.cle_idempotence)).size, 31);
 });
 
+test('fenêtre de 60 jours : étape déjà envoyée il y a 30 j → avance sans renvoi ; il y a 61 j → part de nouveau', async () => {
+  const cle = 'agence@martin.fr|m:pf-premier-contact#e0';
+  const ligne = (jours) => ({ id: 800, destinataire: 'agence@martin.fr', modele: 'pf-premier-contact', mode: 'envoi', statut: 'envoye', cle_idempotence: cle, envoye_le: IL_Y_A(jours) });
+  monter(); process.env.SEQUENCES_AUTO = 'true';
+  faux.etat.envois.push(ligne(30));
+  let r = await http(AUTH);
+  assert.equal(r.corps.dejaEnvoyees, 1);
+  assert.equal(faux.etat.resend.length, 0, 'aucun renvoi dans la fenêtre');
+  assert.equal(faux.etat.inscriptions[0].etape, 1);
+  monter(); process.env.SEQUENCES_AUTO = 'true';
+  faux.etat.envois.push(ligne(61));
+  r = await http(AUTH);
+  assert.equal(r.corps.envoyees, 1);
+  assert.equal(faux.etat.resend.length, 1, 'après 60 jours, un nouvel envoi est permis');
+  delete process.env.SEQUENCES_AUTO;
+});
+
 test('échéances : jamais un week-end, jamais avant demain', () => {
   const lundi = Date.UTC(2026, 10, 16, 9); // lundi 16/11/2026
   for (let j = 0; j < 14; j++) {
