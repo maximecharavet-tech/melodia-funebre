@@ -491,6 +491,30 @@ preuve('reprise : objet normalisé comme en JS (minuscules, espaces simples)', r
 try { await M12b.exec(M12); preuve('12 rejouée sur le journal repris : passe encore', true); }
 catch (e) { preuve('12 rejouée sur le journal repris : passe encore', false, e.message); }
 
+// ═══ Migration 13 : lots d'envoi groupé ═══
+dire('\n== ENVOIS GROUPÉS : lots et file (migration 13) ==');
+const M13 = readFileSync('supabase/migrations/20261115_13_lots_envoi.sql', 'utf8');
+try { await db.exec(M13); preuve('13 appliquée / rejouée (idempotence) sans erreur', true); }
+catch (e) { preuve('13 appliquée / rejouée (idempotence) sans erreur', false, e.message); }
+await db.exec("insert into public.lots_envoi (proprietaire, modele, total) values ('julie@example.test', 'pf-premier-contact', 2)");
+try { await db.exec("insert into public.lots_envoi (proprietaire, modele, total) values ('Julie@Example.test', 'pf-premier-contact', 1)"); preuve('un seul lot en cours par collaborateur', false, 'accepté'); }
+catch (e) { preuve('un seul lot en cours par collaborateur', /unique|duplicate/i.test(e.message), e.message); }
+await db.exec("update public.lots_envoi set statut = 'termine' where proprietaire = 'julie@example.test'");
+try { await db.exec("insert into public.lots_envoi (proprietaire, modele, total) values ('julie@example.test', 'pf-relance-j4', 1)"); preuve('un nouveau lot est permis une fois le précédent terminé', true); }
+catch (e) { preuve('un nouveau lot est permis une fois le précédent terminé', false, e.message); }
+try { await db.exec("insert into public.lots_envoi_items (lot_id, rang, email, statut) select id, 1, 'a@b.fr', 'n-importe-quoi' from public.lots_envoi limit 1"); preuve('statut de file inconnu refusé', false); }
+catch (e) { preuve('statut de file inconnu refusé', true); }
+await db.exec("insert into public.lots_envoi_items (lot_id, rang, email) select id, 1, 'a@b.fr' from public.lots_envoi limit 1");
+r = await db.query("select count(*)::int as n from pg_policies where tablename in ('lots_envoi', 'lots_envoi_items')");
+preuve('RLS : aucune policy sur les lots (serveur seul)', r.rows[0].n === 0);
+r = await db.query("select bool_and(relrowsecurity) as rls from pg_class where relname in ('lots_envoi', 'lots_envoi_items')");
+preuve('RLS activée sur lots_envoi et lots_envoi_items', r.rows[0].rls === true);
+r = await db.query("select has_table_privilege('anon', 'public.lots_envoi_items', 'select') as a, has_table_privilege('authenticated', 'public.lots_envoi', 'insert') as b, has_table_privilege('service_role', 'public.lots_envoi_items', 'update') as c");
+preuve('anon / authenticated sans accès, service_role oui', r.rows[0].a === false && r.rows[0].b === false && r.rows[0].c === true, JSON.stringify(r.rows[0]));
+await db.exec('delete from public.lots_envoi');
+r = await db.query('select count(*)::int as n from public.lots_envoi_items');
+preuve('supprimer un lot supprime sa file (cascade)', r.rows[0].n === 0);
+
 const ko = preuves.filter((p) => !p.ok).length;
 dire(`\nPRO : ${preuves.length - ko} / ${preuves.length} preuves`);
 console.log('\n---FIN---');
