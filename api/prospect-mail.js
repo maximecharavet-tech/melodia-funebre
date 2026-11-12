@@ -56,7 +56,7 @@ import {
   entetesService
 } from './_courrier.js';
 import { urlDesabo, entetesDesabonnement, textePiedProspection, normaliserEmail } from './_desabonnement.js';
-import { cleEnvoi, creerStoreMemoire, creerStoreSupabase, envoyerUnique, ligneAncienne } from './_envoi-unique.js';
+import { cleEnvoi, creerStoreMemoire, creerStoreSupabase, envoyerUnique, ligneAncienne, libelleDeja, STATUTS_REELS } from './_envoi-unique.js';
 import { timingSafeEqual } from 'crypto';
 import { gererSequences } from './_sequences-serveur.js';
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
@@ -258,7 +258,7 @@ async function envoisDuJour(email, mode) {
   if (service && !journalAbsent) {
     try {
       const url = SB_URL + '/rest/v1/envois_prospect?select=destinataire,modele,sujet' +
-        '&collaborateur=eq.' + encodeURIComponent(email) + '&mode=eq.' + mode + '&statut=neq.echec' +
+        '&collaborateur=eq.' + encodeURIComponent(email) + '&mode=eq.' + mode + '&statut=in.(' + STATUTS_REELS.join(',') + ')' +
         '&envoye_le=gte.' + encodeURIComponent(debutJourParis().toISOString()) + '&limit=1000';
       const r = await fetch(url, { headers: service });
       if (r.ok) {
@@ -429,8 +429,8 @@ export default async function handler(req, res) {
 
   const d = (req.body && typeof req.body === 'object') ? req.body : {};
   const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'deja', 'automatisation', 'sequence_enregistrer', 'sequence_sortie'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
-  /* Le modèle choisi : il sert à ne pas renvoyer le même courrier au
-     même destinataire le même jour. À défaut, l'objet en tient lieu. */
+  /* Le modèle choisi : il sert à ne pas renvoyer le même courrier à la
+     même adresse dans les 60 jours. À défaut, l'objet en tient lieu. */
   const modele = String(d.modele || '').trim().slice(0, 80);
   /* L'ancien appel (un seul destinataire à plat) reste compris. */
   const envois = (Array.isArray(d.envois) && d.envois.length ? d.envois : [d]).map(lire);
@@ -581,8 +581,11 @@ export default async function handler(req, res) {
     const cles = liste.map((x) => cleEnvoi({ destinataire: x.to, modele, campagne: String(d.campagne || '').trim().slice(0, 80),
       etape: d.etape != null && d.etape !== '' ? Number(d.etape) : null, sujet: x.sujet }));
     const pris = await magasinEnvois().dejaEnvoyes(cles, liste.map((x) => x.to));
-    return json(res, 200, { ok: true, mode, deja: liste.map((x, i) => ({
-      to: x.to, ref: x.ref, deja: !!pris[cles[i]], statut: pris[cles[i]] || null })) });
+    return json(res, 200, { ok: true, mode, deja: liste.map((x, i) => {
+      const p = pris[cles[i]];
+      return { to: x.to, ref: x.ref, deja: !!p, statut: p ? p.statut : null,
+        precedent: p ? p.precedent : null, renvoi: p ? p.renvoi : null, texte: p ? libelleDeja(p) : '' };
+    }) });
   }
   const quota = quotaDe(qui.role, modeQuota, deja.lignes.length, deja.persistant);
 
@@ -696,10 +699,12 @@ export default async function handler(req, res) {
   }
   out.doublons.forEach((x) => refuses.push({
     to: x.ligne.e.to, ref: x.ligne.e.ref, code: x.deja === 'lot' ? 'DOUBLON' : 'DEJA_ENVOYE',
+    statut: x.deja === 'lot' ? undefined : x.deja,
+    precedent: x.precedent || undefined, renvoi: x.renvoi || undefined,
     motif: x.deja === 'lot' ? 'Adresse en double dans cet envoi.'
       : x.deja === 'reserve' || x.deja === 'incertain'
         ? 'Un envoi à cette adresse est en cours ou à vérifier : pas de second envoi.'
-        : 'Déjà envoyé à cette adresse avec ce modèle.'
+        : (x.precedent ? libelleDeja({ statut: x.deja, precedent: x.precedent, renvoi: x.renvoi }) + '.' : 'Déjà envoyé à cette adresse avec ce modèle (moins de 60 jours).')
   }));
   if (out.echec) {
     const f = out.echec;

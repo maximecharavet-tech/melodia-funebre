@@ -1,7 +1,10 @@
 // Faux Supabase (PostgREST) + faux Resend, pour prouver l'envoi de bout en bout
-// sans réseau. L'index UNIQUE sur envois_prospect.cle_idempotence est émulé :
-// la vérification et l'insertion sont synchrones (comme dans Postgres), l'attente
-// qui précède laisse les requêtes concurrentes s'entrelacer.
+// sans réseau. La fonction reserver_envois (fenêtre de 60 jours) est émulée :
+// la vérification et l'insertion sont synchrones (comme sous le verrou
+// consultatif de Postgres), l'attente qui précède laisse les requêtes
+// concurrentes s'entrelacer.
+const BLOQUANTS = ['reserve', 'incertain', 'envoye', 'delivre', 'ouvert', 'clique', 'differe', 'rejete', 'plainte'];
+const FENETRE = 60 * 24 * 3600 * 1000;
 export function monterFauxServeur(opts = {}) {
   const etat = {
     envois: [], resend: [], sequence: 0,
@@ -34,6 +37,27 @@ export function monterFauxServeur(opts = {}) {
       return rep(200, { id: 'rs_' + n });
     }
     if (u.pathname === '/auth/v1/user') return rep(200, { email: 'Julie@Melodia.test', user_metadata: {} });
+    if (u.pathname === '/rest/v1/rpc/reserver_envois') {
+      if (etat.journalEnPanne) return rep(503, 'indisponible');
+      if (!etat.colonneIdempotence) return rep(404, { code: 'PGRST202', message: 'Could not find the function public.reserver_envois' });
+      await pause(etat.delaiBase);
+      const maintenant = Date.now();
+      const res = [];
+      for (const l of corps.p_lignes) {
+        const cle = l.cle_idempotence;
+        const ex = etat.envois.filter((x) => x.cle_idempotence === cle && BLOQUANTS.includes(x.statut)
+          && new Date(x.envoye_le).getTime() > maintenant - FENETRE)
+          .sort((a, b) => new Date(b.envoye_le) - new Date(a.envoye_le))[0];
+        if (ex) {
+          res.push({ cle, ok: false, deja: ex.statut, precedent: ex.envoye_le, renvoi: new Date(new Date(ex.envoye_le).getTime() + FENETRE).toISOString() });
+          continue;
+        }
+        const ligne = Object.assign({ id: ++etat.sequence, envoye_le: new Date(maintenant).toISOString() }, l, { statut: 'reserve' });
+        etat.envois.push(ligne);
+        res.push({ cle, ok: true, id: ligne.id });
+      }
+      return rep(200, res);
+    }
     if (u.pathname === '/rest/v1/rpc/melodia_trop_souvent') return rep(404, 'PGRST202');
     if (u.pathname === '/rest/v1/roles') return rep(200, [{ email: u.searchParams.get('email')?.replace('ilike.', '').toLowerCase() || 'julie@melodia.test', role: etat.role }]);
     if (u.pathname === '/rest/v1/collaborateurs') return rep(200, [{ email: 'julie@melodia.test', nom: 'Julie Serve' }]);
@@ -84,7 +108,6 @@ export function monterFauxServeur(opts = {}) {
         }
         const inseres = [];
         for (const l of lignes) {
-          if (l.cle_idempotence && etat.envois.some((x) => x.cle_idempotence === l.cle_idempotence)) continue;
           const ligne = Object.assign({ id: ++etat.sequence, statut: 'envoye', envoye_le: new Date().toISOString() }, l);
           etat.envois.push(ligne); inseres.push(ligne);
         }
@@ -106,6 +129,9 @@ export function monterFauxServeur(opts = {}) {
       if (st === 'neq.echec') liste = liste.filter((l) => l.statut !== 'echec');
       const dest = u.searchParams.get('destinataire');
       if (dest && dest.startsWith('in.')) { const v = dest.slice(4, -1).split(',').map((x) => x.replace(/"/g, '')); liste = liste.filter((l) => v.includes(l.destinataire)); }
+      const depuis = u.searchParams.get('envoye_le');
+      if (depuis && depuis.startsWith('gt.')) liste = liste.filter((l) => new Date(l.envoye_le).getTime() > new Date(depuis.slice(3)).getTime());
+      if (depuis && depuis.startsWith('gte.')) liste = liste.filter((l) => new Date(l.envoye_le).getTime() >= new Date(depuis.slice(4)).getTime());
       const mode = u.searchParams.get('mode'); if (mode) liste = liste.filter((l) => l.mode === mode.replace('eq.', ''));
       return rep(200, liste);
     }

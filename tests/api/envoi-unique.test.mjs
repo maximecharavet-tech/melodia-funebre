@@ -263,3 +263,178 @@ test('route : sans session ou sans rôle → rien ne part', async () => {
   faux.etat.role = 'commercial';
   assert.equal(r.statusCode, 403); assert.equal(faux.etat.resend.length, 0);
 });
+
+// ═══ Fenêtre de 60 jours ═════════════════════════════════════════
+const JOUR = 86400000;
+function horloge(t0 = Date.parse('2026-11-12T10:00:00Z')) { const h = { t: t0, now: () => h.t }; return h; }
+const ok = async (cs) => ({ ok: true, ids: cs.map((_, i) => 'r' + i) });
+
+test('fenêtre : frontière nette (59 j bloque, 60 j pile libre)', () => {
+  const p = Date.parse('2026-09-01T08:00:00Z');
+  assert.equal(U.fenetreEnvoi(p, p).bloque, true);
+  assert.equal(U.fenetreEnvoi(p, p + 59 * JOUR).bloque, true);
+  assert.equal(U.fenetreEnvoi(p, p + 60 * JOUR - 1).bloque, true);
+  assert.equal(U.fenetreEnvoi(p, p + 60 * JOUR).bloque, false);
+  assert.equal(U.fenetreEnvoi(p, p + 59 * JOUR).joursRestants, 1);
+  assert.equal(U.fenetreEnvoi(p, p + 60 * JOUR).renvoi, p + 60 * JOUR);
+});
+
+test('fenêtre : libellé « Déjà envoyé le JJ/MM — renvoi possible à partir du … » (année si autre année)', () => {
+  const now = Date.parse('2026-11-12T10:00:00Z');
+  const t = U.libelleDeja({ statut: 'envoye', precedent: '2026-11-12T09:00:00Z', renvoi: '2027-01-11T09:00:00Z' }, now);
+  assert.equal(t, 'Déjà envoyé le 12/11 — renvoi possible à partir du 11/01/2027');
+  assert.equal(U.dateFr('2026-12-01T12:00:00Z', now), '01/12');
+});
+
+test('fenêtre (mémoire) : immédiat, 59 j → bloqué ; 60 j pile et au-delà → autorisé', async () => {
+  const h = horloge();
+  const store = U.creerStoreMemoire({ maintenant: h.now });
+  let appels = 0;
+  const envoyer = async (cs) => { appels++; return ok(cs); };
+  const r1 = await U.envoyerUnique({ store, lignes: [ligne('a@b.fr')], envoyer });
+  assert.equal(r1.envoyes.length, 1);
+  const r2 = await U.envoyerUnique({ store, lignes: [ligne('a@b.fr')], envoyer });
+  assert.equal(r2.doublons.length, 1);
+  assert.ok(r2.doublons[0].precedent && r2.doublons[0].renvoi);
+  assert.equal(Date.parse(r2.doublons[0].renvoi) - Date.parse(r2.doublons[0].precedent), 60 * JOUR);
+  h.t += 59 * JOUR;
+  assert.equal((await U.envoyerUnique({ store, lignes: [ligne('a@b.fr')], envoyer })).doublons.length, 1);
+  h.t += JOUR - 1; // 60 j moins 1 ms
+  assert.equal((await U.envoyerUnique({ store, lignes: [ligne('a@b.fr')], envoyer })).doublons.length, 1);
+  h.t += 1; // 60 j pile
+  const r5 = await U.envoyerUnique({ store, lignes: [ligne('A@B.fr')], envoyer });
+  assert.equal(r5.envoyes.length, 1, 'renvoi autorisé après la fenêtre');
+  assert.equal(appels, 2);
+  // et la nouvelle fenêtre repart de là
+  assert.equal((await U.envoyerUnique({ store, lignes: [ligne('a@b.fr')], envoyer })).doublons.length, 1);
+});
+
+test('fenêtre (mémoire) : autre modèle / autre étape autorisés ; echec libère ; incertain et reserve bloquent', async () => {
+  const h = horloge();
+  const store = U.creerStoreMemoire({ maintenant: h.now });
+  await U.envoyerUnique({ store, lignes: [ligne('a@b.fr', 'm1')], envoyer: ok });
+  assert.equal((await U.envoyerUnique({ store, lignes: [ligne('a@b.fr', 'm2')], envoyer: ok })).envoyes.length, 1);
+  // échec net : retry immédiat
+  const e = async () => ({ ok: false, status: 502, code: 'X', error: 'x' });
+  await U.envoyerUnique({ store, lignes: [ligne('c@d.fr')], envoyer: e });
+  assert.equal((await U.envoyerUnique({ store, lignes: [ligne('c@d.fr')], envoyer: ok })).envoyes.length, 1);
+  // incertain : bloque pendant la fenêtre
+  const t = async () => ({ ok: false, status: 504, code: 'TIMEOUT', error: 'x' });
+  await U.envoyerUnique({ store, lignes: [ligne('i@j.fr')], envoyer: t });
+  h.t += 30 * JOUR;
+  const r = await U.envoyerUnique({ store, lignes: [ligne('i@j.fr')], envoyer: ok });
+  assert.equal(r.doublons[0].deja, 'incertain');
+  // reserve en cours : bloque
+  const sans = U.creerStoreMemoire({ maintenant: h.now });
+  await sans.reserver([{ cle: 'k@l.fr|m:x', meta: {} }]);
+  assert.equal((await sans.reserver([{ cle: 'k@l.fr|m:x', meta: {} }]))[0].deja, 'reserve');
+});
+
+test('concurrence (mémoire) dans la fenêtre : 20 tentatives → un seul envoi ; après expiration → un seul nouvel envoi', async () => {
+  const h = horloge();
+  const store = U.creerStoreMemoire({ maintenant: h.now });
+  let appels = 0;
+  const envoyer = async (cs) => { appels++; await new Promise((r) => setTimeout(r, 3)); return ok(cs); };
+  let rs = await Promise.all(Array.from({ length: 20 }, () => U.envoyerUnique({ store, lignes: [ligne('x@y.fr')], envoyer })));
+  assert.equal(rs.filter((r) => r.envoyes.length === 1).length, 1);
+  assert.equal(rs.filter((r) => r.doublons.length === 1).length, 19);
+  h.t += 61 * JOUR;
+  rs = await Promise.all(Array.from({ length: 20 }, () => U.envoyerUnique({ store, lignes: [ligne('x@y.fr')], envoyer })));
+  assert.equal(rs.filter((r) => r.envoyes.length === 1).length, 1);
+  assert.equal(appels, 2);
+});
+
+const il_y_a = (jours, plus = 0) => new Date(Date.now() - jours * JOUR + plus).toISOString();
+const CLE = 'contact@agence-martin.fr|m:pf-premier-contact';
+const ligneJournal = (envoye_le, statut = 'envoye', cle = CLE) => ({ id: 900 + Math.floor(Math.random() * 1e6), destinataire: 'contact@agence-martin.fr', modele: 'pf-premier-contact', mode: 'envoi', statut, cle_idempotence: cle, envoye_le });
+
+test('route : précédent il y a 59 jours → bloqué, avec la date du précédent et la date de renvoi', async () => {
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(59)));
+  const r = await appeler(corpsEnvoi());
+  assert.equal(r.statusCode, 409);
+  const x = r.corps.refuses[0];
+  assert.equal(x.code, 'DEJA_ENVOYE');
+  assert.equal(Date.parse(x.renvoi) - Date.parse(x.precedent), 60 * JOUR);
+  assert.match(x.motif, /Déjà envoyé le \d\d\/\d\d — renvoi possible à partir du \d\d\/\d\d/);
+  assert.equal(faux.etat.resend.length, 0);
+});
+
+test('route : précédent il y a 60 jours (juste au-delà) → autorisé, nouvelle ligne, ancien historique intact', async () => {
+  repartir();
+  const ancienne = ligneJournal(il_y_a(60, -60000));
+  faux.etat.envois.push(ancienne);
+  const r = await appeler(corpsEnvoi());
+  assert.equal(r.statusCode, 200, JSON.stringify(r.corps));
+  assert.equal(faux.etat.resend.length, 1);
+  assert.equal(faux.etat.envois.length, 2);
+  assert.equal(ancienne.statut, 'envoye');
+  assert.equal((await appeler(corpsEnvoi())).statusCode, 409, 'la nouvelle fenêtre bloque à son tour');
+});
+
+test('route : mode deja → date du précédent et date de renvoi ; après 60 j → libre', async () => {
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(10)));
+  let r = await appeler({ mode: 'deja', modele: 'pf-premier-contact', envois: [{ to: 'Contact@Agence-Martin.fr' }] });
+  const x = r.corps.deja[0];
+  assert.equal(x.deja, true);
+  assert.match(x.texte, /^Déjà envoyé le .* — renvoi possible à partir du /);
+  assert.ok(Date.parse(x.renvoi) > Date.now());
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(61)));
+  r = await appeler({ mode: 'deja', modele: 'pf-premier-contact', envois: [{ to: 'contact@agence-martin.fr' }] });
+  assert.equal(r.corps.deja[0].deja, false);
+});
+
+test('route : echec ne bloque pas ; incertain / reserve bloquent dans la fenêtre', async () => {
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(1), 'echec'));
+  assert.equal((await appeler(corpsEnvoi())).statusCode, 200);
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(20), 'incertain'));
+  assert.equal((await appeler(corpsEnvoi())).statusCode, 409);
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(0), 'reserve'));
+  assert.equal((await appeler(corpsEnvoi())).statusCode, 409);
+});
+
+test('route : autre modèle même destinataire dans la fenêtre → autorisé', async () => {
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(5)));
+  const r = await appeler(corpsEnvoi({ modele: 'pf-relance-j4' }));
+  assert.equal(r.statusCode, 200);
+});
+
+test('route : concurrence dans la fenêtre (×20) → aucun envoi ; après expiration (×20) → un seul', async () => {
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(30)));
+  let rs = await Promise.all(Array.from({ length: 20 }, () => appeler(corpsEnvoi())));
+  assert.equal(faux.etat.resend.length, 0);
+  assert.ok(rs.every((r) => r.statusCode === 409));
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(61)));
+  rs = await Promise.all(Array.from({ length: 20 }, () => appeler(corpsEnvoi())));
+  assert.equal(faux.etat.resend.length, 1);
+  assert.equal(rs.filter((r) => r.statusCode === 200).length, 1);
+  assert.equal(rs.filter((r) => r.statusCode === 409).length, 19);
+});
+
+test('route : mode dégradé — la même fenêtre de 60 jours lit le journal', async () => {
+  repartir();
+  faux.etat.colonneIdempotence = false;
+  faux.etat.envois.push(ligneJournal(il_y_a(40), 'envoye', null));
+  assert.equal((await appeler(corpsEnvoi())).statusCode, 409);
+  repartir();
+  faux.etat.colonneIdempotence = false;
+  faux.etat.envois.push(ligneJournal(il_y_a(61), 'envoye', null));
+  const r = await appeler(corpsEnvoi());
+  assert.equal(r.statusCode, 200, JSON.stringify(r.corps));
+});
+
+test('stats : reserve et echec ne comptent pas comme envoi réel', async () => {
+  repartir();
+  faux.etat.envois.push(ligneJournal(il_y_a(0), 'reserve', 'a@x.fr|m:z'), ligneJournal(il_y_a(0), 'echec', 'b@x.fr|m:z'), ligneJournal(il_y_a(0), 'envoye', 'c@x.fr|m:z'));
+  faux.etat.envois.forEach((l) => { l.collaborateur = 'julie@melodia.test'; });
+  const r = await appeler({ mode: 'quota' });
+  assert.equal(r.corps.quota.utilise, 1);
+});
