@@ -90,7 +90,7 @@ module.exports = {
   }, P.jsonldFil('Pour les professionnels', '/professionnels')],
   scripts: ['assets/js/partenariat.js', 'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js'],
   body: `
-  <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
+  <section class="section a-rosace hero-visuel hero-visuel-pro" style="padding-top:9rem;padding-bottom:0;">
     <div class="orn-rosace-hote" data-orn-rosace="agences" data-orn-traits="3"></div>
     <div class="wrap">
       <div class="eyebrow reveal in">Melodia Funèbre pour les professionnels du funéraire</div>

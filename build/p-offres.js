@@ -46,7 +46,7 @@ module.exports = {
   scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/order.js',
             'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js'],
   body: `
-  <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
+  <section class="section a-rosace hero-visuel hero-visuel-offres" style="padding-top:9rem;padding-bottom:0;">
     <div class="orn-rosace-hote" data-orn-rosace="offres" data-orn-traits="3"></div>
     <div class="wrap">
       <div class="eyebrow reveal in">Offres et tarifs</div>

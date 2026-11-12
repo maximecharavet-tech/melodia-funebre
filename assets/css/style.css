@@ -6106,3 +6106,150 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 @media (prefers-reduced-motion: reduce) {
   .lumiere-3d::before, .lumiere-3d::after, .lumiere-3d .l3d-toile { transition: none; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   v3 — CHARTE STRICTE ET BLOCS COMMERCIAUX (12/11/2026)
+
+   1. L'or ne remplit plus rien. La charte le réserve aux filets fins :
+      les boutons principaux, l'étiquette d'offre, les pastilles de
+      lecture et d'étape passent en ivoire ou en encre, cernés d'un
+      trait d'or. Le texte en dégradé d'or (titres) reste : c'est un
+      trait, pas un aplat.
+   2. Blocs ajoutés en v3 : choix du paiement, saut d'étape, flux de
+      l'argent, console en trois gestes, visuels de couverture.
+   Ces règles viennent en dernier : elles l'emportent à spécificité
+   égale, sans toucher aux règles d'origine plus haut.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Plus d'aplats d'or ─── */
+.btn-gold {
+  background: #f2efe8; color: #0b0b11; font-weight: 600;
+  border: 1px solid #e3c977;
+  box-shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.8);
+}
+.btn-gold:hover, .btn-gold:focus-visible {
+  background: #ffffff; color: #040407;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.22), 0 14px 32px -14px rgba(0, 0, 0, 0.85);
+}
+.btn-gold:focus-visible { outline: 1px solid #e3c977; outline-offset: 3px; }
+/* Sur les sections ivoire, l'ivoire disparaîtrait : on inverse. */
+.section-light .btn-gold { background: #0b0b11; color: #f2efe8; border-color: #97803c; }
+.section-light .btn-gold:hover, .section-light .btn-gold:focus-visible { background: #040407; color: #ffffff; }
+
+.price-tag { background: #0b0b11; color: #e3c977; border: 1px solid #c9a84c; }
+.wz-node.done .wz-dot { background: #0b0b11; border-color: #c9a84c; color: #e3c977; }
+.skip-link { background: #f2efe8; color: #040407; outline: 1px solid #c9a84c; }
+
+.calc-range::-webkit-slider-thumb {
+  background: #0b0b11; border: 2px solid #e3c977;
+  box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.12);
+}
+.calc-range::-moz-range-thumb {
+  background: #0b0b11; border: 2px solid #e3c977;
+  box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.12);
+}
+.cat-filtre.actif { color: #e3c977; background: rgba(201, 168, 76, 0.06); border-color: #c9a84c; }
+.oeuvre.joue .oeuvre-lire { color: #e3c977; background: #0b0b11; border-color: #e3c977; }
+.ecoute-lire { color: #e3c977; background: #0b0b11; border-color: #c9a84c; }
+.ecoute-lire:hover { background: #101018; border-color: #e3c977; }
+.partage-natif { color: #0b0b11; background: #f2efe8; border: 1px solid #e3c977; }
+.partage-natif:hover { color: #040407; background: #ffffff; }
+@media (max-width: 600px) {
+  .partage-natif { color: #0b0b11; background: #f2efe8; }
+}
+a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
+  background: #0b0b11; color: #e3c977; border-color: #e3c977;
+}
+.reg-fleche:hover { background: #0b0b11; color: #e3c977; border-color: #e3c977; }
+.kit-tele:hover, .kit-tele:focus-visible { background: #0b0b11; color: #e3c977; border-color: #e3c977; }
+
+/* ─── 2a. Tunnel familles : saut d'étape et choix du paiement ─── */
+.wz-passer { margin: -0.4rem 0 1.4rem; font-size: 0.92rem; color: var(--ash); line-height: 1.7; }
+.paiement-choix { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 0.4rem; }
+.paiement-option {
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 1.3rem 1.2rem; border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  background: rgba(11, 11, 17, 0.6);
+}
+.paiement-option > :last-child { margin-top: auto; }
+.paiement-titre { font-family: var(--ff-d); font-size: 1.25rem; font-weight: 500; color: #f2efe8; }
+.paiement-texte { font-size: 0.88rem; color: var(--bone); line-height: 1.6; margin: 0; }
+@media (max-width: 720px) { .paiement-choix { grid-template-columns: 1fr; } }
+
+/* ─── 2b. Comment circule l'argent ─── */
+.flux-argent {
+  list-style: none; margin: 0 auto; padding: 0; max-width: 62rem;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong);
+}
+.flux-argent li {
+  display: flex; flex-direction: column; gap: 0.45rem;
+  padding: 1.6rem 1.4rem; color: var(--bone); line-height: 1.6;
+}
+.flux-argent li + li { border-left: 1px solid var(--line-soft); }
+.flux-argent b { font-family: var(--ff-d); font-size: 1.3rem; font-weight: 500; color: #f2efe8; }
+.flux-n { font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.18em; color: var(--or-patina); }
+.flux-table { max-width: 62rem; margin: 0 auto; }
+.flux-table td, .flux-table th { font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) {
+  .flux-argent { grid-template-columns: 1fr; }
+  .flux-argent li + li { border-left: 0; border-top: 1px solid var(--line-soft); }
+}
+
+/* ─── 2c. La console : photo réelle et trois gestes ─── */
+.console-photo { margin: 0; }
+.console-photo img {
+  display: block; width: 100%; height: auto; border-radius: var(--radius-lg);
+  border: 1px solid var(--line); aspect-ratio: 16 / 10; object-fit: cover;
+}
+.console-photo figcaption { margin-top: 0.8rem; font-size: 0.85rem; color: var(--ash); line-height: 1.6; }
+.trois-gestes {
+  list-style: none; margin: 3.2rem 0 0; padding: 0;
+  display: grid; gap: 1.4rem; grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.geste { position: relative; }
+.geste img {
+  display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover;
+  border-radius: var(--radius-lg); border: 1px solid var(--line-soft);
+}
+.geste-n {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem; margin: -1.1rem 0 0 1.1rem; position: relative;
+  border: 1px solid var(--line-strong); border-radius: 50%; background: #0b0b11;
+  font-family: var(--ff-d); font-size: 1rem; color: var(--or);
+}
+.geste h3 { margin-top: 0.6rem; font-family: var(--ff-d); font-size: 1.35rem; font-weight: 500; color: #f2efe8; }
+.geste p { margin-top: 0.35rem; color: var(--bone); line-height: 1.65; font-size: 0.95rem; }
+@media (max-width: 900px) { .trois-gestes { grid-template-columns: 1fr; gap: 2rem; } }
+
+/* Simulateur : liste des trois offres */
+.calc-select { width: 100%; }
+
+/* ─── 2d. Visuels de couverture, grand écran seulement ───
+   Les deux images OG déjà livrées (pupitre ; bureau d'accueil) sont
+   composées avec un vide à gauche pour le texte. Elles ne sont
+   déclarées que dans la media query : un téléphone ne les télécharge
+   pas. Un masque fond l'image dans l'encre et garde le contraste. */
+@media (min-width: 1000px) {
+  .hero-visuel { position: relative; isolation: isolate; }
+  .hero-visuel::after {
+    content: ""; position: absolute; z-index: -1; pointer-events: none;
+    top: 0; right: 0; bottom: 0; width: min(60%, 900px);
+    background-repeat: no-repeat; background-size: cover; background-position: right center;
+    opacity: 0.5;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 45%);
+  }
+  .hero-visuel-offres::after { background-image: url("../img/v2/og-offres.jpg"); }
+  .hero-visuel-pro::after { background-image: url("../img/v2/og-professionnels.jpg"); }
+}
+
+/* ─── Mobile : la barre du pouce accepte un libellé plus long ─── */
+@media (max-width: 600px) {
+  .sticky-cta .btn { white-space: normal; line-height: 1.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold, .paiement-option, .geste img { transition: none; }
+}

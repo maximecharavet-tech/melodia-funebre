@@ -40,7 +40,7 @@ a { color: var(--or-bright); text-underline-offset: 3px; }
 button, input, select, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--or-bright); outline-offset: 3px; border-radius: 4px; }
 .sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.evitement { position: absolute; left: -999px; top: 8px; z-index: 100; background: var(--or); color: var(--sur-or); padding: .7rem 1rem; border-radius: var(--r-s); }
+.evitement { position: absolute; left: -999px; top: 8px; z-index: 100; background: #f2efe8; color: #040407; outline: 1px solid #c9a84c; padding: .7rem 1rem; border-radius: var(--r-s); }
 .evitement:focus { left: 8px; }
 
 /* ─── Typographie ─── */
@@ -84,8 +84,9 @@ h1 em, h2 em, h3 em { font-style: italic; color: var(--or-bright); }
 .btn:hover { background: var(--surface-2); border-color: var(--or); }
 .btn:active { transform: translateY(1px); }
 .btn[disabled], .btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
-.btn-or { background: var(--or-grad); color: var(--sur-or); border: 0; font-weight: 500; }
-.btn-or:hover { background: var(--or-grad); filter: brightness(1.06); }
+/* v3 : l'or ne remplit plus — ivoire cerné d'un filet d'or (charte). */
+.btn-or { background: #f2efe8; color: #0b0b11; border: 1px solid #e3c977; font-weight: 500; }
+.btn-or:hover { background: #ffffff; color: #040407; box-shadow: 0 0 0 3px rgba(201, 168, 76, .2); }
 .btn-danger { border-color: rgba(240, 138, 126, .5); color: var(--rouge); }
 .btn-petit { min-height: 36px; padding: .3rem .8rem; font-size: .9rem; }
 .btn-icone { width: var(--cible); padding: 0; }
