@@ -1,6 +1,12 @@
 // La fiche d'un dossier : où il en est, ce qu'il attend de vous, la chanson.
 import { h, titre, vider, toast, confirmer, badgeStatut } from '../ui.js';
-import { t, date, dateHeure } from '../i18n.js';
+import { t, date, dateHeure, relatif } from '../i18n.js';
+import { lecteurOnde } from '../composants.js';
+import { icone } from '../icones.js';
+import { ETAPES, positionDossier, attendGeste } from '../logique.js';
+import { dupliquerCommeModele } from '../actions-dossier.js';
+import { ouvrirPresentation } from '../presentation.js';
+import { blocPartage } from '../partage.js';
 
 const ATTENTE = {
   paye: 'Réglé. La maison commence l’écriture des paroles.',
@@ -93,7 +99,7 @@ export async function rendre(el, ctx, route) {
     const maisonVoit = s === 'controle_maison';
     return h('section', { class: 'carte filet-or pile' },
       h('h2', null, maisonVoit ? 'Écoute de la ' : 'La ', h('em', null, 'chanson')),
-      h('audio', { controls: true, preload: 'metadata', src: p.url }),
+      lecteurOnde(p.url, { duree: p.duree_s, titre: fiche.dossier.titre || ('Chanson pour ' + (fiche.dossier.prenom || '')) }),
       h('p', { class: 'petit' }, (p.mode === 'essai' ? 'Composition d’essai · ' : '') + (p.duree_s ? Math.floor(p.duree_s / 60) + ' min ' + String(p.duree_s % 60).padStart(2, '0') + ' · ' : '') + t('commun.signature')),
       maisonVoit && fiche.acteur === 'maison' ? h('div', { class: 'rangee' },
         h('button', { class: 'btn btn-or', type: 'button', id: 'btn-livrer', onclick: async () => {
@@ -108,6 +114,44 @@ export async function rendre(el, ctx, route) {
         navigator.share ? h('button', { class: 'btn', type: 'button', onclick: () => navigator.share({ title: 'Une chanson pour ' + (fiche.dossier.prenom || ''), url: fiche.qr ? 'https://melodia-funebre.fr/m/' + fiche.qr.jeton : location.href }).catch(() => {}) }, 'Partager') : null) : null);
   }
 
+  function frise(statut) {
+    const pos = positionDossier(statut);
+    const clos = pos == null;
+    const idx = clos ? 0 : pos.index;
+    return h('ol', { class: 'avancement' + (clos ? ' clos' : ''), 'aria-label': 'Avancement du dossier' }, ETAPES.map((nom, i) => {
+      const classes = [];
+      if (!clos && i < idx) classes.push('fait');
+      if (!clos && i === idx) { classes.push('courant'); if (pos.termine) classes.push('termine'); else if (attendGeste(statut)) classes.push('geste'); }
+      return h('li', { class: classes.join(' '), 'aria-current': !clos && i === idx ? 'step' : null }, nom,
+        !clos && i === idx && !pos.termine && attendGeste(statut) ? h('span', { class: 'sr' }, ' — attend votre geste') : null);
+    }));
+  }
+
+  const peutPresenter = () => !!(fiche.pistes[0] && fiche.pistes[0].url && fiche.dossier.status === 'livre');
+
+  async function presenter() {
+    const d = fiche.dossier;
+    const def = (fiche.questionnaire && fiche.questionnaire.donnees && fiche.questionnaire.donnees.defunt) || {};
+    const annee = (v) => (v ? String(v).slice(0, 4) : '');
+    const org = (ctx.me.organisations || []).find((o) => o.id === ctx.org) || {};
+    let logo = null;
+    try { logo = ctx.donnees.demo ? await ctx.donnees.logoDonnee() : (org.logo_url || null); } catch (e) { logo = null; }
+    const v = fiche.paroles[0];
+    ouvrirPresentation({
+      prenom: d.prenom || def.prenom, dates: [annee(def.naissance), annee(def.deces)].filter(Boolean).join(' – '),
+      titre: (v && v.titre) || d.titre, paroles: v ? v.paroles : null,
+      audio: fiche.pistes[0].url, duree: fiche.pistes[0].duree_s, agence: org.nom, logo, cobranding: org.cobranding !== false
+    });
+  }
+
+  function blocPartageFamille() {
+    if (fiche.dossier.status !== 'livre' || !fiche.qr || !fiche.qr.jeton) return null;
+    const zone = h('section', { class: 'carte pile', 'aria-labelledby': 'partage-t' }, h('h2', { id: 'partage-t' }, 'Partager avec la ', h('em', null, 'famille')));
+    blocPartage({ url: fiche.qr.url || ('https://melodia-funebre.fr/m/' + fiche.qr.jeton), actif: !!fiche.qr.actif, prenom: fiche.dossier.prenom, toast })
+      .then((b) => { zone.append(b, h('div', { class: 'rangee' }, h('a', { class: 'btn btn-petit', href: '#/qr/' + fiche.dossier.id }, 'Ouvrir le studio QR et les impressions'))); }).catch(() => {});
+    return zone;
+  }
+
   function dessiner() {
     vider(el);
     const d = fiche.dossier;
@@ -120,6 +164,8 @@ export async function rendre(el, ctx, route) {
 
     if (ATTENTE[s]) el.append(h('div', { class: 'alerte info', role: 'status', style: { margin: '1rem 0' } }, ATTENTE[s],
       ['paye', 'essai_accorde', 'paroles_en_cours', 'musique_en_cours'].includes(s) ? h('div', { class: 'squelette', style: { height: '4px', marginTop: '.7rem' } }) : null));
+
+    el.append(frise(s));
 
     const actions = h('div', { class: 'rangee', style: { margin: '1rem 0' } });
     if (['brouillon', 'complet'].includes(s) && fiche.acteur !== 'lecture') {
@@ -142,10 +188,14 @@ export async function rendre(el, ctx, route) {
         try { await ctx.donnees.changerStatut(d.id, 'annule'); await recharger(); } catch (e) { toast(e.message, { erreur: true }); }
       } }, 'Annuler le dossier'));
     }
+    // Gestes disponibles à tout moment
+    actions.append(h('button', { class: 'btn', type: 'button', title: 'Ouvre un nouveau questionnaire avec le même style et le même rite, sans rien de la personne', onclick: () => dupliquerCommeModele(ctx, d.id) }, icone('dupliquer', { taille: 18 }), 'Dupliquer comme modèle'));
+    if (peutPresenter()) actions.append(h('button', { class: 'btn', type: 'button', onclick: presenter }, icone('presenter', { taille: 18 }), 'Présenter à la famille ', h('kbd', null, 'P')));
     el.append(actions);
 
-    const colonnes = h('div', { class: 'pile' }, blocChanson(), blocParoles());
+    const colonnes = h('div', { class: 'pile' }, blocChanson(), blocPartageFamille(), blocParoles());
     el.append(colonnes);
+    ctx.presenter = peutPresenter() ? presenter : null;
 
     const q = fiche.questionnaire && fiche.questionnaire.donnees;
     if (q) {
@@ -157,12 +207,12 @@ export async function rendre(el, ctx, route) {
         ].filter(([, v]) => v).map(([k, v]) => h('div', null, h('dt', { class: 'petit' }, k), h('dd', { style: { margin: 0 } }, v))))));
     }
     if (fiche.journal && fiche.journal.length) {
-      el.append(h('section', { class: 'carte', style: { marginTop: '1.2rem' } }, h('h2', null, 'Historique'),
-        h('ol', { class: 'frise' }, fiche.journal.slice(0, 12).map((j) => h('li', null, t('statut.' + j.texte, j.texte), ' ', h('span', { class: 'petit' }, dateHeure(j.quand)))))));
+      el.append(h('section', { class: 'carte', style: { marginTop: '1.2rem' } }, h('h2', null, 'Historique du ', h('em', null, 'dossier')),
+        h('ol', { class: 'frise' }, fiche.journal.slice(0, 12).map((j) => h('li', null, t('statut.' + j.texte, j.texte), ' ', h('span', { class: 'petit' }, dateHeure(j.quand), ' · ', relatif(j.quand)))))));
     }
     suivre();
   }
 
   dessiner();
-  return () => clearInterval(minuteur);
+  return () => { clearInterval(minuteur); ctx.presenter = null; };
 }

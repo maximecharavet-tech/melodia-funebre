@@ -40,6 +40,7 @@ const files = [
   'vercel.json', 'robots.txt', 'sitemap.xml',
   /* Melodia Funèbre Pro (console /pro) */
   'pro.html', 'pro.webmanifest', 'assets/css/pro.css', 'assets/i18n/pro.fr.json', 'assets/js/pro/app.js', 'assets/js/pro/donnees.js',
+  'assets/js/pro/logique.js', 'assets/js/pro/composants.js', 'assets/js/pro/icones.js', 'assets/js/pro/palette.js', 'assets/js/pro/notifications.js', 'assets/js/pro/visite.js', 'assets/js/pro/presentation.js', 'assets/js/pro/partage.js', 'assets/js/pro/theme.js', 'assets/js/pro/theme-init.js', 'assets/js/pro/actions-dossier.js', 'assets/js/pro/vues/statistiques.js',
   'assets/js/vendor/melodia_pro.wasm', 'assets/js/vendor/melodia-pro-glue.js', 'lib/pro/socle.cjs', 'lib/pro/noyau.cjs',
   'api/pro/checkout.js', 'api/pro/stripe-webhook.js', 'api/pro/memorial.js', '.well-known/assetlinks.json'
 ];

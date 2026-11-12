@@ -46,6 +46,7 @@ export async function rendre(el, ctx, route) {
   const fiche = await ctx.donnees.dossier(route.id);
   const d = fiche.dossier;
   const q = (await ctx.donnees.qr(d.id)).qr;
+  try { localStorage.setItem('melodia_pro_qr_' + ctx.org, '1'); } catch (e) { /* prise en main : étape « QR » cochée */ }
   const def = (fiche.questionnaire && fiche.questionnaire.donnees.defunt) || {};
   const annee = (v) => (v ? String(v).slice(0, 4) : '');
   const org = (ctx.me.organisations || []).find((o) => o.id === ctx.org) || {};

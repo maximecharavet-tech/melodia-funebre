@@ -67,3 +67,19 @@ Un en-tête `/*! … */` rappelle la licence MIT en tête de chaque fichier serv
 ## v3 (12/11/2026)
 
 Aucun code tiers ajouté. La minification de la feuille de style (`build/css-min.js`) est écrite pour ce dépôt, sans dépendance. Motion et three.js restent ceux de la v2 ; three.js n'est plus chargé sur `/professionnels` (photo réelle à la place de la médaille), il reste sur l'accueil aux mêmes conditions.
+
+## Pro v4 — console `/pro` (12/11/2026)
+
+**Aucun code tiers n'a été copié dans cette version.** Tout ce qui suit est de l'inspiration (principes d'interaction, organisation), réécrit entièrement pour ce dépôt, sans dépendance ajoutée. Les licences sont citées par honnêteté et pour garder la porte ouverte à de futures reprises de code, qui devraient alors figurer dans le tableau du haut de ce fichier.
+
+| Projet | Licence | Ce qui a inspiré | Où c'est réécrit |
+|---|---|---|---|
+| wavesurfer.js | BSD-3-Clause | décoder l'audio, réduire à quelques centaines de barres, progression et recherche par clic sur la forme d'onde | `assets/js/pro/composants.js` (`lecteurOnde`, calcul des barres dans `logique.js`) |
+| cmdk (Paco Coursey) et composant « Command » de shadcn/ui | MIT | palette de commandes : champ, liste filtrée à la frappe, flèches + Entrée, groupes | `assets/js/pro/palette.js` |
+| shadcn/ui, TanStack Table | MIT | table de données : colonnes triables, case de sélection, barre d'actions groupées, jetons sémantiques clair/sombre | `assets/js/pro/vues/dossiers.js`, `assets/css/pro.css` |
+| Tremor | Apache-2.0 | tuiles de chiffres, répartition en barre empilée, histogramme avec tableau de valeurs en alternative | `assets/js/pro/vues/statistiques.js` |
+| Shepherd.js, Driver.js | MIT | visite guidée : bulles ancrées aux vrais éléments, halo, navigation clavier | `assets/js/pro/visite.js` |
+| react-admin, Refine, Tabler | MIT | structure d'un tableau de bord d'administration (journée, listes filtrables, notifications, export) — aucune ligne reprise | `assets/js/pro/vues/*`, `notifications.js` |
+| Motion | MIT | déjà présent depuis la v2 (`motion-mini-14.12.min.js`) ; v4 : entrée des blocs, montée des barres de graphique | `assets/js/pro/app.js`, `composants.js` |
+
+Les icônes de `assets/js/pro/icones.js` sont des tracés simples dessinés pour ce dépôt (aucune bibliothèque d'icônes n'est copiée).

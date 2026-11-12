@@ -70,7 +70,18 @@ export function confirmer({ titre: t, texte, bouton = 'Confirmer', mot = null, d
   });
 }
 
-export function squelettes(n = 3) {
+/** Squelettes de chargement, à la forme de la vue attendue ('liste', 'tuiles', 'tableau'). */
+export function squelettes(n = 3, forme = 'liste') {
+  const bloc = (hauteur, largeur) => h('div', { class: 'squelette', style: { height: hauteur, width: largeur || '100%' } });
+  if (forme === 'tuiles') {
+    return h('div', { class: 'pile', 'aria-hidden': 'true' }, bloc('2.2rem', '35%'), bloc('1rem', '55%'),
+      h('div', { class: 'tuiles' }, ...Array.from({ length: 4 }, () => bloc('7.5rem'))), bloc('11rem'));
+  }
+  if (forme === 'tableau') {
+    return h('div', { class: 'pile', 'aria-hidden': 'true' }, bloc('2.2rem', '30%'),
+      h('div', { class: 'rangee' }, bloc('44px', '240px'), bloc('38px', '90px'), bloc('38px', '110px'), bloc('38px', '90px')),
+      ...Array.from({ length: 6 }, () => bloc('3.2rem')));
+  }
   return h('div', { class: 'pile', 'aria-hidden': 'true' },
     h('div', { class: 'squelette', style: { height: '2rem', width: '35%' } }),
     ...Array.from({ length: n }, () => h('div', { class: 'squelette', style: { height: '5.5rem' } })));

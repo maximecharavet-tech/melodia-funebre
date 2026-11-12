@@ -24,6 +24,7 @@
     "test:julie": "for t in lib/julie/*.test.cjs; do node --test $t || exit 1; done",
     "test:pro": "node --test tests/pro/*.test.mjs",
     "test:sql": "node scripts/prouver-migrations.mjs",
-    "test:e2e": "node tests/e2e/pro.e2e.mjs"
+    "test:e2e": "node tests/e2e/pro.e2e.mjs",
+    "test:e2e:v4": "node tests/e2e/pro-v4.e2e.mjs"
   }
 }
