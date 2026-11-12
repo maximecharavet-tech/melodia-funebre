@@ -28,7 +28,7 @@ const files = [
   'documents/melodia-brochure-ceremonie.pdf',
   'documents/melodia-brochure-ecoute-exemples.pdf',
   'assets/js/auth.js', 'assets/js/config.js', 'assets/js/candidature.js', 'assets/js/espace.js',
-  'assets/js/collaborateur-mails.js', 'assets/js/collaborateur-espace.js', 'assets/css/collaborateur.css',
+  'assets/js/collaborateur-mails.js', 'assets/js/collaborateur-lot.js', 'api/_lot-envoi.js', 'api/_envoi-unique.js', 'assets/js/collaborateur-espace.js', 'assets/css/collaborateur.css',
   'assets/js/signatures.js', 'assets/js/qr.js', 'assets/img/equipe/julie-serve.jpg', 'assets/img/courriel/banniere.jpg',
   'assets/img/logo-melodia.jpg', 'assets/img/logo-melodia-complet.jpg', 'assets/img/logo-melodia-anime.mp4',
   'assets/img/plaque-qr-700.webp', 'assets/img/plaque-qr-700.jpg',

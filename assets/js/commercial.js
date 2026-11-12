@@ -174,6 +174,9 @@
     julie: ['La maison', 'Julie <em>Serve</em>', vueEsp('julie'), brEsp('julie')],
     mails: ['Courriers', 'Mails <em>tout faits</em>', vueEsp('mails'), brEsp('mails')],
     pret: ['Courriers', 'Mail <em>prêt à envoyer</em>', vueEsp('pret'), brEsp('pret')],
+    lot: ['Courriers', 'Envoi <em>groupé</em>',
+          function () { return window.MelodiaLot ? window.MelodiaLot.vue() : '<div class="form-msg err" style="display:block;">Le module n\'a pas été chargé.</div>'; },
+          function () { if (window.MelodiaLot) window.MelodiaLot.brancher(); }],
     posts: ['Réseaux', 'Publications <em>prêtes</em>', vueEsp('posts'), brEsp('posts')],
     kit: ['Ressources', 'Kit <em>média</em>', vueEsp('kit'), function () {}],
     ecoute: ['Le fonds', 'Écouter les <em>exemples</em>', vueEsp('ecoute'), brEsp('ecoute')],
@@ -1809,6 +1812,7 @@
     $('u-role').textContent = EST_MAITRE ? 'Fondateur · vue totale' : (sigBarre.role || 'Collaborateur');
     var m = $('mode-badge');
     if (m) m.textContent = EST_MAITRE ? 'Vue fondateur' : 'Collaborateur';
+    if (window.MelodiaLot) window.MelodiaLot.attacher({ prospects: function () { return PROSPECTS; } });
     if (window.MelodiaEspace) {
       window.MelodiaEspace.attacher({
         prospects: function () { return PROSPECTS; },
