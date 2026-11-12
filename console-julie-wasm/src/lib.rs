@@ -87,6 +87,7 @@ export_str!(csv_detecter_colonnes, csv::detecter_json);
 export_str!(similarite, dedupe::similarite_json);
 export_str!(dedupe_cle, dedupe::cle_json);
 export_str!(domaine_suggere, dedupe::domaine_json);
+export_str!(envoi_cle, dedupe::cle_envoi_json);
 export_str!(meilleur_creneau, creneau::meilleur_json);
 export_str!(sequence_prochaine_etape, sequences::calculer_json);
 

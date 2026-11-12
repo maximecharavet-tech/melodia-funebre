@@ -161,6 +161,58 @@ pub fn cle_json(input: &str) -> String {
     }
 }
 
+
+// ─── Clé d'idempotence d'un envoi ─────────────────────────────────────
+// Miroir EXACT de cleEnvoi() dans api/_envoi-unique.js : la console grise
+// « déjà envoyé » avec la même clé que celle qui bloque le serveur.
+//   <destinataire normalisé>|m:<modèle> | c:<campagne> | o:<objet>[#e<étape>]
+
+#[derive(Deserialize)]
+struct EnvoiIn {
+    #[serde(default)]
+    destinataire: String,
+    #[serde(default)]
+    modele: String,
+    #[serde(default)]
+    campagne: String,
+    #[serde(default)]
+    sujet: String,
+    #[serde(default)]
+    etape: Option<i64>,
+}
+
+fn norm_texte_envoi(s: &str) -> String {
+    s.to_lowercase()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .chars()
+        .take(120)
+        .collect::<String>()
+}
+
+pub fn cle_envoi_json(input: &str) -> String {
+    match serde_json::from_str::<EnvoiIn>(input) {
+        Ok(e) => {
+            let dest = e.destinataire.trim().to_lowercase();
+            let modele = e.modele.trim().to_lowercase();
+            let campagne = e.campagne.trim().to_lowercase();
+            let mut portee = if !modele.is_empty() {
+                format!("m:{}", modele)
+            } else if !campagne.is_empty() {
+                format!("c:{}", campagne)
+            } else {
+                format!("o:{}", norm_texte_envoi(&e.sujet))
+            };
+            if let Some(n) = e.etape {
+                portee.push_str(&format!("#e{}", n));
+            }
+            serde_json::json!({ "cle": format!("{}|{}", dest, portee) }).to_string()
+        }
+        Err(e) => serde_json::json!({ "error": e.to_string() }).to_string(),
+    }
+}
+
 // ─── Suggestion de domaine ────────────────────────────────────────────
 
 const DOMAINES: &[&str] = &[
@@ -243,6 +295,28 @@ mod tests {
         assert!(out.contains("\"siret\":\"12345678900012\""), "{}", out);
         assert!(out.contains("\"email\":\"a@b.fr\""), "{}", out);
         assert!(out.contains("\"nom_cp\":\"pompes martin|69001\""), "{}", out);
+    }
+
+    #[test]
+    fn cle_envoi_normalisee() {
+        let a = cle_envoi_json(r#"{"destinataire":" Foo@Bar.COM ","modele":"PF-Relance-J4"}"#);
+        let b = cle_envoi_json(r#"{"destinataire":"foo@bar.com","modele":"pf-relance-j4"}"#);
+        assert_eq!(a, b);
+        assert!(a.contains("foo@bar.com|m:pf-relance-j4"), "{}", a);
+    }
+
+    #[test]
+    fn cle_envoi_portees() {
+        let m = cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":1}"#);
+        assert!(m.contains("a@b.fr|m:x#e1"), "{}", m);
+        let c = cle_envoi_json(r#"{"destinataire":"a@b.fr","campagne":"Salon"}"#);
+        assert!(c.contains("a@b.fr|c:salon"), "{}", c);
+        let o = cle_envoi_json(r#"{"destinataire":"a@b.fr","sujet":"  Bonjour   MONDE "}"#);
+        assert!(o.contains("a@b.fr|o:bonjour monde"), "{}", o);
+        assert_ne!(
+            cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":1}"#),
+            cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":2}"#)
+        );
     }
 
     #[test]
