@@ -1,5 +1,8 @@
 // Paramètres : co-branding (logo de l'agence), mode famille par défaut, pack promotionnel.
 import { h, titre, toast } from '../ui.js';
+import { ACCENTS, choixTheme, definirTheme, lireMarque, ecrireMarque, themeEffectif } from '../theme.js';
+import { accentPour } from '../logique.js';
+import { icone } from '../icones.js';
 
 const TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
@@ -30,8 +33,40 @@ export async function rendre(el, ctx) {
   const fam = h('input', { type: 'checkbox', checked: localStorage.getItem('melodia_pro_famille') === '1' });
   fam.addEventListener('change', () => { localStorage.setItem('melodia_pro_famille', fam.checked ? '1' : '0'); toast('Préférence enregistrée sur cet appareil.'); });
 
+  // ─── Apparence et marque de l'agence (gardées sur cet appareil) ───
+  const marque = lireMarque();
+  const radios = (nom, options, valeur, surChoix) => h('div', { class: 'choix', role: 'radiogroup', 'aria-label': nom },
+    options.map(([v, l]) => h('label', null, h('input', { type: 'radio', name: 'rg-' + nom, value: v, checked: v === valeur, onchange: () => surChoix(v) }), h('span', null, l))));
+  const apercuMarque = h('p', { class: 'petit', 'aria-live': 'polite' });
+  const nomAffiche = h('input', { type: 'text', maxlength: 60, value: marque.nom || '', placeholder: org.nom || 'Nom de votre agence', id: 'marque-nom' });
+  const signature = h('input', { type: 'text', maxlength: 80, value: marque.signature || '', placeholder: 'Ex. : Votre conseiller funéraire', id: 'marque-signature' });
+  const sauverTexte = () => { ecrireMarque(Object.assign(lireMarque(), { nom: nomAffiche.value.trim(), signature: signature.value.trim() })); if (ctx.majPiedAgence) ctx.majPiedAgence(); };
+  nomAffiche.addEventListener('change', () => { sauverTexte(); toast('Nom d’affichage enregistré sur cet appareil.'); });
+  signature.addEventListener('change', () => { sauverTexte(); toast('Signature enregistrée sur cet appareil.'); });
+  const clair = () => themeEffectif() === 'light';
+  const pastilles = h('div', { class: 'pastilles-couleur', role: 'radiogroup', 'aria-label': 'Couleur d’accent' }, ACCENTS.map((a) => {
+    const hex = a.sombre ? (clair() ? a.clair : a.sombre) : null;
+    const fond = hex || 'linear-gradient(135deg, #97803c, #e3c977 55%, #c9a84c)';
+    return h('label', { title: a.nom, style: { background: fond } },
+      h('input', { type: 'radio', name: 'accent', value: a.id, 'aria-label': a.nom, checked: (marque.accent || 'or') === a.id, onchange: () => {
+        ecrireMarque(Object.assign(lireMarque(), { accent: a.id }));
+        apercuMarque.textContent = a.nom + ' : appliqué à la console sur cet appareil.';
+      } }));
+  }));
+
   el.append(
     h('section', { class: 'carte pile' },
+      h('h2', null, 'Apparence de la ', h('em', null, 'console')),
+      h('div', { class: 'champ' }, h('span', { class: 'etiquette' }, 'Thème'),
+        radios('Thème', [['auto', 'Suivre mon appareil'], ['light', 'Clair'], ['dark', 'Sombre']], choixTheme(), (v) => { definirTheme(v); toast('Thème appliqué.'); })),
+      h('div', { class: 'champ' }, h('span', { class: 'etiquette' }, 'Couleur d’accent de votre agence'),
+        h('p', { class: 'aide', style: { margin: 0 } }, 'Elle colore le focus, la frise d’avancement, les barres de lecture et les filtres. L’or de la maison reste celui des titres et du logo.'),
+        pastilles, apercuMarque),
+      h('div', { class: 'deux' },
+        h('div', { class: 'champ' }, h('label', { for: 'marque-nom' }, 'Nom d’affichage'), nomAffiche, h('span', { class: 'aide' }, 'Remplace le nom dans la barre latérale de cet appareil.')),
+        h('div', { class: 'champ' }, h('label', { for: 'marque-signature' }, 'Signature du conseiller'), signature, h('span', { class: 'aide' }, 'Pour vos propres repères sur cet appareil.'))),
+      h('p', { class: 'petit' }, icone('alerte', { taille: 14 }), ' Ces réglages restent sur cet appareil. Les partager entre vos collègues et les faire figurer sur les pages mémorial demandera un champ côté serveur : la maison en décide.')),
+    h('section', { class: 'carte pile', style: { marginTop: '1.2rem' } },
       h('h2', null, 'Le logo de votre ', h('em', null, 'agence')),
       h('p', { class: 'petit', id: 'logo-aide' }, 'Il peut figurer, discrètement, sur les cartes QR, la page mémorial et le pack promotionnel. PNG, JPEG ou WebP, 2 Mo au plus.'),
       apercu, fichier,

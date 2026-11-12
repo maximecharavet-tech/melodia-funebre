@@ -7,7 +7,7 @@
 <meta name="description" content="La console des agences partenaires de Melodia Funèbre : dossiers, questionnaire, composition, QR codes et pages mémorial.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#040407">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="dark light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Melodia Pro">
 <link rel="manifest" href="/pro.webmanifest">
@@ -16,6 +16,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/icons/icon-180.png">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
+<script src="/assets/js/pro/theme-init.js"></script>
 <link rel="stylesheet" href="/assets/css/pro.css">
 </head>
 <body>
@@ -39,12 +40,17 @@
     <header class="entete">
       <label class="recherche">
         <span class="sr">Rechercher un dossier</span>
-        <input id="recherche" type="search" placeholder="Rechercher un dossier  ( / )" autocomplete="off">
+        <span class="ico" id="ico-recherche"></span>
+        <input id="recherche" type="search" placeholder="Rechercher un dossier" autocomplete="off">
+        <kbd aria-hidden="true">/</kbd>
       </label>
       <div class="org">
         <label class="sr" for="choix-org">Agence</label>
         <select id="choix-org" hidden></select>
-        <a class="btn btn-or" href="#/nouveau" id="btn-nouveau" title="Nouveau dossier (N)">✚ <span>Nouveau dossier</span></a>
+        <button type="button" class="bouton-icone cache-petit" id="btn-palette" aria-label="Palette de commandes (Ctrl K)" title="Palette de commandes (Ctrl/⌘ K)"></button>
+        <span id="zone-notifs"></span>
+        <button type="button" class="bouton-icone" id="btn-theme" aria-label="Changer de thème" title="Thème clair / sombre (T)"></button>
+        <a class="btn btn-or" href="#/nouveau" id="btn-nouveau" title="Nouveau dossier (N)"><span id="ico-nouveau" aria-hidden="true"></span> <span>Nouveau dossier</span></a>
       </div>
     </header>
     <main id="vue" class="vue" tabindex="-1" aria-live="polite" aria-busy="true">

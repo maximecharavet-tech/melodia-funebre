@@ -2,6 +2,7 @@
   "nav": {
     "journee": "Ma journée",
     "dossiers": "Dossiers",
+    "statistiques": "Statistiques",
     "nouveau": "Nouveau dossier",
     "qr": "QR & impressions",
     "bibliotheque": "Bibliothèque",
@@ -56,6 +57,6 @@
     "texte": "Connectez-vous avec le compte de votre agence pour retrouver vos dossiers.",
     "bouton": "Se connecter",
     "demo": "Découvrir en démonstration",
-    "demo_bandeau": "Démonstration : rien n’est envoyé, rien n’est facturé. Les données restent sur cet appareil."
+    "demo_bandeau": "Démonstration : rien n’est envoyé, rien n’est facturé, les données restent sur cet appareil. Les dossiers « Exemple » servent à découvrir la console."
   }
 }

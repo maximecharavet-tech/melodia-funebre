@@ -27,13 +27,14 @@ function etape(nom, ok, detail = '') { resultats.push({ nom, ok }); console.log(
 
 async function parcours(largeur, hauteur, suffixe, complet) {
   const ctx = await navigateur.newContext({ viewport: { width: largeur, height: hauteur }, acceptDownloads: true, locale: 'fr-FR', deviceScaleFactor: 1 });
+  await ctx.addInitScript(() => localStorage.setItem('melodia_pro_visite', '1')); // la visite guidée a ses propres essais
   const page = await ctx.newPage();
   const erreurs = [];
   page.on('pageerror', (e) => erreurs.push(e.message));
   page.on('console', (m) => { if (m.type() === 'error' && !/favicon|Failed to load resource.*404/.test(m.text())) erreurs.push(m.text()); });
   page.on('dialog', (d) => d.accept());
 
-  await page.goto(url + '/pro?demo=1');
+  await page.goto(url + '/pro?demo=1&vide=1'); // compte vierge : le parcours crée son propre dossier
   await page.getByRole('heading', { level: 1, name: /Ma journée/ }).waitFor();
   etape(`[${suffixe}] la console s’ouvre en démonstration, sous la CSP de /pro`, true);
   await page.screenshot({ path: `${CAPTURES}/${suffixe}-1-journee.png`, fullPage: false });

@@ -113,10 +113,64 @@ const ORG_DEMO = 'demo-agence';
 
 function etatInitial() {
   return {
+    v: 2,
     orgs: [{ id: ORG_DEMO, nom: 'Pompes funèbres de démonstration', statut: 'valide', cobranding: true, siret: '73282932000074', email: 'contact@agence-demo.fr', role: 'owner', logo: null }],
     dossiers: [], questionnaires: {}, paroles: {}, pistes: {}, qr: {}, essais: 0, journal: [], seq: 1,
     equipe: [{ id: 'm-1', email: 'vous@agence-demo.fr', role: 'owner', statut: 'actif' }], invitations: []
   };
+}
+
+/**
+ * Dossiers d'exemple de la démonstration (?demo=1). Ils portent `exemple: true`,
+ * s'affichent avec une pastille « Exemple » et restent sur l'appareil. Les prénoms
+ * sont des prénoms d'usage courants, sans nom de famille. La chanson écoutée est
+ * une composition de démonstration de la maison. Aucun chiffre n'est fixé à
+ * l'avance : les statistiques sont calculées à partir de ces dossiers.
+ */
+function graine(audio) {
+  const e = etatInitial();
+  const maintenant = Date.now();
+  const H = 3600e3, J = 24 * H;
+  const iso = (dt) => new Date(maintenant + dt).toISOString();
+  const jour = (dt) => iso(dt).slice(0, 10);
+  const fiches = [
+    { p: 'Henri', st: 'paroles_a_valider', cree: -2 * J, maj: -3 * H, cer: 30 * H, mode: 'payant', style: 'Chanson française', rite: 'civil', titre: 'Le jardin d’Henri', parole: true, n: -26000, d: -3 },
+    { p: 'Colette', st: 'livre', cree: -9 * J, maj: -6 * J, cer: -7 * J, mode: 'payant', style: 'Piano classique', rite: 'catholique', titre: 'Colette, la lumière', parole: true, piste: true, n: -31000, d: -10 },
+    { p: 'Joseph', st: 'livre', cree: -21 * J, maj: -18 * J, cer: -19 * J, mode: 'essai', style: 'Folk acoustique', rite: 'civil', titre: 'Pour Joseph', parole: true, piste: true, n: -29500, d: -22 },
+    { p: 'Marcel', st: 'controle_maison', cree: -2 * J, maj: -1 * H, cer: 5 * J, mode: 'payant', style: 'Jazz doux', rite: 'civil', titre: 'Marcel au piano', parole: true, piste: true, n: -33000, d: -3 },
+    { p: 'Odette', st: 'musique_en_cours', cree: -1 * J, maj: -20 * 60e3, cer: 6 * J, mode: 'essai', style: 'Chanson française', rite: 'protestant', titre: 'Odette', parole: true, n: -30000, d: -2 },
+    { p: 'Lucien', st: 'complet', cree: -3 * H, maj: -2 * H, cer: 9 * J, mode: null, style: 'Variété', rite: 'catholique', titre: '', n: -27000, d: -1 },
+    { p: 'Simone', st: 'brouillon', cree: -5 * J, maj: -4 * J, cer: null, mode: null, style: '', rite: '', titre: '', n: -28000, d: -5 }
+  ];
+  fiches.forEach((f, i) => {
+    const id = 'exemple-' + (i + 1);
+    e.dossiers.push({
+      id, reference: 'MF-EX' + String(i + 1).padStart(3, '0'), status: f.st, paid: f.mode === 'payant' && !['brouillon', 'complet'].includes(f.st), mode: f.mode, offre_id: f.mode === 'payant' ? 'essentiel' : null,
+      prenom: f.p, titre: f.titre, ceremonie_le: f.cer == null ? null : iso(f.cer), date_limite: f.cer == null ? null : iso(f.cer - 12 * H), org_id: ORG_DEMO,
+      created_at: iso(f.cree), updated_at: iso(f.maj), questionnaire_version: 1, exemple: true
+    });
+    e.questionnaires[id] = [{ version: 1, donnees: {
+      defunt: { prenom: f.p, genre: 'il', naissance: jour(f.n * J), deces: jour(f.d * J) },
+      vie: { metier: 'exemple', traits: ['discret·e'] }, musique: { style: f.style, energie: 35, instruments: ['piano'], instruments_eviter: [], artistes: [] },
+      ceremonie: { rite: f.rite, date_ceremonie: f.cer == null ? '' : iso(f.cer).slice(0, 16) }, message: { titre: f.titre, ton: 'serein' },
+      consentements: { visibilite: 'lien' }, offre: { mode: f.mode || 'essai' }
+    } }];
+    if (f.parole) e.paroles[id] = [{ version: 1, titre: f.titre, paroles: '[Couplet 1]\nExemple de paroles pour la démonstration.\n\n[Refrain]\nElles se remplacent par celles de votre dossier.', prompt_musique: 'gentle strings, intimate', auteur: 'agent', created_at: iso(f.maj - H) }];
+    if (f.piste) e.pistes[id] = [{ id: 'p-ex' + (i + 1), version: 1, url: audio, duree_s: null, mode: f.mode === 'essai' ? 'essai' : 'complet', valide_maison: f.st === 'livre' }];
+    if (f.st === 'livre') e.qr[id] = { jeton: 'EXEMPLE' + String(i + 1).padStart(5, '0'), visibilite: 'lien', actif: true, afficher_paroles: false, mot_famille: '', scans: 0, code: false, url: 'https://melodia-funebre.fr/m/EXEMPLE' + String(i + 1).padStart(5, '0') };
+    const etapes = { brouillon: ['brouillon'], complet: ['brouillon', 'complet'], paroles_a_valider: ['brouillon', 'complet', 'paye', 'paroles_en_cours', 'paroles_a_valider'],
+      musique_en_cours: ['brouillon', 'complet', 'essai_accorde', 'paroles_en_cours', 'paroles_a_valider', 'musique_en_cours'],
+      controle_maison: ['brouillon', 'complet', 'paye', 'paroles_en_cours', 'paroles_a_valider', 'musique_en_cours', 'controle_maison'],
+      livre: ['brouillon', 'complet', f.mode === 'essai' ? 'essai_accorde' : 'paye', 'paroles_en_cours', 'paroles_a_valider', 'musique_en_cours', 'controle_maison', 'livre'] }[f.st];
+    const debut = f.cree, fin = f.maj;
+    etapes.forEach((texte, k) => {
+      const quand = iso(debut + ((fin - debut) * k) / Math.max(1, etapes.length - 1));
+      e.journal.unshift({ quand, dossier: id, texte });
+    });
+  });
+  e.journal.sort((a, b) => (a.quand < b.quand ? 1 : -1));
+  e.seq = fiches.length + 1;
+  return e;
 }
 
 function hasard(n) {
@@ -128,9 +182,17 @@ function hasard(n) {
 class Demo {
   constructor() { this.demo = true; this.sondage = 1500; this.audio = null; }
 
-  async etat() { return (await lire('demo', 'etat')) || etatInitial(); }
+  async etat() {
+    const stocke = await lire('demo', 'etat');
+    if (stocke && (stocke.v || stocke.dossiers.length)) return stocke;
+    // première ouverture : dossiers d'exemple, sauf ?vide=1 (compte vierge)
+    const e = sessionStorage.getItem('melodia_pro_demo_vide') === '1' ? etatInitial() : graine(await this.pisteDemo());
+    await this.poser(e);
+    return e;
+  }
   async poser(e) { await ecrire('demo', 'etat', e); }
-  async reinitialiser() { await this.poser(etatInitial()); }
+  /** Repart d'un compte vierge (vide = true) ou remet les dossiers d'exemple. */
+  async reinitialiser(vide = false) { await this.poser(vide ? etatInitial() : graine(await this.pisteDemo())); }
 
   async noter(e, id, texte) { e.journal.unshift({ quand: new Date().toISOString(), dossier: id, texte }); e.journal = e.journal.slice(0, 200); }
 
@@ -413,8 +475,9 @@ class Demo {
 /** Démonstration (?demo=1, mémorisée pour l'onglet), API si une session existe, sinon null. */
 export function choisirDonnees() {
   if (/[?&]demo=1(?:&|$)/.test(location.search)) sessionStorage.setItem('melodia_pro_demo', '1');
+  if (/[?&]vide=1(?:&|$)/.test(location.search)) sessionStorage.setItem('melodia_pro_demo_vide', '1');
   if (sessionStorage.getItem('melodia_pro_demo') === '1') return new Demo();
   return aUneSession() ? new Api() : null;
 }
 
-export function quitterDemo() { sessionStorage.removeItem('melodia_pro_demo'); }
+export function quitterDemo() { sessionStorage.removeItem('melodia_pro_demo'); sessionStorage.removeItem('melodia_pro_demo_vide'); }

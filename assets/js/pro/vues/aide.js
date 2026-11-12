@@ -1,5 +1,7 @@
 // Aide : le déroulé, les raccourcis, les réponses aux questions fréquentes.
 import { h, titre, media } from '../ui.js';
+import { RACCOURCIS } from '../palette.js';
+import { lancerVisite } from '../visite.js';
 
 const FAQ = [
   ['Combien de temps faut-il pour recevoir une chanson ?', 'Les paroles arrivent en quelques minutes. Après votre relecture, la composition prend quelques minutes encore, puis la maison écoute la chanson avant de vous la confier.'],
@@ -17,7 +19,9 @@ export async function rendre(el) {
       h('ol', { class: 'frise' }, ['Le questionnaire, seul ou avec la famille', 'Le règlement par l’agence, ou la composition d’essai', 'La relecture des paroles et de la description musicale', 'La composition, puis l’écoute par la maison', 'La livraison : chanson, QR, page mémorial'].map((x) => h('li', null, x)))),
     h('section', { class: 'pile', style: { marginTop: '1.2rem' } }, FAQ.map(([q, r]) => h('details', { class: 'carte' },
       h('summary', { style: { cursor: 'pointer', minHeight: '44px', display: 'flex', alignItems: 'center' } }, q), h('p', { class: 'discret' }, r)))),
-    h('section', { class: 'carte', style: { marginTop: '1.2rem' } }, h('h2', null, 'Raccourcis clavier'),
-      h('p', null, h('span', { class: 'mono' }, 'N'), ' nouveau dossier · ', h('span', { class: 'mono' }, '/'), ' rechercher')),
+    h('section', { class: 'carte pile', style: { marginTop: '1.2rem' } }, h('h2', null, 'Raccourcis ', h('em', null, 'clavier')),
+      h('dl', { class: 'raccourcis-liste' }, RACCOURCIS.flatMap(([touches, desc]) => [
+        h('dt', null, desc), h('dd', null, touches.map((x, i) => [i ? ' ' : '', h('kbd', null, x)]))])),
+      h('div', { class: 'rangee' }, h('button', { class: 'btn', type: 'button', onclick: () => { location.hash = '#/journee'; setTimeout(() => lancerVisite({ force: true }), 400); } }, 'Relancer la visite guidée'))),
     h('p', { class: 'petit', style: { marginTop: '1.2rem' } }, 'Une question ? ', h('a', { href: 'mailto:contact@melodia-funebre.fr' }, 'contact@melodia-funebre.fr')));
 }
