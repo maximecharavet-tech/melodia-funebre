@@ -44,9 +44,14 @@ export async function rendre(el, ctx) {
 
     zone.append(h('section', { class: 'carte pile' }, h('h2', null, 'Tarifs agence'),
       h('p', { class: 'petit' }, 'En centimes. Vide : tarif non fixé, le paiement est alors refusé avec un message clair.'),
+      // Repère v3 : le site public promet 60 % à l'agence ; le tarif agence
+      // cohérent vaut donc 40 % du prix public. Simple indication, rien n'est saisi.
+      h('p', { class: 'petit' }, 'Cohérence avec le site public (« l’agence garde 60 % ») : tarif agence = 40 % du prix public, indiqué en repère sous chaque offre. Décision de la maison.'),
       a.offres.map((o) => {
         const i = h('input', { type: 'number', min: 0, step: 1, value: o.prix_cents == null ? '' : o.prix_cents, placeholder: 'à fixer', 'aria-label': 'Tarif ' + o.nom });
-        return h('div', { class: 'rangee' }, h('span', { style: { flex: '1 1 200px' } }, o.nom, ' · ', h('span', { class: 'petit' }, prix(o.prix_cents))), i,
+        const repere = o.prix_public_cents == null ? null : Math.round(o.prix_public_cents * 0.4);
+        return h('div', { class: 'rangee' }, h('span', { style: { flex: '1 1 200px' } }, o.nom, ' · ', h('span', { class: 'petit' }, prix(o.prix_cents)),
+          repere == null ? null : h('span', { class: 'petit discret' }, ' · repère 40 % : ' + repere + ' centimes')), i,
           h('button', { class: 'btn btn-petit', type: 'button', onclick: () => act({ action: 'offre', id: o.id, price_cents: i.value === '' ? null : i.value }) }, 'Enregistrer'));
       })));
 

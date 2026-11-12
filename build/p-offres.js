@@ -52,6 +52,15 @@ module.exports = {
       <div class="eyebrow reveal in">Offres et tarifs</div>
       <h1 class="h-hero reveal in reveal-d1">Trois façons<br>de dire <em>adieu.</em></h1>
       <p class="lead reveal in reveal-d2" style="margin-top:1.8rem;">Paiement sécurisé, entretien sous vingt-quatre heures, aucun droit de diffusion à régler. Et si l'œuvre ne vous touche pas, nous la reprenons.</p>
+      <!-- Deux gestes dès l'arrivée (v3) : commencer seul, ou être
+           guidé au téléphone. Une famille en deuil n'a pas toujours la
+           force de remplir un formulaire, et elle doit le savoir avant
+           d'avoir à faire défiler trois sections. -->
+      <div class="hero-actions reveal in reveal-d3" style="margin-top:2rem;">
+        <a href="#commander" class="btn btn-gold btn-lg">Commencer ma commande</a>
+        <button type="button" class="btn btn-outline btn-lg" data-rappel>${ICON.phone} Être rappelé</button>
+      </div>
+      <p class="note reveal in reveal-d4" style="margin-top:1rem;">Trois minutes en ligne · ou réservez l'entretien et réglez après</p>
     </div>
   </section>
 
@@ -146,7 +155,7 @@ ${P.urgency()}
       <div class="center reveal" style="margin-bottom:3rem;">
         <div class="eyebrow">Votre commande</div>
         <h2 class="h-xl">Racontez-nous <em>qui il était.</em></h2>
-        <p class="lead" style="margin-top:1.2rem;">Six étapes courtes, trois minutes en tout. Vous pouvez vous arrêter et revenir : votre brouillon est conservé sur cet appareil.</p>
+        <p class="lead" style="margin-top:1.2rem;">Six étapes courtes, trois minutes en tout. Seuls son prénom et vos coordonnées sont indispensables : le reste peut se dire au téléphone. Votre brouillon est conservé sur cet appareil.</p>
       </div>
 
       <div class="wz-layout">
@@ -203,8 +212,12 @@ ${optionsBloc}
           <div class="wz-step">
             <h3 class="wz-title">Son portrait, en quelques mots</h3>
             <p class="wz-sub">Le concret vaut mieux que le beau. « Il sifflait en marchant » nous sert davantage que « c'était quelqu'un de bien ».</p>
+            <!-- Étape facultative (v3) : l'entretien de cinq minutes recueille
+                 de toute façon ce portrait. L'exiger ici retenait des familles
+                 qui n'avaient pas la force de l'écrire. -->
+            <p class="wz-passer"><button type="button" class="lien-bouton" data-wz-goto="4">Je préfère tout raconter au téléphone</button> — nous poserons les questions pendant l'entretien.</p>
             <div class="field">
-              <label class="field-label" for="o-traits">Trois traits de caractère *</label>
+              <label class="field-label" for="o-traits">Trois traits de caractère</label>
               <input class="field-input" id="o-traits" placeholder="têtu, généreux, taquin">
               <div class="field-err"></div>
             </div>
@@ -277,10 +290,25 @@ ${optionsBloc}
           <!-- Étape 6 -->
           <div class="wz-step">
             <h3 class="wz-title">Tout est prêt.</h3>
-            <p class="wz-sub">Vérifiez le récapitulatif ci-contre, puis réglez en ligne — ou enregistrez et réglez après l'entretien.</p>
+            <p class="wz-sub">Vérifiez le récapitulatif, puis choisissez : régler en ligne maintenant, ou réserver l'entretien et régler après.</p>
             <div class="form-msg" id="o-msg"></div>
-            <div id="paypal-zone" style="min-height:46px;margin-bottom:1rem;"></div>
-            <button class="btn btn-outline btn-block" id="o-submit" type="button" data-act="sendOrder">Enregistrer et régler après l'entretien</button>
+            <!-- Deux options à égalité (v3). « Régler après l'entretien »
+                 était présenté comme un second choix, en bouton secondaire ;
+                 c'est pourtant ce qui rassure le plus une famille, la nuit ou
+                 le week-end. Identifiants et data-act inchangés : le flux
+                 PayPal et l'enregistrement ne bougent pas. -->
+            <div class="paiement-choix">
+              <div class="paiement-option">
+                <h4 class="paiement-titre">Régler maintenant</h4>
+                <p class="paiement-texte">Paiement sécurisé par PayPal. La composition démarre dès l'entretien.</p>
+                <div id="paypal-zone" style="min-height:46px;"></div>
+              </div>
+              <div class="paiement-option">
+                <h4 class="paiement-titre">Réserver l'entretien, régler après</h4>
+                <p class="paiement-texte">Rien n'est prélevé aujourd'hui. Nous vous rappelons, et vous réglez une fois l'entretien passé.</p>
+                <button class="btn btn-outline btn-block" id="o-submit" type="button" data-act="sendOrder">Réserver l'entretien</button>
+              </div>
+            </div>
             <p style="font-size:.78rem;color:var(--dust);margin-top:1rem;line-height:1.6;">Aucun prélèvement n'est effectué tant que vous n'avez pas validé le paiement. Vous pouvez annuler sans frais jusqu'au début de la composition.</p>
             <div class="wz-actions"><button type="button" class="btn btn-ghost" data-wz-prev>${ICON.arrowL} Retour</button></div>
           </div>

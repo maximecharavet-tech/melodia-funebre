@@ -293,7 +293,7 @@
       "price": 299,
       "desc": "L'hommage complet : plus de choix, plus de sérénité.",
       "featured": true,
-      "tag": "Le plus choisi",
+      "tag": "Notre conseil",
       "feats": [
         "Tout ce que comprend Essentiel",
         "Deux versions au choix",
@@ -332,7 +332,7 @@
     },
     {
       "id": "temoin-2",
-      "visible": true,
+      "visible": false,
       "stars": 5,
       "text": "En trente ans de métier, je n'avais jamais vu une famille redemander la musique trois fois après la cérémonie. Depuis, je le propose à chaque premier rendez-vous.",
       "who": "Directeur d'agence de pompes funèbres — Lyon"
@@ -387,13 +387,13 @@
       "id": "faq-6",
       "visible": true,
       "q": "Peut-on écouter avant de payer ?",
-      "a": "Vous pouvez écouter les {{HOMMAGES}} hommages de démonstration sur la page Écouter. Pour les agences funéraires, la première composition est offerte : vous la présentez à une famille, et vous décidez ensuite."
+      "a": "Vous pouvez écouter les {{HOMMAGES}} hommages de démonstration sur la page Écouter. Pour les agences funéraires, une composition d'essai est offerte une fois par agence, d'environ deux minutes trente, une fois le compte vérifié : vous la faites écouter à une famille, et vous décidez ensuite."
     },
     {
       "id": "faq-7",
       "visible": true,
       "q": "Comment se passe le paiement ?",
-      "a": "Par carte bancaire ou PayPal, en paiement sécurisé au moment de la commande. Vous pouvez aussi enregistrer votre commande et régler après l'entretien téléphonique. Rétractation de 14 jours dans les conditions prévues par la loi."
+      "a": "Par PayPal, en paiement sécurisé, au moment de la commande. Vous pouvez aussi enregistrer votre commande et régler après l'entretien téléphonique. Rétractation de 14 jours dans les conditions prévues par la loi."
     },
     {
       "id": "faq-8",

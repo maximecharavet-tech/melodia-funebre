@@ -543,20 +543,28 @@
     var rPrice = $('#calc-price', calc);
     var MARGE = 0.6; /* 60 % reversés à l'agence */
     var euro = function (n) { return n.toLocaleString('fr-FR') + ' €'; };
+    /* Le taux de prise n'est plus figé (v3) : aucune mesure n'existe
+       encore, c'est donc l'hypothèse du dirigeant qui compte, pas la
+       nôtre. Sans curseur (ancienne page en cache), on garde 25 %. */
+    var rTaux = $('#calc-taux', calc);
     var update = function () {
       var vol = parseInt(rVol.value, 10);
       var price = parseInt(rPrice.value, 10);
-      /* Hypothèse affichée : environ une famille sur quatre retient l'hommage */
-      var taux = 0.25;
+      var taux = rTaux ? parseInt(rTaux.value, 10) / 100 : 0.25;
       var ventes = Math.round(vol * taux);
       var moisNet = Math.round(ventes * price * MARGE);
       $('#calc-volume-val', calc).textContent = vol + ' obsèques / mois';
       $('#calc-price-val', calc).textContent = euro(price);
+      if (rTaux) $('#calc-taux-val', calc).textContent = Math.round(taux * 100) + ' %';
       $('#calc-out-ventes', calc).textContent = ventes;
       $('#calc-out-mois', calc).textContent = euro(moisNet);
       $('#calc-out-an', calc).textContent = euro(moisNet * 12);
     };
-    [rVol, rPrice].forEach(function (r) { if (r) r.addEventListener('input', update); });
+    [rVol, rPrice, rTaux].forEach(function (r) {
+      if (!r) return;
+      r.addEventListener('input', update);
+      r.addEventListener('change', update);
+    });
     update();
   }
 

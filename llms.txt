@@ -82,8 +82,12 @@ sont relus, corrigés et validés à la main avant livraison.
 ## Pour les pompes funèbres
 
 Les agences partenaires conservent 60 % du montant sur chaque
-hommage, sans investissement ni charge technique. La première
-composition est offerte pour être présentée à une famille.
+hommage, sans investissement ni charge technique : la famille règle
+le prix public à l'agence, la maison facture à l'agence 40 % de ce
+prix. Une composition d'essai, d'environ deux minutes trente, est
+offerte une fois par agence, après vérification du compte. Une
+démonstration de la console est ouverte sans compte :
+https://melodia-funebre.fr/pro?demo=1
 
 ## Pages
 
