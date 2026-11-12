@@ -32,7 +32,7 @@ function monter({ etape = 0, prospect = {}, inscription = {} } = {}) {
   e.envois.length = 0; e.resend.length = 0; e.taches.length = 0; e.patches.length = 0; e.resendReponse = null;
   e.colonneIdempotence = true; e.journalEnPanne = false; e.role = 'commercial';
   e.sequences = [{ id: 7, etapes: ETAPES, actif: true, nom: 'Premier contact' }];
-  e.prospects = [Object.assign({ siret: '12345678900012', email: 'Agence@Martin.fr', nom: 'Pompes Martin', ville: 'Lyon', statut: 'nouveau', oppose: false, rejete: false }, prospect)];
+  e.prospects = [Object.assign({ owner: 'julie@melodia.test', siret: '12345678900012', email: 'Agence@Martin.fr', nom: 'Pompes Martin', ville: 'Lyon', statut: 'nouveau', oppose: false, rejete: false }, prospect)];
   e.inscriptions = [Object.assign({ id: 1, owner: 'julie@melodia.test', prospect_siret: '12345678900012', sequence_id: 7, etape, prochaine_le: IL_Y_A(0.01), statut: 'active', motif_sortie: '', created_at: IL_Y_A(8) }, inscription)];
 }
 
@@ -186,7 +186,7 @@ test('actif : pas de plafond quotidien — 31 inscriptions dues, 31 envois (au-d
   faux.etat.prospects = []; faux.etat.inscriptions = [];
   for (let n = 0; n < 31; n++) {
     const siret = String(10000000000000 + n);
-    faux.etat.prospects.push({ siret, email: 'p' + n + '@agence.fr', nom: 'Agence ' + n, statut: 'nouveau' });
+    faux.etat.prospects.push({ owner: 'julie@melodia.test', siret, email: 'p' + n + '@agence.fr', nom: 'Agence ' + n, statut: 'nouveau' });
     faux.etat.inscriptions.push({ id: n + 1, owner: 'julie@melodia.test', prospect_siret: siret, sequence_id: 7, etape: 0, prochaine_le: IL_Y_A(0.01), statut: 'active', motif_sortie: '', created_at: IL_Y_A(8) });
   }
   const b = await cron.traiterEcheances({ budgetMs: 10 * 60_000 });

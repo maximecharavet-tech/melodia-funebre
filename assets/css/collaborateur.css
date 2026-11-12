@@ -333,3 +333,15 @@
 .col-statut-delivre { color: var(--or-patina); }
 .col-statut-ouvert, .col-statut-clique { color: var(--or-bright, var(--or)); }
 .col-statut-rejete, .col-statut-plainte { color: var(--red, #e07a7a); }
+
+/* ─── « Déjà envoyé » : l'état se lit d'un coup d'œil, l'envoi est bloqué ─── */
+.col-deja {
+  margin: .6rem 0; padding: .7rem .9rem;
+  border: 1px solid rgba(201,168,76,.45); border-left-width: 3px;
+  background: rgba(201,168,76,.08); color: #f4f1ea;
+  font-size: .9rem; line-height: 1.5; border-radius: 4px;
+}
+.col-deja[hidden] { display: none; }
+[data-deja="1"], [data-deja="1"]:hover { opacity: .45; cursor: not-allowed; }
+.col-kit-apercu { display: inline-block; margin: .25rem 0 0 1rem; font-size: .85rem; color: var(--or, #c9a84c); text-underline-offset: 3px; }
+.col-kit-apercu:focus-visible { outline: 2px solid var(--or, #c9a84c); outline-offset: 3px; }

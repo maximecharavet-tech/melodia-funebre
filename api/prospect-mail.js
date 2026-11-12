@@ -58,6 +58,7 @@ import {
 import { urlDesabo, entetesDesabonnement, textePiedProspection, normaliserEmail } from './_desabonnement.js';
 import { cleEnvoi, creerStoreMemoire, creerStoreSupabase, envoyerUnique, ligneAncienne } from './_envoi-unique.js';
 import { timingSafeEqual } from 'crypto';
+import { gererSequences } from './_sequences-serveur.js';
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
 import { gabaritV2, layoutValide } from './_courrier-v2.js';
 import {
@@ -427,7 +428,7 @@ export default async function handler(req, res) {
   }
 
   const d = (req.body && typeof req.body === 'object') ? req.body : {};
-  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'deja'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
+  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'deja', 'automatisation', 'sequence_enregistrer', 'sequence_sortie'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
   /* Le modèle choisi : il sert à ne pas renvoyer le même courrier au
      même destinataire le même jour. À défaut, l'objet en tient lieu. */
   const modele = String(d.modele || '').trim().slice(0, 80);
@@ -525,6 +526,11 @@ export default async function handler(req, res) {
   if (!qui) return json(res, 401, { error: 'Session absente ou expirée : reconnectez-vous.', code: 'NON_CONNECTE' });
   if (ROLES_PERMIS.indexOf(qui.role) === -1) {
     return json(res, 403, { error: 'Seuls les collaborateurs et le fondateur envoient des courriels de prospection.', code: 'INTERDIT' });
+  }
+
+  /* ─── Séquences : état de l'automatisation, inscription, sortie ─── */
+  if (mode === 'automatisation' || mode === 'sequence_enregistrer' || mode === 'sequence_sortie') {
+    return gererSequences(mode, d, qui, (code, corps) => json(res, code, corps));
   }
 
   /* ─── Quota du jour, sans rien envoyer ─── */

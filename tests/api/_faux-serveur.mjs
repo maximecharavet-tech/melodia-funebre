@@ -41,7 +41,12 @@ export function monterFauxServeur(opts = {}) {
       if (methode === 'PATCH') { etat.patches.push({ table: 'prospects', q: u.search, corps }); return rep(204, ''); }
       return rep(200, etat.prospects);
     }
-    if (u.pathname === '/rest/v1/sequences') return rep(200, etat.sequences);
+    if (u.pathname === '/rest/v1/sequences') {
+      if (methode === 'POST') { const l = Object.assign({ id: 100 + etat.sequences.length }, corps); etat.sequences.push(l); return rep(201, [l]); }
+      if (methode === 'PATCH') { const id = Number(u.searchParams.get('id').replace('eq.', '')); const l = etat.sequences.find((x) => x.id === id); if (l) Object.assign(l, corps); return rep(204, ''); }
+      const nom = u.searchParams.get('nom');
+      return rep(200, nom ? etat.sequences.filter((x) => x.nom === decodeURIComponent(nom.replace('eq.', ''))) : etat.sequences);
+    }
     if (u.pathname === '/rest/v1/sequence_inscriptions') {
       if (methode === 'PATCH') {
         etat.patches.push({ table: 'sequence_inscriptions', q: u.search, corps });
@@ -53,6 +58,18 @@ export function monterFauxServeur(opts = {}) {
         const ok = l && (!exige || new Date(exige.replace('eq.', '')).getTime() === new Date(l.prochaine_le).getTime()) && (!st || st.replace('eq.', '') === l.statut);
         if (ok) Object.assign(l, corps);
         return /return=representation/.test(init.headers?.Prefer || '') ? rep(200, ok ? [l] : []) : rep(204, '');
+      }
+      if (methode === 'POST') {
+        const nouvelles = [];
+        for (const l of corps) {
+          if (etat.inscriptions.some((x) => x.owner === l.owner && x.prospect_siret === l.prospect_siret && x.sequence_id === l.sequence_id)) continue;
+          const ligne = Object.assign({ id: 500 + etat.inscriptions.length, motif_sortie: '', created_at: new Date().toISOString() }, l);
+          etat.inscriptions.push(ligne); nouvelles.push(ligne);
+        }
+        return rep(201, nouvelles);
+      }
+      if (u.searchParams.get('owner') && !u.searchParams.get('prochaine_le')) {
+        return rep(200, etat.inscriptions.filter((x) => ['active', 'pause'].includes(x.statut)));
       }
       return rep(200, etat.inscriptions.filter((x) => x.statut === 'active' && new Date(x.prochaine_le) <= new Date(u.searchParams.get('prochaine_le').replace('lte.', ''))));
     }

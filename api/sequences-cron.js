@@ -168,7 +168,8 @@ export async function traiterEcheances({ maintenant = Date.now(), budgetMs = BUD
   const sirets = [...new Set(dues.map((i) => String(i.prospect_siret || '').replace(/[^0-9A-Za-z]/g, '')).filter(Boolean))];
   const pr = await sb('prospects?select=*&siret=in.(' + sirets.map((s) => '"' + s + '"').join(',') + ')');
   const parSiret = {};
-  (Array.isArray(pr.data) ? pr.data : []).forEach((p) => { parSiret[String(p.siret)] = p; });
+  /* Un même SIRET peut figurer chez deux commerciaux : on retient la fiche de LEUR propriétaire. */
+  (Array.isArray(pr.data) ? pr.data : []).forEach((p) => { parSiret[String(p.owner || '').toLowerCase() + '|' + String(p.siret)] = p; });
 
   const maj = (ins, corps) => sb('sequence_inscriptions?id=eq.' + ins.id, { methode: 'PATCH', corps: Object.assign({ updated_at: new Date().toISOString() }, corps) });
 
@@ -179,7 +180,7 @@ export async function traiterEcheances({ maintenant = Date.now(), budgetMs = BUD
     const seq = parSeq[String(ins.sequence_id)];
     const etapes = seq && Array.isArray(seq.etapes) ? seq.etapes : [];
     const idx = Number(ins.etape || 0);
-    const prospect = parSiret[String(ins.prospect_siret)];
+    const prospect = parSiret[String(ins.owner || '').toLowerCase() + '|' + String(ins.prospect_siret)];
 
     if (!seq || seq.actif === false) {
       await maj(ins, { statut: 'pause', motif_sortie: 'Séquence désactivée' });

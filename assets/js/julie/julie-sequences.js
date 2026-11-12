@@ -33,6 +33,7 @@
   };
 
   var etat = {
+    auto: null,   // { auto, file, pauses, tables } lu sur le serveur ; null = indisponible
     sequences: [],
     inscriptions: [],
     chargement: false,
@@ -59,6 +60,50 @@
     J.ecrireCache(CLE_INSCR, liste);
   }
 
+  // ─── Serveur : état de l'automatisation, inscription, sortie ────────
+  async function appelServeur(corps) {
+    try {
+      var r = await fetch('/api/prospect-mail', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify(corps) });
+      var d = await r.json().catch(function () { return {}; });
+      return { ok: r.ok, status: r.status, d: d };
+    } catch (e) { return { ok: false, status: 0, d: {} }; }
+  }
+
+  async function chargerAuto() {
+    var r = await appelServeur({ mode: 'automatisation' });
+    etat.auto = r.ok && r.d && r.d.ok ? r.d : null;
+  }
+
+  function dateCourte(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  function bandeauAuto() {
+    var a = etat.auto;
+    if (!a) {
+      return '<div class="jv2-auto jv2-auto-inconnu" role="status"><strong>Automatisation</strong> — état indisponible (session absente ou serveur injoignable). Rien ne part sans votre clic.</div>';
+    }
+    var titre = a.auto
+      ? '<strong class="jv2-auto-on">Automatisation active</strong> — les étapes dues partent d’elles-mêmes. Chaque envoi est journalisé, et un même courriel ne part jamais deux fois à la même personne.'
+      : '<strong class="jv2-auto-off">Automatisation désactivée</strong> — rien n’est envoyé sans votre clic ; les étapes dues apparaissent dans « Ma journée ».';
+    var file = (a.file || []).slice(0, 8).map(function (l) {
+      return '<li><span class="jv2-auto-date">' + esc(dateCourte(l.prochaine_le)) + '</span> ' + esc(l.sequence || 'Séquence') +
+        ' · étape ' + (Number(l.etape) + 1) + ' · ' + (l.canal === 'appel' ? 'appel à passer' : esc(l.modele || 'mail')) +
+        ' <span class="jv2-auto-qui">(' + esc(l.prospect_siret) + ')</span></li>';
+    }).join('');
+    var pauses = (a.pauses || []).slice(0, 6).map(function (l) {
+      return '<li><span class="jv2-auto-pause">En pause</span> ' + esc(l.prospect_siret) + ' — ' + esc(l.motif || 'à reprendre') + '</li>';
+    }).join('');
+    return '<div class="jv2-auto" role="status">' + titre +
+      (a.tables === false ? '<p class="jv2-auto-note">Les séquences serveur ne sont pas encore disponibles (migration 11 à appliquer) : les inscriptions restent dans ce navigateur.</p>' : '') +
+      (a.auto && !a.secret ? '<p class="jv2-auto-note">Le secret du cron n’est pas configuré : aucun envoi automatique ne partira.</p>' : '') +
+      (file ? '<h4 class="jv2-auto-t">' + (a.auto ? 'Partira ensuite' : 'Partirait si l’automatisation était activée') + '</h4><ul class="jv2-auto-liste">' + file + '</ul>' : '') +
+      (pauses ? '<h4 class="jv2-auto-t">À reprendre à la main</h4><ul class="jv2-auto-liste">' + pauses + '</ul>' : '') +
+      '</div>';
+  }
+
   // ─── Vue ─────────────────────────────────────────────────────────────
   function vueHTML() {
     var rows = etat.sequences.map(function (s) {
@@ -76,9 +121,10 @@
     return '' +
       '<div class="jv2 jv2-sequences">' +
         '<div class="jv2-seq-entete">' +
-          '<div class="jv2-seq-note">Séquences semi-automatiques : les étapes dues apparaissent dans « Ma journée ». Rien n’est envoyé sans votre clic.</div>' +
+          '<div class="jv2-seq-note">Les étapes dues apparaissent dans « Ma journée ». Un humain valide, sauf si l’automatisation est activée côté serveur (voir ci-dessous).</div>' +
           '<button type="button" class="btn" data-act="creer">Nouvelle séquence</button>' +
         '</div>' +
+        bandeauAuto() +
         '<ul class="jv2-seq-liste">' + (rows || '<li class="jv2-vide">Aucune séquence.</li>') + '</ul>' +
         (etat.edition ? editeurHTML() : '') +
       '</div>';
@@ -160,6 +206,7 @@
     try {
       chargerLocal();
       await chargerServeur();
+      await chargerAuto();
       cible.innerHTML = vueHTML();
       brancher(cible);
     } finally {
@@ -289,7 +336,13 @@
       } catch (_) { /* local */ }
     }
     ecrireInscriptions(etat.inscriptions);
-    if (window.melodiaToast) window.melodiaToast(compte + ' prospect' + (compte > 1 ? 's' : '') + ' inscrit' + (compte > 1 ? 's' : '') + '.');
+    /* Le serveur est ce que lit le cron : sans cette écriture, rien ne partirait jamais seul. */
+    var nouveaux = etat.inscriptions.filter(function (x) { return x.sequence_id === sequenceId && x.statut === 'active'; })
+      .map(function (x) { return { prospect_siret: x.prospect_siret }; });
+    var srv = await appelServeur({ mode: 'sequence_enregistrer', sequence: { nom: seq.nom, cible: seq.cible, actif: seq.actif !== false, etapes: seq.etapes }, inscriptions: nouveaux });
+    var suffixe = srv.ok ? '' : (srv.d && srv.d.code === 'TABLES_ABSENTES'
+      ? ' (suivi local seulement : migration 11 à appliquer pour l’envoi serveur)' : ' (non synchronisé avec le serveur : ' + ((srv.d && srv.d.code) || srv.status) + ')');
+    if (window.melodiaToast) window.melodiaToast(compte + ' prospect' + (compte > 1 ? 's' : '') + ' inscrit' + (compte > 1 ? 's' : '') + '.' + suffixe);
     rendre();
   }
 
@@ -307,6 +360,7 @@
       }
     });
     if (modifie) ecrireInscriptions(etat.inscriptions);
+    appelServeur({ mode: 'sequence_sortie', prospect_siret: siret, motif: motif || 'Sortie manuelle' });
     if (await J.consoleV2Dispo() && window.MelodiaDB) {
       try {
         var supabase = window.MelodiaDB.sb && window.MelodiaDB.sb();
