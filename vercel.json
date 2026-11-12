@@ -27,6 +27,11 @@
   },
   "redirects": [
     {
+      "source": "/lib/:chemin*",
+      "destination": "/404",
+      "permanent": false
+    },
+    {
       "source": "/documents/melodia-manuel-de-vente.pdf",
       "destination": "/api/document?fichier=manuel",
       "permanent": false

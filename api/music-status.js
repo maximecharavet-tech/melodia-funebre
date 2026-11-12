@@ -3,7 +3,7 @@
 // GET /api/music-status?taskId=xxx&kind=song|instrumental
 // ═══════════════════════════════════════════════════════════════
 
-import { garder } from '../lib/pro/garde.mjs';
+import { garder } from '../lib/pro/garde.cjs';
 
 const TIMEOUT_MS = 20000;
 const DEFAUT_URL = 'https://api.mureka.ai';

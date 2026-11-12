@@ -5,7 +5,7 @@ autonome (ABI C + JSON, aucun `wasm-bindgen`, aucun bundler). Le **même**
 fichier est chargé :
 
 - dans le navigateur par `assets/js/vendor/melodia-pro-glue.js` ;
-- dans les fonctions Vercel par `lib/pro/noyau.mjs`.
+- dans les fonctions Vercel par `lib/pro/noyau.cjs`.
 
 Une règle (prix, transition d'état, éligibilité à l'essai, nettoyage du
 prompt, contraste d'un QR) n'existe donc qu'une fois.

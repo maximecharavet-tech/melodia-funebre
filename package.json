@@ -10,6 +10,8 @@
     "dev:lan": "node scripts/serve-lan.js",
     "dev:python": "python3 -m http.server 3000",
     "check": "node scripts/check.js",
+    "test": "node --test \"tests/api/*.test.mjs\" \"tests/pro/*.test.mjs\" \"lib/julie/*.test.cjs\"",
+    "test:api": "node --test \"tests/api/*.test.mjs\"",
     "deploy": "npx vercel --prod",
     "dev:full": "npx vercel dev",
     "pages": "node build/build.js",

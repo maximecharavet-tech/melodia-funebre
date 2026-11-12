@@ -6042,3 +6042,67 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
    s'échappait du conteneur et élargissait la page de 1 200 px. */
 .pastille { position: relative; }
 .lu-seul { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+/* ═══════════════════════════════════════════════════════════════
+   v2 — Filets d'or, médaille, étapes après commande, console agences
+
+   L'or reste un trait : filets d'un pixel, contours, chiffres romains.
+   Jamais un aplat. Le mouvement est confié à recueil.js (Motion) et
+   lumiere-3d.js (three.js) ; ici, uniquement l'état final, fixe, que
+   voit aussi quiconque a demandé à réduire les animations.
+   ═══════════════════════════════════════════════════════════════ */
+.filet-or {
+  display: block; width: min(12rem, 60%); height: 1px; margin: 1.4rem 0 0;
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0), rgba(201, 168, 76, .85) 30%, rgba(227, 201, 119, .9) 50%, rgba(201, 168, 76, .85) 70%, rgba(201, 168, 76, 0));
+}
+.center .filet-or, .filet-or[data-filet="centre"] { margin-left: auto; margin-right: auto; }
+
+/* La médaille, version fixe : un disque de pierre sombre et deux filets. */
+.lumiere-3d {
+  position: relative; width: 100%; aspect-ratio: 1 / 1; max-width: 30rem; margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(16, 16, 24, .9) 0, rgba(11, 11, 17, .6) 45%, rgba(4, 4, 7, 0) 70%);
+}
+.lumiere-3d::before, .lumiere-3d::after {
+  content: ""; position: absolute; border-radius: 50%; pointer-events: none;
+  transition: opacity 2.2s var(--ease, ease);
+}
+.lumiere-3d::before { inset: 14%; border: 1px solid rgba(201, 168, 76, .7); outline: 1px solid rgba(151, 128, 60, .45); outline-offset: 9px; }
+.lumiere-3d::after {
+  inset: 20%;
+  background: radial-gradient(circle at 34% 30%, #1d1d29 0, #101018 38%, #08080d 70%, #040407 100%);
+  box-shadow: inset 0 1px 0 rgba(242, 239, 232, .06), 0 30px 60px rgba(0, 0, 0, .55);
+}
+.lumiere-3d .l3d-toile { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 2.2s var(--ease, ease); }
+.lumiere-3d.l3d-actif .l3d-toile { opacity: 1; }
+.lumiere-3d.l3d-actif::before, .lumiere-3d.l3d-actif::after { opacity: 0; }
+.lumiere-3d-final { max-width: 15rem; margin-bottom: 2rem; }
+
+/* Après la commande : quatre temps, numérotés à la romaine. */
+.etapes-apres { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.2rem; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.etape-apres { padding: 1.8rem 1.5rem; border: 1px solid var(--line-soft); border-radius: var(--radius-lg); background: rgba(11, 11, 17, .6); }
+.etape-apres p { margin-top: .6rem; color: var(--bone); line-height: 1.7; }
+.etape-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem; margin-bottom: 1rem;
+  border: 1px solid var(--line-strong); border-radius: 50%;
+  font-family: var(--ff-d); font-size: 1.05rem; color: var(--or);
+}
+@media (max-width: 900px) { .etapes-apres { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .etapes-apres { grid-template-columns: 1fr; } }
+
+.lien-bouton {
+  background: none; border: 0; padding: 0; font: inherit; color: var(--or-bright, #e3c977); cursor: pointer;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em;
+}
+.lien-bouton:focus-visible { outline: 1px solid var(--or); outline-offset: 3px; }
+
+/* La console des agences */
+.console-pro-bloc { align-items: center; gap: 4rem; }
+.liste-sobre { list-style: none; margin: 1.6rem 0 0; padding: 0; }
+.liste-sobre li { position: relative; padding: .7rem 0 .7rem 1.6rem; border-bottom: 1px solid var(--line-soft); color: var(--bone); line-height: 1.6; }
+.liste-sobre li::before { content: ""; position: absolute; left: 0; top: 1.35rem; width: .8rem; height: 1px; background: var(--or); }
+@media (max-width: 900px) { .console-pro-bloc .lumiere-3d { max-width: 16rem; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lumiere-3d::before, .lumiere-3d::after, .lumiere-3d .l3d-toile { transition: none; }
+}

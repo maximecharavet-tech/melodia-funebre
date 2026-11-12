@@ -17,6 +17,8 @@ téléchargés (`Cargo.toml` du registre crates.io, `package.json` npm).
 | Tauri 2 (`tauri`, `tauri-build`, `tauri-plugin-dialog`, `tauri-plugin-updater` optionnel) | 2.x | MIT OR Apache-2.0 | `apps/desktop` | Application Windows. |
 | `base64` (crate) | 0.22 | MIT OR Apache-2.0 | `apps/desktop` | Transfert des fichiers exportés. |
 | Capacitor (`@capacitor/core`, `@capacitor/android`, `@capacitor/cli`) | 7.6.10 | MIT | `apps/android` | Application Android. Le projet `android/` est celui que génère `cap add android`, retouché (App Links, icônes, couleurs). |
+| Motion (`motion`, avec `motion-dom`, `motion-utils`) | 14.12.0 | MIT — © Motion B.V. | `assets/js/vendor/motion-mini-14.12.min.js` (11 Ko) | Site public (v2) : `animate` (version *mini*, WAAPI), `inView`, `stagger`, pour les filets d'or et les entrées lentes de `assets/js/recueil.js`. |
+| three.js (`three`) | 0.187.0 (r187) | MIT — © 2010-2026 three.js authors | `assets/js/vendor/three-melodia-0.187.min.js` (≈ 540 Ko, 135 Ko compressés) | Site public (v2) : la médaille 3D de `assets/js/lumiere-3d.js`, chargée à la demande sur grand écran seulement. Sous-ensemble : rendu WebGL, scène, caméra, cylindre, tore, matériaux standard/basique, lumières. |
 
 ## Outils de test et de construction (jamais servis)
 
@@ -45,3 +47,19 @@ téléchargés (`Cargo.toml` du registre crates.io, `package.json` npm).
 ## Polices et logos
 
 Polices déjà hébergées par le site (Cormorant Garamond, Jost, JetBrains Mono — OFL, voir `assets/fonts/LICENCE.txt`). Logos officiels de Melodia Funèbre utilisés tels quels, jamais redessinés.
+
+## Recette des paquets réduits (v2, 12/11/2026)
+
+Construits hors dépôt avec esbuild 0.28.2 (MIT), à partir des paquets npm officiels ; aucun fichier source modifié.
+
+```sh
+npm install motion@14.12.0 three@0.187.0 esbuild@0.28.2
+# entree-motion.js : export { animate } from 'motion/mini'; export { inView, stagger } from 'motion';
+npx esbuild entree-motion.js --bundle --minify --format=iife --global-name=MelodiaMotion --target=es2019
+# entree-three.js : export { WebGLRenderer, Scene, PerspectiveCamera, TorusGeometry, CylinderGeometry,
+#   MeshStandardMaterial, MeshBasicMaterial, Mesh, Group, AmbientLight, DirectionalLight, PointLight,
+#   Color, SRGBColorSpace, ACESFilmicToneMapping, Fog } from 'three';
+npx esbuild entree-three.js --bundle --minify --format=esm --target=es2020
+```
+
+Un en-tête `/*! … */` rappelle la licence MIT en tête de chaque fichier servi.

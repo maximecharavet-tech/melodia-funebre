@@ -31,7 +31,7 @@
 <meta name="format-detection" content="telephone=no">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/style.css?v=aa8861a7">
+<link rel="stylesheet" href="/assets/css/style.css?v=ba9cbd1a">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -1432,7 +1432,12 @@ Et l’amour comme unique richesse</blockquote>
   <!-- ═══ APPEL FINAL ═══ -->
   <section class="section section-top" style="padding-bottom:6rem;">
     <div class="wrap center reveal">
+      <!-- Un seul geste en volume sur tout l'accueil : la médaille, avant
+           le dernier appel. Version fixe en CSS ; la 3D ne s'y ajoute que
+           sur grand écran capable (voir assets/js/lumiere-3d.js). -->
+      <div class="lumiere-3d lumiere-3d-final" data-lumiere-3d role="img" aria-label="Une médaille sombre cerclée d'un filet d'or, qu'une lumière chaude effleure"></div>
       <h2 class="h-xl">Offrez-leur la chanson<br>qu'ils <em>méritaient.</em></h2>
+      <span class="filet-or" data-filet="centre" aria-hidden="true"></span>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Il n'y aura pas de deuxième cérémonie. Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape — et si l'œuvre ne vous touche pas, nous la reprenons.</p>
       <div class="hero-actions">
         <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>
@@ -1480,6 +1485,7 @@ Et l’amour comme unique richesse</blockquote>
           <li><a href="/professionnels">Pour les pompes funèbres</a></li>
           <li><a href="/professionnels#partenariat">Devenir partenaire</a></li>
           <li><a href="/professionnels#calculateur">Simuler mes revenus</a></li>
+          <li><a href="/professionnels#console">La console des agences</a></li>
           <li><a href="/qui-sommes-nous">Qui sommes-nous</a></li>
           <li><a href="/rejoindre">Nous rejoindre</a></li>
           <li><a href="/compte">Connexion partenaire</a></li>
@@ -1555,6 +1561,9 @@ Et l’amour comme unique richesse</blockquote>
 <script src="/assets/js/ornements.js?v=b37cef91"></script>
 <script src="/assets/js/motion.js?v=59d24715"></script>
 <script src="/assets/js/catalogue.js?v=937566dc"></script>
+<script src="/assets/js/vendor/motion-mini-14.12.min.js?v=c2bb143b"></script>
+<script src="/assets/js/recueil.js?v=8f46517e"></script>
+<script src="/assets/js/lumiere-3d.js?v=0bf7cd76"></script>
 
 <!-- Mesure d'audience Vercel : sans cookie, activable depuis le tableau de bord.
      Les scripts restent inertes tant que la fonctionnalité n'est pas activée. -->

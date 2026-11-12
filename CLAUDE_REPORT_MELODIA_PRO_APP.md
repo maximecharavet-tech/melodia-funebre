@@ -34,7 +34,7 @@ Marque blanche (décision n° 6) : aucun nom de fournisseur dans l'interface, le
 274 fichiers, +18 912 / −50 lignes (`git diff --shortstat main...HEAD`).
 
 - **Noyau Rust** : `melodia-pro-wasm/` (Cargo, `src/{lib,texte,siret,prix,promo,statut,essai,questionnaire,prompt,qr}.rs`, `BUILD.md`), `assets/js/vendor/melodia_pro.wasm`, `assets/js/vendor/melodia-pro-glue.js`, `scripts/build-wasm.sh` (étendu).
-- **Serveur** : `api/pro/{me,orgs,dossiers,checkout,promo,stripe-webhook,portal,trial,lyrics,music,job-tick,qr,memorial,scan,admin,export,invitations}.js` ; `lib/pro/{socle,depot,noyau,fournisseurs,paiement,moteur,audio,garde}.mjs` ; `lib/pro/routes/*.mjs`.
+- **Serveur** : `api/pro/{me,orgs,dossiers,checkout,promo,stripe-webhook,portal,trial,lyrics,music,job-tick,qr,memorial,scan,admin,export,invitations}.js` ; `lib/pro/{socle,depot,noyau,fournisseurs,paiement,moteur,audio,garde}.cjs` ; `lib/pro/routes/*.cjs`.
 - **Routes historiques** : `api/generate-lyrics.js`, `api/generate-music.js`, `api/music-status.js` (garde), `api/music-config.js` (marque blanche), `assets/js/auth.js` (jeton joint par `MelodiaAI`).
 - **Console** : `pro.html`, `pro.webmanifest`, `assets/css/pro.css`, `assets/i18n/pro.fr.json`, `assets/js/pro/{app,ui,i18n,memoire,noyau,donnees,pdf,gabarits,pack}.js`, `assets/js/pro/vues/{journee,dossiers,questionnaire,fiche,qr,bibliotheque,facturation,equipe,parametres,aide,admin,memorial,invitation}.js`.
 - **Mémorial** : `assets/js/hommage.js` (+ empreinte dans `hommage.html`).

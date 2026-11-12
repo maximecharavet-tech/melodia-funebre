@@ -167,7 +167,7 @@ const confid = legal(
   <li><strong>PayPal</strong> — traitement des paiements (Melodia Funèbre n'a jamais accès à vos coordonnées bancaires) ;</li>
   <li><strong>Supabase Inc.</strong> — hébergement de la base de données (comptes, commandes et briefs). Les données sont stockées dans l'Union européenne, région Irlande (eu-west-1) ;</li>
   <li><strong>Resend</strong> — acheminement des courriels de confirmation, de suivi et de livraison ;</li>
-  <li><strong>Mistral AI</strong> (France) — aide à la rédaction des paroles à partir du brief. Les données sont traitées dans l'Union européenne.</li>
+  <li><strong>Un prestataire européen d'aide à la rédaction</strong> — première mise en forme des paroles à partir du brief, relue ensuite par nos soins. Les données sont traitées dans l'Union européenne. Le nom de ce prestataire vous est communiqué sur simple demande à l'adresse ci-dessous.</li>
 </ul>
 <p>L'hébergement du site par Vercel Inc. implique un transfert de données vers les États-Unis. Il est encadré par les clauses contractuelles types de la Commission européenne. La base de données, elle, ne quitte pas l'Union européenne.</p>
 <p>Lorsqu'une commande provient d'une agence partenaire, celle-ci a accès au statut d'avancement des commandes qu'elle a elle-même transmises.</p>

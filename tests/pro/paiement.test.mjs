@@ -1,13 +1,13 @@
 // Stripe (simulé), webhook, codes promo, code maître, essai.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { servir, enfiler } from '../../lib/pro/socle.mjs';
-import { signerStripe } from '../../lib/pro/fournisseurs.mjs';
-import webhook from '../../lib/pro/routes/stripe-webhook.mjs';
-import promo from '../../lib/pro/routes/promo.mjs';
-import checkout from '../../lib/pro/routes/checkout.mjs';
-import trial from '../../lib/pro/routes/trial.mjs';
-import dossiers from '../../lib/pro/routes/dossiers.mjs';
+import { servir, enfiler } from '../../lib/pro/socle.cjs';
+import { signerStripe } from '../../lib/pro/fournisseurs.cjs';
+import webhook from '../../lib/pro/routes/stripe-webhook.cjs';
+import promo from '../../lib/pro/routes/promo.cjs';
+import checkout from '../../lib/pro/routes/checkout.cjs';
+import trial from '../../lib/pro/routes/trial.cjs';
+import dossiers from '../../lib/pro/routes/dossiers.cjs';
 import { base, contexte, reponse, requete, utilisateur, fauxReseau, creerDossier, questionnaireComplet, ORG_A, ORG_B } from './aide.mjs';
 
 const SECRET = 'whsec_test_simule';

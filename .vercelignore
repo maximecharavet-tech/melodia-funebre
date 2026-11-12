@@ -21,3 +21,21 @@ supabase/
 # développement, rien à servir.
 .claude/
 .mcp.json
+
+# Documents de travail à la racine (plans, rapports, audit, crédits) :
+# ils nomment des fournisseurs et des décisions internes. La marque
+# blanche interdit qu'ils soient lisibles en ligne. (v2, 12/11/2026)
+/*.md
+
+# Sources et outils sans usage en ligne : documentation interne, tests,
+# applications natives, sources Rust des noyaux (le .wasm compilé, lui,
+# est dans assets/js/vendor), visuels sources.
+docs/
+tests/
+apps/
+melodia-pro-wasm/
+console-julie-wasm/
+art/
+
+# lib/ ne peut PAS être ignoré : les fonctions api/ le requièrent. Son
+# accès HTTP direct est refusé par une redirection dans vercel.json.

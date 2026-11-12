@@ -13,7 +13,7 @@ module.exports = {
      c'est ce que les moteurs suivent. */
   jsonld: [P.jsonldSite, P.jsonldOrg, P.jsonldService, P.jsonldFaq],
   intro: true,
-  scripts: ['assets/js/catalogue.js'],
+  scripts: ['assets/js/catalogue.js', 'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js', 'assets/js/lumiere-3d.js'],
   body: `
   <!-- ═══ COUVERTURE ═══ -->
   <section class="hero-video">
@@ -351,7 +351,12 @@ ${P.faq(null, true)}
   <!-- ═══ APPEL FINAL ═══ -->
   <section class="section section-top" style="padding-bottom:6rem;">
     <div class="wrap center reveal">
+      <!-- Un seul geste en volume sur tout l'accueil : la médaille, avant
+           le dernier appel. Version fixe en CSS ; la 3D ne s'y ajoute que
+           sur grand écran capable (voir assets/js/lumiere-3d.js). -->
+      <div class="lumiere-3d lumiere-3d-final" data-lumiere-3d role="img" aria-label="Une médaille sombre cerclée d'un filet d'or, qu'une lumière chaude effleure"></div>
       <h2 class="h-xl">Offrez-leur la chanson<br>qu'ils <em>méritaient.</em></h2>
+      <span class="filet-or" data-filet="centre" aria-hidden="true"></span>
       <p class="lead" style="margin:1.6rem auto 2.4rem;">Il n'y aura pas de deuxième cérémonie. Commande en trois minutes, entretien sous vingt-quatre heures, suivi en ligne à chaque étape — et si l'œuvre ne vous touche pas, nous la reprenons.</p>
       <div class="hero-actions">
         <a href="/offres" class="btn btn-gold btn-lg">Commander un hommage</a>

@@ -1,6 +1,7 @@
 const { ICON } = require('./gen.js');
 const P = require('./parts.js');
 const { OFFERS, FAQ, STYLES, OPTIONS } = require('./data.js');
+const FAQ_OFFRES = [FAQ[6], FAQ[2], FAQ[1], FAQ[5]];
 
 const offerChoices = OFFERS.map(o => `            <button type="button" class="choice${o.name === 'Prestige' ? ' selected' : ''}" data-offer="${o.name}">
               <span class="choice-title">${o.name} — ${o.price} €</span>
@@ -28,13 +29,22 @@ module.exports = {
   file: 'offres.html',
   title: 'Tarifs d\'un hommage musical, dès 149 € | Melodia Funèbre',
   desc: "Trois offres : Essentiel 149 €, Prestige 299 €, Mémorial 499 €. Livraison en 24 h, aucun droit SACEM, révision incluse, commande en ligne.",
+  image: '/assets/img/v2/og-offres.jpg',
+  imageAlt: 'Pupitre de bois sombre, partition vierge et plume de laiton éclairés par une bougie',
   /* L'entité « maison » est déclarée ici aussi : le Service la
      désigne par identifiant, et une référence dont la cible n'est
      déclarée sur aucune page lue en même temps ne se résout pas. Le
      nœud est léger, et le répéter rend le graphe de la page complet
      à lui seul. */
-  jsonld: [P.jsonldOrg, P.jsonldService, P.jsonldFil('Offres et tarifs', '/offres')],
-  scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/order.js'],
+  /* La page porte une FAQ « questions d'argent » : on la déclare, avec
+     exactement les questions affichées, ni plus ni moins. */
+  jsonld: [P.jsonldOrg, P.jsonldService, P.jsonldFil('Offres et tarifs', '/offres'), {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ_OFFRES.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } }))
+  }],
+  scripts: ['assets/js/config.js', 'assets/js/auth.js', 'assets/js/order.js',
+            'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js'],
   body: `
   <section class="section a-rosace" style="padding-top:9rem;padding-bottom:0;">
     <div class="orn-rosace-hote" data-orn-rosace="offres" data-orn-traits="3"></div>
@@ -52,7 +62,48 @@ ${P.pricing('order')}
       </div>
       <div style="margin-top:2.5rem;">${P.trustStrip()}</div>
       <p class="center reveal note" style="margin-top:1rem;">
-        Paiement PayPal et carte bancaire · Rétractation 14 jours · TVA non applicable, art. 293 B du CGI
+        Paiement sécurisé par PayPal · Rétractation 14 jours · TVA non applicable, art. 293 B du CGI
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══ APRÈS LA COMMANDE ═══
+       Une famille en deuil n'achète pas d'abord une prestation : elle
+       achète d'être prise en charge. On lui dit donc, avant qu'elle
+       paie, ce qui va se passer et quand. Chaque délai écrit ici est
+       déjà publié ailleurs sur le site (rappel, entretien, 24 h après
+       l'entretien, révision) — aucun nouveau n'est promis. -->
+  <section class="section section-tight" id="apres-commande">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.4rem;">
+        <div class="eyebrow">Après votre commande</div>
+        <h2 class="h-xl">Ce qui se passe,<br><em>et quand.</em></h2>
+        <span class="filet-or" data-filet="centre" aria-hidden="true"></span>
+      </div>
+      <ol class="etapes-apres" data-recueil>
+        <li class="etape-apres" data-recueil-item>
+          <span class="etape-num" aria-hidden="true">I</span>
+          <h3 class="h-lg">Nous vous rappelons</h3>
+          <p>Sous deux heures ouvrées, par la personne qui composera. Vous choisissez le moment de l'entretien.</p>
+        </li>
+        <li class="etape-apres" data-recueil-item>
+          <span class="etape-num" aria-hidden="true">II</span>
+          <h3 class="h-lg">Cinq minutes pour lui</h3>
+          <p>Vous nous parlez de lui ou d'elle : son métier, sa manie, la phrase qu'il répétait. Rien à préparer, rien à écrire.</p>
+        </li>
+        <li class="etape-apres" data-recueil-item>
+          <span class="etape-num" aria-hidden="true">III</span>
+          <h3 class="h-lg">L'œuvre, 24 h après</h3>
+          <p>Vingt-quatre heures après l'entretien, vous recevez la chanson, prête à être diffusée à la cérémonie.</p>
+        </li>
+        <li class="etape-apres" data-recueil-item>
+          <span class="etape-num" aria-hidden="true">IV</span>
+          <h3 class="h-lg">Vous la gardez</h3>
+          <p>Révision incluse dès Prestige. Et si l'œuvre ne vous touche pas, nous la reprenons.</p>
+        </li>
+      </ol>
+      <p class="center note reveal" style="margin-top:2rem;">
+        Vous hésitez entre deux offres ? <button type="button" class="lien-bouton" data-rappel>Être rappelé</button> — nous vous dirons honnêtement laquelle suffit.
       </p>
     </div>
   </section>
@@ -281,7 +332,7 @@ ${optionsBloc}
         <h2 class="h-xl">Les questions <em>d'argent.</em></h2>
       </div>
       <div class="reveal">
-${P.faq([FAQ[6], FAQ[2], FAQ[1], FAQ[5]])}
+${P.faq(FAQ_OFFRES)}
       </div>
     </div>
   </section>`,

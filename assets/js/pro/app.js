@@ -93,6 +93,7 @@ async function rendre() {
     if (n !== rendu) return;
     const cible = vider(vue);
     ctx.nettoyage = await mod.rendre(cible, ctx, r);
+    entree(cible);
     const titre = cible.querySelector('h1');
     document.title = (titre ? titre.textContent + ' — ' : '') + 'Melodia Funèbre Pro';
     if (titre) annoncer(titre.textContent);
@@ -103,6 +104,22 @@ async function rendre() {
     vue.setAttribute('aria-busy', 'false');
     if (r.vue !== 'questionnaire') vue.focus({ preventScroll: true });
   }
+}
+
+/* Entrée des vues (Motion, MIT) : les premiers blocs montent de quelques
+   pixels, l'un après l'autre, en moins d'une demi-seconde. C'est un outil
+   de travail : le geste doit se sentir, jamais se faire attendre. Rien
+   pour qui a demandé à réduire les animations, ni si la bibliothèque
+   n'est pas chargée — la vue est alors simplement là. */
+function entree(cible) {
+  const M = window.MelodiaMotion;
+  if (!M || !M.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const blocs = Array.from(cible.children).slice(0, 8);
+  if (!blocs.length) return;
+  try {
+    M.animate(blocs, { opacity: [0, 1], transform: ['translateY(6px)', 'translateY(0)'] },
+      { duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: M.stagger(0.05) });
+  } catch (e) { /* la vue reste visible */ }
 }
 
 async function pastilles() {

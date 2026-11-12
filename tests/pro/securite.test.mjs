@@ -1,9 +1,9 @@
 // Authentification, CORS, limite de débit, routes de génération historiques, marque blanche.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { servir, origineAutorisee, blanchir } from '../../lib/pro/socle.mjs';
-import { garder } from '../../lib/pro/garde.mjs';
-import me from '../../lib/pro/routes/me.mjs';
+import { servir, origineAutorisee, blanchir } from '../../lib/pro/socle.cjs';
+import { garder } from '../../lib/pro/garde.cjs';
+import me from '../../lib/pro/routes/me.cjs';
 import { base, contexte, reponse, requete } from './aide.mjs';
 
 const handlerMe = servir(me, { methodes: 'GET' });
@@ -69,7 +69,7 @@ test('limite de débit : 429 avec Retry-After', async () => {
 });
 
 test('route réservée à la maison', async () => {
-  const { default: admin } = await import('../../lib/pro/routes/admin.mjs');
+  const { default: admin } = await import('../../lib/pro/routes/admin.cjs');
   const h = servir(admin, { methodes: 'GET, POST', maison: true });
   const ctx = contexte(base());
   const r1 = reponse();

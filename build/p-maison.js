@@ -50,6 +50,7 @@ module.exports = {
   title: 'Qui sommes-nous — la maison Melodia Funèbre',
   desc: "La maison Melodia Funèbre : ce qu'aucun outil ne fait à notre place, et cinq façons de vérifier qu'il y a quelqu'un au bout du téléphone.",
   jsonld: [P.jsonldFil('Qui sommes-nous', '/qui-sommes-nous')],
+  scripts: ['assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js'],
   body: `
   <section class="page-head">
     <div class="wrap">
@@ -76,6 +77,7 @@ module.exports = {
       <div class="reveal">
         <div class="eyebrow">Ce qu’aucun outil ne fait</div>
         <h2 class="h-xl" style="margin-top:.8rem;">La machine ne décroche pas<br><em>le téléphone.</em></h2>
+        <span class="filet-or" data-filet aria-hidden="true"></span>
         <p class="lead" style="margin-top:1.4rem;">
           Nous n’allons pas vous raconter que tout se fait à la plume et à la guitare :
           la composition s’appuie sur des outils de création musicale assistée, et nous
@@ -111,6 +113,7 @@ ${HUMAIN.map(([t, p], i) => `        <div class="carte reveal reveal-d${(i % 3) 
       <div class="center reveal" style="margin-bottom:2.6rem;">
         <div class="eyebrow">La production</div>
         <h2 class="h-xl">Ceux qui règlent<br><em>le son.</em></h2>
+        <span class="filet-or" data-filet="centre" aria-hidden="true"></span>
         <p class="lead" style="margin:1.6rem auto 0;max-width:52rem;">
           Entre l’entretien de cinq minutes et le fichier que reçoit la famille, il y a
           des gens devant des écrans : ceux qui écrivent les paroles, ceux qui composent
@@ -240,6 +243,7 @@ ${MAISONS.map((m, i) => `        <div class="maison-carte reveal reveal-d${(i % 
       <div class="reveal center">
         <div class="eyebrow">Nous rencontrer</div>
         <h2 class="h-xl">Ne nous croyez pas sur parole.<br><em>Appelez.</em></h2>
+        <span class="filet-or" data-filet="centre" aria-hidden="true"></span>
         <p class="lead" style="margin:1.4rem auto 0;max-width:60ch;">
           Une page peut écrire n’importe quoi, et une image ne prouve plus grand-chose
           à personne. Voici cinq choses que vous pouvez vérifier vous-même, maintenant,

@@ -12,7 +12,7 @@
 //   MUREKA_MODEL     facultatif — « auto » par défaut
 // ═══════════════════════════════════════════════════════════════
 
-import { garder } from '../lib/pro/garde.mjs';
+import { garder } from '../lib/pro/garde.cjs';
 
 const TIMEOUT_MS = 30000;
 const DEFAUT_URL = 'https://api.mureka.ai';

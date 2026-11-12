@@ -1,5 +1,5 @@
-// /api/pro/export — voir lib/pro/routes/export.mjs
-import { servir } from '../../lib/pro/socle.mjs';
-import export from '../../lib/pro/routes/export.mjs';
+// /api/pro/export — voir lib/pro/routes/export.cjs
+import { servir } from '../../lib/pro/socle.cjs';
+import exporter from '../../lib/pro/routes/export.cjs';
 
-export default servir(export, { methodes: 'GET', limite: [10, 60000] });
+export default servir(exporter, { methodes: 'GET', limite: [10, 60000] });
