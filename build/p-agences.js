@@ -59,6 +59,8 @@ module.exports = {
   file: 'professionnels.html',
   title: "Hommage musical pour pompes funèbres : devenir partenaire | Melodia Funèbre",
   desc: "Solution d'hommage musical pour les pompes funèbres : page hommage, QR code, 60 % de marge, aucun investissement. Demandez une démonstration.",
+  image: '/assets/img/v2/og-professionnels.jpg',
+  imageAlt: 'Bureau d\'accueil : classeur de cuir fermé et tablette éteinte sur un plateau de bois, lumière de fenêtre',
   /* La page B2B n'avait qu'un fil d'Ariane. Elle déclare désormais la
      maison, le service tel qu'il est proposé aux agences, et les
      questions qu'elle affiche — exactement celles-là. */

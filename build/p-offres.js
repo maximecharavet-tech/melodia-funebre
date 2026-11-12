@@ -29,6 +29,8 @@ module.exports = {
   file: 'offres.html',
   title: 'Tarifs d\'un hommage musical, dès 149 € | Melodia Funèbre',
   desc: "Trois offres : Essentiel 149 €, Prestige 299 €, Mémorial 499 €. Livraison en 24 h, aucun droit SACEM, révision incluse, commande en ligne.",
+  image: '/assets/img/v2/og-offres.jpg',
+  imageAlt: 'Pupitre de bois sombre, partition vierge et plume de laiton éclairés par une bougie',
   /* L'entité « maison » est déclarée ici aussi : le Service la
      désigne par identifiant, et une référence dont la cible n'est
      déclarée sur aucune page lue en même temps ne se résout pas. Le
