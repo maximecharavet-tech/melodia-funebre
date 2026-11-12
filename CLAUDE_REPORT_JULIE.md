@@ -94,9 +94,9 @@ aucun secret / DNS / réglage Vercel ou GitHub n'a été touché.**
 | `node --test tests/api/sequences-serveur.test.mjs` (3) | vert |
 | `cargo test` (`console-julie-wasm`, 29) | vert |
 | `npm run test:julie` | vert |
-| `npm run test:sql` (PGlite installé dans `/tmp`, 47 preuves + celles de la migration 12) | vert |
+| `npm run test:sql` (PGlite installé dans `/tmp` : 47 preuves, dont celles de la migration 12) | vert |
 | `npm run check` | vert |
-| `npm test` | 170 / 171 — **1 échec préexistant** : `tests/pro/pipeline.test.mjs` « pipeline complet simulé » (Melodia Pro, hors périmètre ; il échouait déjà avant mes modifications) |
+| `npm test` | 170 / 171 — **1 échec préexistant** : `tests/pro/pipeline.test.mjs` « pipeline complet simulé » (Melodia Pro, hors périmètre ; vérifié : il échoue aussi sur `main` @ `ec3b9a1`) |
 
 ## 5. Décisions pour Maxime
 1. **Appliquer la migration `20261114_12`** (éditeur SQL Supabase) : c'est elle qui rend
