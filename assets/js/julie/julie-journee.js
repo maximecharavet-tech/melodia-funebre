@@ -635,6 +635,16 @@
       });
       if (!reponse.ok) {
         var err = await reponse.json().catch(function () { return {}; });
+        if (reponse.status === 409 || err.code === 'DEJA_ENVOYE') {
+          /* Le serveur est la source de vérité : ce modèle est déjà parti à cette adresse. */
+          if (window.melodiaToast) window.melodiaToast('Déjà envoyé à ' + (p.nom || p.email) + ' : pas de second envoi.');
+          triageSuivant(false);
+          return;
+        }
+        if (err.code === 'ENVOI_INCERTAIN') {
+          if (window.melodiaToast) window.melodiaToast('Envoi incertain : vérifiez dans Resend avant de renvoyer.');
+          return;
+        }
         if (window.melodiaToast) window.melodiaToast('Envoi refusé : ' + (err.code || reponse.status));
         if (reponse.status === 503) {
           window.location.href = 'mailto:' + encodeURIComponent(p.email) + '?subject=' + encodeURIComponent('Une chanson pour les familles');

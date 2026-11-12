@@ -523,3 +523,15 @@
   .jv2-triage { inset: 4vh 3vw; }
   .jv2-csv-rapport { grid-template-columns: 1fr; }
 }
+
+/* ─── Séquences : l'automatisation se lit d'un coup d'œil ─── */
+.jv2-auto { margin: 1rem 0; padding: 1rem 1.2rem; border: 1px solid rgba(201,168,76,.28); border-radius: 6px; background: rgba(201,168,76,.04); line-height: 1.55; }
+.jv2-auto-on { color: #8fd19e; }
+.jv2-auto-off { color: var(--or, #c9a84c); }
+.jv2-auto-t { margin: .9rem 0 .3rem; font: 500 .72rem/1 var(--ff-m, monospace); letter-spacing: .16em; text-transform: uppercase; color: var(--ash, #9a9484); }
+.jv2-auto-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; font-size: .9rem; }
+.jv2-auto-date { display: inline-block; min-width: 6.5em; color: var(--or, #c9a84c); }
+.jv2-auto-qui { color: var(--ash, #9a9484); }
+.jv2-auto-pause { color: #e0a96d; font-weight: 500; }
+.jv2-auto-note { margin: .6rem 0 0; font-size: .85rem; color: var(--ash, #9a9484); font-style: italic; }
+@media (prefers-reduced-motion: no-preference) { .jv2-auto { transition: border-color .3s; } }

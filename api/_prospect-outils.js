@@ -74,6 +74,36 @@ const BROCHURES = {
     label: 'Brochure Cérémonie (pompes funèbres & officiants)',
     chemin: 'documents/melodia-brochure-ceremonie.pdf',
     nom: 'Melodia-Funebre-Ceremonie-Pompes-funebres-Officiants.pdf'
+  },
+  'ecoute-exemples': {
+    id: 'ecoute-exemples',
+    label: 'Écoutez — exemples de musiques du site (disque d’or, liens et QR)',
+    chemin: 'documents/melodia-brochure-ecoute-exemples.pdf',
+    nom: 'Melodia-Funebre-Ecoutez-exemples-de-musiques.pdf'
+  },
+  'presentation-agences': {
+    id: 'presentation-agences',
+    label: 'Présentation agences partenaires (pompes funèbres, crématoriums, marbriers, officiants)',
+    chemin: 'documents/melodia-presentation-agences-partenaires.pdf',
+    nom: 'Melodia-Funebre-Presentation-agences-partenaires.pdf'
+  },
+  'offre-pro': {
+    id: 'offre-pro',
+    label: 'Offre Pro — questionnaire, composition, QR, plaque, mémorial',
+    chemin: 'documents/melodia-offre-pro.pdf',
+    nom: 'Melodia-Funebre-Offre-Pro.pdf'
+  },
+  'ecoute-prestige': {
+    id: 'ecoute-prestige',
+    label: 'Plaquette Écoutez prestige (disque d’or, extraits, liens et QR)',
+    chemin: 'documents/melodia-plaquette-ecoute-prestige.pdf',
+    nom: 'Melodia-Funebre-Plaquette-Ecoutez-prestige.pdf'
+  },
+  'fiche-contact-julie': {
+    id: 'fiche-contact-julie',
+    label: 'Fiche contact Julie Serve (carte de visite)',
+    chemin: 'documents/melodia-fiche-contact-julie-serve.pdf',
+    nom: 'Melodia-Funebre-Fiche-contact-Julie-Serve.pdf'
   }
 };
 const BROCHURE_IDS = Object.keys(BROCHURES);
@@ -93,18 +123,49 @@ function civilite(nom) {
   return n ? ' ' + n : '';
 }
 
+/* Civilité brute → « Monsieur » / « Madame » / '' (rien d'autre n'est inventé). */
+function civiliteLongue(brut) {
+  const c = String(brut || '').toLowerCase().replace(/[.\s]/g, '');
+  if (c === 'm' || c === 'mr' || c === 'monsieur') return 'Monsieur';
+  if (c === 'mme' || c === 'madame' || c === 'mlle' || c === 'mademoiselle') return 'Madame';
+  return '';
+}
+
+/* La formule qui suit « Bonjour » : toujours sûre.
+     civilité + nom de famille → « Bonjour Madame Dupont, »
+     prénom                    → « Bonjour Marie, »
+     seulement un nom complet  → « Bonjour Marie Dupont, » (ancien comportement)
+     sinon (rien, ou nom de famille seul sans civilité) → « Bonjour, »
+   Jamais « undefined », jamais de nom de famille nu. */
+function salutation(v) {
+  const titre = civiliteLongue(v.civ || v.civilite_brute);
+  const famille = String(v.nomFamille || v.nom_famille || '').replace(/\s+/g, ' ').trim();
+  const prenom = String(v.prenom || '').replace(/\s+/g, ' ').trim();
+  if (titre && famille) return ' ' + titre + ' ' + famille;
+  if (prenom) return ' ' + prenom;
+  const complet = String(v.nom || v.dirigeant || '').replace(/\s+/g, ' ').trim();
+  if (complet && !famille) return ' ' + complet;
+  return '';
+}
+
 function varsNormalisees(v) {
   v = v || {};
-  const nom = String(v.nom || v.dirigeant || '').replace(/\s+/g, ' ').trim();
-  const societe = String(v.societe || v.agence || '').replace(/\s+/g, ' ').trim();
+  const prenom = String(v.prenom || '').replace(/\s+/g, ' ').trim();
+  const famille = String(v.nomFamille || v.nom_famille || '').replace(/\s+/g, ' ').trim();
+  const nom = String(v.nom || v.dirigeant || [prenom, famille].filter(Boolean).join(' ')).replace(/\s+/g, ' ').trim();
+  const societe = String(v.societe || v.agence || v.organisation || '').replace(/\s+/g, ' ').trim();
   const ville = String(v.ville || '').replace(/\s+/g, ' ').trim();
   const email = String(v.email || v.to || '').trim();
   return {
     nom,
+    prenom,
+    nom_famille: famille,
+    civilite_longue: civiliteLongue(v.civ || v.civilite_brute),
+    organisation: societe,
     societe,
     ville,
     email,
-    civilite: civilite(nom),
+    civilite: salutation(v),
     agence: societe || 'votre maison',
     ville_rel: ville ? ' à ' + ville : '',
     lien_brochure: BROCHURE_URL,
@@ -393,6 +454,8 @@ export {
   PDF_MAX,
   validerEmail,
   civilite,
+  civiliteLongue,
+  salutation,
   varsNormalisees,
   remplir,
   objetDe,

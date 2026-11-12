@@ -86,7 +86,7 @@ function run() {
   test('journal Invalid API key', (() => { const r = o.interpreterLectureJournal(401, '{"message":"Invalid API key","hint":"Double check your Supabase `anon` or `service_role` API key."}'); return r.ok === false && r.absent === false; })());
   test('journal permission denied n’est pas une table absente', o.interpreterLectureJournal(401, '{"code":"42501","message":"permission denied for table envois_prospect"}').absent === false);
 
-  test('catalogue 12 brochures', o.BROCHURE_IDS && o.BROCHURE_IDS.length === 12 &&
+  test('catalogue 17 brochures', o.BROCHURE_IDS && o.BROCHURE_IDS.length === 17 &&
     o.BROCHURES['pompes-funebres'] && o.BROCHURES.marbriers && o.BROCHURES.crematoriums);
   test('libellé Pompes funèbres', o.BROCHURES['pompes-funebres'].label === 'Brochure Pompes funèbres');
   test('libellé Marbriers', o.BROCHURES.marbriers.label === 'Brochure Marbriers');
@@ -164,9 +164,15 @@ function run() {
    'documents/melodia-brochure-prestige-ecoute.pdf',
    'documents/melodia-brochure-prestige-art.pdf',
    'documents/melodia-brochure-souvenirs-qui-resonnent.pdf',
-   'documents/melodia-brochure-ceremonie.pdf'].forEach((f) => {
+   'documents/melodia-brochure-ceremonie.pdf',
+   'documents/melodia-brochure-ecoute-exemples.pdf',
+   'documents/melodia-presentation-agences-partenaires.pdf',
+   'documents/melodia-offre-pro.pdf',
+   'documents/melodia-plaquette-ecoute-prestige.pdf',
+   'documents/melodia-fiche-contact-julie-serve.pdf'].forEach((f) => {
     const buf = fsPdf.readFileSync(require('path').join(__dirname, '..', f));
-    const plafond = /prestige-art|souvenirs-qui-resonnent|ceremonie/.test(f) ? 4
+    const plafond = /presentation-agences|offre-pro|plaquette-ecoute|fiche-contact/.test(f) ? 2.5
+      : /prestige-art|souvenirs-qui-resonnent|ceremonie|ecoute-exemples/.test(f) ? 4
       : (/-v2|prestige/.test(f) ? 2 : 3);
     test('PDF ' + f, buf.slice(0, 5).toString() === '%PDF-' && buf.length > 100 * 1024 && buf.length < plafond * 1024 * 1024);
   });

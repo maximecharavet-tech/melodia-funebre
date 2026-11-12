@@ -355,7 +355,7 @@ async function respecterDebitResend() {
 /**
  * Appel Resend avec cadence ~2 req/s et nouvelles tentatives sur 429.
  */
-async function appelerResend(chemin, corps, timeoutMs) {
+async function appelerResend(chemin, corps, timeoutMs, idempotence) {
   const cle = process.env.RESEND_API_KEY;
   if (!cle) return { ok: false, status: 503, code: 'NOT_CONFIGURED', error: 'RESEND_API_KEY absente.' };
   let dernier = null;
@@ -367,7 +367,8 @@ async function appelerResend(chemin, corps, timeoutMs) {
       const r = await fetch('https://api.resend.com' + chemin, {
         method: 'POST',
         signal: ctrl.signal,
-        headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' },
+        headers: Object.assign({ Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' },
+          idempotence ? { 'Idempotency-Key': String(idempotence).slice(0, 250) } : {}),
         body: JSON.stringify(corps)
       });
       const brut = await r.text();
@@ -405,8 +406,8 @@ async function appelerResend(chemin, corps, timeoutMs) {
   return dernier || { ok: false, status: 500, code: 'FETCH_FAILED', error: 'Envoi impossible.' };
 }
 
-export async function envoyer(charge) {
-  const r = await appelerResend('/emails', charge, TIMEOUT_MS);
+export async function envoyer(charge, options) {
+  const r = await appelerResend('/emails', charge, TIMEOUT_MS, options && options.idempotence);
   if (!r.ok) return r;
   return { ok: true, id: (r.data && r.data.id) || null };
 }
@@ -415,8 +416,8 @@ export async function envoyer(charge) {
  * Remet un lot de courriels à Resend en un seul appel (100 au plus).
  * Renvoie { ok, ids } ou { ok:false, ... } comme envoyer().
  */
-export async function envoyerLot(charges) {
-  const r = await appelerResend('/emails/batch', charges, TIMEOUT_MS * 2);
+export async function envoyerLot(charges, options) {
+  const r = await appelerResend('/emails/batch', charges, TIMEOUT_MS * 2, options && options.idempotence);
   if (!r.ok) return r;
   const liste = (r.data && (r.data.data || r.data)) || [];
   return { ok: true, ids: Array.isArray(liste) ? liste.map((x) => x && x.id) : [] };

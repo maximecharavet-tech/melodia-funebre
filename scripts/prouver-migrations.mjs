@@ -14,7 +14,12 @@ try {
   ({ PGlite } = await import('/tmp/pglite-melodia/node_modules/@electric-sql/pglite/dist/index.js'));
 }
 
-const db = new PGlite();
+/* btree_gist : exigé par la contrainte d'exclusion de la migration 12. */
+let btree_gist;
+try { ({ btree_gist } = await import('@electric-sql/pglite/contrib/btree_gist')); }
+catch (e) { ({ btree_gist } = await import('/tmp/pglite-melodia/node_modules/@electric-sql/pglite/dist/contrib/btree_gist.js')); }
+const EXT = { btree_gist };
+const db = new PGlite({ extensions: EXT });
 const log = [];
 function dire(t) { log.push(t); console.log(t); }
 
@@ -346,7 +351,7 @@ preuve('RLS activée sur toutes les tables pro_*', r.rows[0].n === 0, r.rows[0].
 // (c'est ce qui a fait échouer 09 le 11/11/2026). On rejoue donc tout sur
 // une base neuve sans ces alias : 09 doit échouer, 11 doit passer.
 dire('\n== CONSOLE V2 : base sans alias public.est_* (comme la production) ==');
-const prod = new PGlite();
+const prod = new PGlite({ extensions: EXT });
 const AMORCE_PROD = AMORCE.replace(/create or replace function public\.est_\w+\(\)[^;]*?\$\$[^$]*\$\$;/g, '');
 preuve('amorce de production : alias public.est_* retirés', !/public\.est_/.test(AMORCE_PROD));
 await prod.exec(AMORCE_PROD);
@@ -392,6 +397,123 @@ t = await prod.query('select public.melodia_capacites() as c');
 preuve('melodia_capacites().console_v2 = true', t.rows[0].c && t.rows[0].c.console_v2 === true, JSON.stringify(t.rows[0].c));
 t = await prodComme('julie@example.test', 'select count(*)::int as n from public.orders');
 preuve('S1 tient toujours : le commercial ne lit pas les commandes', t.ok && t.rows[0].n === 0);
+
+// ═══ Migration 12 : un même courriel ne part pas deux fois en 60 jours ═══
+dire('\n== ENVOIS : fenêtre de 60 jours (migration 12) ==');
+const M12 = readFileSync('supabase/migrations/20261114_12_envois_idempotence.sql', 'utf8');
+try { await db.exec(M12); preuve('12 rejouée (idempotence) sans erreur', true); }
+catch (e) { preuve('12 rejouée (idempotence) sans erreur', false, e.message); }
+const T0 = '2026-11-12T10:00:00Z';
+const JOURS = (n) => `'${T0}'::timestamptz - interval '${n} days'`;
+const meta = (dest, modele = 'pf-contact') => ({ collaborateur: 'julie@example.test', mode: 'envoi', destinataire: dest, modele, sujet: 's' });
+async function reserver(cle, dest, maintenant, modele) {
+  const l = Object.assign({ cle_idempotence: cle }, meta(dest, modele));
+  const q = await db.query('select public.reserver_envois($1::jsonb, $2::timestamptz) as r', [JSON.stringify([l]), maintenant]);
+  return q.rows[0].r[0];
+}
+await db.exec('delete from public.envois_prospect');
+let x = await reserver('foo@bar.com|m:pf-contact', 'foo@bar.com', T0);
+preuve('1re réservation : prise (statut reserve)', x.ok === true && x.id > 0, JSON.stringify(x));
+x = await reserver('foo@bar.com|m:pf-contact', 'Foo@Bar.com', T0);
+preuve('2e tentative immédiate : bloquée, avec précédent et renvoi à +60 j',
+  x.ok === false && x.deja === 'reserve' && new Date(x.renvoi) - new Date(x.precedent) === 60 * 86400000, JSON.stringify(x));
+await db.exec("update public.envois_prospect set statut = 'envoye' where cle_idempotence = 'foo@bar.com|m:pf-contact'");
+const plus = (n, s = 0) => new Date(Date.parse(T0) + n * 86400000 + s * 1000).toISOString();
+x = await reserver('foo@bar.com|m:pf-contact', 'foo@bar.com', plus(59));
+preuve('précédent il y a 59 jours : bloqué', x.ok === false && x.deja === 'envoye', JSON.stringify(x));
+x = await reserver('foo@bar.com|m:pf-contact', 'foo@bar.com', plus(60, -1));
+preuve('précédent il y a 60 jours moins 1 s : encore bloqué', x.ok === false);
+x = await reserver('foo@bar.com|m:pf-contact', 'foo@bar.com', plus(60));
+preuve('précédent il y a exactement 60 jours : autorisé (nouvelle ligne)', x.ok === true, JSON.stringify(x));
+r = await db.query("select count(*)::int as n from public.envois_prospect where cle_idempotence = 'foo@bar.com|m:pf-contact'");
+preuve('l’historique n’est pas réécrit : deux lignes pour la clé', r.rows[0].n === 2);
+x = await reserver('foo@bar.com|m:pf-contact', 'foo@bar.com', plus(60, 5));
+preuve('la nouvelle fenêtre bloque à son tour', x.ok === false);
+x = await reserver('foo@bar.com|m:pf-contact#e1', 'foo@bar.com', T0);
+preuve('une autre étape du même modèle est permise', x.ok === true);
+x = await reserver('foo@bar.com|m:pf-relance', 'foo@bar.com', T0, 'pf-relance');
+preuve('un autre modèle, même destinataire : permis', x.ok === true);
+x = await reserver('autre@bar.com|m:pf-contact', 'autre@bar.com', T0);
+preuve('un autre destinataire, même modèle : permis', x.ok === true);
+// echec : libère
+await db.exec("update public.envois_prospect set statut = 'echec' where cle_idempotence = 'autre@bar.com|m:pf-contact'");
+x = await reserver('autre@bar.com|m:pf-contact', 'autre@bar.com', T0);
+preuve('statut echec : nouvel essai immédiat', x.ok === true, JSON.stringify(x));
+await db.exec("update public.envois_prospect set statut = 'incertain' where cle_idempotence = 'autre@bar.com|m:pf-contact' and statut = 'reserve'");
+x = await reserver('autre@bar.com|m:pf-contact', 'autre@bar.com', plus(30));
+preuve('statut incertain : bloque pendant la fenêtre', x.ok === false && x.deja === 'incertain', JSON.stringify(x));
+// concurrence : 20 appels simultanés (file de PGlite : chacun sa transaction)
+await db.exec('delete from public.envois_prospect');
+const lots = await Promise.all(Array.from({ length: 20 }, () => reserver('conc@bar.com|m:pf-contact', 'conc@bar.com', T0)));
+preuve('20 réservations simultanées dans la fenêtre : une seule gagne', lots.filter((y) => y.ok).length === 1 && lots.filter((y) => !y.ok).length === 19);
+const lots2 = await Promise.all(Array.from({ length: 20 }, () => reserver('conc@bar.com|m:pf-contact', 'conc@bar.com', plus(61))));
+preuve('20 réservations simultanées après expiration : une seule nouvelle', lots2.filter((y) => y.ok).length === 1);
+// contrainte d'exclusion : un INSERT direct qui contourne la fonction est refusé
+const direct = (dest, jours, st) => db.exec(`insert into public.envois_prospect (collaborateur, destinataire, modele, statut, cle_idempotence, envoye_le)
+  values ('j', '${dest}', 'm', '${st || 'envoye'}', '${dest}|m:m', ${JOURS(jours)})`);
+await direct('dir@x.fr', 10);
+try { await direct('dir@x.fr', 5); preuve('INSERT direct dans la fenêtre : refusé par la contrainte d’exclusion', false, 'accepté'); }
+catch (e) { preuve('INSERT direct dans la fenêtre : refusé par la contrainte d’exclusion', /exclusion|conflicting/i.test(e.message), e.message); }
+try { await direct('dir@x.fr', 80); preuve('INSERT direct 70 jours plus tôt (hors fenêtre) : permis', true); }
+catch (e) { preuve('INSERT direct 70 jours plus tôt (hors fenêtre) : permis', false, e.message); }
+try { await direct('dir@x.fr', 5, 'echec'); preuve('une ligne echec ne bloque pas (hors contrainte)', true); }
+catch (e) { preuve('une ligne echec ne bloque pas (hors contrainte)', false, e.message); }
+try { await db.exec(`insert into public.envois_prospect (collaborateur, destinataire, modele, statut, cle_idempotence) values ('a','b','m','envoye','Dir@X.fr|m:m')`); preuve('une clé non normalisée (majuscules) est refusée', false, 'acceptée'); }
+catch (e) { preuve('une clé non normalisée (majuscules) est refusée', /minuscules|check/i.test(e.message), e.message); }
+await db.exec(`insert into public.envois_prospect (collaborateur, destinataire, modele, statut) values ('j','foo@bar.com','m','envoye'),('j','foo@bar.com','m','envoye')`);
+preuve('les envois de test (clé NULL) restent répétables', true);
+r = await db.query("select bloque_jusqua - envoye_le as d from public.envois_prospect where cle_idempotence = 'dir@x.fr|m:m' limit 1");
+preuve('le trigger pose bloque_jusqua = envoye_le + 60 jours', r.rows[0] && /^(60 days|1440:00:00)/.test(String(r.rows[0].d)), JSON.stringify(r.rows[0]));
+try { await db.exec("insert into public.envois_prospect (collaborateur, destinataire, statut) values ('a','b','n-importe-quoi')"); preuve('statut inconnu refusé', false); }
+catch (e) { preuve('statut inconnu refusé', true); }
+r = await db.query("select has_function_privilege('anon', 'public.reserver_envois(jsonb, timestamptz)', 'execute') as a, has_function_privilege('service_role', 'public.reserver_envois(jsonb, timestamptz)', 'execute') as s");
+preuve('reserver_envois : anon ne peut pas l’appeler, service_role oui', r.rows[0].a === false && r.rows[0].s === true, JSON.stringify(r.rows[0]));
+const ligne = (cle, dest, st) => `insert into public.envois_prospect (collaborateur, destinataire, modele, statut, cle_idempotence)
+  values ('julie@example.test', '${dest}', 'pf-contact', '${st || 'reserve'}', ${cle ? "'" + cle + "'" : 'null'})`;
+// Reprise de l'existant : deux anciens envois identiques → une seule clé.
+const M12b = new PGlite({ extensions: EXT });
+await M12b.exec(AMORCE);
+for (const f of fichiers.filter((x) => /_0[0-8]_|_10_/.test(x))) await M12b.exec(readFileSync('supabase/migrations/' + f, 'utf8'));
+await M12b.exec(`insert into public.envois_prospect (collaborateur, destinataire, modele, sujet, mode, envoye_le) values
+  ('j','Dup@X.fr','pf-contact','a','envoi', now() - interval '20 days'),('j','dup@x.fr','pf-contact','a','envoi', now() - interval '10 days'),
+  ('j','t@x.fr','','Objet  Libre','envoi', now() - interval '5 days'),('j','t@x.fr','pf-contact','a','test', now() - interval '5 days'),
+  ('j','vieux@x.fr','pf-contact','a','envoi', now() - interval '90 days')`);
+try { await M12b.exec(M12); preuve('12 sur un journal existant avec doublons historiques : passe', true); }
+catch (e) { preuve('12 sur un journal existant avec doublons historiques : passe', false, e.message); }
+r = await M12b.query("select count(*)::int as n, count(cle_idempotence)::int as k from public.envois_prospect");
+preuve('reprise : doublons conservés, seule la ligne la plus récente des 60 derniers jours porte la clé', r.rows[0].n === 5 && r.rows[0].k === 2, JSON.stringify(r.rows[0]));
+r = await M12b.query("select count(*)::int as n from public.envois_prospect where destinataire = 'vieux@x.fr' and cle_idempotence is not null");
+preuve('reprise : un envoi de 90 jours ne bloque plus rien', r.rows[0].n === 0);
+r = await M12b.query("select cle_idempotence, envoye_le > now() - interval '11 days' as recent from public.envois_prospect where cle_idempotence like 'dup@x.fr%'");
+preuve('reprise : c’est le plus récent des doublons qui bloque', r.rows.length === 1 && r.rows[0].recent === true, JSON.stringify(r.rows));
+r = await M12b.query("select cle_idempotence from public.envois_prospect where cle_idempotence like 't@x.fr%'");
+preuve('reprise : objet normalisé comme en JS (minuscules, espaces simples)', r.rows[0] && r.rows[0].cle_idempotence === 't@x.fr|o:objet libre', JSON.stringify(r.rows));
+try { await M12b.exec(M12); preuve('12 rejouée sur le journal repris : passe encore', true); }
+catch (e) { preuve('12 rejouée sur le journal repris : passe encore', false, e.message); }
+
+// ═══ Migration 13 : lots d'envoi groupé ═══
+dire('\n== ENVOIS GROUPÉS : lots et file (migration 13) ==');
+const M13 = readFileSync('supabase/migrations/20261115_13_lots_envoi.sql', 'utf8');
+try { await db.exec(M13); preuve('13 appliquée / rejouée (idempotence) sans erreur', true); }
+catch (e) { preuve('13 appliquée / rejouée (idempotence) sans erreur', false, e.message); }
+await db.exec("insert into public.lots_envoi (proprietaire, modele, total) values ('julie@example.test', 'pf-premier-contact', 2)");
+try { await db.exec("insert into public.lots_envoi (proprietaire, modele, total) values ('Julie@Example.test', 'pf-premier-contact', 1)"); preuve('un seul lot en cours par collaborateur', false, 'accepté'); }
+catch (e) { preuve('un seul lot en cours par collaborateur', /unique|duplicate/i.test(e.message), e.message); }
+await db.exec("update public.lots_envoi set statut = 'termine' where proprietaire = 'julie@example.test'");
+try { await db.exec("insert into public.lots_envoi (proprietaire, modele, total) values ('julie@example.test', 'pf-relance-j4', 1)"); preuve('un nouveau lot est permis une fois le précédent terminé', true); }
+catch (e) { preuve('un nouveau lot est permis une fois le précédent terminé', false, e.message); }
+try { await db.exec("insert into public.lots_envoi_items (lot_id, rang, email, statut) select id, 1, 'a@b.fr', 'n-importe-quoi' from public.lots_envoi limit 1"); preuve('statut de file inconnu refusé', false); }
+catch (e) { preuve('statut de file inconnu refusé', true); }
+await db.exec("insert into public.lots_envoi_items (lot_id, rang, email) select id, 1, 'a@b.fr' from public.lots_envoi limit 1");
+r = await db.query("select count(*)::int as n from pg_policies where tablename in ('lots_envoi', 'lots_envoi_items')");
+preuve('RLS : aucune policy sur les lots (serveur seul)', r.rows[0].n === 0);
+r = await db.query("select bool_and(relrowsecurity) as rls from pg_class where relname in ('lots_envoi', 'lots_envoi_items')");
+preuve('RLS activée sur lots_envoi et lots_envoi_items', r.rows[0].rls === true);
+r = await db.query("select has_table_privilege('anon', 'public.lots_envoi_items', 'select') as a, has_table_privilege('authenticated', 'public.lots_envoi', 'insert') as b, has_table_privilege('service_role', 'public.lots_envoi_items', 'update') as c");
+preuve('anon / authenticated sans accès, service_role oui', r.rows[0].a === false && r.rows[0].b === false && r.rows[0].c === true, JSON.stringify(r.rows[0]));
+await db.exec('delete from public.lots_envoi');
+r = await db.query('select count(*)::int as n from public.lots_envoi_items');
+preuve('supprimer un lot supprime sa file (cascade)', r.rows[0].n === 0);
 
 const ko = preuves.filter((p) => !p.ok).length;
 dire(`\nPRO : ${preuves.length - ko} / ${preuves.length} preuves`);

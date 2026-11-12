@@ -58,3 +58,13 @@ au-delà de `serde` / `serde_json` (MIT / Apache-2.0, voir `Cargo.lock`).
 
 `assets/js/vendor/julie-fallback.js` reprend en JavaScript pur, de façon simplifiée,
 les mêmes calculs que le wasm. Il n’est utilisé que si `julie_v2.wasm` ne se charge pas.
+
+## Anti-doublon d’envoi et PDF « Écoutez » (novembre 2026)
+
+Aucune crate ni dépendance npm ajoutée, aucun code recopié. La clé
+d’idempotence (`api/_envoi-unique.js`, `dedupe.rs::cle_envoi_json`) est une
+réimplémentation originale du schéma « réserver, envoyer, confirmer » ; l’en-tête
+`Idempotency-Key` transmis à Resend suit la documentation publique du prestataire.
+Le PDF `documents/melodia-brochure-ecoute-exemples.pdf` (`build/pdf-ecoute.js`)
+réutilise le disque d’or de `assets/css/style.css` et l’encodeur QR maison
+`assets/js/qr.js`, tous deux du dépôt.

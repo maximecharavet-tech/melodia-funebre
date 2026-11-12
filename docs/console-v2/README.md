@@ -78,10 +78,30 @@ Une séquence « Premier contact » existe par défaut : J0 (premier message),
 J+3 (relance), J+7 (dernière relance). Vous pouvez la cloner, changer les
 délais, les modèles, la cible, et y inscrire jusqu’à dix prospects d’un coup.
 
-**Les étapes ne partent jamais toutes seules.** Les envois automatiques
-existent (route `/api/sequences-cron`), mais ils sont **désactivés par défaut**
-(`SEQUENCES_AUTO` absent = désactivé). Un humain valide toujours. Le cron ne
-fait qu’avancer les dates et journaliser les tâches.
+**Par défaut, les étapes ne partent pas toutes seules.** L’envoi automatique
+(`/api/sequences-cron`) est **désactivé** tant que `SEQUENCES_AUTO` n’est pas
+exactement `true` : un humain valide dans « Ma journée ».
+
+**Quand `SEQUENCES_AUTO=true`** (et `CRON_SECRET` configuré, et un cron Vercel
+qui appelle la route), le cron envoie réellement, une inscription à la fois,
+par `/api/prospect-mail` : STOP et désabonnés respectés, adresses rejetées
+écartées, un même courriel (même modèle / étape) jamais envoyé deux fois à la
+même personne, reprises espacées (1 h, 4 h, 12 h) puis pause visible, résultat
+incertain = pause. Les envois apparaissent dans le suivi ; l’écran « Mes
+séquences » affiche l’état (actif / désactivé), ce qui partira ensuite et ce qui
+attend une reprise humaine.
+
+Les inscriptions sont écrites en base (migration 11) à l’inscription : sans
+elle, elles restent dans le navigateur et le cron n’a rien à traiter.
+
+## Un courriel ne part jamais deux fois
+
+Clé d’idempotence = adresse en minuscules + modèle (ou campagne, ou objet) +
+étape. Le serveur réserve la clé en base **avant** d’appeler Resend (migration
+`20261114_12`) : double clic, nouvel essai, onglet en double ou cron concurrent,
+un seul gagne. L’écran grise l’envoi (« Déjà envoyé »). Un échec net du
+prestataire libère la clé (on peut réessayer) ; un délai dépassé la garde
+(« À vérifier dans Resend ») pour ne jamais risquer un doublon.
 
 ## Import CSV 2.0
 
@@ -130,7 +150,11 @@ sur le lien `mailto:` — rien n’est perdu en silence.
    l’aperçu et le contrôleur de délivrabilité la signalera comme
    « non résolue ». Voir la description de la PR.
 
-4. **Le cron `vercel.json` est proposé, non appliqué.** Le bloc `crons` de
+4. **La migration `20261114_12_envois_idempotence.sql` n’est pas appliquée.**
+   Sans elle l’anti-doublon fonctionne en mode dégradé (verrou en mémoire de
+   l’instance + lecture du journal) : pas atomique entre instances.
+
+5. **Le cron `vercel.json` est proposé, non appliqué.** Le bloc `crons` de
    `vercel.json` prévoit un déclenchement à `07:40 UTC` (08:40 Paris en
    hiver, 09:40 Paris en été). Aucun envoi ne se produit tant que
    `SEQUENCES_AUTO !== 'true'`.

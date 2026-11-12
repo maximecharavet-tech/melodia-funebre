@@ -511,6 +511,15 @@
     var q = d.quota;
     if (r.status === 401 || d.code === 'NON_CONNECTE') return 'Session expirée : reconnectez-vous, puis renvoyez. Rien n’est parti.';
     if (r.status === 403 && d.code === 'INTERDIT') return 'Votre compte n’a pas le droit d’envoyer : l’envoi direct est réservé aux comptes commercial et fondateur. Utilisez « Copier » en attendant.';
+    if (d.code === 'DEJA_ENVOYE' || r.status === 409) {
+      var dj = d.refuses && d.refuses[0];
+      return (dj && dj.motif) ? dj.motif + '. Pour écrire plus tôt, choisissez un autre modèle (une relance, par exemple).'
+        : 'Déjà envoyé à cette adresse avec ce modèle il y a moins de 60 jours. Choisissez un autre modèle (une relance, par exemple).';
+    }
+    if (d.code === 'ENVOI_INCERTAIN') return 'Le service d’envoi n’a pas répondu à temps : on ne sait pas si le message est parti. Il est bloqué contre un second envoi — vérifiez dans Resend (journal des e-mails) avant de décider.';
+    if (d.code === 'JOURNAL_INDISPONIBLE') return 'Le journal des envois est injoignable : rien n’est parti, par prudence. Réessayez dans un instant.';
+    if (d.code === 'RIEN' && d.refuses && d.refuses[0] && (d.refuses[0].code === 'DESABONNE' || d.refuses[0].code === 'REJETE')) return d.refuses[0].motif;
+    if (d.retentable) return 'Le prestataire a refusé l’envoi (' + (d.motif || d.code || r.status) + '). Rien n’est compté : vous pouvez réessayer.';
     if (d.code === 'QUOTA') return 'L’envoi a été refusé par le service (plafond du prestataire atteint, ou limite temporaire). Réessayez plus tard.';
     if (d.code === 'RATE_LIMIT') return 'Trop d’envois en peu de temps : réessayez dans quelques minutes.';
     if (d.code === 'ENVOI_DESACTIVE' || d.code === 'NOT_CONFIGURED') return 'Envoi direct indisponible pour le moment : copiez le mail à la place.';
@@ -792,6 +801,11 @@
 
   /* ─── Kit ─── */
   var KIT = [
+    { t: 'Écoutez — exemples de musiques (disque d’or)', f: '/documents/melodia-brochure-ecoute-exemples.pdf', d: 'Les musiques déjà sur le site, avec liens et QR d’écoute. Joignable à un mail.' },
+    { t: 'Présentation agences partenaires', f: '/documents/melodia-presentation-agences-partenaires.pdf', d: 'Plaquette premium pour pompes funèbres, crématoriums, marbriers, officiants. Joignable à un mail.' },
+    { t: 'Offre Pro', f: '/documents/melodia-offre-pro.pdf', d: 'Questionnaire, composition, QR, plaque, mémorial : l’offre professionnelle expliquée. Joignable à un mail.' },
+    { t: 'Plaquette Écoutez prestige', f: '/documents/melodia-plaquette-ecoute-prestige.pdf', d: 'Six musiques mises en scène, disque d’or, liens et QR d’écoute. Joignable à un mail.' },
+    { t: 'Fiche contact Julie Serve', f: '/documents/melodia-fiche-contact-julie-serve.pdf', d: 'La carte de visite de Julie, ses coordonnées et trois QR. Joignable à un mail.' },
     { t: 'Brochure partenaire', f: '/documents/melodia-brochure-partenaire.pdf', d: 'À remettre ou à envoyer à une agence.' },
     { t: 'Manuel de vente', f: '/api/document?fichier=manuel', doc: 'manuel', nom: 'melodia-manuel-de-vente.pdf', d: 'Document interne : script, objections, séquence.' },
     { t: 'Plan LinkedIn', f: '/api/document?fichier=linkedin', doc: 'linkedin', nom: 'melodia-plan-linkedin.pdf', d: 'Document interne.' },
@@ -806,7 +820,9 @@
       '<ul class="col-kit">' + KIT.map(function (k) {
         return '<li><a class="col-kit-a" href="' + esc(k.f) + '"' +
           (k.doc ? ' data-doc="' + esc(k.doc) + '" data-nom="' + esc(k.nom) + '"' : ' download') +
-          '><strong>' + esc(k.t) + '</strong><span>' + esc(k.d) + '</span></a></li>';
+          '><strong>' + esc(k.t) + '</strong><span>' + esc(k.d) + '</span></a>' +
+          (/\.pdf$/i.test(k.f) && !k.doc ? '<a class="col-kit-apercu" href="' + esc(k.f) + '" target="_blank" rel="noopener">Aperçu dans un nouvel onglet</a>' : '') +
+          '</li>';
       }).join('') + '</ul>';
   }
 
@@ -1150,6 +1166,7 @@
             '<button type="button" class="btn btn-outline btn-sm" id="pret-copier">Copier le mail</button>' +
           '</div>' +
           '<p class="col-aide" id="pret-etat" role="status"></p>' +
+          '<p class="col-deja" id="pret-deja" role="status" aria-live="polite" hidden></p>' +
           '<p class="col-aide" id="pret-envoi" role="status" aria-live="polite"></p>' +
           '<div class="col-apercu-barre" role="group" aria-label="Format de l’aperçu">' +
             '<button type="button" class="col-filtre' + (pretEtat.apercuFmt !== 'mobile' ? ' est-on' : '') + '" data-apercu-fmt="desktop">Ordinateur</button>' +
@@ -1211,7 +1228,8 @@
   function libelleStatut(s) {
     return ({
       envoye: 'Envoyé', delivre: 'Délivré', ouvert: 'Ouvert',
-      clique: 'Cliqué', rejete: 'Rejeté', plainte: 'Signalé', differe: 'Différé'
+      clique: 'Cliqué', rejete: 'Rejeté', plainte: 'Signalé', differe: 'Différé',
+      reserve: 'En cours', incertain: 'À vérifier dans Resend'
     })[s] || s || '—';
   }
 
@@ -1360,6 +1378,35 @@
       if (timer) clearTimeout(timer);
       timer = setTimeout(relireServeur, 280);
     }
+    /* « Déjà envoyé » : le serveur dit si ce couple destinataire + modèle est
+       déjà parti (même clé que celle qui bloque l'envoi). Le bouton est
+       alors désactivé — le serveur refuserait de toute façon. */
+    var dejaTimer = null;
+    function verifierDeja() {
+      var btn = racine.querySelector('#pret-envoyer');
+      var z = racine.querySelector('#pret-deja');
+      if (!btn || !z) return;
+      var c = champsEnvoi();
+      var m = modelePretCourant();
+      var libre = function () {
+        z.hidden = true; z.textContent = '';
+        if (btn.getAttribute('data-deja') === '1') { btn.disabled = false; btn.removeAttribute('data-deja'); btn.removeAttribute('aria-disabled'); }
+      };
+      if (!C || !C.appeler || !m || !RE_EMAIL.test(c.dest)) { libre(); return; }
+      C.appeler({ mode: 'deja', modele: m.id || m.nom, envois: [{ to: c.dest }] }).then(function (r) {
+        var x = r.ok && r.d && r.d.deja && r.d.deja[0];
+        if (!x || !x.deja) { libre(); return; }
+        z.hidden = false;
+        /* « Déjà envoyé le JJ/MM — renvoi possible à partir du … » : texte du serveur,
+           qui calcule la fenêtre de 60 jours. */
+        z.textContent = x.texte || 'Déjà envoyé à ' + c.dest + ' avec ce modèle il y a moins de 60 jours.';
+        btn.disabled = true; btn.setAttribute('data-deja', '1'); btn.setAttribute('aria-disabled', 'true');
+      });
+    }
+    function programmerDeja() {
+      if (dejaTimer) clearTimeout(dejaTimer);
+      dejaTimer = setTimeout(verifierDeja, 350);
+    }
     function champsEnvoi() {
       var v = varsPret(racine);
       var piece = pretEtat.piece;
@@ -1424,6 +1471,7 @@
       if (e.target && (e.target.id === 'pret-dirigeant' || e.target.id === 'pret-email' || e.target.id === 'pret-agence' || e.target.id === 'pret-ville')) {
         pretEtat.vars = varsPret(racine);
         pretEtat.dest = ((racine.querySelector('#pret-email') || {}).value || '').trim();
+        if (e.target.id === 'pret-email') programmerDeja();
         if (!pretEtat.brochuresManuel && (e.target.id === 'pret-agence' || e.target.id === 'pret-dirigeant')) {
           pretEtat.brochures = brochuresParDefaut(ficheParSiret(pretEtat.siret));
           Array.prototype.forEach.call(racine.querySelectorAll('[data-brochure]'), function (el) {
@@ -1486,6 +1534,7 @@
     planifier();
     lireQuota();
     lireJournal();
+    verifierDeja();
 
     var copier = racine.querySelector('#pret-copier');
     if (copier) copier.addEventListener('click', function () {
@@ -1520,6 +1569,7 @@
           if (mode !== 'test') majApresPreparation(racine, rendu, true);
           lireQuota();
           lireJournal();
+          verifierDeja();
         }
       });
     }

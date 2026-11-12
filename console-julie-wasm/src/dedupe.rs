@@ -161,6 +161,84 @@ pub fn cle_json(input: &str) -> String {
     }
 }
 
+
+// ─── Clé d'idempotence d'un envoi ─────────────────────────────────────
+// Miroir EXACT de cleEnvoi() dans api/_envoi-unique.js : la console grise
+// « déjà envoyé » avec la même clé que celle qui bloque le serveur.
+//   <destinataire normalisé>|m:<modèle> | c:<campagne> | o:<objet>[#e<étape>]
+
+#[derive(Deserialize)]
+struct EnvoiIn {
+    #[serde(default)]
+    destinataire: String,
+    #[serde(default)]
+    modele: String,
+    #[serde(default)]
+    campagne: String,
+    #[serde(default)]
+    sujet: String,
+    #[serde(default)]
+    etape: Option<i64>,
+}
+
+fn norm_texte_envoi(s: &str) -> String {
+    s.to_lowercase()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .chars()
+        .take(120)
+        .collect::<String>()
+}
+
+pub fn cle_envoi_json(input: &str) -> String {
+    match serde_json::from_str::<EnvoiIn>(input) {
+        Ok(e) => {
+            let dest = e.destinataire.trim().to_lowercase();
+            let modele = e.modele.trim().to_lowercase();
+            let campagne = e.campagne.trim().to_lowercase();
+            let mut portee = if !modele.is_empty() {
+                format!("m:{}", modele)
+            } else if !campagne.is_empty() {
+                format!("c:{}", campagne)
+            } else {
+                format!("o:{}", norm_texte_envoi(&e.sujet))
+            };
+            if let Some(n) = e.etape {
+                portee.push_str(&format!("#e{}", n));
+            }
+            serde_json::json!({ "cle": format!("{}|{}", dest, portee) }).to_string()
+        }
+        Err(e) => serde_json::json!({ "error": e.to_string() }).to_string(),
+    }
+}
+
+// ─── Fenêtre de 60 jours ──────────────────────────────────────────────
+// Même règle que fenetreEnvoi() dans api/_envoi-unique.js et que la fonction
+// SQL reserver_envois : un envoi bloque le renvoi jusqu'à précédent + 60 jours
+// (borne exclue : à 60 jours pile, le renvoi est permis).
+
+const FENETRE_MS: i64 = 60 * 24 * 3600 * 1000;
+
+#[derive(Deserialize)]
+struct FenetreIn {
+    precedent_ms: i64,
+    maintenant_ms: i64,
+}
+
+pub fn fenetre_envoi_json(input: &str) -> String {
+    match serde_json::from_str::<FenetreIn>(input) {
+        Ok(f) => {
+            let renvoi = f.precedent_ms + FENETRE_MS;
+            let bloque = f.maintenant_ms < renvoi;
+            let restant = renvoi - f.maintenant_ms;
+            let jours = if bloque { (restant + 86_399_999) / 86_400_000 } else { 0 };
+            serde_json::json!({ "bloque": bloque, "renvoi_ms": renvoi, "jours_restants": jours }).to_string()
+        }
+        Err(e) => serde_json::json!({ "error": e.to_string() }).to_string(),
+    }
+}
+
 // ─── Suggestion de domaine ────────────────────────────────────────────
 
 const DOMAINES: &[&str] = &[
@@ -243,6 +321,41 @@ mod tests {
         assert!(out.contains("\"siret\":\"12345678900012\""), "{}", out);
         assert!(out.contains("\"email\":\"a@b.fr\""), "{}", out);
         assert!(out.contains("\"nom_cp\":\"pompes martin|69001\""), "{}", out);
+    }
+
+    #[test]
+    fn cle_envoi_normalisee() {
+        let a = cle_envoi_json(r#"{"destinataire":" Foo@Bar.COM ","modele":"PF-Relance-J4"}"#);
+        let b = cle_envoi_json(r#"{"destinataire":"foo@bar.com","modele":"pf-relance-j4"}"#);
+        assert_eq!(a, b);
+        assert!(a.contains("foo@bar.com|m:pf-relance-j4"), "{}", a);
+    }
+
+    #[test]
+    fn cle_envoi_portees() {
+        let m = cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":1}"#);
+        assert!(m.contains("a@b.fr|m:x#e1"), "{}", m);
+        let c = cle_envoi_json(r#"{"destinataire":"a@b.fr","campagne":"Salon"}"#);
+        assert!(c.contains("a@b.fr|c:salon"), "{}", c);
+        let o = cle_envoi_json(r#"{"destinataire":"a@b.fr","sujet":"  Bonjour   MONDE "}"#);
+        assert!(o.contains("a@b.fr|o:bonjour monde"), "{}", o);
+        assert_ne!(
+            cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":1}"#),
+            cle_envoi_json(r#"{"destinataire":"a@b.fr","modele":"x","etape":2}"#)
+        );
+    }
+
+    #[test]
+    fn fenetre_60_jours_frontiere() {
+        let j: i64 = 86_400_000;
+        let p: i64 = 1_800_000_000_000;
+        let f = |m: i64| fenetre_envoi_json(&format!(r#"{{"precedent_ms":{},"maintenant_ms":{}}}"#, p, m));
+        assert!(f(p).contains("\"bloque\":true"), "{}", f(p));
+        assert!(f(p + 59 * j).contains("\"bloque\":true"));
+        assert!(f(p + 60 * j - 1).contains("\"bloque\":true"));
+        assert!(f(p + 60 * j).contains("\"bloque\":false"));
+        assert!(f(p + 59 * j).contains("\"jours_restants\":1"));
+        assert!(f(p).contains(&format!("\"renvoi_ms\":{}", p + 60 * j)));
     }
 
     #[test]

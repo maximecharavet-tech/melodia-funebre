@@ -97,6 +97,22 @@
     o = o || {};
     return { siret: String(o.siret || '').replace(/\D/g, '').slice(0, 14), email: String(o.email || '').trim().toLowerCase(), nom_cp: sansAccent(o.nom).replace(/[^a-z0-9]/g, '') + '|' + String(o.cp || '').trim() };
   }
+  function envoi_cle(o) {
+    o = o || {};
+    var dest = String(o.destinataire || '').trim().toLowerCase();
+    var modele = String(o.modele || '').trim().toLowerCase();
+    var campagne = String(o.campagne || '').trim().toLowerCase();
+    var portee = modele ? 'm:' + modele : campagne ? 'c:' + campagne
+      : 'o:' + String(o.sujet || '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 120);
+    if (o.etape !== null && o.etape !== undefined && o.etape !== '' && isFinite(Number(o.etape))) portee += '#e' + Number(o.etape);
+    return { cle: dest + '|' + portee };
+  }
+  function envoi_fenetre(o) {
+    o = o || {};
+    var renvoi = Number(o.precedent_ms) + 60 * 24 * 3600 * 1000;
+    var bloque = Number(o.maintenant_ms) < renvoi;
+    return { bloque: bloque, renvoi_ms: renvoi, jours_restants: bloque ? Math.ceil((renvoi - Number(o.maintenant_ms)) / 86400000) : 0 };
+  }
   var DOM = { 'gmial.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gmail.fr': 'gmail.com', 'hotmial.com': 'hotmail.com', 'hotmal.fr': 'hotmail.fr', 'oranje.fr': 'orange.fr', 'orange.com': 'orange.fr', 'wanado.fr': 'wanadoo.fr', 'yahou.fr': 'yahoo.fr', 'free.com': 'free.fr', 'laposte.fr': 'laposte.net', 'outlok.fr': 'outlook.fr' };
   function domaine_suggere(o) { return { suggestion: DOM[String((o && o.domaine) || '').toLowerCase()] || null }; }
 
@@ -136,7 +152,7 @@
 
   window.MelodiaJulieFallback = {
     score_prospect: score_prospect, delivrabilite_verifier: delivrabilite_verifier, csv_parser: csv_parser,
-    csv_detecter_colonnes: csv_detecter_colonnes, similarite: similarite, dedupe_cle: dedupe_cle,
+    csv_detecter_colonnes: csv_detecter_colonnes, similarite: similarite, dedupe_cle: dedupe_cle, envoi_cle: envoi_cle, envoi_fenetre: envoi_fenetre,
     domaine_suggere: domaine_suggere, meilleur_creneau: meilleur_creneau,
     sequence_prochaine_etape: sequence_prochaine_etape, jours_feries_annee: jours_feries_annee
   };

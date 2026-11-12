@@ -333,3 +333,36 @@
 .col-statut-delivre { color: var(--or-patina); }
 .col-statut-ouvert, .col-statut-clique { color: var(--or-bright, var(--or)); }
 .col-statut-rejete, .col-statut-plainte { color: var(--red, #e07a7a); }
+
+/* ─── « Déjà envoyé » : l'état se lit d'un coup d'œil, l'envoi est bloqué ─── */
+.col-deja {
+  margin: .6rem 0; padding: .7rem .9rem;
+  border: 1px solid rgba(201,168,76,.45); border-left-width: 3px;
+  background: rgba(201,168,76,.08); color: #f4f1ea;
+  font-size: .9rem; line-height: 1.5; border-radius: 4px;
+}
+.col-deja[hidden] { display: none; }
+[data-deja="1"], [data-deja="1"]:hover { opacity: .45; cursor: not-allowed; }
+.col-kit-apercu { display: inline-block; margin: .25rem 0 0 1rem; font-size: .85rem; color: var(--or, #c9a84c); text-underline-offset: 3px; }
+.col-kit-apercu:focus-visible { outline: 2px solid var(--or, #c9a84c); outline-offset: 3px; }
+
+/* ─── Envoi groupé ─── */
+.lot { min-width: 0; }
+.lot-bloc { margin: 1.2rem 0; padding: 1rem 1.1rem; border: 1px solid var(--line-soft); background: rgba(255,255,255,0.02); }
+.lot-t { font-family: var(--ff-m); font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-patina); margin: 0 0 0.8rem; }
+.lot-filtres { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.6rem; margin-bottom: 0.7rem; }
+.lot-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin: 0.6rem 0; }
+.lot-table-wrap { max-height: 22rem; overflow: auto; border: 1px solid var(--line-soft); }
+.lot-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.lot-table th, .lot-table td { padding: 0.45rem 0.6rem; text-align: left; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.lot-table th { position: sticky; top: 0; background: var(--ink, #14120e); color: var(--bone); font-weight: 600; }
+.lot-table tr.est-on { background: rgba(201,168,76,0.08); }
+.lot-nav { display: flex; align-items: center; gap: 0.8rem; margin: 0.6rem 0; }
+.lot-champs, .lot-sujet { font-size: 0.9rem; color: var(--bone); margin: 0.3rem 0; }
+.lot-barre { height: 0.7rem; border: 1px solid var(--line); background: rgba(255,255,255,0.04); margin: 0.4rem 0 0.7rem; overflow: hidden; }
+.lot-barre span { display: block; height: 100%; background: linear-gradient(90deg, var(--or-patina), #e3c977); transition: width 0.3s ease; }
+.lot-bilan { margin: 0.4rem 0; }
+.lot-st-envoye td:nth-child(2) { color: #4ade80; }
+.lot-st-erreur td:nth-child(2), .lot-st-desabonne td:nth-child(2) { color: #f87171; }
+.lot-st-deja td:nth-child(2), .lot-st-reporte td:nth-child(2) { color: #fbbf24; }
+.lot-import summary { cursor: pointer; }

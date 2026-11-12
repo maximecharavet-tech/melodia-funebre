@@ -50,8 +50,10 @@
       if (!d) return;
       var j = parDate[isoJour(d)];
       if (!j) return;
-      j.envois++;
       var st = String(l.statut || '');
+      /* Un envoi unique = un compteur : une réservation en cours ou un échec net n'est pas un envoi. */
+      if (st === 'reserve' || st === 'echec') return;
+      j.envois++;
       if (st === 'ouvert' || st === 'clique' || (l.ouvert_nb | 0) > 0) j.ouverts++;
       if (st === 'clique' || (l.clique_nb | 0) > 0) j.clics++;
       if (st === 'rejete' || st === 'plainte') j.rejets++;
