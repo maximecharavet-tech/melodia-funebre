@@ -105,6 +105,13 @@ self.addEventListener('fetch', (e) => {
   if (url.origin !== location.origin && !/fonts\.(googleapis|gstatic)\.com/.test(url.hostname)) return;
   if (JAMAIS.test(url.pathname + url.search)) return;
 
+  /* Les plans du hero se lisent en flux, souvent par morceaux (en-tête
+     Range). Les mettre en cache prendrait cinquante mégaoctets sur le
+     téléphone de quelqu'un qui n'a fait que passer, et une réponse 206
+     ne se range pas dans le Cache API. On les laisse au navigateur.
+     Les affiches, elles, sont petites : elles suivent le chemin commun. */
+  if (/\/assets\/video\/hero\/.+\.(?:mp4|webm)$/i.test(url.pathname)) return;
+
   /* ─── Les pages : réseau d'abord, cache en repli ─── */
   if (req.mode === 'navigate') {
     e.respondWith((async () => {

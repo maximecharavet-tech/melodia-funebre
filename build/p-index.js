@@ -1,10 +1,78 @@
-const { ICON } = require('./gen.js');
+const fs = require('fs');
+const path = require('path');
+const { ICON, versionne } = require('./gen.js');
 const P = require('./parts.js');
+
+/* La succession du hero se lit dans le manifeste des clips, pas dans
+   le gabarit : l'ordre, le point de cadrage et les fichiers restent
+   une seule source. L'empreinte dans l'adresse suit le fichier, comme
+   pour le reste du site. */
+function adresse(relatif) {
+  return '/' + versionne(relatif);
+}
+function ratio(bloc) {
+  return {
+    webm: adresse(bloc.webm.path),
+    mp4: adresse(bloc.mp4.path),
+    avif: adresse(bloc.poster.avif),
+    jpg: adresse(bloc.poster.jpg),
+    leger: bloc.leger ? adresse(bloc.leger.path) : ''
+  };
+}
+function suiteHero() {
+  const manifeste = JSON.parse(fs.readFileSync(
+    path.join(__dirname, '../assets/video/hero/manifest.json'), 'utf8'));
+  return {
+    tenue: 6.8,
+    fondu: 1.55,
+    plans: manifeste.clips.map((c) => ({
+      id: c.id,
+      titre: c.title,
+      posL: c.objectPosition['16x9'],
+      posP: c.objectPosition['9x16'],
+      l: ratio(c.files['16x9']),
+      p: ratio(c.files['9x16'])
+    }))
+  };
+}
+const SUITE = suiteHero();
+const PREMIER = SUITE.plans[0];
+
+function sceneHero() {
+  return `<div class="hero-scene" aria-hidden="true">
+      <picture class="hero-affiche">
+        <source media="(max-width: 860px) and (orientation: portrait)" type="image/avif" srcset="${PREMIER.p.avif}">
+        <source media="(max-width: 860px) and (orientation: portrait)" type="image/jpeg" srcset="${PREMIER.p.jpg}">
+        <source type="image/avif" srcset="${PREMIER.l.avif}">
+        <img src="${PREMIER.l.jpg}" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+      </picture>
+      <video class="hero-plan" data-plan="a" muted playsinline autoplay preload="none" disablepictureinpicture tabindex="-1"></video>
+      <video class="hero-plan" data-plan="b" muted playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
+    </div>`;
+}
+function regieHero() {
+  const traits = SUITE.plans.map(() => '<li class="hero-chap"><span></span></li>').join('');
+  return `<div class="hero-regie">
+      <ol class="hero-chapitres" aria-hidden="true">${traits}</ol>
+      <button type="button" class="hero-pause" aria-pressed="false" aria-label="Mettre le film en pause">
+        <svg class="ico-pause" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><rect x="6" y="4.5" width="3.4" height="15" rx="0.4" fill="currentColor"/><rect x="14.6" y="4.5" width="3.4" height="15" rx="0.4" fill="currentColor"/></svg>
+        <svg class="ico-lire" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M8.2 4.8v14.4L19.2 12z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <script type="application/json" id="hero-suite">${JSON.stringify(SUITE).replace(/</g, '\\u003c')}</script>`;
+}
 
 module.exports = {
   file: 'index.html',
   title: 'Chanson d\'hommage pour obsèques, en 24 h | Melodia Funèbre',
   desc: "Une chanson originale composée pour votre défunt, d'après ce que vous nous racontez de lui. Livrée en 24 h, sans droit SACEM. Dès 149 €.",
+  /* L'affiche du premier plan, dès le premier paint : c'est elle qui
+     tient le plus grand contenu de l'accueil une fois le seuil passé.
+     Le film, lui, n'est pas préchargé ici — il attendrait derrière
+     l'animation d'entrée, ou pèserait sur un forfait pour rien. */
+  metas: `<link rel="preload" as="image" type="image/avif" href="${PREMIER.p.avif}" media="(max-width: 860px) and (orientation: portrait)" fetchpriority="high">
+<link rel="preload" as="image" type="image/avif" href="${PREMIER.l.avif}" media="not ((max-width: 860px) and (orientation: portrait))" fetchpriority="high">
+`,
   /* Le catalogue des dix-sept œuvres n'est plus déclaré ici. Il porte
      l'identifiant « /demos#catalogue » et il est déjà déclaré sur
      /demos : le répéter sur l'accueil décrivait le même nœud à deux
@@ -13,16 +81,14 @@ module.exports = {
      c'est ce que les moteurs suivent. */
   jsonld: [P.jsonldSite, P.jsonldOrg, P.jsonldService, P.jsonldFaq],
   intro: true,
-  scripts: ['assets/js/catalogue.js', 'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js', 'assets/js/lumiere-3d.js'],
+  scripts: ['assets/js/hero-film.js', 'assets/js/catalogue.js', 'assets/js/vendor/motion-mini-14.12.min.js', 'assets/js/recueil.js', 'assets/js/lumiere-3d.js'],
   body: `
   <!-- ═══ COUVERTURE ═══ -->
-  <section class="hero-video">
-    <!-- L'animation de fond montrait l'ANCIEN logo, en filigrane derrière
-         le nouvel emblème : deux dessins de la maison superposés. Elle
-         est retirée. L'emblème tient désormais ce rôle, avec le bon
-         dessin — et la page s'allège de 5,2 Mo au passage.
-         assets/img/logo-melodia-anime.mp4 reste au dépôt : si une
-         animation du nouveau logo arrive, elle prendra cette place. -->
+  <section class="hero-video a-film" data-hero-film>
+    <!-- Huit plans, dans l'ordre du manifeste. L'emblème, le titre et
+         les deux portes restent devant. assets/img/logo-melodia-anime.mp4
+         est l'ancien logo : il ne revient pas ici. -->
+    ${sceneHero()}
     <!-- L'emblème en scène : l'anneau se trace, la gravure tourne, une
          lumière balaie la médaille. Le logo n'est pas redessiné, il est
          mis en scène — c'est une image matricielle, on ne peut pas
@@ -64,6 +130,7 @@ module.exports = {
         <a href="/demos">${ICON.note} Écouter un hommage</a> · sans inscription, en trente secondes
       </p>
     </div>
+    ${regieHero()}
     <div class="hero-scroll" aria-hidden="true">Découvrir</div>
   </section>
 
