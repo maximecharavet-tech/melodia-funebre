@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = '0e3ccfef0e';
+const VERSION = 'b8b0d9a5b4';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -62,7 +62,7 @@ const PRECHARGE = [
   "/404",
   "/assets/img/icons/icon-48.png?v=08368217",
   "/assets/img/icons/icon-180.png?v=77f4ddbf",
-  "/assets/css/style.css?v=ba9cbd1a",
+  "/assets/css/style.css?v=c6b3669b",
   "/assets/img/intro-logo-360.webp?v=f1f2e4f6",
   "/assets/img/logo-melodia-160.webp?v=d5ed7d92",
   "/assets/img/maxime-128.webp?v=59ad45f3",
@@ -74,6 +74,7 @@ const PRECHARGE = [
   "/assets/js/courrier.js?v=7feee7d2",
   "/assets/js/ornements.js?v=b37cef91",
   "/assets/js/motion.js?v=59d24715",
+  "/assets/js/hero-film.js?v=6e0c662c",
   "/assets/js/catalogue.js?v=937566dc",
   "/assets/js/vendor/motion-mini-14.12.min.js?v=c2bb143b",
   "/assets/js/recueil.js?v=8f46517e",
@@ -138,6 +139,13 @@ self.addEventListener('fetch', (e) => {
   /* On ne se mêle pas de ce qui vient d'ailleurs, hors polices. */
   if (url.origin !== location.origin && !/fonts\.(googleapis|gstatic)\.com/.test(url.hostname)) return;
   if (JAMAIS.test(url.pathname + url.search)) return;
+
+  /* Les plans du hero se lisent en flux, souvent par morceaux (en-tête
+     Range). Les mettre en cache prendrait cinquante mégaoctets sur le
+     téléphone de quelqu'un qui n'a fait que passer, et une réponse 206
+     ne se range pas dans le Cache API. On les laisse au navigateur.
+     Les affiches, elles, sont petites : elles suivent le chemin commun. */
+  if (/\/assets\/video\/hero\/.+\.(?:mp4|webm)$/i.test(url.pathname)) return;
 
   /* ─── Les pages : réseau d'abord, cache en repli ─── */
   if (req.mode === 'navigate') {

@@ -533,6 +533,117 @@ ul { list-style: none; }
 }
 @keyframes scrollHint { 0%, 100% { opacity: 0.25; transform: scaleY(0.5); transform-origin: top; } 50% { opacity: 1; transform: scaleY(1); } }
 
+/* ─── Le film d'accueil ───
+   Deux lecteurs superposés : l'un tient le plan, l'autre prépare le
+   suivant. Le fondu ne joue que sur l'opacité, le léger travelling
+   seulement sur l'échelle — rien qui fasse reflow. Le voile au-dessus
+   reste assez sombre pour que le titre et les portes se lisent. */
+.hero-scene {
+  position: absolute; inset: 0; z-index: 0; overflow: hidden;
+  background: var(--ink);
+}
+.hero-affiche, .hero-affiche img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 58%;
+}
+@media (max-width: 860px) and (orientation: portrait) {
+  .hero-affiche img { object-position: center 55%; }
+}
+.hero-video.film-lance .hero-affiche {
+  opacity: 0;
+  transition: opacity 0.6s linear 1.15s;
+}
+.hero-video video.hero-plan {
+  z-index: 0; opacity: 0; background: transparent;
+  transition: opacity var(--hero-fondu, 1.55s) cubic-bezier(.4, 0, .2, 1);
+}
+.hero-video video.hero-plan.est-la { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-plan.ken { animation: heroSouffle 8.6s linear forwards; }
+}
+@keyframes heroSouffle {
+  from { transform: scale(1); }
+  to { transform: scale(1.035); }
+}
+.hero-video.film-repos .hero-plan.ken { animation-play-state: paused; }
+
+.hero-video.a-film::after {
+  background:
+    linear-gradient(90deg, rgba(4, 4, 7, 0.94) 0%, rgba(4, 4, 7, 0.84) 26%, rgba(4, 4, 7, 0.58) 46%, rgba(4, 4, 7, 0.22) 70%, rgba(4, 4, 7, 0.4) 100%),
+    radial-gradient(ellipse at 74% 46%, transparent 0%, rgba(4, 4, 7, 0.28) 52%, rgba(4, 4, 7, 0.7) 100%),
+    linear-gradient(180deg, rgba(4, 4, 7, 0.78) 0%, transparent 14%, transparent 74%, var(--ink) 100%);
+}
+@media (max-width: 860px) {
+  .hero-video.a-film::after {
+    background:
+      linear-gradient(180deg, rgba(4, 4, 7, 0.94) 0%, rgba(4, 4, 7, 0.88) 16%, rgba(4, 4, 7, 0.8) 34%, rgba(4, 4, 7, 0.62) 52%, rgba(4, 4, 7, 0.82) 74%, var(--ink) 100%);
+  }
+}
+
+.hero-regie {
+  display: none;
+  position: absolute; z-index: 4;
+  left: max(var(--pad), calc((100% - var(--container)) / 2 + var(--pad)));
+  bottom: 1.35rem;
+  align-items: center; gap: 0.75rem;
+}
+.hero-video.film-actif .hero-regie,
+.hero-video.film-calme .hero-regie { display: flex; }
+.hero-chapitres {
+  display: flex; align-items: center; gap: 6px;
+  list-style: none; margin: 0; padding: 0;
+}
+.hero-chap {
+  width: 26px; height: 2px; position: relative; overflow: hidden;
+  background: rgba(242, 239, 232, 0.28);
+}
+.hero-chap span {
+  position: absolute; inset: 0; background: #e3c977;
+  transform: scaleX(0); transform-origin: left center;
+}
+.hero-chap.fait span { transform: scaleX(1); opacity: 0.55; }
+.hero-pause {
+  appearance: none; -webkit-appearance: none;
+  width: 44px; height: 44px; padding: 0; margin: 0;
+  display: grid; place-items: center;
+  border-radius: 50%; cursor: pointer;
+  color: var(--paper);
+  background: rgba(4, 4, 7, 0.72);
+  border: 1px solid rgba(242, 239, 232, 0.38);
+}
+.hero-pause:hover, .hero-pause:focus-visible {
+  border-color: var(--or-bright); color: var(--or-bright);
+}
+.hero-pause .ico-lire { display: none; transform: translateX(1px); }
+.hero-video.est-pause .hero-pause .ico-pause { display: none; }
+.hero-video.est-pause .hero-pause .ico-lire { display: block; }
+@media (max-width: 860px) {
+  /* Le bloc des portes dépasse le premier écran. Le contrôle reste
+     dans la barre, entre le logotype et le menu : c'est le seul
+     endroit libre qui ne recouvre ni le titre ni les portes, et il
+     disparaît avec la couverture. */
+  .hero-video.film-actif .hero-regie,
+  .hero-video.film-calme .hero-regie {
+    position: fixed;
+    top: 0;
+    bottom: auto;
+    left: 9.2rem;
+    right: 4.7rem;
+    height: calc(4.15rem + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    z-index: 120;
+    justify-content: flex-end;
+    gap: 0.45rem;
+    pointer-events: none;
+  }
+  .hero-video .hero-chapitres,
+  .hero-video .hero-pause { pointer-events: auto; }
+  .hero-video.hors-champ .hero-regie { display: none; }
+  .hero-chap { width: 10px; }
+  .hero-chapitres { gap: 4px; }
+}
+@media print { .hero-regie { display: none !important; } }
+
 /* Bandeau d'urgence sous la nav */
 .urgency-bar {
   background: linear-gradient(90deg, rgba(201, 168, 76, 0.1), rgba(201, 168, 76, 0.03));

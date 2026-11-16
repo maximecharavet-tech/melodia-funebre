@@ -21,6 +21,8 @@
 <meta name="twitter:title" content="Chanson d'hommage pour obsèques, en 24 h | Melodia Funèbre">
 <meta name="twitter:description" content="Une chanson originale composée pour votre défunt, d'après ce que vous nous racontez de lui. Livrée en 24 h, sans droit SACEM. Dès 149 €.">
 <meta name="twitter:image" content="https://melodia-funebre.fr/assets/img/og-melodia.jpg?v=6b7ddd5c">
+<link rel="preload" as="image" type="image/avif" href="/assets/video/hero/01-seuil-9x16-poster.avif?v=65aafe26" media="(max-width: 860px) and (orientation: portrait)" fetchpriority="high">
+<link rel="preload" as="image" type="image/avif" href="/assets/video/hero/01-seuil-16x9-poster.avif?v=fd4126c1" media="not ((max-width: 860px) and (orientation: portrait))" fetchpriority="high">
 
 <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/img/icons/icon-48.png?v=08368217">
@@ -31,7 +33,7 @@
 <meta name="format-detection" content="telephone=no">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/style.css?v=ba9cbd1a">
+<link rel="stylesheet" href="/assets/css/style.css?v=c6b3669b">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -182,13 +184,20 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
 <main id="main">
 
   <!-- ═══ COUVERTURE ═══ -->
-  <section class="hero-video">
-    <!-- L'animation de fond montrait l'ANCIEN logo, en filigrane derrière
-         le nouvel emblème : deux dessins de la maison superposés. Elle
-         est retirée. L'emblème tient désormais ce rôle, avec le bon
-         dessin — et la page s'allège de 5,2 Mo au passage.
-         assets/img/logo-melodia-anime.mp4?v=14671ff7 reste au dépôt : si une
-         animation du nouveau logo arrive, elle prendra cette place. -->
+  <section class="hero-video a-film" data-hero-film>
+    <!-- Huit plans, dans l'ordre du manifeste. L'emblème, le titre et
+         les deux portes restent devant. assets/img/logo-melodia-anime.mp4?v=14671ff7
+         est l'ancien logo : il ne revient pas ici. -->
+    <div class="hero-scene" aria-hidden="true">
+      <picture class="hero-affiche">
+        <source media="(max-width: 860px) and (orientation: portrait)" type="image/avif" srcset="/assets/video/hero/01-seuil-9x16-poster.avif?v=65aafe26">
+        <source media="(max-width: 860px) and (orientation: portrait)" type="image/jpeg" srcset="/assets/video/hero/01-seuil-9x16-poster.jpg?v=d5cb9ec8">
+        <source type="image/avif" srcset="/assets/video/hero/01-seuil-16x9-poster.avif?v=fd4126c1">
+        <img src="/assets/video/hero/01-seuil-16x9-poster.jpg?v=1d668383" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+      </picture>
+      <video class="hero-plan" data-plan="a" muted playsinline autoplay preload="none" disablepictureinpicture tabindex="-1"></video>
+      <video class="hero-plan" data-plan="b" muted playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
+    </div>
     <!-- L'emblème en scène : l'anneau se trace, la gravure tourne, une
          lumière balaie la médaille. Le logo n'est pas redessiné, il est
          mis en scène — c'est une image matricielle, on ne peut pas
@@ -230,6 +239,14 @@ try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.classNam
         <a href="/demos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg> Écouter un hommage</a> · sans inscription, en trente secondes
       </p>
     </div>
+    <div class="hero-regie">
+      <ol class="hero-chapitres" aria-hidden="true"><li class="hero-chap"><span></span></li><li class="hero-chap"><span></span></li><li class="hero-chap"><span></span></li><li class="hero-chap"><span></span></li><li class="hero-chap"><span></span></li><li class="hero-chap"><span></span></li><li class="hero-chap"><span></span></li><li class="hero-chap"><span></span></li></ol>
+      <button type="button" class="hero-pause" aria-pressed="false" aria-label="Mettre le film en pause">
+        <svg class="ico-pause" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><rect x="6" y="4.5" width="3.4" height="15" rx="0.4" fill="currentColor"/><rect x="14.6" y="4.5" width="3.4" height="15" rx="0.4" fill="currentColor"/></svg>
+        <svg class="ico-lire" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M8.2 4.8v14.4L19.2 12z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <script type="application/json" id="hero-suite">{"tenue":6.8,"fondu":1.55,"plans":[{"id":"01-seuil","titre":"Le seuil","posL":"center 58%","posP":"center 55%","l":{"webm":"/assets/video/hero/01-seuil-16x9.webm?v=a74cf3bb","mp4":"/assets/video/hero/01-seuil-16x9.mp4?v=933d438d","avif":"/assets/video/hero/01-seuil-16x9-poster.avif?v=fd4126c1","jpg":"/assets/video/hero/01-seuil-16x9-poster.jpg?v=1d668383","leger":"/assets/video/hero/01-seuil-16x9-leger.mp4?v=4d7786eb"},"p":{"webm":"/assets/video/hero/01-seuil-9x16.webm?v=1cf3970e","mp4":"/assets/video/hero/01-seuil-9x16.mp4?v=a64c080a","avif":"/assets/video/hero/01-seuil-9x16-poster.avif?v=65aafe26","jpg":"/assets/video/hero/01-seuil-9x16-poster.jpg?v=d5cb9ec8","leger":"/assets/video/hero/01-seuil-9x16-leger.mp4?v=397a7313"}},{"id":"02-pas","titre":"Les pas","posL":"center 48%","posP":"center 45%","l":{"webm":"/assets/video/hero/02-pas-16x9.webm?v=f81b0f15","mp4":"/assets/video/hero/02-pas-16x9.mp4?v=2a86190d","avif":"/assets/video/hero/02-pas-16x9-poster.avif?v=2171ab66","jpg":"/assets/video/hero/02-pas-16x9-poster.jpg?v=9e9b1f66","leger":""},"p":{"webm":"/assets/video/hero/02-pas-9x16.webm?v=aa7c60d2","mp4":"/assets/video/hero/02-pas-9x16.mp4?v=33ddb375","avif":"/assets/video/hero/02-pas-9x16-poster.avif?v=29a340bd","jpg":"/assets/video/hero/02-pas-9x16-poster.jpg?v=b40073b9","leger":""}},{"id":"03-bureau","titre":"Le bureau","posL":"center 52%","posP":"center 50%","l":{"webm":"/assets/video/hero/03-bureau-16x9.webm?v=67c8aa27","mp4":"/assets/video/hero/03-bureau-16x9.mp4?v=4a251407","avif":"/assets/video/hero/03-bureau-16x9-poster.avif?v=1431ea92","jpg":"/assets/video/hero/03-bureau-16x9-poster.jpg?v=3f5b7b32","leger":""},"p":{"webm":"/assets/video/hero/03-bureau-9x16.webm?v=cd311db6","mp4":"/assets/video/hero/03-bureau-9x16.mp4?v=1680550c","avif":"/assets/video/hero/03-bureau-9x16-poster.avif?v=2a5d1945","jpg":"/assets/video/hero/03-bureau-9x16-poster.jpg?v=50d95354","leger":""}},{"id":"04-carte","titre":"La carte","posL":"center 58%","posP":"center 52%","l":{"webm":"/assets/video/hero/04-carte-16x9.webm?v=70364a46","mp4":"/assets/video/hero/04-carte-16x9.mp4?v=70d26dd7","avif":"/assets/video/hero/04-carte-16x9-poster.avif?v=3f199fe8","jpg":"/assets/video/hero/04-carte-16x9-poster.jpg?v=490e3d32","leger":""},"p":{"webm":"/assets/video/hero/04-carte-9x16.webm?v=a67c1b8f","mp4":"/assets/video/hero/04-carte-9x16.mp4?v=d9623026","avif":"/assets/video/hero/04-carte-9x16-poster.avif?v=714beba1","jpg":"/assets/video/hero/04-carte-9x16-poster.jpg?v=2d38f452","leger":""}},{"id":"05-lys","titre":"Les lys","posL":"center 42%","posP":"center 40%","l":{"webm":"/assets/video/hero/05-lys-16x9.webm?v=80bd475e","mp4":"/assets/video/hero/05-lys-16x9.mp4?v=54292d85","avif":"/assets/video/hero/05-lys-16x9-poster.avif?v=235c8960","jpg":"/assets/video/hero/05-lys-16x9-poster.jpg?v=150cd94f","leger":""},"p":{"webm":"/assets/video/hero/05-lys-9x16.webm?v=b49840fe","mp4":"/assets/video/hero/05-lys-9x16.mp4?v=e3ffcf6b","avif":"/assets/video/hero/05-lys-9x16-poster.avif?v=bc5e0c81","jpg":"/assets/video/hero/05-lys-9x16-poster.jpg?v=7c7d2ac4","leger":""}},{"id":"06-fenetre","titre":"La fenêtre","posL":"center 42%","posP":"center 45%","l":{"webm":"/assets/video/hero/06-fenetre-16x9.webm?v=c5539a93","mp4":"/assets/video/hero/06-fenetre-16x9.mp4?v=bf31fec2","avif":"/assets/video/hero/06-fenetre-16x9-poster.avif?v=317e1363","jpg":"/assets/video/hero/06-fenetre-16x9-poster.jpg?v=53c213ab","leger":""},"p":{"webm":"/assets/video/hero/06-fenetre-9x16.webm?v=27ecef13","mp4":"/assets/video/hero/06-fenetre-9x16.mp4?v=70557d54","avif":"/assets/video/hero/06-fenetre-9x16-poster.avif?v=c4451bb4","jpg":"/assets/video/hero/06-fenetre-9x16-poster.jpg?v=a74be8a7","leger":""}},{"id":"07-jeu","titre":"Le jeu","posL":"center 40%","posP":"center 42%","l":{"webm":"/assets/video/hero/07-jeu-16x9.webm?v=a9e26c39","mp4":"/assets/video/hero/07-jeu-16x9.mp4?v=f159eccc","avif":"/assets/video/hero/07-jeu-16x9-poster.avif?v=aa2df8a2","jpg":"/assets/video/hero/07-jeu-16x9-poster.jpg?v=65dcf91f","leger":""},"p":{"webm":"/assets/video/hero/07-jeu-9x16.webm?v=9a10f697","mp4":"/assets/video/hero/07-jeu-9x16.mp4?v=dab0c367","avif":"/assets/video/hero/07-jeu-9x16-poster.avif?v=6ab3cbba","jpg":"/assets/video/hero/07-jeu-9x16-poster.jpg?v=73cbe9a3","leger":""}},{"id":"08-portrait","titre":"Le portrait","posL":"center 72%","posP":"center 58%","l":{"webm":"/assets/video/hero/08-portrait-16x9.webm?v=2711746d","mp4":"/assets/video/hero/08-portrait-16x9.mp4?v=74c276bc","avif":"/assets/video/hero/08-portrait-16x9-poster.avif?v=07112139","jpg":"/assets/video/hero/08-portrait-16x9-poster.jpg?v=70e5427e","leger":""},"p":{"webm":"/assets/video/hero/08-portrait-9x16.webm?v=dbb80a4a","mp4":"/assets/video/hero/08-portrait-9x16.mp4?v=5520f016","avif":"/assets/video/hero/08-portrait-9x16-poster.avif?v=7c8fa3a6","jpg":"/assets/video/hero/08-portrait-9x16-poster.jpg?v=5b8a3336","leger":""}}]}</script>
     <div class="hero-scroll" aria-hidden="true">Découvrir</div>
   </section>
 
@@ -1560,6 +1577,7 @@ Et l’amour comme unique richesse</blockquote>
 <script src="/assets/js/courrier.js?v=7feee7d2"></script>
 <script src="/assets/js/ornements.js?v=b37cef91"></script>
 <script src="/assets/js/motion.js?v=59d24715"></script>
+<script src="/assets/js/hero-film.js?v=6e0c662c"></script>
 <script src="/assets/js/catalogue.js?v=937566dc"></script>
 <script src="/assets/js/vendor/motion-mini-14.12.min.js?v=c2bb143b"></script>
 <script src="/assets/js/recueil.js?v=8f46517e"></script>
