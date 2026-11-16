@@ -1,0 +1,630 @@
+{
+  "version": 1,
+  "purpose": "Succession de clips pour le hero animé de la page d'accueil Melodia Funèbre. Sobre, digne, sans effet flashy.",
+  "source": "Films Grok Imagine, brief du 10 novembre 2026 (/workspace/melodia-ad). Les 10 s d'ouverture des bases 1–3 et les extensions ext-1-2, ext-2-1, ext-2-2, ext-3-1, ext-3-2b.",
+  "playback": {
+    "order": [
+      "01-seuil",
+      "02-pas",
+      "03-bureau",
+      "04-carte",
+      "05-lys",
+      "06-fenetre",
+      "07-jeu",
+      "08-portrait"
+    ],
+    "loop": true,
+    "muted": true,
+    "playsInline": true,
+    "preload": "metadata",
+    "transition": "Coupes franches ou fondus au noir très lents. Pas de zoom, flash, ni punchline commerciale.",
+    "suggestedSourceOrder": [
+      "video/webm (AV1) — Chrome, Firefox, Edge, Safari 17+ avec décodeur matériel",
+      "video/mp4 (H.264) — repli, notamment Safari plus ancien et iOS"
+    ],
+    "layout": "En desktop, servir le 16:9 (déjà recadré). En mobile, servir le 9:16. Si un seul fichier est utilisé avec object-fit: cover, appliquer object-position indiqué pour chaque clip.",
+    "overlay": "Emblème officiel et typo « Chaque vie mérite sa chanson. » par-dessus. Ne pas redessiner le logo. logo-melodia-anime.mp4 est l'ancien logo : ne pas le réutiliser."
+  },
+  "encoding": {
+    "16x9": "1600×900, 24 i/s, yuv420p, sans son, 10 s",
+    "9x16": "900×1600, 24 i/s, yuv420p, sans son, 10 s",
+    "mp4": "H.264 High, CRF 27, +faststart",
+    "webm": "AV1 (SVT-AV1 CRF 34) dans un conteneur WebM",
+    "posters": "AVIF + JPEG, image médiane (t = 5 s)",
+    "leger": "Premier clip seulement, H.264 CRF 32, 1280×720 et 720×1280, chacun < 1 Mo"
+  },
+  "budgetBytes": 60000000,
+  "totalBytes": 54292076,
+  "clips": [
+    {
+      "id": "01-seuil",
+      "title": "Le seuil",
+      "order": 1,
+      "duration": 10.0,
+      "description": "Plan large : famille de dos au seuil d'un édifice de pierre, cyprès, lumière rasante.",
+      "defects": null,
+      "objectPosition": {
+        "16x9": "center 58%",
+        "9x16": "center 55%"
+      },
+      "crop16x9": "Recadrage sur les figures, les marches et la porte éclairée (pas le centre géométrique : trop de ciel).",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/01-seuil-16x9.mp4",
+            "bytes": 1597937,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/01-seuil-16x9.webm",
+            "bytes": 1495948,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/01-seuil-16x9-poster.avif",
+            "jpg": "assets/video/hero/01-seuil-16x9-poster.jpg",
+            "bytes": {
+              "avif": 27819,
+              "jpg": 108611
+            }
+          },
+          "leger": {
+            "path": "assets/video/hero/01-seuil-16x9-leger.mp4",
+            "bytes": 438814,
+            "width": 1280,
+            "height": 720,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/01-seuil-9x16.mp4",
+            "bytes": 931018,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/01-seuil-9x16.webm",
+            "bytes": 798567,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/01-seuil-9x16-poster.avif",
+            "jpg": "assets/video/hero/01-seuil-9x16-poster.jpg",
+            "bytes": {
+              "avif": 18400,
+              "jpg": 74238
+            }
+          },
+          "leger": {
+            "path": "assets/video/hero/01-seuil-9x16-leger.mp4",
+            "bytes": 270328,
+            "width": 720,
+            "height": 1280,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          }
+        }
+      },
+      "lcp": {
+        "note": "Pour le LCP : poster AVIF (repli JPG) dès le premier paint, puis 01-seuil-*-leger.mp4 (< 1 Mo) en fond, puis bascule sur le mp4/webm complet. Le leger est du H.264 1280×720 / 720×1280, 10 s, sans son.",
+        "posterPreferred": "avif"
+      }
+    },
+    {
+      "id": "02-pas",
+      "title": "Les pas",
+      "order": 2,
+      "duration": 10.0,
+      "description": "Plus près : la même famille avance vers la porte en se tenant par la main (silhouettes).",
+      "defects": "Mains jointes en silhouette un peu pâteuses. En 16:9 le cadrage est serré sur les têtes et les pieds.",
+      "objectPosition": {
+        "16x9": "center 48%",
+        "9x16": "center 45%"
+      },
+      "crop16x9": "Recadrage un peu au-dessus du centre pour garder les têtes ; les pieds frôlent le bord inférieur.",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/02-pas-16x9.mp4",
+            "bytes": 1755043,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/02-pas-16x9.webm",
+            "bytes": 1931343,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/02-pas-16x9-poster.avif",
+            "jpg": "assets/video/hero/02-pas-16x9-poster.jpg",
+            "bytes": {
+              "avif": 20972,
+              "jpg": 81838
+            }
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/02-pas-9x16.mp4",
+            "bytes": 1474937,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/02-pas-9x16.webm",
+            "bytes": 1571944,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/02-pas-9x16-poster.avif",
+            "jpg": "assets/video/hero/02-pas-9x16-poster.jpg",
+            "bytes": {
+              "avif": 25418,
+              "jpg": 95459
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "03-bureau",
+      "title": "Le bureau",
+      "order": 3,
+      "duration": 10.0,
+      "description": "Bureau de réception, lys, dossier de cuir, tablette, sans main. Beaucoup de noir à droite pour le typo.",
+      "defects": null,
+      "objectPosition": {
+        "16x9": "center 52%",
+        "9x16": "center 50%"
+      },
+      "crop16x9": "Lys, plateau et dossier, mur noir à droite (place pour le titre).",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/03-bureau-16x9.mp4",
+            "bytes": 1414762,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/03-bureau-16x9.webm",
+            "bytes": 1245933,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/03-bureau-16x9-poster.avif",
+            "jpg": "assets/video/hero/03-bureau-16x9-poster.jpg",
+            "bytes": {
+              "avif": 28129,
+              "jpg": 103290
+            }
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/03-bureau-9x16.mp4",
+            "bytes": 839764,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/03-bureau-9x16.webm",
+            "bytes": 598355,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/03-bureau-9x16-poster.avif",
+            "jpg": "assets/video/hero/03-bureau-9x16-poster.jpg",
+            "bytes": {
+              "avif": 17526,
+              "jpg": 69442
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "04-carte",
+      "title": "La carte",
+      "order": 4,
+      "duration": 10.0,
+      "description": "Une main pose une carte blanche près des lys.",
+      "defects": "Main globalement propre sur les images inspectées ; à revérifier au montage (doigts, prise de la carte).",
+      "objectPosition": {
+        "16x9": "center 58%",
+        "9x16": "center 52%"
+      },
+      "crop16x9": "Priorité au geste (main + carte + dossier). Les fleurs des lys sont coupées en haut.",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/04-carte-16x9.mp4",
+            "bytes": 1892187,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/04-carte-16x9.webm",
+            "bytes": 1877880,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/04-carte-16x9-poster.avif",
+            "jpg": "assets/video/hero/04-carte-16x9-poster.jpg",
+            "bytes": {
+              "avif": 26830,
+              "jpg": 102176
+            }
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/04-carte-9x16.mp4",
+            "bytes": 1112603,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/04-carte-9x16.webm",
+            "bytes": 957030,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/04-carte-9x16-poster.avif",
+            "jpg": "assets/video/hero/04-carte-9x16-poster.jpg",
+            "bytes": {
+              "avif": 22639,
+              "jpg": 89093
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "05-lys",
+      "title": "Les lys",
+      "order": 5,
+      "duration": 10.0,
+      "description": "Après le geste : lys, dossier, carte posée, poussières dans la lumière.",
+      "defects": "En 16:9 les corolles des lys sont un peu coupées ; le dossier reste entier.",
+      "objectPosition": {
+        "16x9": "center 42%",
+        "9x16": "center 40%"
+      },
+      "crop16x9": "Compromis vase + dossier. Les fleurs dépassent le haut du cadre 16:9.",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/05-lys-16x9.mp4",
+            "bytes": 2160662,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/05-lys-16x9.webm",
+            "bytes": 2183801,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/05-lys-16x9-poster.avif",
+            "jpg": "assets/video/hero/05-lys-16x9-poster.jpg",
+            "bytes": {
+              "avif": 31268,
+              "jpg": 97441
+            }
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/05-lys-9x16.mp4",
+            "bytes": 1549915,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/05-lys-9x16.webm",
+            "bytes": 1468898,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/05-lys-9x16-poster.avif",
+            "jpg": "assets/video/hero/05-lys-9x16-poster.jpg",
+            "bytes": {
+              "avif": 29369,
+              "jpg": 107562
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "06-fenetre",
+      "title": "La fenêtre",
+      "order": 6,
+      "duration": 10.0,
+      "description": "Femme au piano, de dos/trois-quarts, regard vers la fenêtre.",
+      "defects": null,
+      "objectPosition": {
+        "16x9": "center 42%",
+        "9x16": "center 45%"
+      },
+      "crop16x9": "Tête, fenêtre et photo sur le piano. Les mains et le clavier sortent du cadre.",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/06-fenetre-16x9.mp4",
+            "bytes": 1492558,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/06-fenetre-16x9.webm",
+            "bytes": 1609730,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/06-fenetre-16x9-poster.avif",
+            "jpg": "assets/video/hero/06-fenetre-16x9-poster.jpg",
+            "bytes": {
+              "avif": 29663,
+              "jpg": 106304
+            }
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/06-fenetre-9x16.mp4",
+            "bytes": 1021449,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/06-fenetre-9x16.webm",
+            "bytes": 896142,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/06-fenetre-9x16-poster.avif",
+            "jpg": "assets/video/hero/06-fenetre-9x16-poster.jpg",
+            "bytes": {
+              "avif": 24985,
+              "jpg": 86871
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "07-jeu",
+      "title": "Le jeu",
+      "order": 7,
+      "duration": 10.0,
+      "description": "Plus près, de profil, elle joue. Mains peu visibles, cadrage sûr.",
+      "defects": null,
+      "objectPosition": {
+        "16x9": "center 40%",
+        "9x16": "center 42%"
+      },
+      "crop16x9": "Portrait de profil et lumière de fenêtre. Le clavier est coupé.",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/07-jeu-16x9.mp4",
+            "bytes": 2135933,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/07-jeu-16x9.webm",
+            "bytes": 2375083,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/07-jeu-16x9-poster.avif",
+            "jpg": "assets/video/hero/07-jeu-16x9-poster.jpg",
+            "bytes": {
+              "avif": 38554,
+              "jpg": 122123
+            }
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/07-jeu-9x16.mp4",
+            "bytes": 1520026,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/07-jeu-9x16.webm",
+            "bytes": 1683362,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/07-jeu-9x16-poster.avif",
+            "jpg": "assets/video/hero/07-jeu-9x16-poster.jpg",
+            "bytes": {
+              "avif": 32710,
+              "jpg": 101695
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "08-portrait",
+      "title": "Le portrait",
+      "order": 8,
+      "duration": 10.0,
+      "description": "Gros plan : mains sur les touches, lumière, photo d'un aîné (visible en 9:16).",
+      "defects": "Le 16:9 est recadré sur les mains et le piano : la photo encadrée sort du cadre. Mains correctes sur les images inspectées.",
+      "objectPosition": {
+        "16x9": "center 72%",
+        "9x16": "center 58%"
+      },
+      "crop16x9": "Mains et touches, faisceau de lumière. La photo sur le piano n'entre pas dans le 16:9.",
+      "files": {
+        "16x9": {
+          "mp4": {
+            "path": "assets/video/hero/08-portrait-16x9.mp4",
+            "bytes": 2716416,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/08-portrait-16x9.webm",
+            "bytes": 3017772,
+            "width": 1600,
+            "height": 900,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/08-portrait-16x9-poster.avif",
+            "jpg": "assets/video/hero/08-portrait-16x9-poster.jpg",
+            "bytes": {
+              "avif": 44377,
+              "jpg": 158580
+            }
+          }
+        },
+        "9x16": {
+          "mp4": {
+            "path": "assets/video/hero/08-portrait-9x16.mp4",
+            "bytes": 2018606,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "h264",
+            "audio": false
+          },
+          "webm": {
+            "path": "assets/video/hero/08-portrait-9x16.webm",
+            "bytes": 2109047,
+            "width": 900,
+            "height": 1600,
+            "duration": 10.0,
+            "codec": "av1",
+            "audio": false
+          },
+          "poster": {
+            "avif": "assets/video/hero/08-portrait-9x16-poster.avif",
+            "jpg": "assets/video/hero/08-portrait-9x16-poster.jpg",
+            "bytes": {
+              "avif": 41607,
+              "jpg": 143699
+            }
+          }
+        }
+      }
+    }
+  ]
+}
