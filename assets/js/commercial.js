@@ -1850,6 +1850,8 @@
     }
     await charger();
     var demarrage = vueHash();
+    /* Une vue inscrite après le démarrage (script chargé plus tard) relit ce hash d'origine. */
+    window.MelodiaConsole.hashDemarrage = demarrage;
     go(VUES[demarrage] ? demarrage : (VUES.journee ? 'journee' : 'accueil'));
     window.MelodiaConsole.demarree = true;
     /* Le compteur de messages non lus doit vivre dès l'ouverture :
