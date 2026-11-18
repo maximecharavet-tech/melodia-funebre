@@ -31,6 +31,10 @@
       "maxDuration": 30,
       "includeFiles": "assets/js/vendor/{melodia_pro.wasm,melodia-pro-glue.js}"
     },
+    "api/medias-generer.js": {
+      "maxDuration": 30,
+      "includeFiles": "api/_medias-idees.json"
+    },
     "api/*.js": {
       "maxDuration": 30
     }

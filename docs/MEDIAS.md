@@ -19,9 +19,15 @@ Préparé par `python3 scripts/medias-preparer.py` (métadonnées retirées, son
 
 Les 13 affiches du 16/11/2026 (`/workspace/melodia-cgpt`, copie dans `/workspace/melodia-ad/chatgpt-visuels`), moins trois : la planche multi-affiches, et les deux scènes de famille photoréalistes avec enfants au premier plan (« Souvenirs en musique dorée », « Souvenirs qui résonnent en famille »). Les personnages sont illustrés/générés : aucune personne réelle. Le logo y est déjà posé (approuvé par Maxime).
 
-## Générer un visuel Melodia
+## Générer un visuel Melodia (refonte du 18/11, 03 h)
 
-`/api/medias-generer` → API à jeton d'Image MAX Gen (Hyper Engine) : `POST /api/image/tasks`, `POST /api/image/tasks/tick`, `GET /api/image/tasks/:id` (voir `hyper-engine/docs/IMAGE_MAX_GEN.md`). Un jeton `imx_…` n'utilise que les moteurs gratuits.
+Julie écrit librement « Décrivez votre image », choisit un format (Post 1:1, Story 9:16, Bannière 16:9) et appuie sur « Générer ». Dix cartes d'idées (vignettes tirées des médias existants) pré-remplissent le champ ; tant que l'idée reste dans le texte, son pré-prompt détaillé est ajouté côté serveur (`api/_medias-idees.json`, version publique sans pré-prompt dans `assets/medias/medias.json`).
+
+Côté serveur (`api/_medias.js`), toujours : l'enveloppe de style Melodia (`STYLE`) et les interdits de sécurité (`INTERDITS` : pas de texte, pas de logo généré, pas de visage réaliste d'enfant, pas de personne réelle connue, pas de cercueil, pas d'effet gadget). La demande composée ne sort jamais du serveur.
+
+Logo : le fichier officiel `assets/img/logo-melodia-complet.jpg` (1600 px) est posé par la console sur CHAQUE résultat, proportions d'origine, marges de sécurité (zones d'interface des stories comprises). Variante automatique selon la clarté de la zone : fond sombre → mode « écran » (le noir du fichier disparaît, le dessin reste exact) ; fond clair → pastille noire du fichier d'origine. Option : signature (« Chaque vie mérite sa chanson. » + MELODIA-FUNEBRE.FR) et « Ajouter un mot » (désactivé par défaut), écrits par la console, jamais par le moteur. Puis Télécharger / Partager / Garder dans Mes créations.
+
+Moteur : API à jeton d'Image MAX Gen (Hyper Engine) : `POST /api/image/tasks`, `POST /api/image/tasks/tick`, `GET /api/image/tasks/:id`. L'image est relayée par `/api/medias-generer?brut=` (même origine) pour que le logo puisse être posé et l'image exportée.
 
 Éteint par défaut. Pour l'allumer (Vercel, projet melodia-funebre, Production) :
 
@@ -34,6 +40,6 @@ Les 13 affiches du 16/11/2026 (`/workspace/melodia-cgpt`, copie dans `/workspace
 
 Côté Hyper Engine : la migration `0102_image_studio.sql` doit être appliquée (sinon 503 `schema_missing`) et le pare-feu Vercel doit laisser passer `/api/image/tasks*` (le « Security Checkpoint » répond aujourd'hui à un client automatique).
 
-Rangement : bucket `medias-commerciaux` (migration `supabase/migrations/20261118_14_medias_commerciaux.sql`, non appliquée). Sans lui, l'adresse du moteur est gardée dans le navigateur.
+Rangement : bucket `medias-commerciaux` (migration `supabase/migrations/20261118_14_medias_commerciaux.sql`, non appliquée) : `gardes/` (images composées, logo posé, listées dans Mes créations) et `bruts/` (copie brute du moteur). Sans lui, « Garder » range l'image brute et ses réglages dans le navigateur, et la console la recompose (logo compris) à chaque ouverture.
 
-Le logo n'est jamais demandé au moteur : « Modifier » pose le fichier officiel `assets/img/logo-melodia-600.webp` tel quel (fusion « écran » de son fond noir).
+« Modifier » (affiches existantes) utilise la même pose du logo.

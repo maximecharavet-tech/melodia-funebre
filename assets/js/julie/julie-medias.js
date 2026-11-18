@@ -22,16 +22,15 @@
   var esc = J.esc;
 
   var SITE = 'https://melodia-funebre.fr';
-  var LOGO = '/assets/img/logo-melodia-600.webp';
+  var LOGO = '/assets/img/logo-melodia-complet.jpg'; // fichier officiel 1600 px, posé tel quel
   var CLE_CREES = 'melodia_medias_crees';
 
-  var STYLES = [['lys', 'Lys blancs'], ['bougies', 'Bougies'], ['lumiere', 'Lumière douce'], ['partition', 'Mains sur partition'], ['nature', 'Nature'], ['colombes', 'Colombes']];
-  var COULEURS = [['or', 'Or'], ['ivoire', 'Ivoire'], ['gris', 'Gris']];
-  var FORMATS_GEN = [['post', 'Publication 1:1'], ['story', 'Story 9:16'], ['banniere', 'Bannière 16:9']];
+  var FORMATS_GEN = [['post', 'Post 1:1'], ['story', 'Story 9:16'], ['banniere', 'Bannière 16:9']];
+  var DEVISE = 'Chaque vie mérite sa chanson.';
   var FORMATS_EDIT = { post: [1080, 1080, 'Publication 1:1'], portrait: [1080, 1350, 'Portrait 4:5'], story: [1080, 1920, 'Story 9:16'], banniere: [1920, 1080, 'Bannière 16:9'] };
   var LEGENDE_CREE = 'Chaque vie mérite sa chanson. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche. melodia-funebre.fr';
 
-  var etat = { medias: null, erreur: '', filtre: 'tous', serveur: [], actif: null, stockage: null, gen: { style: 'lys', couleur: 'or', format: 'post', precision: '' }, enCours: false, message: '' };
+  var etat = { medias: null, erreur: '', filtre: 'tous', serveur: [], actif: null, stockage: null, idees: [], gen: { texte: '', carte: '', format: 'post', motActif: false, mot: '', signature: true }, enCours: false, message: '' };
 
   /* ─── Données ─────────────────────────────────────────────────── */
   function lireCrees() {
@@ -39,10 +38,15 @@
   }
   function ecrireCrees(l) { try { localStorage.setItem(CLE_CREES, JSON.stringify(l.slice(0, 60))); } catch (e) { /* plein */ } }
 
+  /* Deux sortes de créations : « gardée » (image déjà composée, logo posé, rangée en ligne)
+     et « locale » (image brute du moteur + réglages : on la recompose, logo compris, à chaque ouverture). */
   function creation(c) {
+    var garde = !c.tache;
     return {
-      id: 'c-' + c.id, type: 'creation', titre: 'Visuel généré', legende: LEGENDE_CREE, vignette: c.url, ratio: '',
-      formats: [{ k: 'original', label: 'Image générée', url: c.url }], note: (c.le ? 'Créé le ' + jour(c.le) + '. ' : '') + 'Sans logo : posez-le avec « Modifier ».', modifiable: true, le: c.le
+      id: 'c-' + c.id, type: 'creation', titre: c.titre || 'Visuel Melodia', legende: LEGENDE_CREE, vignette: c.vignette || c.url, ratio: '',
+      formats: [{ k: 'original', label: 'Visuel avec logo', url: c.url }], modifiable: garde, le: c.le,
+      note: (c.le ? 'Créé le ' + jour(c.le) + '. ' : '') + (garde ? 'Rangé dans Mes créations.' : 'Gardé dans ce navigateur.'),
+      locale: garde ? null : c
     };
   }
   function creations() {
@@ -64,7 +68,9 @@
     if (etat.medias === null) {
       var r = await fetch('/assets/medias/medias.json', { cache: 'no-cache' });
       if (!r.ok) throw new Error('Médias indisponibles.');
-      etat.medias = (await r.json()).medias || [];
+      var cat = await r.json();
+      etat.medias = cat.medias || [];
+      etat.idees = cat.idees || [];
     }
     if (session()) {
       try {
@@ -101,14 +107,22 @@
   function generateur() {
     var g = etat.gen;
     var statut = etat.actif === true ? '<span class="jm-etat est-on">Activé</span>' : etat.actif === false ? '<span class="jm-etat">En attente d’activation</span>' : '';
-    return '<details class="panel jm-gen"' + (etat.genOuvert || etat.message ? ' open' : '') + '><summary><span class="jm-gen-t">Générer un visuel Melodia</span> ' + statut + '</summary>' +
-      '<p class="panel-note">Styles de la maison : sobre, sans texte ni visage. Le logo officiel est posé ensuite, tel quel, jamais généré.</p>' +
-      '<div class="jm-gen-l"><span class="jm-gen-k">Style</span>' + puces('style', STYLES, g.style) + '</div>' +
-      '<div class="jm-gen-l"><span class="jm-gen-k">Couleur</span>' + puces('couleur', COULEURS, g.couleur) + '</div>' +
+    return '<section class="panel jm-gen" aria-labelledby="jm-gen-t">' +
+      '<div class="jm-gen-tete"><h2 class="jm-gen-t" id="jm-gen-t">Générer un visuel Melodia</h2>' + statut + '</div>' +
+      '<label class="jm-gen-k" for="jm-texte">Décrivez votre image</label>' +
+      '<textarea id="jm-texte" class="jm-champ jm-texte" rows="3" maxlength="400" data-jm-texte placeholder="Ex. : un bouquet de roses blanches sur un piano, lumière du soir">' + esc(g.texte) + '</textarea>' +
+      (etat.idees.length ? '<p class="jm-aide">Besoin d’une idée ? Touchez une carte, puis modifiez le texte à votre goût.</p>' +
+        '<ul class="jm-idees">' + etat.idees.map(function (i) {
+          return '<li><button type="button" class="jm-idee' + (g.carte === i.id ? ' est-actif' : '') + '" data-jm-idee="' + esc(i.id) + '" aria-pressed="' + (g.carte === i.id) + '">' +
+            '<img src="' + esc(i.vignette) + '" alt="" loading="lazy" width="96" height="96"><span>' + esc(i.nom) + '</span></button></li>';
+        }).join('') + '</ul>' : '') +
       '<div class="jm-gen-l"><span class="jm-gen-k">Format</span>' + puces('format', FORMATS_GEN, g.format) + '</div>' +
-      '<label class="jm-gen-l"><span class="jm-gen-k">Précision</span><input type="text" class="jm-champ" maxlength="160" data-jm-precision value="' + esc(g.precision) + '" placeholder="Facultatif : « un piano au loin », « fin d’automne »…"></label>' +
-      '<div class="jm-gen-bas"><button type="button" class="btn btn-gold" data-jm-generer' + (etat.enCours ? ' disabled' : '') + '>' + (etat.enCours ? 'Génération…' : 'Générer') + '</button>' +
-      (etat.message ? '<p class="jm-msg" role="status">' + etat.message + '</p>' : '') + '</div></details>';
+      '<label class="jm-case"><input type="checkbox" data-jm-signature' + (g.signature ? ' checked' : '') + '> Signature en bas : « ' + DEVISE + ' » et melodia-funebre.fr</label>' +
+      '<label class="jm-case"><input type="checkbox" data-jm-mot-actif' + (g.motActif ? ' checked' : '') + '> Ajouter un mot (un prénom, une phrase)</label>' +
+      (g.motActif ? '<input type="text" class="jm-champ" maxlength="60" data-jm-mot value="' + esc(g.mot) + '" placeholder="Ex. : En mémoire de Jeanne">' : '') +
+      '<button type="button" class="btn btn-gold jm-generer" data-jm-generer' + (etat.enCours ? ' disabled' : '') + '>' + (etat.enCours ? 'Génération…' : 'Générer') + '</button>' +
+      '<p class="jm-aide">Le logo officiel Melodia est posé sur chaque image, tel quel : il n’est jamais généré.</p>' +
+      (etat.message ? '<p class="jm-msg" role="status">' + etat.message + '</p>' : '') + '</section>';
   }
 
   function vue() {
@@ -288,13 +302,101 @@
       x.font = '400 ' + t2 + 'px Jost, Arial, sans-serif'; x.fillStyle = '#c9a84c'; x.textAlign = 'center';
       x.fillText('MELODIA-FUNEBRE.FR', W / 2, H - marge * 0.6);
     }
-    if (o.logo !== 'aucun' && logo) {
-      // le fichier officiel tel quel ; « écran » fond son noir dans l'image, sans retoucher le dessin
-      var s = Math.round(Math.min(W, H) * 0.24);
-      var lx = o.logo === 'gauche' ? marge * 0.6 : (W - s) / 2;
-      var ly = o.logo === 'bas' ? H - s - marge * 1.2 : marge * 0.4;
-      x.save(); x.globalCompositeOperation = 'screen'; x.drawImage(logo, lx, ly, s, s); x.restore();
+    if (o.logo !== 'aucun' && logo) poserLogo(x, W, H, logo, o.logo === 'bas' ? 'bas' : o.logo === 'gauche' ? 'gauche' : 'haut', o.format);
+  }
+
+  /* ─── Logo officiel : posé à l'identique ─────────────────────────
+     Proportions d'origine, fichier 1600 px réduit en haute qualité (net),
+     marges de sécurité (zones d'interface des stories comprises), et
+     variante choisie selon la clarté du fond : sur fond sombre, le logo
+     or est posé en mode « écran » (son noir disparaît, le dessin reste
+     exact) ; sur fond clair, il est posé sur sa propre pastille noire,
+     comme le fichier d'origine, pour rester lisible. */
+  function clarte(x, bx, by, bw, bh) {
+    try {
+      var d = x.getImageData(Math.max(0, bx | 0), Math.max(0, by | 0), Math.max(1, bw | 0), Math.max(1, bh | 0)).data;
+      var t = 0, n = 0;
+      for (var i = 0; i < d.length; i += 16) { t += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255; n++; }
+      return n ? t / n : 0;
+    } catch (e) { return 0; } // toile illisible : fond Melodia supposé sombre
+  }
+  function placeLogo(W, H, ou, format) {
+    var story = H / W > 1.5, large = W / H > 1.5;
+    var t = Math.round(large ? H * 0.3 : story ? W * 0.34 : W * 0.26);
+    var marge = Math.round(Math.min(W, H) * (story ? 0.06 : 0.05));
+    var haut = story ? Math.round(H * 0.075) : marge;
+    var bas = story ? Math.round(H * 0.13) : marge;
+    var x0 = ou === 'gauche' || (large && ou !== 'bas') ? marge : Math.round((W - t) / 2);
+    var y0 = ou === 'bas' ? H - bas - t : haut;
+    return { x: x0, y: y0, t: t };
+  }
+  function poserLogo(x, W, H, logo, ou, format) {
+    var p = placeLogo(W, H, ou, format);
+    var ratio = logo.naturalHeight / logo.naturalWidth || 1;
+    var l = p.t, h = Math.round(p.t * ratio);
+    var c = clarte(x, p.x, p.y, l, h);
+    x.save();
+    x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+    if (c < 0.42) {
+      // fond sombre : un léger voile sous le logo pour la lisibilité, puis le logo en « écran »
+      var g = x.createRadialGradient(p.x + l / 2, p.y + h / 2, l * 0.1, p.x + l / 2, p.y + h / 2, l * 0.7);
+      g.addColorStop(0, 'rgba(4,4,7,0.55)'); g.addColorStop(1, 'rgba(4,4,7,0)');
+      x.fillStyle = g; x.fillRect(p.x - l * 0.3, p.y - h * 0.3, l * 1.6, h * 1.6);
+      x.globalCompositeOperation = 'screen';
+      x.drawImage(logo, p.x, p.y, l, h);
+    } else {
+      // fond clair : pastille noire du fichier d'origine
+      var r = Math.round(l * 0.12);
+      x.beginPath();
+      if (x.roundRect) x.roundRect(p.x, p.y, l, h, r); else x.rect(p.x, p.y, l, h);
+      x.closePath(); x.clip();
+      x.fillStyle = '#040407'; x.fillRect(p.x, p.y, l, h);
+      x.drawImage(logo, p.x, p.y, l, h);
     }
+    x.restore();
+    return { x: p.x, y: p.y, l: l, h: h, variante: c < 0.42 ? 'clair' : 'sombre' };
+  }
+
+  /* Le visuel final d'une génération : image en plein cadre, logo, mot, signature. */
+  function composer(cv, img, logo, o) {
+    var F = FORMATS_EDIT[o.format] || FORMATS_EDIT.post, W = F[0], H = F[1];
+    cv.width = W; cv.height = H;
+    var x = cv.getContext('2d');
+    x.fillStyle = '#040407'; x.fillRect(0, 0, W, H);
+    var rc = Math.max(W / img.width, H / img.height), w = img.width * rc, h = img.height * rc;
+    x.imageSmoothingQuality = 'high';
+    x.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+    var story = H / W > 1.5, large = W / H > 1.5;
+    var bas = story ? Math.round(H * 0.13) : Math.round(Math.min(W, H) * 0.05);
+    var t2 = Math.round(Math.min(W, H) * (large ? 0.03 : 0.026));
+    var tm = Math.round(Math.min(W, H) * (large ? 0.065 : 0.06));
+    var zone = (o.signature ? t2 * 3.4 : 0) + (o.mot ? tm * 1.6 : 0);
+    var clair = zone ? clarte(x, 0, H - bas - zone, W, zone) >= 0.5 : false;
+    if (zone) {
+      // voile discret en bas pour la lecture
+      var gr = x.createLinearGradient(0, H - bas - zone * 1.6, 0, H);
+      var c0 = clair ? 'rgba(244,241,234,0)' : 'rgba(4,4,7,0)', c1 = clair ? 'rgba(244,241,234,0.7)' : 'rgba(4,4,7,0.7)';
+      gr.addColorStop(0, c0); gr.addColorStop(1, c1); x.fillStyle = gr; x.fillRect(0, H - bas - zone * 1.6, W, bas + zone * 1.6);
+    }
+    var cx = large ? W / 2 : W / 2;
+    x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+    var y = H - bas;
+    if (o.signature) {
+      x.font = '400 ' + t2 + 'px Jost, Arial, sans-serif';
+      x.fillStyle = clair ? '#806a30' : '#c9a84c';
+      x.fillText('MELODIA-FUNEBRE.FR', cx, y);
+      y -= t2 * 1.6;
+      x.font = 'italic 300 ' + Math.round(t2 * 1.25) + 'px "Cormorant Garamond", Georgia, serif';
+      x.fillStyle = clair ? '#17150f' : '#f2efe8';
+      x.fillText(DEVISE, cx, y);
+      y -= t2 * 1.9;
+    }
+    if (o.mot) {
+      x.font = '300 ' + tm + 'px "Cormorant Garamond", Georgia, serif';
+      x.fillStyle = clair ? '#17150f' : '#f2efe8';
+      couper(x, o.mot, W * 0.84).slice(0, 2).reverse().forEach(function (l) { x.fillText(l, cx, y); y -= tm * 1.15; });
+    }
+    return logo ? poserLogo(x, W, H, logo, 'haut', o.format) : null;
   }
   function couper(x, t, max) {
     var mots = String(t).split(/ +/), l = [], c = '';
@@ -352,17 +454,101 @@
     });
   }
 
+  /* ─── Résultat : logo posé, puis Télécharger / Partager / Garder ─── */
+  async function imageBrute(c) {
+    // relais par le serveur (même origine) : la toile reste lisible et exportable
+    if (c.tache && session()) {
+      try {
+        var r = await fetch('/api/medias-generer?brut=' + encodeURIComponent(c.tache), { headers: J.entetes(), credentials: 'same-origin' });
+        if (r.ok) return await charge(URL.createObjectURL(await r.blob()));
+      } catch (e) { /* repli sur l'adresse directe */ }
+    }
+    return charge(c.url);
+  }
+
+  async function resultat(c) {
+    var o = { format: c.format || 'post', signature: c.signature !== false, mot: c.mot || '' };
+    var d = dialogue('jm-edition jm-resultat', '<div class="jm-apercu-media"><canvas class="jm-toile" aria-label="Votre visuel Melodia"></canvas></div><div class="jm-apercu-cote">' +
+      '<h2 class="jm-apercu-t">Votre visuel</h2>' +
+      '<p class="jm-aide">' + esc(c.texte || '') + '</p>' +
+      '<label class="jm-case"><input type="checkbox" data-r="signature"' + (o.signature ? ' checked' : '') + '> Signature et melodia-funebre.fr</label>' +
+      '<label class="jm-gen-l"><span class="jm-gen-k">Un mot</span><input type="text" class="jm-champ" maxlength="60" data-r="mot" value="' + esc(o.mot) + '" placeholder="Facultatif"></label>' +
+      '<div class="jm-partage jm-gros"><button type="button" class="btn btn-gold" data-r-telecharger>⇩ Télécharger</button>' +
+      '<button type="button" class="btn btn-outline" data-r-partager>Partager</button>' +
+      '<button type="button" class="btn btn-outline" data-r-garder>Garder dans Mes créations</button></div>' +
+      '<p class="jm-aide">Le logo est le fichier officiel, posé à l’identique ; sa variante (sur fond sombre ou clair) se choisit seule.</p></div>');
+    var cv = d.querySelector('canvas'), img, logo;
+    try {
+      if (document.fonts && document.fonts.load) await Promise.all([document.fonts.load('300 40px "Cormorant Garamond"'), document.fonts.load('italic 300 40px "Cormorant Garamond"'), document.fonts.load('400 20px Jost')]).catch(function () {});
+      img = await imageBrute(c); logo = await charge(LOGO);
+    } catch (e) { dire(e.message || 'Image illisible.'); return; }
+    function maj() { composer(cv, img, logo, o); }
+    maj();
+    d.addEventListener('input', function (ev) {
+      var k = ev.target.dataset && ev.target.dataset.r; if (!k) return;
+      o[k] = ev.target.type === 'checkbox' ? ev.target.checked : ev.target.value; maj();
+    });
+    function blob() { return new Promise(function (ok, ko) { try { cv.toBlob(function (b) { b ? ok(b) : ko(new Error('Export impossible.')); }, 'image/jpeg', 0.92); } catch (e) { ko(new Error('Export impossible : image d’une autre origine.')); } }); }
+    var nom = 'melodia-visuel-' + o.format + '-' + new Date().toISOString().slice(0, 10) + '.jpg';
+    d.addEventListener('click', async function (ev) {
+      try {
+        if (ev.target.closest('[data-r-telecharger]')) {
+          var u = URL.createObjectURL(await blob()), a = document.createElement('a'); a.href = u; a.download = nom; document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function () { URL.revokeObjectURL(u); }, 4000); return dire('Visuel téléchargé.');
+        }
+        if (ev.target.closest('[data-r-partager]')) {
+          var f = new File([await blob()], nom, { type: 'image/jpeg' });
+          if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: LEGENDE_CREE }); return; }
+          await copier(LEGENDE_CREE);
+          return dire('Ce navigateur ne partage pas d’image : téléchargez-la puis publiez-la (légende copiée).');
+        }
+        if (ev.target.closest('[data-r-garder]')) return garder(c, o, cv);
+      } catch (e) { if (!(e && e.name === 'AbortError')) dire(e.message || 'Action impossible.'); }
+    });
+  }
+
+  async function garder(c, o, cv) {
+    var data = '';
+    try { data = cv.toDataURL('image/jpeg', 0.9); } catch (e) { data = ''; }
+    var titre = (c.carteNom || 'Visuel Melodia');
+    if (data && session()) {
+      try {
+        var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ garder: data }) });
+        var d = await r.json().catch(function () { return {}; });
+        if (r.ok && d.url) {
+          etat.serveur.unshift({ id: d.id, url: d.url, le: new Date().toISOString(), titre: titre });
+          rendre(); return dire('Gardé dans Mes créations.');
+        }
+      } catch (e) { /* repli local */ }
+    }
+    if (!c.tache) return dire('Impossible de garder cette image.');
+    var l = lireCrees().filter(function (x) { return x.tache !== c.tache; });
+    l.unshift({ id: c.tache, tache: c.tache, url: c.url, format: o.format, mot: o.mot, signature: o.signature, texte: c.texte, titre: titre, le: c.le || new Date().toISOString() });
+    ecrireCrees(l); rendre();
+    dire('Gardé dans Mes créations (dans ce navigateur).');
+  }
+
   /* ─── Génération ─────────────────────────────────────────────── */
+  function carteDe(id) { return etat.idees.filter(function (i) { return i.id === id; })[0] || null; }
+  // la carte compte tant que son idée est encore dans le texte (Julie peut compléter)
+  function carteGardee() {
+    var c = carteDe(etat.gen.carte);
+    return c && etat.gen.texte.indexOf(c.idee.slice(0, 30)) !== -1 ? c : null;
+  }
+
   async function generer() {
     if (etat.enCours) return;
+    var g = etat.gen;
+    if (String(g.texte).trim().length < 3) { etat.message = 'Décrivez votre image en quelques mots, ou touchez une carte d’idée.'; return rendre(); }
     if (!session()) { etat.message = 'Connectez-vous pour générer un visuel.'; return rendre(); }
+    var carte = carteGardee();
     etat.enCours = true; etat.message = 'Demande envoyée…'; rendre();
     try {
-      var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify(etat.gen) });
+      var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ texte: g.texte, format: g.format, carte: carte ? carte.id : '' }) });
       var d = await r.json().catch(function () { return {}; });
       if (r.status === 503 && d.code === 'GENERATION_INACTIVE') {
-        etat.actif = false; etat.demande = d.demande || '';
-        etat.message = esc(d.error) + (d.demande ? ' <button type="button" class="btn btn-sm btn-outline" data-jm-copier-demande>Copier la demande</button>' : '');
+        etat.actif = false;
+        etat.message = esc(d.error);
         return;
       }
       if (!r.ok || !d.tache) { etat.message = esc(d.error || 'La génération a échoué.'); return; }
@@ -373,12 +559,9 @@
         var s = await fetch('/api/medias-generer?tache=' + encodeURIComponent(d.tache), { headers: J.entetes(), credentials: 'same-origin' });
         var e = await s.json().catch(function () { return {}; });
         if (e.statut === 'fait' && e.url) {
-          var c = { id: d.tache, url: e.url, le: new Date().toISOString(), format: d.format };
-          var l = lireCrees(); l.unshift(c); ecrireCrees(l);
-          etat.message = 'Visuel prêt' + (e.stockage ? ', rangé dans l’espace Médias.' : ' (gardé dans ce navigateur).');
-          etat.filtre = 'creation';
+          etat.message = 'Visuel prêt.';
           etat.enCours = false; rendre();
-          return editer(creation(c));
+          return resultat({ tache: d.tache, url: e.url, format: d.format || g.format, texte: g.texte, mot: g.motActif ? g.mot : '', signature: g.signature, carteNom: carte ? carte.nom : '', le: new Date().toISOString() });
         }
         if (e.statut === 'echec' || !s.ok) { etat.message = esc(e.error || 'La génération a échoué.'); return; }
       }
@@ -404,11 +587,17 @@
       if (fi) { etat.filtre = fi.dataset.jmFiltre; return rendre(); }
       var pu = ev.target.closest('[data-jm-gen] [data-v]');
       if (pu) { etat.gen[pu.parentNode.dataset.jmGen] = pu.dataset.v; return rendre(); }
+      var id = ev.target.closest('[data-jm-idee]');
+      if (id) {
+        var c = carteDe(id.dataset.jmIdee);
+        if (c) { etat.gen.texte = c.idee; etat.gen.carte = c.id; rendre(); var t = view.querySelector('[data-jm-texte]'); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } }
+        return;
+      }
       if (ev.target.closest('[data-jm-generer]')) return generer();
-      if (ev.target.closest('[data-jm-copier-demande]')) { await copier(etat.demande || ''); var p = view.querySelector('.jm-msg'); if (p) p.insertAdjacentText('beforeend', ' Copiée.'); return; }
       var li = ev.target.closest('[data-jm-id]');
       var m = li && parId(li.dataset.jmId);
       if (!m) return;
+      if (m.locale) return resultat(m.locale); // création brute : toujours recomposée, logo compris
       if (ev.target.closest('[data-jm-voir]')) return ouvrir(m);
       if (ev.target.closest('[data-jm-telecharger]')) return ouvrir(m, 'telecharger');
       if (ev.target.closest('[data-jm-partager]')) {
@@ -417,15 +606,24 @@
       }
       if (ev.target.closest('[data-jm-modifier]')) return editer(m);
     });
-    view.addEventListener('toggle', function (ev) {
-      if (ev.target.classList && ev.target.classList.contains('jm-gen')) etat.genOuvert = ev.target.open;
-    }, true);
+    view.addEventListener('change', function (ev) {
+      var t = ev.target;
+      if (t.matches('[data-jm-signature]')) etat.gen.signature = t.checked;
+      if (t.matches('[data-jm-mot-actif]')) { etat.gen.motActif = t.checked; rendre(); }
+    });
     view.addEventListener('input', function (ev) {
-      if (ev.target.matches && ev.target.matches('[data-jm-precision]')) etat.gen.precision = ev.target.value;
+      var t = ev.target;
+      if (!t.matches) return;
+      if (t.matches('[data-jm-texte]')) {
+        etat.gen.texte = t.value;
+        var garde = carteGardee();
+        if (!garde && etat.gen.carte) { etat.gen.carte = ''; view.querySelectorAll('.jm-idee.est-actif').forEach(function (b) { b.classList.remove('est-actif'); b.setAttribute('aria-pressed', 'false'); }); }
+      }
+      if (t.matches('[data-jm-mot]')) etat.gen.mot = t.value;
     });
   }
 
-  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
+  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, composer: composer, poserLogo: poserLogo, placeLogo: placeLogo, resultat: resultat, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
 
   window.MelodiaConsole.ajouterVue('medias', ['Ressources', 'Mes <em>médias</em>', function () { etat.charge = false; return vue(); }, brancher]);
   var hv = (location.hash || '').replace(/^#/, '').split('?')[0];

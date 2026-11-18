@@ -18,12 +18,18 @@
 .jm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .jm-actions .btn { min-height: 36px; padding: 6px 4px; font-size: .8rem; justify-content: center; text-align: center; }
 
-.jm-gen { margin: 0 0 16px; }
-.jm-gen summary { cursor: pointer; display: flex; align-items: center; gap: 10px; min-height: 44px; list-style: none; }
-.jm-gen summary::-webkit-details-marker { display: none; }
-.jm-gen summary::before { content: '＋'; color: var(--or, #c9a84c); }
-.jm-gen[open] summary::before { content: '－'; }
-.jm-gen-t { font: 400 1.2rem/1.2 var(--ff-d, Georgia, serif); color: var(--paper, #f2efe8); }
+.jm-gen { margin: 0 0 18px; display: flex; flex-direction: column; gap: 10px; }
+.jm-gen-tete { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.jm-texte { min-height: 96px; resize: vertical; font-size: 1rem; line-height: 1.45; }
+.jm-idees { list-style: none; margin: 0; padding: 0 0 4px; display: grid; grid-auto-flow: column; grid-auto-columns: 112px; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; }
+.jm-idee { width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 0 0 8px; border: 1px solid var(--line, rgba(201,168,76,.12)); border-radius: 10px; background: var(--surface, #0b0b11); color: var(--silver, #d8d8dc); cursor: pointer; overflow: hidden; scroll-snap-align: start; font-size: .8rem; line-height: 1.25; text-align: center; }
+.jm-idee img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.jm-idee span { padding: 0 6px; }
+.jm-idee.est-actif { border-color: var(--or, #c9a84c); color: var(--paper, #f2efe8); background: var(--or-soft, rgba(201,168,76,.07)); }
+.jm-idee:focus-visible { outline: 2px solid var(--or-bright, #e3c977); outline-offset: 2px; }
+.jm-generer { align-self: stretch; min-height: 56px; font-size: 1rem; letter-spacing: .12em; }
+.jm-gros .btn { flex: 1 1 100%; min-height: 48px; justify-content: center; }
+.jm-gen-t { margin: 0; font: 400 1.35rem/1.2 var(--ff-d, Georgia, serif); color: var(--paper, #f2efe8); }
 .jm-etat { font-size: .8rem; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line, rgba(201,168,76,.12)); color: var(--ash, #8e8878); }
 .jm-etat.est-on { color: var(--green, #4ade80); border-color: rgba(74,222,128,.3); }
 .jm-gen-l { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 10px; margin: 10px 0; }

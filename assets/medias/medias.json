@@ -662,5 +662,67 @@
    ],
    "note": "Plan muet de 10 s."
   }
+ ],
+ "idees": [
+  {
+   "id": "lys",
+   "nom": "Lys et lumière douce",
+   "vignette": "/assets/medias/cartes/lys.webp",
+   "idee": "Des lys blancs dans un vase, près d’une fenêtre, dans une lumière douce de fin de journée."
+  },
+  {
+   "id": "bougie",
+   "nom": "Bougie du souvenir",
+   "vignette": "/assets/medias/cartes/bougie.webp",
+   "idee": "Une bougie allumée près d’un violon et de quelques fleurs blanches, dans la pénombre."
+  },
+  {
+   "id": "partition",
+   "nom": "Partition et piano",
+   "vignette": "/assets/medias/cartes/partition.webp",
+   "idee": "Un piano ancien avec une partition ouverte, une tasse et une lampe allumée dans un atelier calme."
+  },
+  {
+   "id": "colombes",
+   "nom": "Colombes au ciel",
+   "vignette": "/assets/medias/cartes/colombes.webp",
+   "idee": "Deux colombes blanches qui s’envolent dans un ciel du soir doré."
+  },
+  {
+   "id": "jardin",
+   "nom": "Jardin paisible",
+   "vignette": "/assets/medias/cartes/jardin.webp",
+   "idee": "Un banc en bois dans un jardin de roses blanches, une casquette et des gants posés dessus."
+  },
+  {
+   "id": "arches",
+   "nom": "Sous les arches",
+   "vignette": "/assets/medias/cartes/arches.webp",
+   "idee": "Des arches en pierre claire ouvrant sur un lac et des cyprès au coucher du soleil."
+  },
+  {
+   "id": "dorees",
+   "nom": "Mélodies dorées",
+   "vignette": "/assets/medias/cartes/dorees.webp",
+   "idee": "Un piano à queue avec des partitions, des bougies et des fleurs blanches, dans une lumière dorée."
+  },
+  {
+   "id": "crepuscule",
+   "nom": "Crépuscule sur le lac",
+   "vignette": "/assets/medias/cartes/crepuscule.webp",
+   "idee": "Un lac calme au crépuscule, entouré de collines et de cyprès, le ciel orangé."
+  },
+  {
+   "id": "lumiere",
+   "nom": "Lumière à la fenêtre",
+   "vignette": "/assets/medias/cartes/lumiere.webp",
+   "idee": "Un rayon de lumière douce à travers un rideau léger, sur un bouquet de fleurs blanches."
+  },
+  {
+   "id": "peupliers",
+   "nom": "Chemin des peupliers",
+   "vignette": "/assets/medias/cartes/peupliers.webp",
+   "idee": "Une route de campagne bordée de hauts peupliers, sous un ciel pâle."
+  }
  ]
 }

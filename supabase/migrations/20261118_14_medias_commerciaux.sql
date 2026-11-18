@@ -5,7 +5,8 @@
 -- Idempotente (rejouable). Aucune valeur secrète.
 --
 -- « Générer un visuel Melodia » (console commerciale, /api/medias-generer)
--- range chaque image produite dans ce bucket, sous generes/<dossier>/.
+-- range dans ce bucket les images gardées par Julie (logo déjà posé), sous gardes/<dossier>/,
+-- et une copie brute de chaque image du moteur, sous bruts/<dossier>/.
 -- Contenu commercial seulement : jamais de donnée de famille ni de défunt
 -- (ceux-là restent dans adieux / hommages / souvenirs, qu'on ne mélange
 -- pas). Lecture publique, pour que les liens de partage s'ouvrent chez
