@@ -17,6 +17,8 @@
 .jm-titre { font: 400 1.08rem/1.2 var(--ff-d, Georgia, serif); color: var(--paper, #f2efe8); }
 .jm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .jm-actions .btn { min-height: 36px; padding: 6px 4px; font-size: .8rem; justify-content: center; text-align: center; }
+/* Sous téléphone, deux cartes par rangée : « Télécharger » en capitales ne tenait pas dans la moitié de carte. */
+@media (max-width: 560px) { .jm-actions .btn { min-height: 44px; text-transform: none; letter-spacing: .02em; font-size: .82rem; padding: 6px 2px; } }
 
 .jm-gen { margin: 0 0 18px; display: flex; flex-direction: column; gap: 10px; }
 .jm-gen-tete { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

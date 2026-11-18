@@ -1,0 +1,88 @@
+/* ═══════════════════════════════════════════════════════════════
+   julie-typo.css — typographie de la console commerciale (Julie)
+   Chargée en dernier, sur dashboard-commercial.html seulement.
+
+   Deux familles, celles du site, auto-hébergées (OFL 1.1) :
+   — Cormorant Garamond pour les titres et les grands chiffres ;
+   — Jost pour toute l'interface (texte, boutons, étiquettes).
+   La chasse fixe (JetBrains Mono) donnait à la console un air de
+   terminal : elle est retirée de l'écran de Julie. Les étiquettes en
+   petites capitales passent en Jost, interlettrage régulier ; les
+   chiffres restent alignés grâce aux chiffres tabulaires.
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --ff-m: 'Jost', 'Jost Repli', system-ui, -apple-system, sans-serif;
+  /* échelle */
+  --t-xs: .75rem;   /* étiquettes en capitales */
+  --t-sm: .875rem;  /* méta, aides */
+  --t-md: 1rem;     /* texte courant */
+  --t-lg: 1.25rem;  /* titres de carte */
+  --t-xl: 1.75rem;  /* titres de section */
+  --lh-txt: 1.55;
+  --lh-titre: 1.15;
+  --ls-caps: .12em;
+}
+
+body { font-family: var(--ff-b); font-weight: 400; line-height: var(--lh-txt); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; font-kerning: normal; }
+.dash-main { font-size: var(--t-md); }
+
+/* Titres : Cormorant, graisse légère, interlignage serré */
+.dash-title, .dash-main h1, .dash-main h2, .dash-main h3, .panel-title, .jm-gen-t, .jm-apercu-t, .o-name, .jv-ligne-nom, .jv2-relance-nom {
+  font-family: var(--ff-d); font-weight: 400; line-height: var(--lh-titre); letter-spacing: .01em; font-variant-numeric: lining-nums;
+}
+.dash-title { font-weight: 300; letter-spacing: .005em; }
+.dash-title em, .dash-main h2 em, .dash-main h3 em { font-style: italic; font-weight: 300; }
+
+/* Étiquettes en petites capitales : Jost 500, interlettrage constant */
+.dash-eyebrow, .side-label, .kpi-label, .kpi-foot, .jm-gen-k, .jv2-kpi-label, .pill, .btn, .own-tab, .mob-o-nom, .side-badge {
+  font-family: var(--ff-b); font-weight: 500; letter-spacing: var(--ls-caps);
+}
+.dash-eyebrow, .side-label, .kpi-label, .jm-gen-k, .jv2-kpi-label { font-size: var(--t-xs); }
+.btn { letter-spacing: .1em; }
+.mob-o-nom { letter-spacing: .04em; font-size: .78rem; }
+.mono { font-family: var(--ff-b); letter-spacing: .02em; }
+
+/* Méta et aides : Jost, lisible, sans capitales forcées */
+.o-meta, .jv2-relance-meta, .jv-ligne-meta, .jm-aide, .panel-note, .jv2-csv-note { font-size: var(--t-sm); line-height: 1.5; letter-spacing: .01em; }
+
+/* Chiffres : alignés et tabulaires partout où l'on compare */
+.kpi-value, .jv-kpi-n, .jv2-kpi-valeur, .jv2-bl-valeur, .side-badge, .tbl td, .jv2-csv-n {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.kpi-value, .jv-kpi-n, .jv2-kpi-valeur { font-family: var(--ff-d); font-weight: 300; letter-spacing: 0; }
+
+/* Champs : Jost 16 px minimum sous téléphone (iOS ne zoome plus) */
+input, select, textarea, button { font-family: inherit; }
+.field-input, .field-area, .field-select, .jm-champ, .dash-main input:not([type=checkbox]):not([type=radio]):not([type=range]), .dash-main select, .dash-main textarea { font-family: var(--ff-b); letter-spacing: .01em; }
+
+@media (max-width: 760px) {
+  .dash-main input:not([type=checkbox]):not([type=radio]):not([type=range]), .dash-main select, .dash-main textarea,
+  .field-input, .field-area, .field-select, .jm-champ { font-size: 16px !important; }
+  /* cibles tactiles : 44 px pour les boutons, cases agrandies */
+  .dash-main .btn-sm, .own-mini, .jv-lien, .jv2-carte-fiche { min-height: 44px; min-width: 44px; }
+  .dash-main input[type=checkbox], .dash-main input[type=radio] { width: 22px; height: 22px; flex-shrink: 0; }
+  .dash-main label:has(> input[type=checkbox]), .dash-main label:has(> input[type=radio]) { min-height: 44px; display: flex; align-items: center; gap: .6rem; }
+  .dash-title { font-size: 2rem; }
+}
+
+/* ─── Correctifs de mise en page relevés à l'audit ─────────────── */
+
+/* « Mes prospects » sous téléphone : la case à cocher forçait la carte
+   sur une seule ligne et le nom s'écrasait en colonne d'un mot. */
+@media (max-width: 760px) {
+  .o-head:has(.sel-case) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .5rem .8rem; align-items: start; }
+  .o-head:has(.sel-case) > :last-child { grid-column: 1 / -1; }
+  .o-head > div[style*="min-width:0"] { min-width: 0; }
+}
+
+/* « Ma journée › Sans prochaine action » : nom et ville à gauche,
+   boutons à droite ; sous téléphone, les boutons passent dessous. */
+.jv2-relance-ligne { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nom actions" "meta actions"; row-gap: .15rem; }
+.jv2-relance-nom { grid-area: nom; }
+.jv2-relance-meta { grid-area: meta; }
+.jv2-relance-actions { grid-area: actions; flex-wrap: nowrap; }
+.jv2-relance-actions .btn { white-space: nowrap; }
+@media (max-width: 560px) {
+  .jv2-relance-ligne { grid-template-columns: minmax(0, 1fr); grid-template-areas: "nom" "meta" "actions"; }
+  .jv2-relance-actions .btn { flex: 1; }
+}
