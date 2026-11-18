@@ -252,6 +252,29 @@
       '</section>';
   }
 
+  // ─── Rendu : ont écouté (liens d'écoute suivis) ───────────────────────
+  function sectionEcoutesHTML(items) {
+    if (!items.length) return '';
+    var rows = items.slice(0, 8).map(function (p) {
+      var n = normalise(p);
+      var tel = String(p.tel || n.tel || '').replace(/[^\d+]/g, '');
+      return '' +
+        '<li class="jv2-relance-ligne" data-siret="' + esc(n.siret) + '" data-owner="' + esc(p.owner || '') + '">' +
+          '<div class="jv2-relance-nom">' + esc(n.nom || '(sans nom)') + '</div>' +
+          '<div class="jv2-relance-meta">' + esc(p._ecoute.phrase) + '</div>' +
+          '<div class="jv2-relance-actions">' +
+            (tel ? '<a class="btn btn-sm" href="tel:' + esc(tel) + '" data-act="appeler">Appeler</a>' : '') +
+            '<button type="button" class="btn btn-sm btn-outline" data-act="fiche">Fiche</button>' +
+          '</div>' +
+        '</li>';
+    }).join('');
+    return '' +
+      '<section class="jv2-section" data-section="ecoutes">' +
+        '<header class="jv2-section-tete"><h3>Ont <em>écouté</em></h3><span class="jv2-badge">' + items.length + '</span></header>' +
+        '<ul class="jv2-relances">' + rows + '</ul>' +
+      '</section>';
+  }
+
   // ─── Rendu : fiches engagées sans prochaine action ───────────────────
   function sectionSansActionHTML(items) {
     if (!items.length) return '';
@@ -402,6 +425,7 @@
     return '' +
       '<div class="jv2">' +
         data.entete +
+        sectionEcoutesHTML(data.ecoutes || []) +
         sectionTraiterHTML(data.traiter) +
         sectionRappelsHTML(data.rappels || []) +
         sectionSansActionHTML(data.sansAction || []) +
@@ -457,6 +481,9 @@
       try { rappels = (await T.lister()).filter(function (t) { return !t.jour || t.jour <= isoJour; }); } catch (_) { rappels = []; }
     }
     var sansAction = V ? enrichis.filter(function (p) { return V.sansProchaineAction(p, isoJour); }) : [];
+    /* Ont écouté ces deux derniers jours : le meilleur moment pour appeler. */
+    var ecoutesRecentes = V ? enrichis.map(function (p) { var e = V.derniereEcoute(p, isoJour); return e && e.jours <= 2 && !p.oppose ? Object.assign({ _ecoute: e }, p) : null; })
+      .filter(Boolean).sort(function (a, b) { return String(b._ecoute.le).localeCompare(String(a._ecoute.le)); }) : [];
 
     var entete = await enteteHTML({ quota: quota, objectif: objectif, faits: faits });
 
@@ -469,6 +496,7 @@
       plusTard: plusTard,
       rappels: rappels,
       sansAction: sansAction,
+      ecoutes: ecoutesRecentes,
       quota: quota,
       objectif: objectif,
       faits: faits,
@@ -510,7 +538,7 @@
   // ─── Bindings ────────────────────────────────────────────────────────
   function trouverProspect(siret) {
     if (!etat.data) return null;
-    var toutes = [].concat(etat.data.traiter, etat.data.relances, etat.data.nouveaux, etat.data.enrichir);
+    var toutes = [].concat(etat.data.traiter, etat.data.relances, etat.data.nouveaux, etat.data.enrichir, etat.data.ecoutes || [], etat.data.sansAction || []);
     for (var i = 0; i < toutes.length; i++) {
       if (toutes[i].siret === siret) return toutes[i];
     }

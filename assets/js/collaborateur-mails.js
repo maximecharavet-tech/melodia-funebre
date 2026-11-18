@@ -1193,7 +1193,7 @@
 
   function prochaineSequence(fiche) {
     fiche = fiche || {};
-    if (fiche.oppose || fiche.statut === 'refus' || fiche.statut === 'partenaire') return null;
+    if (fiche.oppose || fiche.statut === 'refus' || fiche.statut === 'partenaire' || fiche.statut === 'activee') return null;
     var journal = fiche.journal || [];
     var dernierIdx = -1;
     var premierLe = null;

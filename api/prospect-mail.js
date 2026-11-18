@@ -62,6 +62,7 @@ import { gererSequences } from './_sequences-serveur.js';
 import { gererLots, creerStoreLotsMemoire, creerStoreLotsSupabase } from './_lot-envoi.js';
 import { estModeleJulie, composerModele } from './_modeles-prospect.js';
 import { gabaritV2, layoutValide } from './_courrier-v2.js';
+import { marquerHtml, marquerTexte, siretPropre } from './_ecoute.js';
 import {
   BROCHURE_CHEMIN, BROCHURE_NOM, BROCHURE_URL,
   pdfDepuisBase64, nomPiecePropre, avecBrochure,
@@ -476,7 +477,7 @@ export default async function handler(req, res) {
   }
 
   const d = (req.body && typeof req.body === 'object') ? req.body : {};
-  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'deja', 'automatisation', 'sequence_enregistrer', 'sequence_sortie', 'lot_creer', 'lot_traiter', 'lot_etat', 'lot_reprendre', 'lot_annuler'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
+  const mode = ['apercu', 'test', 'envoi', 'quota', 'journal', 'partenaires', 'deja', 'automatisation', 'sequence_enregistrer', 'sequence_sortie', 'lot_creer', 'lot_traiter', 'lot_etat', 'lot_reprendre', 'lot_annuler'].indexOf(d.mode) !== -1 ? d.mode : 'envoi';
   /* Le modèle choisi : il sert à ne pas renvoyer le même courrier à la
      même adresse dans les 60 jours. À défaut, l'objet en tient lieu. */
   const modele = String(d.modele || '').trim().slice(0, 80);
@@ -642,6 +643,42 @@ export default async function handler(req, res) {
         note: 'Journal des envois indisponible.' });
     }
   }
+  /* ─── Mes partenaires : commandes par agence, en agrégats seulement ───
+     Le collaborateur ne lit pas la table des commandes. Le serveur la lit
+     pour lui et ne rend, par fiche partenaire, que le nombre de commandes
+     et la date de la dernière : jamais un nom de famille, de défunt, ni
+     un brief. Rattachement : adresse du compte partenaire, ou nom d'agence. */
+  if (mode === 'partenaires') {
+    const service = entetesService();
+    if (!service) return json(res, 200, { ok: true, mode, stats: {}, note: 'Base non configurée.' });
+    try {
+      const maitre = qui.role === 'master';
+      const rp = await fetch(SB_URL + '/rest/v1/prospects?select=siret,nom,enseigne,email&statut=in.(partenaire,activee)' +
+        (maitre ? '' : '&owner=ilike.' + encodeURIComponent(qui.email)) + '&limit=500', { headers: service });
+      const fiches = rp.ok ? await rp.json() : [];
+      const stats = {};
+      if (Array.isArray(fiches) && fiches.length) {
+        const ro = await fetch(SB_URL + '/rest/v1/orders?select=agence,user_email,created_at&order=created_at.desc&limit=5000', { headers: service });
+        const commandes = ro.ok ? await ro.json() : [];
+        const cle = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        for (const f of fiches) {
+          const noms = [cle(f.nom), cle(f.enseigne)].filter((x) => x.length >= 4);
+          const mail = normaliserEmail(f.email);
+          let n = 0, derniere = '';
+          for (const o of Array.isArray(commandes) ? commandes : []) {
+            const lie = (mail && normaliserEmail(o.user_email) === mail) || (noms.length && noms.includes(cle(o.agence)));
+            if (!lie) continue;
+            n++;
+            if (!derniere || String(o.created_at) > derniere) derniere = String(o.created_at);
+          }
+          stats[f.siret] = { commandes: n, derniere };
+        }
+      }
+      return json(res, 200, { ok: true, mode, stats });
+    } catch (e) {
+      return json(res, 200, { ok: true, mode, stats: {}, note: 'Commandes indisponibles.' });
+    }
+  }
   /* ─── « Déjà envoyé ? » : pour griser l'envoi dans la console ─── */
   if (mode === 'deja') {
     const liste = envois.filter((x) => valideEmail(x.to));
@@ -714,6 +751,11 @@ export default async function handler(req, res) {
       /* Bouton « Se désabonner » (RFC 8058, un clic) + lien mailto STOP. */
       headers: entetesDesabonnement(e.to, qui.email)
     };
+    /* Liens d'écoute suivis (jeton signé, sans cookie ni pixel) : envois réels seulement. */
+    if (mode !== 'test' && siretPropre(e.ref)) {
+      charge.html = marquerHtml(charge.html, e.ref);
+      charge.text = marquerTexte(charge.text, e.ref);
+    }
     if (atts.length) charge.attachments = atts;
     lignes.push({
       e, charge,

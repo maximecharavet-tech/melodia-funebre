@@ -75,7 +75,7 @@
   function compte(lignes) {
     var partenaires = 0, contactes = 0;
     lignes.forEach(function (p) {
-      if (p.statut === 'partenaire') partenaires++;
+      if (p.statut === 'partenaire' || p.statut === 'activee') partenaires++;
       if (p.statut && p.statut !== 'nouveau') contactes++;
     });
     return { fiches: lignes.length, partenaires: partenaires, contactes: contactes };
@@ -1631,12 +1631,12 @@
     var pack = fichesPour(u.email);
     var ST = window.MELODIA_PROSPECT_STATUTS || {};
     var ordre = (window.MelodiaProspects && window.MelodiaProspects.STATUTS) ||
-      ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'refus'];
+      ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'activee', 'refus'];
     var auj = aujourdhuiIso();
     var colonnes = ordre.map(function (k) {
       var label = (ST[k] && ST[k].label) || k;
       var cartes = pack.lignes.filter(function (p) { return p.statut === k; }).map(function (p) {
-        var tard = p.relance_le && p.relance_le < auj && k !== 'partenaire' && k !== 'refus';
+        var tard = p.relance_le && p.relance_le < auj && k !== 'partenaire' && k !== 'activee' && k !== 'refus';
         return '<article class="col-kanban-carte' + (tard ? ' est-retard' : '') + '" draggable="true" data-siret="' + esc(p.siret) + '">' +
           '<strong>' + esc(p.nom) + '</strong>' +
           '<span>' + esc(p.ville || '') + '</span>' +

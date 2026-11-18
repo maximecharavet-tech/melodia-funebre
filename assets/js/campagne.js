@@ -149,7 +149,7 @@
     if (vues[email]) return { ok: false, fixe: true, motif: 'Adresse en double' };
     vues[email] = 1;
     if (modele && dejaRecu(p, modele.nom)) return { ok: false, fixe: true, motif: 'A déjà reçu ce modèle aujourd’hui' };
-    if (p.statut === 'partenaire') return { ok: false, fixe: false, motif: 'Déjà partenaire' };
+    if (p.statut === 'partenaire' || p.statut === 'activee') return { ok: false, fixe: false, motif: 'Déjà partenaire' };
     if (p.dernier_contact && Date.now() - new Date(p.dernier_contact).getTime() < SEPT_JOURS) {
       return { ok: false, fixe: false, motif: 'Contactée il y a moins de 7 jours' };
     }

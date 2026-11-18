@@ -144,7 +144,7 @@
       return { quoi: 'Statut : ' + ((ST[vers] || {}).label || vers), detail: ((ST[ancien] || {}).label || ancien) + ' → ' + ((ST[vers] || {}).label || vers) +
         (suite ? ' · ensuite : ' + V.libelleAction(suite.type) + ' le ' + suite.date : '') };
     }, p.owner);
-    if (['interesse', 'demo_offerte', 'partenaire', 'refus'].indexOf(vers) >= 0 && window.MelodiaJulieSequences && window.MelodiaJulieSequences.sortir) {
+    if (['interesse', 'demo_offerte', 'partenaire', 'activee', 'refus'].indexOf(vers) >= 0 && window.MelodiaJulieSequences && window.MelodiaJulieSequences.sortir) {
       try { await window.MelodiaJulieSequences.sortir(siret, 'statut ' + vers); } catch (_) { /* facultatif */ }
     }
     return true;

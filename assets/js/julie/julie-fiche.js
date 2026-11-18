@@ -78,6 +78,11 @@
             (p.oppose ? '<span class="pill jv-pill-stop">Opposition : ne plus contacter</span>' : '') +
           '</div>' +
         '</header>' +
+        (function () {
+          var ec = V.derniereEcoute(p, auj);
+          return ec ? '<p class="jv-ecoute' + (ec.jours <= 2 ? ' est-recente' : '') + '">♪ ' + esc(ec.phrase) +
+            (V.ecoutes(p).length > 1 ? ' · ' + V.ecoutes(p).length + ' écoutes en tout' : '') + '</p>' : '';
+        })() +
 
         '<section class="jv-suite-bloc' + (sans ? ' est-manquante' : '') + '">' +
           '<div><div class="jv-appel-h">Prochaine action</div>' +

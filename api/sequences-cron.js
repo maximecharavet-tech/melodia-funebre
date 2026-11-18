@@ -50,6 +50,7 @@
 import { origineAutorisee, entetesOrigine, entetesService, tropSouvent, SITE } from './_courrier.js';
 import { timingSafeEqual } from 'crypto';
 import mailHandler from './prospect-mail.js';
+import { purgerJournal, QUOI_ECOUTE } from './_ecoute.js';
 
 export const config = { runtime: 'nodejs', maxDuration: 60 };
 
@@ -58,7 +59,7 @@ const BUDGET_MS = 45_000;
 const VERROU_MS = 15 * 60_000;
 const ESSAIS_MAX = 3;
 const PAUSES_ESSAI_H = [1, 4, 12];
-const STATUTS_SORTIE = ['interesse', 'demo_offerte', 'partenaire', 'refus'];
+const STATUTS_SORTIE = ['interesse', 'demo_offerte', 'partenaire', 'activee', 'refus'];
 const RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 function sbUrl() { return (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, ''); }
@@ -140,6 +141,22 @@ async function envoyerViaRoute(owner, charge) {
   res.json = (o) => { res.corps = o; return res; };
   await mailHandler(req, res);
   return { status: res.statusCode, corps: res.corps || {} };
+}
+
+/** Retire des journaux les écoutes de plus de 3 ans. Rend { fiches, retirees }. */
+export async function purgerEcoutes(maintenant = Date.now()) {
+  const filtre = encodeURIComponent(JSON.stringify([{ quoi: QUOI_ECOUTE }]));
+  const r = await sb('prospects?select=owner,siret,journal&journal=cs.' + filtre + '&limit=2000');
+  let fiches = 0, retirees = 0;
+  for (const p of Array.isArray(r.data) ? r.data : []) {
+    const avant = Array.isArray(p.journal) ? p.journal : [];
+    const apres = purgerJournal(avant, maintenant);
+    if (apres.length === avant.length) continue;
+    const w = await sb('prospects?siret=eq.' + encodeURIComponent(p.siret) + '&owner=eq.' + encodeURIComponent(p.owner),
+      { methode: 'PATCH', corps: { journal: apres } });
+    if (w.ok) { fiches++; retirees += avant.length - apres.length; }
+  }
+  return { fiches, retirees };
 }
 
 export const SANS_REPONSE_MAX = 3;
@@ -303,8 +320,13 @@ export default async function handler(req, res) {
   const o = req.headers && (req.headers.origin || req.headers.Origin);
   if (o && !origineAutorisee(req)) return reponse(res, 403, { ok: false, code: 'ORIGINE', message: 'Origine refusée.' });
 
+  /* Conservation des écoutes (3 ans au plus) : purgée à chaque passage authentifié,
+     que les séquences soient actives ou non. */
+  let purge = null;
+  if (secretValide(req) && entetesService()) purge = await purgerEcoutes();
+
   if (process.env.SEQUENCES_AUTO !== 'true') {
-    return reponse(res, 200, { ok: false, code: 'DESACTIVE', message: 'SEQUENCES_AUTO désactivé : rien n’est envoyé.' });
+    return reponse(res, 200, Object.assign({ ok: false, code: 'DESACTIVE', message: 'SEQUENCES_AUTO désactivé : rien n’est envoyé.' }, purge ? { purge } : {}));
   }
   if (!secretValide(req)) return reponse(res, 401, { ok: false, code: 'SECRET', message: 'Secret du cron manquant ou invalide.' });
   if (!entetesService()) return reponse(res, 503, { ok: false, code: 'NOT_CONFIGURED', message: 'Base non configurée.' });
@@ -313,5 +335,5 @@ export default async function handler(req, res) {
     return reponse(res, 429, { ok: false, code: 'RATE_LIMIT', message: 'Trop d’exécutions.' });
   }
   const bilan = await traiterEcheances();
-  return reponse(res, 200, Object.assign({ ok: true }, bilan));
+  return reponse(res, 200, Object.assign({ ok: true }, bilan, purge ? { purge } : {}));
 }

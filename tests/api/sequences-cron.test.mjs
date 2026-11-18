@@ -266,4 +266,29 @@ test('vercel.json : le cron embarque les modèles lus par prospect-mail (plus de
   assert.equal(f.maxDuration, 60);
   assert.match(f.includeFiles, /assets\/data\/modeles-julie\.json/);
   assert.equal(f.includeFiles, v.functions['api/prospect-mail.js'].includeFiles);
+  assert.ok((v.crons || []).some((c) => c.path === '/api/sequences-cron' && /1-5$/.test(c.schedule)), 'cron planifié en semaine');
+});
+
+test('cron authentifié, séquences coupées : purge des écoutes de plus de 3 ans, rien n’est envoyé', async () => {
+  monter(); delete process.env.SEQUENCES_AUTO;
+  faux.etat.prospects[0].journal = [
+    { le: IL_Y_A(3 * 365 + 5), quoi: 'Écoute', detail: 'ancienne', oeuvre: 'X', secondes: 30 },
+    { le: IL_Y_A(10), quoi: 'Écoute', detail: 'récente', oeuvre: 'Y', secondes: 30 },
+    { le: IL_Y_A(4 * 365), quoi: 'Appel — messagerie', detail: '' }
+  ];
+  const r = await http(AUTH);
+  assert.equal(r.status, 200);
+  assert.equal(r.corps.code, 'DESACTIVE');
+  assert.deepEqual(r.corps.purge, { fiches: 1, retirees: 1 });
+  const p = faux.etat.patches.find((x) => x.table === 'prospects');
+  assert.deepEqual(p.corps.journal.map((j) => j.detail), ['récente', '']);
+  assert.equal(faux.etat.resend.length, 0);
+});
+
+test('actif : une agence « Activée » sort de la séquence', async () => {
+  monter({ prospect: { statut: 'activee' } }); process.env.SEQUENCES_AUTO = 'true';
+  const r = await http(AUTH);
+  assert.equal(r.corps.sorties, 1, JSON.stringify(r.corps));
+  assert.equal(faux.etat.resend.length, 0);
+  delete process.env.SEQUENCES_AUTO;
 });
