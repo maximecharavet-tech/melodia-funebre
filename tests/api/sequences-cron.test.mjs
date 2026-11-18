@@ -221,3 +221,49 @@ test('échéances : jamais un week-end, jamais avant demain', () => {
     assert.ok(t >= lundi + 86400_000);
   }
 });
+
+test('inerte : réponse HTTP 200 « DESACTIVE », sans secret ni base, et rien n’est écrit', async () => {
+  monter(); delete process.env.SEQUENCES_AUTO;
+  const r = await http({});
+  assert.equal(r.status, 200);
+  assert.equal(r.corps.code, 'DESACTIVE');
+  assert.equal(faux.etat.resend.length, 0);
+  assert.equal(faux.etat.taches.length, 0);
+  assert.equal(faux.etat.patches.length, 0);
+});
+
+const PARTI = (modele, statut, j) => ({ id: 900 + j, destinataire: 'agence@martin.fr', mode: 'envoi', modele, statut, envoye_le: IL_Y_A(j) });
+
+test('actif : trois messages déjà partis sans réponse → pause « appeler plutôt », tâche d’appel, aucun quatrième mail', async () => {
+  monter(); process.env.SEQUENCES_AUTO = 'true';
+  faux.etat.envois.push(PARTI('autre-1', 'delivre', 20), PARTI('autre-2', 'ouvert', 12), PARTI('autre-3', 'envoye', 5));
+  const r = await http(AUTH);
+  assert.equal(r.status, 200, JSON.stringify(r.corps));
+  assert.equal(r.corps.envoyees, 0);
+  assert.equal(r.corps.pauses, 1);
+  assert.equal(faux.etat.resend.length, 0);
+  assert.equal(faux.etat.inscriptions[0].statut, 'pause');
+  assert.equal(faux.etat.inscriptions[0].motif_sortie, cron.MOTIF_SANS_REPONSE);
+  assert.equal(faux.etat.taches.length, 1);
+  assert.equal(faux.etat.taches[0].type, 'appel');
+  delete process.env.SEQUENCES_AUTO;
+});
+
+test('actif : deux messages partis, ou trois dont un en échec / un test → l’étape part normalement', async () => {
+  monter(); process.env.SEQUENCES_AUTO = 'true';
+  faux.etat.envois.push(PARTI('autre-1', 'delivre', 20), PARTI('autre-2', 'echec', 12), Object.assign(PARTI('autre-3', 'envoye', 5), { mode: 'test' }));
+  const r = await http(AUTH);
+  assert.equal(r.corps.envoyees, 1, JSON.stringify(r.corps));
+  assert.equal(faux.etat.inscriptions[0].statut, 'active');
+  delete process.env.SEQUENCES_AUTO;
+});
+
+test('vercel.json : le cron embarque les modèles lus par prospect-mail (plus de 500 au chargement)', async () => {
+  const { readFileSync } = await import('node:fs');
+  const v = JSON.parse(readFileSync(new URL('../../vercel.json', import.meta.url), 'utf8'));
+  const f = v.functions['api/sequences-cron.js'];
+  assert.ok(f, 'entrée api/sequences-cron.js absente');
+  assert.equal(f.maxDuration, 60);
+  assert.match(f.includeFiles, /assets\/data\/modeles-julie\.json/);
+  assert.equal(f.includeFiles, v.functions['api/prospect-mail.js'].includeFiles);
+});

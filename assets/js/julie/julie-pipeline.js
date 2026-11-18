@@ -96,7 +96,9 @@
         '</div>' +
         '<div class="jv2-carte-ville">' + esc(n.ville || '') + (n.departement ? ' · ' + esc(n.departement) : '') + '</div>' +
         (dernier ? '<div class="jv2-carte-dernier">' + esc(dernier) + '</div>' : '') +
-        (n.relance_le ? '<div class="jv2-carte-relance">Relance ' + esc(n.relance_le.slice(0, 10)) + '</div>' : '') +
+        (n.relance_le ? '<div class="jv2-carte-relance">' + esc(window.MelodiaVente ? window.MelodiaVente.libelleAction(window.MelodiaVente.lireProchaineAction(n.prochaine_action).type || 'appel') : 'Relance') + ' · ' + esc(n.relance_le.slice(0, 10)) + '</div>'
+          : (n.statut !== 'nouveau' && n.statut !== 'refus' && !n.oppose ? '<div class="jv2-carte-relance jv-retard">Sans prochaine action</div>' : '')) +
+        '<button type="button" class="jv-lien jv2-carte-fiche" data-act="fiche">Fiche</button>' +
         '<div class="jv2-carte-chips">' +
           (n.statut === 'contacte' || n.statut === 'relance' ? '<span class="jv2-chip">Séquence</span>' : '') +
         '</div>' +
@@ -142,6 +144,8 @@
     var out = [];
     for (var i = 0; i < liste.length; i++) {
       var n = normalise(liste[i]);
+      n.owner = liste[i].owner || '';
+      n.prochaine_action = liste[i].prochaine_action || '';
       if (etat.filtreType && n.type !== etat.filtreType) continue;
       if (etat.filtreDep && n.departement !== etat.filtreDep) continue;
       try {
@@ -236,6 +240,14 @@
       });
     });
 
+    cible.querySelectorAll('[data-act="fiche"]').forEach(function (b) {
+      b.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var carte = b.closest('.jv2-carte');
+        if (carte && window.MelodiaJulieActions) window.MelodiaJulieActions.ouvrirFiche(carte.dataset.siret);
+      });
+    });
+
     // Menu clavier « Déplacer vers… »
     cible.querySelectorAll('.jv2-carte-menu button').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -247,34 +259,21 @@
     });
   }
 
+  /* Déplacer une carte demande la suite (« Et ensuite ? ») : aucune fiche
+     ouverte ne reste sans prochaine action. La fiche est relue en base avant
+     d'être enregistrée, et le journal garde la trace du changement. */
   async function deplacer(siret, vers) {
     var p = etat.prospects.find(function (x) { return x.siret === siret; });
     if (!p || p.statut === vers) return;
-    var ancien = p.statut;
-    p.statut = vers;
-    // Optimistic UI
-    await rendre();
+    var A = window.MelodiaJulieActions;
     try {
-      if (window.MelodiaProspects && typeof window.MelodiaProspects.enregistrer === 'function') {
-        await window.MelodiaProspects.enregistrer(p);
-      }
-      if (window.MelodiaProspects && typeof window.MelodiaProspects.noter === 'function') {
-        await window.MelodiaProspects.noter(siret, 'statut', ancien + ' → ' + vers);
-      }
-      // Sortie de séquence automatique
-      if (['interesse', 'demo_offerte', 'partenaire', 'refus'].indexOf(vers) >= 0) {
-        try {
-          if (window.MelodiaJulieSequences && window.MelodiaJulieSequences.sortir) {
-            await window.MelodiaJulieSequences.sortir(siret, 'statut ' + vers);
-          }
-        } catch (_) { /* optionnel */ }
-      }
-      if (window.melodiaToast) window.melodiaToast('Déplacé vers « ' + libelleStatut(vers) + ' ».');
+      if (!A) throw new Error('Module de fiche non chargé.');
+      var ok = await A.changerStatut(siret, vers, p.owner);
+      if (ok && window.melodiaToast) window.melodiaToast('Déplacé vers « ' + libelleStatut(vers) + ' ».');
     } catch (e) {
-      p.statut = ancien;
-      await rendre();
       if (window.melodiaToast) window.melodiaToast('Erreur : ' + e.message);
     }
+    await rendre();
   }
 
   window.MelodiaJuliePipeline = {

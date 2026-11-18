@@ -191,6 +191,7 @@
           '<div>' + faits.mails + '/' + obj.mails + ' mails</div>' +
           '<div>' + faits.appels + '/' + obj.appels + ' appels</div>' +
           '<div>' + faits.relances + '/' + obj.relances + ' relances</div>' +
+          '<button type="button" class="jv-lien jv-regler" data-act="regler-objectif">Régler</button>' +
         '</div>' +
       '</div>';
   }
@@ -228,6 +229,50 @@
           '<button type="button" class="btn btn-sm btn-outline" data-act="stop" title="Ne plus contacter">STOP</button>' +
         '</div>' +
       '</article>';
+  }
+
+  // ─── Rendu : rappels du jour (table taches, synchronisée) ────────────
+  function sectionRappelsHTML(items) {
+    if (!items.length) return '';
+    var rows = items.slice(0, 12).map(function (t) {
+      return '' +
+        '<li class="jv2-relance-ligne jv-rappel-ligne" data-tache="' + esc(t.id) + '"' + (t.prospect_siret ? ' data-siret="' + esc(t.prospect_siret) + '"' : '') + '>' +
+          '<div class="jv2-relance-nom">' + esc(t.texte) + '</div>' +
+          '<div class="jv2-relance-meta">' + esc(t.jour ? fmtDate(t.jour) : '') + (t.type === 'appel' ? ' · appel' : '') + '</div>' +
+          '<div class="jv2-relance-actions">' +
+            (t.prospect_siret ? '<button type="button" class="btn btn-sm btn-outline" data-act="fiche">Fiche</button>' : '') +
+            '<button type="button" class="btn btn-sm" data-act="tache-faite">Fait</button>' +
+          '</div>' +
+        '</li>';
+    }).join('');
+    return '' +
+      '<section class="jv2-section" data-section="rappels">' +
+        '<header class="jv2-section-tete"><h3>Mes <em>rappels</em></h3><span class="jv2-badge">' + items.length + '</span></header>' +
+        '<ul class="jv2-relances">' + rows + '</ul>' +
+      '</section>';
+  }
+
+  // ─── Rendu : fiches engagées sans prochaine action ───────────────────
+  function sectionSansActionHTML(items) {
+    if (!items.length) return '';
+    var ST = window.MELODIA_PROSPECT_STATUTS || {};
+    var rows = items.slice(0, 10).map(function (p) {
+      var n = normalise(p);
+      return '' +
+        '<li class="jv2-relance-ligne" data-siret="' + esc(n.siret) + '" data-owner="' + esc(p.owner || '') + '">' +
+          '<div class="jv2-relance-nom">' + esc(n.nom || '(sans nom)') + '</div>' +
+          '<div class="jv2-relance-meta">' + esc(n.ville || '') + ' · ' + esc((ST[n.statut] || {}).label || n.statut) + '</div>' +
+          '<div class="jv2-relance-actions">' +
+            '<button type="button" class="btn btn-sm" data-act="fixer-suite">Fixer la suite</button>' +
+            '<button type="button" class="btn btn-sm btn-outline" data-act="fiche">Fiche</button>' +
+          '</div>' +
+        '</li>';
+    }).join('');
+    return '' +
+      '<section class="jv2-section jv-section-alerte" data-section="sans-action">' +
+        '<header class="jv2-section-tete"><h3>Sans <em>prochaine action</em></h3><span class="jv2-badge">' + items.length + '</span></header>' +
+        '<ul class="jv2-relances">' + rows + '</ul>' +
+      '</section>';
   }
 
   // ─── Rendu : section relances ────────────────────────────────────────
@@ -358,6 +403,8 @@
       '<div class="jv2">' +
         data.entete +
         sectionTraiterHTML(data.traiter) +
+        sectionRappelsHTML(data.rappels || []) +
+        sectionSansActionHTML(data.sansAction || []) +
         sectionRelancesHTML(data.relances) +
         sectionNouveauxHTML(data.nouveaux) +
         sectionEnrichirHTML(data.enrichir) +
@@ -391,15 +438,25 @@
 
     var quota = { utilise: 0, illimite: true };
     try {
-      if (window.MelodiaAuth && typeof window.MelodiaAuth.quota === 'function') {
-        var q = await Promise.resolve(window.MelodiaAuth.quota());
-        if (q && typeof q.utilise === 'number') quota = q;
+      var rq = await fetch('/api/prospect-mail', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ mode: 'quota' }) });
+      if (rq.ok) {
+        var dq = await rq.json();
+        if (dq && dq.quota && typeof dq.quota.utilise === 'number') quota = dq.quota;
       }
     } catch (_) { /* quota par défaut */ }
 
-    // Objectif et faits du jour (fallback : localStorage)
-    var objectif = J.lireCache('objectif.' + isoJour, { mails: 30, appels: 5, relances: 3 });
-    var faits = J.lireCache('faits.' + isoJour, { mails: 0, appels: 0, relances: 0 });
+    /* Objectif : table objectifs_jour (le même sur tous les appareils).
+       Faits : relus dans le journal des fiches et le journal des envois, donc
+       identiques partout — plus de compteur gardé dans le navigateur. */
+    var V = window.MelodiaVente;
+    var T = window.MelodiaJulieTaches;
+    var objectif = T ? await T.lireObjectif(isoJour) : J.lireCache('objectif.' + isoJour, { mails: 30, appels: 5, relances: 3 });
+    var faits = V ? V.faitsDuJour(prospects, isoJour, quota.utilise) : J.lireCache('faits.' + isoJour, { mails: 0, appels: 0, relances: 0 });
+    var rappels = [];
+    if (T) {
+      try { rappels = (await T.lister()).filter(function (t) { return !t.jour || t.jour <= isoJour; }); } catch (_) { rappels = []; }
+    }
+    var sansAction = V ? enrichis.filter(function (p) { return V.sansProchaineAction(p, isoJour); }) : [];
 
     var entete = await enteteHTML({ quota: quota, objectif: objectif, faits: faits });
 
@@ -410,6 +467,8 @@
       nouveaux: nouveaux,
       enrichir: enrichir,
       plusTard: plusTard,
+      rappels: rappels,
+      sansAction: sansAction,
       quota: quota,
       objectif: objectif,
       faits: faits,
@@ -476,10 +535,25 @@
     }
   }
 
+  async function surFiche(p, fn) {
+    var A = window.MelodiaJulieActions;
+    try {
+      if (A) await A.modifier(p.siret, fn, p.owner);
+    } catch (e) {
+      if (window.melodiaToast) window.melodiaToast('Non enregistré : ' + ((e && e.message) || 'erreur'));
+    }
+    return rendre();
+  }
+
   function brancher(cible) {
+    /* La cible survit aux rendus : un seul jeu d'écouteurs. */
+    if (cible.dataset.jvBranche === '1') return;
+    cible.dataset.jvBranche = '1';
     cible.addEventListener('click', async function (ev) {
       var t = ev.target;
       if (!(t instanceof HTMLElement)) return;
+      var A = window.MelodiaJulieActions;
+      var V = window.MelodiaVente;
 
       // Section relances → triage
       if (t.dataset.act === 'triage') {
@@ -487,50 +561,69 @@
         return;
       }
 
-      // Card chaude : boutons d'issue
+      if (t.dataset.act === 'regler-objectif') {
+        return reglerObjectif();
+      }
+
+      // Rappels (table taches)
+      var ligneTache = t.closest('[data-tache]');
+      if (ligneTache && t.dataset.act === 'tache-faite') {
+        try { await window.MelodiaJulieTaches.marquer(ligneTache.dataset.tache, true); }
+        catch (e) { if (window.melodiaToast) window.melodiaToast('Non enregistré : ' + e.message); }
+        return rendre();
+      }
+
+      // Cartes : boutons d'issue
       var card = t.closest('.jv2-card-chaud, .jv2-relance-ligne, .jv2-nouveau-ligne, .jv2-enrichir-ligne');
       if (card) {
         var siret = card.dataset.siret;
-        var p = trouverProspect(siret);
         var act = t.dataset.act;
-        if (!p || !act) return;
+        if (!siret || !act) return;
+        if (act === 'fiche' || act === 'composer' || act === 'completer') {
+          ev.preventDefault();
+          if (A) A.ouvrirFiche(siret); else window.location.hash = '#prospects';
+          return;
+        }
+        if (act === 'fixer-suite') {
+          if (A && await A.poserSuite(siret, card.dataset.owner)) return rendre();
+          return;
+        }
+        var p = trouverProspect(siret);
+        if (!p) return;
 
+        if (act === 'appeler') {
+          if (window.MelodiaJulieAppel) { ev.preventDefault(); window.MelodiaJulieAppel.ouvrir(siret, p.owner); }
+          return;
+        }
         if (act === 'interesse') {
-          p.statut = 'interesse';
-          await noter(p, 'appel', 'Intéressé (Ma journée)');
-          await incrementerFait('appels');
-          return rendre();
+          if (A && await A.changerStatut(siret, 'interesse', p.owner)) return rendre();
+          return;
         }
         if (act === 'rappeler') {
-          var d = prompt('Rappeler le (AAAA-MM-JJ) ?', aujourdhui());
-          if (d) {
-            p.relance_le = d + 'T09:00:00+01:00';
-            await noter(p, 'rappel', 'Rappel programmé pour le ' + d);
-          }
-          return rendre();
+          if (A && await A.poserSuite(siret, p.owner)) return rendre();
+          return;
         }
         if (act === 'pas-maintenant') {
-          p.relance_le = J.isoParis(new Date(Date.now() + 14 * 86400000));
-          await noter(p, 'report', 'Reporté de 14 jours');
-          return rendre();
+          return surFiche(p, function (f) {
+            f.relance_le = V ? V.plusJoursOuvres(aujourdhui(), 10) : f.relance_le;
+            return { quoi: 'Report', detail: 'Reporté de deux semaines' };
+          });
         }
         if (act === 'stop') {
           if (!confirm('Marquer ce prospect comme opposé (STOP) ? Il ne sera plus jamais contacté.')) return;
-          p.oppose = true;
-          await noter(p, 'stop', 'Opposition enregistrée');
-          return rendre();
+          return surFiche(p, function (f) {
+            f.oppose = true; f.statut = 'refus'; f.relance_le = null; f.prochaine_action = '';
+            return { quoi: 'Opposition enregistrée', detail: 'Depuis Ma journée' };
+          });
         }
         if (act === 'relire') {
           return ouvrirTriage(siret);
         }
         if (act === 'reporter') {
-          p.relance_le = J.isoParis(new Date(Date.now() + 3 * 86400000));
-          await noter(p, 'report', 'Relance reportée de 3 jours');
-          return rendre();
-        }
-        if (act === 'composer' || act === 'completer') {
-          window.location.hash = '#prospects';
-          return;
+          return surFiche(p, function (f) {
+            f.relance_le = V ? V.plusJoursOuvres(aujourdhui(), 3) : f.relance_le;
+            return { quoi: 'Report', detail: 'Relance reportée de trois jours ouvrés' };
+          });
         }
       }
 
@@ -556,7 +649,7 @@
     });
 
     // Touches clavier globales du triage
-    document.addEventListener('keydown', triageTouches);
+    if (!etat.clavier) { etat.clavier = true; document.addEventListener('keydown', triageTouches); }
   }
 
   function triageTouches(ev) {
@@ -657,6 +750,41 @@
     } catch (e) {
       if (window.melodiaToast) window.melodiaToast('Erreur réseau : ' + e.message);
     }
+  }
+
+  // ─── Objectif du jour : réglé une fois, le même partout ──────────────
+  async function reglerObjectif() {
+    var T = window.MelodiaJulieTaches;
+    var V = window.MelodiaVente;
+    if (!T || !V) return;
+    var actuel = (etat.data && etat.data.objectif) || V.OBJECTIF_DEFAUT;
+    var hote = document.createElement('div');
+    hote.className = 'jv-hote';
+    hote.innerHTML = '<div class="jv-voile" data-jv-fermer></div>' +
+      '<div class="jv-dialogue" role="dialog" aria-modal="true" aria-labelledby="jv-obj-titre">' +
+        '<h2 class="jv-dialogue-titre" id="jv-obj-titre">Objectif du jour</h2>' +
+        '<p class="jv-dialogue-note">Enregistré sur votre compte : le même sur l’ordinateur et le téléphone.</p>' +
+        '<form class="jv-obj"><div class="field-row">' +
+          [['mails', 'Courriels'], ['appels', 'Appels'], ['relances', 'Relances']].map(function (c) {
+            return '<div class="field"><label class="field-label" for="jv-obj-' + c[0] + '">' + c[1] + '</label>' +
+              '<input class="field-input" id="jv-obj-' + c[0] + '" name="' + c[0] + '" inputmode="numeric" maxlength="3" value="' + esc(actuel[c[0]]) + '"></div>';
+          }).join('') +
+        '</div><div class="jv-dialogue-pied"><button type="button" class="btn btn-outline" data-jv-fermer>Annuler</button>' +
+        '<button type="submit" class="btn btn-gold">Enregistrer</button></div></form></div>';
+    document.body.appendChild(hote);
+    hote.addEventListener('click', function (ev) { if (ev.target.closest('[data-jv-fermer]')) hote.remove(); });
+    hote.querySelector('form').addEventListener('submit', async function (ev) {
+      ev.preventDefault();
+      var f = ev.target;
+      try {
+        await T.ecrireObjectif({ mails: f.mails.value, appels: f.appels.value, relances: f.relances.value }, aujourdhui());
+        hote.remove();
+        if (window.melodiaToast) window.melodiaToast('Objectif enregistré.');
+        rendre();
+      } catch (e) {
+        if (window.melodiaToast) window.melodiaToast('Objectif non enregistré : ' + ((e && e.message) || 'erreur'));
+      }
+    });
   }
 
   // ─── Exposition à la console ─────────────────────────────────────────

@@ -916,6 +916,13 @@
     } else if (fiche.relance_le) {
       out.relance = fiche.relance_le;
     }
+    /* relance (timestamptz) et relance_le (date) : une chaîne vide y serait refusée par la base. */
+    if (out.relance === '') out.relance = null;
+    if (out.relance_le === '') out.relance_le = null;
+    /* Prochaine action (texte) : colonne de la migration 11, signalée par console_v2. */
+    if (caps && caps.console_v2 && fiche.prochaine_action !== undefined) {
+      out.prochaine_action = String(fiche.prochaine_action || '').slice(0, 200);
+    }
     return out;
   }
 
@@ -988,6 +995,26 @@
       if (i >= 0) l[i] = Object.assign(l[i], fiche); else l.unshift(fiche);
       this._ecrire(l);
       return fiche;
+    },
+
+    /** Une fiche du portefeuille, telle qu'en base (null si absente). */
+    async une(siret, owner) {
+      var liste = await this.mine();
+      var o = String(owner || '').toLowerCase();
+      return liste.filter(function (p) {
+        return p.siret === siret && (!o || String(p.owner || '').toLowerCase() === o);
+      })[0] || null;
+    },
+
+    /** Ajoute une ligne datée au journal de la fiche, puis l'enregistre. */
+    async noter(siret, quoi, detail, owner) {
+      var p = await this.une(siret, owner);
+      if (!p) return null;
+      var u = window.MelodiaAuth.current() || {};
+      if (!Array.isArray(p.journal)) p.journal = [];
+      p.journal.unshift({ le: new Date().toISOString(), quoi: String(quoi || ''), detail: String(detail || ''), par: u.name || u.email || '' });
+      if (p.journal.length > 60) p.journal.length = 60;
+      return this.enregistrer(p);
     },
 
     async supprimer(siret) {
