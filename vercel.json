@@ -5,6 +5,12 @@
   "regions": [
     "cdg1"
   ],
+  "crons": [
+    {
+      "path": "/api/sequences-cron",
+      "schedule": "0 8 * * 1-5"
+    }
+  ],
   "functions": {
     "api/document.js": {
       "maxDuration": 30,

@@ -130,7 +130,7 @@
     o = o || {};
     var auj = String(o.aujourdhui || jourParis()).slice(0, 10);
     var note = String(o.note || '').replace(/\s+/g, ' ').trim().slice(0, 400);
-    var ordre = ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire'];
+    var ordre = ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'activee'];
     var actuel = (p && p.statut) || 'nouveau';
     var statut = actuel;
     if (is.oppose) statut = 'refus';
@@ -177,7 +177,7 @@
     var lignes = [];
     (Array.isArray(p && p.journal) ? p.journal : []).forEach(function (j) {
       if (!j || !j.le) return;
-      lignes.push({ le: j.le, genre: 'note', quoi: String(j.quoi || ''), detail: String(j.detail || ''), par: j.par || '' });
+      lignes.push({ le: j.le, genre: j.quoi === 'Écoute' ? 'ecoute' : 'note', quoi: String(j.quoi || ''), detail: String(j.detail || ''), par: j.par || '' });
     });
     var adresse = String((p && p.email) || '').toLowerCase();
     (Array.isArray(envois) ? envois : []).forEach(function (e) {
@@ -345,13 +345,124 @@
     return pdf;
   }
 
+  /* ─── Écoutes (lignes « Écoute » écrites par /api/ecoute) ───────── */
+  var MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+
+  function ecarteJours(a, b) {
+    return Math.round((Date.parse(String(b).slice(0, 10) + 'T12:00:00Z') - Date.parse(String(a).slice(0, 10) + 'T12:00:00Z')) / JOUR_MS);
+  }
+
+  /** « aujourd’hui », « hier », « avant-hier », « le 12 novembre ». */
+  function quand(iso, aujourdhui) {
+    var j = jourParis(iso);
+    var n = ecarteJours(j, aujourdhui || jourParis());
+    if (n === 0) return 'aujourd’hui';
+    if (n === 1) return 'hier';
+    if (n === 2) return 'avant-hier';
+    return 'le ' + Number(j.slice(8, 10)) + ' ' + MOIS[Number(j.slice(5, 7)) - 1];
+  }
+
+  function ecoutes(p) {
+    return (Array.isArray(p && p.journal) ? p.journal : []).filter(function (j) { return j && j.quoi === 'Écoute' && j.le; });
+  }
+
+  /** La dernière écoute, en phrase : « A écouté « Le roi de la route » hier (1 min 40) ». */
+  function derniereEcoute(p, aujourdhui) {
+    var l = ecoutes(p).sort(function (a, b) { return String(b.le).localeCompare(String(a.le)); })[0];
+    if (!l) return null;
+    var titre = l.oeuvre || String(l.detail || '').replace(/^«\s*|\s*».*$/g, '') || 'une création';
+    var s = Math.round(Number(l.secondes) || 0);
+    var d = s >= 60 ? Math.floor(s / 60) + ' min' + (s % 60 ? ' ' + String(s % 60).padStart(2, '0') : '') : s + ' s';
+    return { le: l.le, jours: ecarteJours(jourParis(l.le), aujourdhui || jourParis()), titre: titre,
+      phrase: 'A écouté « ' + titre + ' » ' + quand(l.le, aujourdhui) + (s ? ' (' + d + ')' : '') };
+  }
+
+  /* ─── Tableau de bord : quatre chiffres, semaine en cours / précédente ── */
+  function lundiDe(iso) {
+    var d = new Date(String(iso).slice(0, 10) + 'T12:00:00Z');
+    var j = (d.getUTCDay() + 6) % 7;
+    return new Date(d.getTime() - j * JOUR_MS).toISOString().slice(0, 10);
+  }
+
+  function semaineVide() { return { contacts: 0, ecoutes: 0, rdv: 0, activees: 0 }; }
+
+  /**
+   * contacts : appels où l'on a joint quelqu'un + réponses reçues ;
+   * écoutes : lectures de plus de 20 s ; rdv : rendez-vous posés ;
+   * activées : fiches passées en « Activée ».
+   * Rend { semaines: [{ lundi, contacts, ecoutes, rdv, activees }] } de la plus ancienne à l'actuelle.
+   */
+  function kpiSemaines(prospects, aujourdhui, n) {
+    n = n || 8;
+    var lundi = lundiDe(aujourdhui || jourParis());
+    var semaines = [];
+    for (var i = n - 1; i >= 0; i--) {
+      var l = new Date(Date.parse(lundi + 'T12:00:00Z') - i * 7 * JOUR_MS).toISOString().slice(0, 10);
+      semaines.push(Object.assign({ lundi: l }, semaineVide()));
+    }
+    function ranger(iso) {
+      if (!iso) return null;
+      var lj = lundiDe(jourParis(iso));
+      for (var k = 0; k < semaines.length; k++) if (semaines[k].lundi === lj) return semaines[k];
+      return null;
+    }
+    (prospects || []).forEach(function (p) {
+      var s0 = ranger(p && p.a_repondu_le);
+      if (s0) s0.contacts++;
+      (Array.isArray(p && p.journal) ? p.journal : []).forEach(function (j) {
+        if (!j || !j.le) return;
+        var s = ranger(j.le);
+        if (!s) return;
+        var q = String(j.quoi || '');
+        if (q === 'Appel — intéressé' || q === 'Appel — à rappeler') s.contacts++;
+        else if (q === 'Écoute') s.ecoutes++;
+        else if (q === 'Statut : Activée') s.activees++;
+        if (/Rendez-vous le \d{4}-\d{2}-\d{2}/.test(String(j.detail || ''))) s.rdv++;
+      });
+    });
+    return { semaines: semaines, courante: semaines[semaines.length - 1], precedente: semaines[semaines.length - 2] || semaineVide() };
+  }
+
+  /* ─── Mes partenaires ────────────────────────────────────────────── */
+  var SILENCE_JOURS = 45;
+
+  /** Le jour où la fiche est passée « Partenaire » (journal), sinon sa dernière mise à jour. */
+  function signeeLe(p) {
+    var l = (Array.isArray(p && p.journal) ? p.journal : []).filter(function (j) { return j && /^Statut : Partenaire/.test(String(j.quoi || '')); })
+      .sort(function (a, b) { return String(a.le).localeCompare(String(b.le)); })[0];
+    return l ? l.le : (p && (p.updated_at || p.created_at)) || '';
+  }
+
+  /**
+   * Lignes de la vue « Mes partenaires ». stats[siret] = { commandes, derniere } (agrégats serveur,
+   * jamais de donnée de famille). « Silencieuse » : aucune commande depuis 45 jours
+   * (ou depuis la signature s'il n'y en a jamais eu).
+   */
+  function partenaires(prospects, stats, aujourdhui) {
+    var auj = aujourdhui || jourParis();
+    return (prospects || []).filter(function (p) { return p && (p.statut === 'partenaire' || p.statut === 'activee') && !p.oppose; })
+      .map(function (p) {
+        var st = (stats && stats[p.siret]) || { commandes: 0, derniere: '' };
+        var signe = signeeLe(p);
+        var repere = st.derniere || signe;
+        var silence = repere ? ecarteJours(jourParis(repere), auj) : 0;
+        return {
+          siret: p.siret, owner: p.owner || '', nom: p.nom || p.enseigne || 'Agence', ville: p.ville || '', statut: p.statut,
+          signee: signe, commandes: Number(st.commandes) || 0, derniere: st.derniere || '',
+          silence: silence, silencieuse: silence >= SILENCE_JOURS,
+          aActiver: p.statut === 'partenaire' && Number(st.commandes) > 0
+        };
+      })
+      .sort(function (a, b) { return (b.silencieuse - a.silencieuse) || (b.silence - a.silence); });
+  }
+
   /* ─── Les cinq espaces du menu ───────────────────────────────────── */
   var ESPACES = [
     { titre: 'Aujourd’hui', vues: ['journee', 'appels', 'relances', 'rappels', 'agenda'] },
-    { titre: 'Prospects', vues: ['pipeline', 'prospects', 'recherche', 'import'] },
+    { titre: 'Prospects', vues: ['pipeline', 'prospects', 'partenaires', 'recherche', 'import'] },
     { titre: 'Écrire', vues: ['composer', 'pret', 'lot', 'sequences', 'suivi', 'mails', 'modeles', 'boite', 'messagerie'] },
     { titre: 'Ressources', vues: ['playbook', 'ecoute', 'kit', 'catalogue', 'traditions', 'faq', 'social', 'posts', 'plan', 'atelier', 'checklist'] },
-    { titre: 'Mon poste', vues: ['accueil', 'analyse', 'simulateur', 'profil', 'julie', 'compte'] }
+    { titre: 'Mon poste', vues: ['resultats', 'accueil', 'analyse', 'simulateur', 'profil', 'julie', 'compte'] }
   ];
 
   return {
@@ -379,6 +490,14 @@
     limace: limace,
     euros: euros,
     dessinerProposition: dessinerProposition,
-    ESPACES: ESPACES
+    ESPACES: ESPACES,
+    quand: quand,
+    ecoutes: ecoutes,
+    derniereEcoute: derniereEcoute,
+    lundiDe: lundiDe,
+    kpiSemaines: kpiSemaines,
+    SILENCE_JOURS: SILENCE_JOURS,
+    signeeLe: signeeLe,
+    partenaires: partenaires
   };
 });

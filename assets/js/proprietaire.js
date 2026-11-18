@@ -491,7 +491,7 @@
       if (!parPersonne[k]) parPersonne[k] = { total: 0, contactes: 0, partenaires: 0 };
       parPersonne[k].total++;
       if (pr.statut && pr.statut !== 'nouveau') parPersonne[k].contactes++;
-      if (pr.statut === 'partenaire') parPersonne[k].partenaires++;
+      if (pr.statut === 'partenaire' || pr.statut === 'activee') parPersonne[k].partenaires++;
     });
 
     hote.innerHTML =

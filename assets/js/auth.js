@@ -880,7 +880,7 @@
   /* ═══ PROSPECTS ═══
      Chaque collaborateur travaille ses propres fiches ; le fondateur
      voit l'ensemble. */
-  var STATUTS = ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'refus'];
+  var STATUTS = ['nouveau', 'contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'activee', 'refus'];
   window.MELODIA_PROSPECT_STATUTS = {
     nouveau: { label: 'À contacter', color: '#8e8878' },
     contacte: { label: 'Contacté', color: '#38bdf8' },
@@ -888,6 +888,8 @@
     interesse: { label: 'Intéressé', color: '#fbbf24' },
     demo_offerte: { label: 'Démo offerte', color: '#e3c977' },
     partenaire: { label: 'Partenaire', color: '#4ade80' },
+    /* Activée : la première famille a été servie par l'agence. */
+    activee: { label: 'Activée', color: '#c9a84c' },
     refus: { label: 'Sans suite', color: '#5d5a51' }
   };
 

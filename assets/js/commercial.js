@@ -58,7 +58,7 @@
   }
   function enRetard(p) { return p.relance_le && p.relance_le < aujourdhui() && !estClos(p); }
   function pourAujourdhui(p) { return p.relance_le && p.relance_le <= aujourdhui() && !estClos(p); }
-  function estClos(p) { return p.statut === 'refus' || p.statut === 'partenaire' || p.oppose; }
+  function estClos(p) { return p.statut === 'refus' || p.statut === 'partenaire' || p.statut === 'activee' || p.oppose; }
 
   /* ═══ Casse des noms ═══
      La base SIRENE ne connaît que les capitales : « POMPES FUNEBRES
@@ -275,7 +275,7 @@
     var retard = aFaire.filter(enRetard);
     var sansMail = PROSPECTS.filter(function (p) { return !p.email && !estClos(p); });
     var sansSuite = PROSPECTS.filter(function (p) { return !p.relance_le && !estClos(p); });
-    var partenaires = compte('partenaire');
+    var partenaires = compte('partenaire') + compte('activee');
     var taux = total ? Math.round(partenaires / total * 100) : 0;
 
     /* Activité des trente derniers jours, lue dans les journaux */

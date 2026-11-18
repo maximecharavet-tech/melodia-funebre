@@ -44,11 +44,15 @@ export function entetesDesabonnement(email, replyTo) {
   };
 }
 
+/* Une ligne, discrète : les liens d'écoute portent un jeton (aucun cookie, aucun pixel), conservé 3 ans au plus. */
+export const MENTION_ECOUTE = 'Les liens d’écoute sont suivis pour vous recontacter au bon moment.';
+
 export function textePiedProspection(unsubUrl) {
   const u = String(unsubUrl || (SITE + '/api/prospect-stop'));
   return 'Vous recevez ce message dans un cadre strictement professionnel, parce que votre établissement exerce dans les services funéraires.\n' +
     'Pour ne plus être contacté, ouvrez ce lien : ' + u + '\n' +
-    'ou répondez STOP à ce courriel : votre adresse est retirée immédiatement et définitivement.\n\n' +
+    'ou répondez STOP à ce courriel : votre adresse est retirée immédiatement et définitivement.\n' +
+    MENTION_ECOUTE + '\n\n' +
     'Melodia Funèbre — Maxime Charavet\n' +
     'Mentions légales : ' + SITE + '/mentions-legales';
 }
@@ -64,6 +68,7 @@ export function htmlPiedProspection(unsubUrl) {
     'établissement exerce dans les services funéraires. Pour ne plus être contacté, ' +
     '<a href="' + u + '" style="color:#5c5749;text-decoration:underline;">désinscrivez-vous en un clic</a> ' +
     'ou répondez <b style="color:#5c5749;">STOP</b> à ce courriel : votre adresse est retirée immédiatement et définitivement.' +
+    '<br>' + MENTION_ECOUTE +
     '<br><span style="color:#a49d8c;">Melodia Funèbre — Maxime Charavet — <a href="' +
     SITE + '/mentions-legales" style="color:#8b8474;text-decoration:underline;">Mentions légales</a></span>';
 }

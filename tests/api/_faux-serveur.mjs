@@ -10,7 +10,7 @@ export function monterFauxServeur(opts = {}) {
     envois: [], resend: [], sequence: 0,
     resendReponse: opts.resendReponse || null, // fonction (n) → { status, corps } | 'timeout'
     colonneIdempotence: opts.colonneIdempotence !== false,
-    prospects: opts.prospects || [], inscriptions: opts.inscriptions || [], sequences: opts.sequences || [],
+    prospects: opts.prospects || [], orders: opts.orders || [], inscriptions: opts.inscriptions || [], sequences: opts.sequences || [],
     taches: [], patches: [], role: opts.role || 'commercial', delaiBase: opts.delaiBase ?? 4,
     journalEnPanne: false,
     lots: [], lotItems: [], tablesLotsAbsentes: false, seqLot: 0, seqLotItem: 0
@@ -62,6 +62,7 @@ export function monterFauxServeur(opts = {}) {
     if (u.pathname === '/rest/v1/rpc/melodia_trop_souvent') return rep(404, 'PGRST202');
     if (u.pathname === '/rest/v1/roles') return rep(200, [{ email: u.searchParams.get('email')?.replace('ilike.', '').toLowerCase() || 'julie@melodia.test', role: etat.role }]);
     if (u.pathname === '/rest/v1/collaborateurs') return rep(200, [{ email: 'julie@melodia.test', nom: 'Julie Serve' }]);
+    if (u.pathname === '/rest/v1/orders') { etat.lectureOrders = u.searchParams.get('select'); return rep(200, etat.orders); }
     if (u.pathname === '/rest/v1/prospects') {
       if (methode === 'PATCH') { etat.patches.push({ table: 'prospects', q: u.search, corps }); return rep(204, ''); }
       return rep(200, etat.prospects);

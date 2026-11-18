@@ -16,6 +16,67 @@
     parrain = parrain.trim().toLowerCase();
     if (/^[a-z0-9-]{2,40}$/.test(parrain)) localStorage.setItem('melodia_parrain', parrain);
   } catch (e) {}
+  /* Lien d'écoute reçu par une agence (?ec=…). Ni cookie, ni pixel, rien
+     de gardé sur l'appareil : le jeton reste en mémoire, l'adresse affichée
+     est nettoyée, et un seul signal part quand la lecture dépasse 20 s
+     (mis à jour à la sortie de page si elle a duré plus longtemps). */
+  try {
+    var ecJeton = new URLSearchParams(location.search).get('ec') || '';
+    if (/^\d{14}\.[0-9a-f]{16}$/.test(ecJeton)) {
+      var ecPropre = new URL(location.href);
+      ecPropre.searchParams.delete('ec');
+      history.replaceState(history.state, '', ecPropre.pathname + ecPropre.search + ecPropre.hash);
+      var ecSuivis = [];
+      var ecTitres = null;
+      var ecTitre = function (el) {
+        var src = '';
+        try { src = new URL(el.currentSrc || el.src, location.href).pathname; } catch (e) {}
+        var t = '';
+        (ecTitres || []).forEach(function (d) { if (!t && d.audio && src && src === d.audio.replace(/^https?:\/\/[^/]+/, '')) t = d.title; });
+        if (!t) t = String(el.getAttribute('aria-label') || '').replace(/^Écouter\s+/, '');
+        if (!t) { var j = document.querySelector('[data-jeton][aria-label^="Écouter "]'); if (j) t = j.getAttribute('aria-label').replace(/^Écouter\s+/, ''); }
+        return (t || document.title.split('—')[0] || '').trim().slice(0, 80);
+      };
+      var ecEnvoyer = function (s) {
+        var corps = JSON.stringify({ ec: ecJeton, oeuvre: s.titre, secondes: Math.round(s.secondes) });
+        s.envoye = s.secondes;
+        try {
+          if (navigator.sendBeacon && navigator.sendBeacon('/api/ecoute', new Blob([corps], { type: 'application/json' }))) return;
+        } catch (e) {}
+        try { fetch('/api/ecoute', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: corps, keepalive: true }); } catch (e) {}
+      };
+      var ecSuivre = function (el) {
+        if (el.__ecSuivi) return;
+        el.__ecSuivi = true;
+        var dernier = null;
+        el.addEventListener('timeupdate', function () {
+          var t = el.currentTime || 0;
+          var cle = el.currentSrc || el.src;
+          var s = ecSuivis.filter(function (x) { return x.cle === cle; })[0];
+          if (!s) { s = { cle: cle, el: el, secondes: 0, envoye: 0, titre: '' }; ecSuivis.push(s); dernier = null; }
+          if (dernier !== null && t > dernier && t - dernier < 2) s.secondes += t - dernier;
+          dernier = t;
+          if (!s.envoye && s.secondes >= 20) { s.titre = ecTitre(el); ecEnvoyer(s); }
+        });
+        el.addEventListener('seeking', function () { dernier = null; });
+      };
+      fetch('/assets/data/content.json', { cache: 'force-cache' }).then(function (r) { return r.json(); })
+        .then(function (c) { ecTitres = (c && c.demos) || []; }).catch(function () {});
+      var ecPlay = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function () { ecSuivre(this); return ecPlay.apply(this, arguments); };
+      document.addEventListener('play', function (ev) { if (ev.target && ev.target.tagName === 'AUDIO') ecSuivre(ev.target); }, true);
+      window.addEventListener('pagehide', function () {
+        ecSuivis.forEach(function (s) { if (s.envoye && s.secondes >= s.envoye + 15) ecEnvoyer(s); });
+      });
+      /* Les liens internes vers une autre écoute gardent le jeton. */
+      document.addEventListener('click', function (ev) {
+        var a = ev.target && ev.target.closest ? ev.target.closest('a[href^="/ecouter"], a[href^="/demos"]') : null;
+        if (!a || a.href.indexOf('ec=') >= 0) return;
+        a.href = a.href + (a.href.indexOf('?') >= 0 ? '&' : '?') + 'ec=' + ecJeton;
+      }, true);
+    }
+  } catch (e) {}
+
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 

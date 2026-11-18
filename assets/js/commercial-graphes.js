@@ -163,10 +163,11 @@
     };
     var etapes = [
       { l: 'Au portefeuille', n: P.length, dit: 'Toutes vos fiches' },
-      { l: 'Contactées', n: dans(['contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire']), dit: 'Un premier message est parti' },
-      { l: 'Intéressées', n: dans(['interesse', 'demo_offerte', 'partenaire']), dit: 'Elles ont répondu favorablement' },
-      { l: 'Démonstration offerte', n: dans(['demo_offerte', 'partenaire']), dit: 'Un hommage leur a été composé' },
-      { l: 'Partenaires', n: dans(['partenaire']), dit: 'Elles proposent le service' }
+      { l: 'Contactées', n: dans(['contacte', 'relance', 'interesse', 'demo_offerte', 'partenaire', 'activee']), dit: 'Un premier message est parti' },
+      { l: 'Intéressées', n: dans(['interesse', 'demo_offerte', 'partenaire', 'activee']), dit: 'Elles ont répondu favorablement' },
+      { l: 'Démonstration offerte', n: dans(['demo_offerte', 'partenaire', 'activee']), dit: 'Un hommage leur a été composé' },
+      { l: 'Partenaires', n: dans(['partenaire', 'activee']), dit: 'Elles proposent le service' },
+      { l: 'Activées', n: dans(['activee']), dit: 'Une première famille a été servie' }
     ];
     var refus = dans(['refus']);
 

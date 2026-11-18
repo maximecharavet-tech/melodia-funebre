@@ -293,7 +293,7 @@
         var liste = await Promise.resolve(window.MelodiaProspects.mine());
         if (Array.isArray(liste)) {
           return liste.filter(function (p) {
-            return p && p.statut === 'partenaire';
+            return p && (p.statut === 'partenaire' || p.statut === 'activee');
           }).length;
         }
       }

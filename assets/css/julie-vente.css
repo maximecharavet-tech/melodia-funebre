@@ -130,3 +130,18 @@ html.jv-sans-defilement, html.jv-sans-defilement body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .jv-hote *, .jv-hote *::before, .jv-hote *::after { transition: none !important; animation: none !important; }
 }
+
+/* ─── Écoutes, partenaires, résultats ─────────────────────── */
+.jv-ecoute { margin: 0 0 14px; padding: 10px 14px; border-radius: 10px; background: var(--surface, #0b0b11); color: var(--silver, #d8d8dc); font-size: .9rem; }
+.jv-ecoute.est-recente { border-left: 2px solid var(--or, #c9a84c); color: var(--paper, #f2efe8); }
+.jv-chrono li.jv-chrono-ecoute::before { background: var(--or, #c9a84c); }
+.jv-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.jv-kpi-carte { padding: 16px; border-radius: 12px; background: var(--surface, #0b0b11); border: 1px solid var(--line-soft, rgba(255,255,255,.06)); }
+.jv-kpi-n { font: 400 2.6rem/1 var(--ff-d, Georgia, serif); color: var(--paper, #f2efe8); margin: 6px 0 4px; }
+.jv-kpi-ecart { display: block; font-size: .8rem; color: var(--ash, #8e8878); }
+.jv-kpi-ecart.est-hausse { color: var(--or-bright, #e3c977); }
+.jv-kpi-barres { display: block; width: 100%; height: 40px; margin: 12px 0 8px; }
+.jv-kpi-barres rect { fill: var(--line-strong, rgba(201,168,76,.3)); }
+.jv-kpi-barres rect.est-courante { fill: var(--or, #c9a84c); }
+.jv-kpi-d { color: var(--ash, #8e8878); font-size: .8rem; margin: 0; }
+@media (max-width: 860px) { .jv-kpi { grid-template-columns: 1fr 1fr; } }
