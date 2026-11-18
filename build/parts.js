@@ -384,10 +384,10 @@ const jsonldOrg = {
   logo: { '@type': 'ImageObject', url: SITE + '/assets/img/logo-melodia.jpg' },
   founder: { '@type': 'Person', name: 'Maxime Charavet' },
   /* « sameAs » relie la fiche de la maison à ses comptes publics :
-     c'est ce qui permet à Google de comprendre que la page Facebook et
-     le compte Instagram appartiennent bien à cette organisation, et
+     c'est ce qui permet à Google de comprendre que les comptes Facebook,
+     Instagram et TikTok appartiennent bien à cette organisation, et
      non à une homonyme. */
-  sameAs: [SOCIAL.facebook, SOCIAL.instagram],
+  sameAs: [SOCIAL.facebook, SOCIAL.instagram, SOCIAL.tiktok],
   foundingDate: '2026',
   areaServed: { '@type': 'Country', name: 'France' },
   knowsLanguage: ['fr', 'co', 'br', 'he', 'it', 'pt'],
@@ -398,10 +398,8 @@ const jsonldOrg = {
     areaServed: 'FR',
     availableLanguage: 'French'
   }
-  /* « sameAs » viendra lister les comptes officiels (Instagram,
-     Facebook, LinkedIn) dès qu'ils existeront : c'est ce qui permet
-     aux moteurs de rattacher ces profils à cette entité plutôt que
-     d'en déduire deux entreprises distinctes. */
+  /* Le LinkedIn de Julie Serve n'entre pas dans sameAs : c'est un
+     profil personnel, pas un compte de la maison. */
 };
 
 const jsonldFaq = {

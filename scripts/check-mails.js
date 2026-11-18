@@ -31,6 +31,7 @@ function run() {
   const attendus = ['pf-premier-contact', 'pf-relance-j4', 'pf-relance-j10', 'pf-apres-appel', 'pf-partenariat', 'pf-brochure', 'pf-merci'];
   test('ids stables', JSON.stringify(ids) === JSON.stringify(attendus));
   test('JSON et UMD alignés', JSON.stringify(pack.modeles.map((m) => m.id + m.objet + m.texte)) === JSON.stringify(packJson.modeles.map((m) => m.id + m.objet + m.texte)));
+  test('7 modèles : reseaux', pack.modeles.every((m) => m.reseaux === true) && packJson.modeles.every((m) => m.reseaux === true));
 
   const compose = modeles.composerModele('pf-premier-contact', { nom: 'Marie Dupont', societe: 'Pompes Dupont', ville: 'Lyon' });
   test('composerModele sujet', !!(compose && compose.sujet.indexOf('Pompes Dupont') !== -1 && compose.sujet.indexOf('{') === -1));
@@ -138,11 +139,38 @@ function run() {
     mentionPlus.indexOf('Brochure Pompes funèbres') !== -1 && mentionPlus.indexOf('Brochure Crématoriums') !== -1);
   test('mention vide', o.mentionBrochure([]) === '' && o.avecBrochure('Bonjour.', []) === 'Bonjour.');
   test('mention compat true', /brochure professionnelle est jointe/.test(o.mentionBrochure(true)));
+  const dejaBrochure = (phrase) => {
+    const avant = phrase + '\nhttps://melodia-funebre.fr/documents/x.pdf';
+    return o.avecBrochure(avant, true) === avant;
+  };
+  test('avecBrochure ne redouble pas « La brochure est jointe »', dejaBrochure('La brochure est jointe à ce courriel :'));
+  test('avecBrochure ne redouble pas « brochure jointe »', dejaBrochure('Le détail est aussi dans la brochure jointe :'));
+  test('avecBrochure ne redouble pas « brochure professionnelle est jointe »', dejaBrochure('La brochure professionnelle est jointe à ce courriel.'));
 
   /* Alignement du catalogue exposé par la console. */
   const fs = require('fs');
   const srcMails = fs.readFileSync(require('path').join(__dirname, '../assets/js/collaborateur-mails.js'), 'utf8');
   test('console : mêmes ids de brochures', BROCHURE_IDS_MAILS(srcMails).join(',') === o.BROCHURE_IDS.join(','));
+  test('console : Instagram, TikTok, LinkedIn Julie',
+    srcMails.indexOf("url: 'https://www.instagram.com/melodia_funebre'") !== -1 &&
+    srcMails.indexOf("url: 'https://www.tiktok.com/@melodia.funebre'") !== -1 &&
+    srcMails.indexOf("url: 'https://www.linkedin.com/in/julie-serve-0a3076224'") !== -1 &&
+    srcMails.indexOf('{{LIEN_TIKTOK}}') === -1 &&
+    srcMails.indexOf('{{LIEN_LINKEDIN_JULIE}}') === -1);
+  test('console : pas d’injonction dans la ligne réseaux',
+    srcMails.indexOf('Restons en contact') === -1 && srcMails.indexOf('suivez-nous') === -1);
+  const srcCourrier = fs.readFileSync(require('path').join(__dirname, '../api/_courrier.js'), 'utf8');
+  test('signature Resend : mêmes trois liens',
+    srcCourrier.indexOf("url: 'https://www.instagram.com/melodia_funebre'") !== -1 &&
+    srcCourrier.indexOf("url: 'https://www.tiktok.com/@melodia.funebre'") !== -1 &&
+    srcCourrier.indexOf("url: 'https://www.linkedin.com/in/julie-serve-0a3076224'") !== -1);
+  const srcMailApi = fs.readFileSync(require('path').join(__dirname, '../api/prospect-mail.js'), 'utf8');
+  test('urlPubliqueDe ignore l’hôte Vercel',
+    !/process\.env\.VERCEL_(?:BRANCH_)?URL/.test(srcMailApi) &&
+    /process\.env\.SITE_URL/.test(srcMailApi));
+  const srcGen = fs.readFileSync(require('path').join(__dirname, '../build/gen.js'), 'utf8');
+  test('pied du site : TikTok de la maison',
+    srcGen.indexOf("tiktok: 'https://www.tiktok.com/@melodia.funebre'") !== -1);
   test('console : libellés identiques',
     srcMails.indexOf('Brochure Pompes funèbres') !== -1 &&
     srcMails.indexOf('Brochure Marbriers') !== -1 &&

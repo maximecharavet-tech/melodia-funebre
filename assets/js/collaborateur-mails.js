@@ -17,14 +17,14 @@
   var ENVOI_ACTIF = true;
   var BANNIERE = '/assets/img/courriel/banniere.jpg';
   var PARRAIN = 'julie-serve';
-  /* Trouvés dans le pied du site. TikTok et le LinkedIn de Julie
-     n’y figurent pas : les emplacements restent nommés, et ne sont
-     pas montrés dans le courriel tant qu’ils ne sont pas remplis. */
+  /* Instagram et TikTok : comptes de la maison (même source que le
+     pied du site). LinkedIn : profil de Julie Serve, à confirmer
+     par Maxime s’il change. Ligne de signature : Instagram · TikTok
+     · LinkedIn (Julie Serve) — sans icône, sans injonction. */
   var RESEAUX = [
-    { nom: 'Facebook', url: 'https://www.facebook.com/share/1GUX4Ht8M8/' },
     { nom: 'Instagram', url: 'https://www.instagram.com/melodia_funebre' },
-    { nom: 'TikTok', url: '{{LIEN_TIKTOK}}' },
-    { nom: 'LinkedIn — Julie Serve', url: '{{LIEN_LINKEDIN_JULIE}}' }
+    { nom: 'TikTok', url: 'https://www.tiktok.com/@melodia.funebre' },
+    { nom: 'LinkedIn (Julie Serve)', url: 'https://www.linkedin.com/in/julie-serve-0a3076224' }
   ];
   var SIGNATURE_JULIE = {
     nom: 'Julie Serve',
@@ -752,15 +752,13 @@
   }
 
   function reseauxHtml() {
-    /* Un emplacement encore nommé ({{…}}) ne part pas chez le
-       prospect : le réseau apparaîtra quand son lien sera renseigné. */
-    var cellules = RESEAUX.filter(function (r) {
-      return r.url && !/^\{\{/.test(r.url);
-    }).map(function (r) {
-      var contenu = '<a href="' + esc(r.url) + '" style="color:#97803c;text-decoration:none;">' + esc(r.nom) + '</a>';
-      return '<td style="padding:0 14px 8px 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.4;color:#5c574c;">' + contenu + '</td>';
+    var liens = RESEAUX.filter(function (r) { return r.url && !/^\{\{/.test(r.url); });
+    if (!liens.length) return '';
+    var ligne = liens.map(function (r, i) {
+      var a = '<a href="' + esc(r.url) + '" style="color:#97803c;text-decoration:none;">' + esc(r.nom) + '</a>';
+      return i ? '<span style="color:#8b8474;"> · </span>' + a : a;
     }).join('');
-    return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 8px;"><tr>' + cellules + '</tr></table>';
+    return '<p style="margin:0 0 8px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;">' + ligne + '</p>';
   }
 
   function paragraphePremium(bloc) {
@@ -831,16 +829,9 @@
     }
     var social = '';
     if (o.reseaux) {
-      var liens = RESEAUX.filter(function (r) { return r.url && !/^\{\{/.test(r.url); });
-      if (liens.length) {
-        social = '<tr><td align="center" style="padding:23px 20px 15px;background-color:#eeece6;">' +
-          '<p style="margin:0 0 15px;color:#8b806c;font-family:Georgia,\'Times New Roman\',serif;font-size:16px;">Restons en contact</p>' +
-          '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>' +
-          liens.map(function (r, i) {
-            return (i ? '<td style="color:#c0b7a5;font-size:12px;">|</td>' : '') +
-              '<td style="padding:0 12px;"><a href="' + esc(r.url) + '" style="color:#827047;font-family:Arial,Helvetica,sans-serif;font-size:12px;text-decoration:none;">' + esc(r.nom) + '</a></td>';
-          }).join('') +
-          '</tr></table></td></tr>';
+      var bloc = reseauxHtml();
+      if (bloc) {
+        social = '<tr><td align="center" style="padding:18px 20px 14px;background-color:#eeece6;">' + bloc + '</td></tr>';
       }
     }
     return '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="x-apple-disable-message-reformatting"><title>' + esc(o.sujet || 'Melodia Funèbre') + '</title></head>' +
