@@ -239,7 +239,8 @@
     $('head-title').innerHTML = def[1];
     $('view').innerHTML = def[2]();
     def[3]();
-    if (history.replaceState) {
+    /* Une vue qui porte un paramètre (#fiche?siret=…) le garde : recharger rouvre la même fiche. */
+    if (history.replaceState && !(vueHash() === v && location.hash.indexOf('?') > 0)) {
       try { history.replaceState(null, '', '#' + v); } catch (e) {}
     }
     Array.prototype.forEach.call(document.querySelectorAll('.side-item'), function (b) {
@@ -252,7 +253,11 @@
      ici, dans le même routeur, sans toucher aux vues existantes. */
   window.MelodiaConsole = {
     ajouterVue: function (id, def) { VUES[id] = def; },
-    courante: function () { return vueCourante; }
+    courante: function () { return vueCourante; },
+    /* Le portefeuille chargé, et sa relecture : partagés avec la fiche agence et le mode appel. */
+    prospects: function () { return PROSPECTS; },
+    recharger: function () { return charger(); },
+    estMaitre: EST_MAITRE
   };
   window.addEventListener('hashchange', function () {
     var h = vueHash();
@@ -837,7 +842,8 @@
         '</div>' +
         '<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">' +
           '<span class="pill" style="color:' + s.color + ';border-color:' + s.color + '55;">' + s.label + '</span>' +
-          '<button class="own-mini" data-ouvrir="' + esc(p.siret) + '" title="Ouvrir la fiche">✎</button>' +
+          '<button class="own-mini" data-ouvrir="' + esc(p.siret) + '" title="Modifier ici">✎</button>' +
+          '<button class="btn btn-ghost btn-sm" type="button" data-fiche-complete="' + esc(p.siret) + '">Fiche agence</button>' +
         '</div>' +
       '</div>' +
 
@@ -879,7 +885,7 @@
           '<textarea class="field-area" data-champ="notes" data-siret="' + esc(p.siret) + '" style="min-height:80px;" placeholder="Leurs mots à eux, pas un résumé…">' + esc(p.notes || '') + '</textarea></div>' +
 
         '<div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem;">' +
-          '<button class="btn btn-outline btn-sm" data-appel="' + esc(p.siret) + '">Journaliser un appel</button>' +
+          '<button class="btn btn-outline btn-sm" data-appel="' + esc(p.siret) + '">' + (window.MelodiaJulieAppel ? 'Mode appel' : 'Journaliser un appel') + '</button>' +
           (p.tel ? '<a class="btn btn-ghost btn-sm" href="tel:' + esc(String(p.tel).replace(/\s/g, '')) + '">Appeler ↗</a>' : '') +
           '<button class="own-mini' + (p.oppose ? ' danger' : '') + '" data-stop="' + esc(p.siret) + '" title="Opposition — ne plus jamais contacter">' +
             (p.oppose ? 'Opposition levée ?' : 'A répondu STOP') + '</button>' +
@@ -969,7 +975,28 @@
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-champ][data-siret]'), function (el) {
       var ev = (el.tagName === 'SELECT' || el.type === 'date') ? 'change' : 'input';
-      el.addEventListener(ev, function () { majFiche(el.dataset.siret, el.dataset.champ, el.value); });
+      el.addEventListener(ev, function () {
+        /* Changer de statut demande la suite (« Et ensuite ? ») : aucune fiche ouverte sans prochaine action. */
+        if (el.dataset.champ === 'statut' && window.MelodiaJulieActions) {
+          var p0 = trouver(el.dataset.siret);
+          var avant = p0 ? p0.statut : '';
+          window.MelodiaJulieActions.changerStatut(el.dataset.siret, el.value, p0 && p0.owner).then(function (ok) {
+            if (!ok) { el.value = avant; return; }
+            return charger().then(function () { ouvrirApres = el.dataset.siret; go(vueCourante); });
+          }).catch(function (err) {
+            el.value = avant;
+            if (window.melodiaToast) window.melodiaToast('Statut non enregistré : ' + (err.message || 'erreur'));
+          });
+          return;
+        }
+        majFiche(el.dataset.siret, el.dataset.champ, el.value);
+      });
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-fiche-complete]'), function (b) {
+      b.addEventListener('click', function () {
+        if (window.MelodiaJulieActions) window.MelodiaJulieActions.ouvrirFiche(b.dataset.ficheComplete);
+      });
     });
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-report]'), function (b) {
@@ -1062,6 +1089,8 @@
   function journaliserAppel(siret) {
     var p = trouver(siret);
     if (!p) return;
+    /* Le mode appel (script, objections, issue en un geste) remplace la fenêtre de saisie. */
+    if (window.MelodiaJulieAppel) { window.MelodiaJulieAppel.ouvrir(siret, p.owner); return; }
     var quoi = prompt('Ce qui s\'est dit pendant l\'appel :\n(leurs mots à eux, pas un résumé)');
     if (quoi === null) return;
     noter(p, 'Appel', quoi.slice(0, 400));

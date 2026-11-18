@@ -1,0 +1,132 @@
+/* Melodia — espace collaborateur, phase 1 vente : mode appel, fiche agence,
+   « Et ensuite ? », rappels synchronisés, proposition PDF.
+   Sobre : noir, ivoire, or. Aucune animation décorative. */
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html.jv-sans-defilement, html.jv-sans-defilement body { overflow: hidden; }
+
+/* ─── Calques ─────────────────────────────────────────────── */
+.jv-hote { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.jv-voile { position: absolute; inset: 0; background: rgba(4, 4, 7, 0.72); }
+.jv-dialogue {
+  position: relative; width: min(520px, 100%); max-height: calc(100dvh - 32px); overflow: auto;
+  background: var(--surface-2, #101018); border: 1px solid var(--line-strong, rgba(201,168,76,.3));
+  border-radius: 14px; padding: 22px 22px 18px; color: var(--paper, #f2efe8);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+.jv-dialogue-large { width: min(640px, 100%); }
+.jv-dialogue-sur { font: 500 .68rem/1.2 var(--ff-m, monospace); letter-spacing: .14em; text-transform: uppercase; color: var(--or, #c9a84c); margin-bottom: 4px; }
+.jv-dialogue-titre { font: 400 1.55rem/1.15 var(--ff-d, Georgia, serif); margin: 0 0 6px; color: var(--paper, #f2efe8); }
+.jv-dialogue-note { color: var(--ash, #8e8878); font-size: .86rem; margin: 0 0 14px; }
+.jv-dialogue-pied { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 16px; }
+.jv-erreur { color: var(--red, #f87171); font-size: .86rem; margin: 8px 0 0; }
+.jv-fermer { background: none; border: 1px solid var(--line, rgba(201,168,76,.12)); color: var(--silver-dim, #9a9aa2); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1rem; flex: none; }
+.jv-fermer:hover, .jv-fermer:focus-visible { color: var(--paper, #f2efe8); border-color: var(--or, #c9a84c); }
+.jv-lien { background: none; border: 0; padding: 0; color: var(--or-bright, #e3c977); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font: inherit; font-size: .84rem; }
+
+/* ─── « Et ensuite ? » ────────────────────────────────────── */
+.jv-choix { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin: 8px 0 14px; border: 0; padding: 0; }
+.jv-choix-item { position: relative; }
+.jv-choix-item input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.jv-choix-item span { display: block; text-align: center; padding: 10px 8px; min-height: 44px; border: 1px solid var(--line, rgba(201,168,76,.12)); border-radius: 10px; color: var(--silver, #d8d8dc); font-size: .9rem; }
+.jv-choix-item input:checked + span { border-color: var(--or, #c9a84c); background: var(--or-soft, rgba(201,168,76,.07)); color: var(--paper, #f2efe8); }
+.jv-choix-item input:focus-visible + span { outline: 2px solid var(--or-bright, #e3c977); outline-offset: 2px; }
+.jv-raccourcis, .jv-jours { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+.jv-raccourcis button, .jv-jours button { min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line, rgba(201,168,76,.12)); background: transparent; color: var(--silver, #d8d8dc); cursor: pointer; font-size: .82rem; }
+.jv-raccourcis button:hover, .jv-jours button:hover { border-color: var(--or, #c9a84c); }
+
+/* ─── Mode appel ──────────────────────────────────────────── */
+.jv-hote:has(.jv-appel) { justify-content: flex-end; align-items: stretch; padding: 0; }
+.jv-appel {
+  position: relative; display: flex; flex-direction: column; width: min(480px, 100%); height: 100%;
+  background: var(--ink-2, #08080d); border-left: 1px solid var(--line-strong, rgba(201,168,76,.3)); color: var(--paper, #f2efe8);
+}
+.jv-appel-tete { display: flex; justify-content: space-between; gap: 12px; padding: 18px 20px 12px; border-bottom: 1px solid var(--line-soft, rgba(255,255,255,.06)); }
+.jv-appel-nom { font: 400 1.5rem/1.15 var(--ff-d, Georgia, serif); margin: 0; }
+.jv-appel-meta { color: var(--ash, #8e8878); font-size: .86rem; margin-top: 2px; }
+.jv-appel-corps { flex: 1; overflow: auto; padding: 16px 20px; -webkit-overflow-scrolling: touch; }
+.jv-appel-num { display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 12px; background: var(--or, #c9a84c); color: var(--ink, #040407); font-weight: 600; text-decoration: none; font-size: 1.05rem; margin-bottom: 14px; }
+.jv-appel-num.est-vide { background: transparent; border: 1px dashed var(--line-strong, rgba(201,168,76,.3)); color: var(--ash, #8e8878); font-weight: 400; font-size: .9rem; }
+.jv-appel-rappel { margin: 0 0 14px; display: grid; gap: 8px; }
+.jv-appel-rappel div { padding: 10px 12px; border-radius: 10px; background: var(--surface, #0b0b11); }
+.jv-appel-rappel dt { font: 500 .66rem/1.2 var(--ff-m, monospace); letter-spacing: .12em; text-transform: uppercase; color: var(--or-patina, #97803c); margin-bottom: 3px; }
+.jv-appel-rappel dd { margin: 0; font-size: .9rem; color: var(--silver, #d8d8dc); }
+.jv-appel-bloc { margin: 0 0 16px; }
+.jv-appel-bloc summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; color: var(--or-bright, #e3c977); }
+.jv-appel-h { font: 500 .7rem/1.2 var(--ff-m, monospace); letter-spacing: .12em; text-transform: uppercase; color: var(--or, #c9a84c); margin: 0 0 8px; }
+.jv-etape { padding: 8px 0; border-bottom: 1px solid var(--line-soft, rgba(255,255,255,.06)); font-size: .9rem; color: var(--silver, #d8d8dc); }
+.jv-etape-duree, .jv-dire { color: var(--ash, #8e8878); font-size: .8rem; }
+.jv-pastilles { display: flex; flex-wrap: wrap; gap: 6px; }
+.jv-pastille { min-height: 38px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line, rgba(201,168,76,.12)); background: transparent; color: var(--silver, #d8d8dc); cursor: pointer; font-size: .82rem; text-align: left; }
+.jv-pastille[aria-expanded="true"] { border-color: var(--or, #c9a84c); color: var(--paper, #f2efe8); background: var(--or-soft, rgba(201,168,76,.07)); }
+.jv-reponse { margin-top: 10px; padding: 12px 14px; border-left: 2px solid var(--or, #c9a84c); background: var(--surface, #0b0b11); border-radius: 0 10px 10px 0; font-size: .9rem; line-height: 1.5; }
+.jv-reponse-relance { color: var(--ash, #8e8878); margin-top: 6px; font-size: .84rem; }
+.jv-appel-pied { padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-soft, rgba(255,255,255,.06)); background: var(--ink, #040407); }
+.jv-appel-pied.est-occupe { opacity: .6; pointer-events: none; }
+.jv-issues { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.jv-issue { min-height: 48px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line-strong, rgba(201,168,76,.3)); background: var(--surface, #0b0b11); color: var(--paper, #f2efe8); cursor: pointer; font-size: .9rem; }
+.jv-issue:hover, .jv-issue:focus-visible { border-color: var(--or, #c9a84c); }
+.jv-issue.est-stop { grid-column: 1 / -1; border-color: rgba(248, 113, 113, .35); color: var(--silver-dim, #9a9aa2); }
+.jv-appel-fait p { margin: 4px 0 10px; color: var(--silver, #d8d8dc); }
+.jv-appel-fait .jv-dialogue-pied { justify-content: flex-start; }
+
+@media (max-width: 860px) {
+  .jv-appel { width: 100%; border-left: 0; }
+  .jv-hote { padding: 0; align-items: flex-end; }
+  .jv-hote .jv-dialogue { width: 100%; max-height: 92dvh; border-radius: 16px 16px 0 0; padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+}
+
+/* ─── Listes « À appeler » et rappels ─────────────────────── */
+.jv-liste-appels, .jv-taches { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.jv-ligne-appel, .jv-tache { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--surface, #0b0b11); border: 1px solid var(--line-soft, rgba(255,255,255,.06)); }
+.jv-ligne-corps, .jv-tache-corps { flex: 1; min-width: 0; }
+.jv-ligne-nom, .jv-tache-texte { color: var(--paper, #f2efe8); font-size: .95rem; overflow-wrap: anywhere; }
+.jv-ligne-meta, .jv-tache-meta { color: var(--ash, #8e8878); font-size: .8rem; margin-top: 2px; }
+.jv-ligne-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.jv-retard { color: var(--amber, #fbbf24); }
+.jv-tache-case { width: 22px; height: 22px; accent-color: var(--or, #c9a84c); flex: none; }
+.jv-tache.est-faite .jv-tache-texte { text-decoration: line-through; color: var(--ash, #8e8878); }
+.jv-tache-retirer { background: none; border: 0; color: var(--dust, #7c786c); cursor: pointer; min-width: 36px; min-height: 36px; }
+.jv-rappel-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin-bottom: 16px; }
+.jv-rappel-form .field { flex: 1 1 200px; margin: 0; }
+
+@media (max-width: 600px) {
+  .jv-ligne-appel { flex-wrap: wrap; }
+  .jv-ligne-actions { width: 100%; justify-content: stretch; }
+  .jv-ligne-actions > * { flex: 1; min-height: 44px; }
+}
+
+/* ─── Fiche agence ────────────────────────────────────────── */
+.jv-fiche-tete { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 16px; }
+.jv-fiche-nom { font: 400 1.8rem/1.1 var(--ff-d, Georgia, serif); margin: 0; color: var(--paper, #f2efe8); }
+.jv-fiche-meta { color: var(--ash, #8e8878); font-size: .88rem; }
+.jv-fiche-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+.jv-suite-bloc { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line-strong, rgba(201,168,76,.3)); background: var(--or-soft, rgba(201,168,76,.07)); margin-bottom: 16px; }
+.jv-suite-bloc.est-manquante { border-color: rgba(251, 191, 36, .5); background: rgba(251, 191, 36, .06); }
+.jv-suite-titre { font: 500 .7rem/1.2 var(--ff-m, monospace); letter-spacing: .12em; text-transform: uppercase; color: var(--or, #c9a84c); margin: 0 0 6px; }
+.jv-manque { color: var(--amber, #fbbf24); }
+.jv-fiche-grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 16px; }
+.jv-fiche-grille > section { padding: 16px; border-radius: 12px; background: var(--surface, #0b0b11); border: 1px solid var(--line-soft, rgba(255,255,255,.06)); }
+.jv-dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: .9rem; }
+.jv-dl dt { color: var(--ash, #8e8878); }
+.jv-dl dd { margin: 0; color: var(--silver, #d8d8dc); overflow-wrap: anywhere; }
+.jv-notes { white-space: pre-wrap; color: var(--silver, #d8d8dc); font-size: .9rem; }
+.jv-chrono { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 1px solid var(--line, rgba(201,168,76,.12)); display: grid; gap: 10px; }
+.jv-chrono li { font-size: .88rem; color: var(--silver, #d8d8dc); position: relative; }
+.jv-chrono li::before { content: ''; position: absolute; left: -18px; top: .45em; width: 7px; height: 7px; border-radius: 50%; background: var(--or-patina, #97803c); }
+.jv-chrono time { display: block; color: var(--ash, #8e8878); font-size: .8rem; }
+@media (max-width: 860px) { .jv-fiche-grille { grid-template-columns: 1fr; } }
+
+/* ─── Proposition PDF ─────────────────────────────────────── */
+.jv-prop-oeuvres { display: grid; gap: 6px; margin: 6px 0 12px; }
+.jv-prop-oeuvres label { display: flex; gap: 10px; align-items: center; min-height: 40px; color: var(--silver, #d8d8dc); font-size: .9rem; }
+.jv-prop-calcul { padding: 12px 14px; border-radius: 10px; background: var(--surface, #0b0b11); color: var(--silver, #d8d8dc); font-size: .9rem; line-height: 1.5; }
+
+/* ─── Ma journée : alerte sobre ───────────────────────────── */
+.jv-section-alerte .jv2-section-tete h3 em { color: var(--amber, #fbbf24); }
+.jv-regler { margin-top: 4px; }
+.jv2-carte-fiche { margin-top: 6px; font-size: .8rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .jv-hote *, .jv-hote *::before, .jv-hote *::after { transition: none !important; animation: none !important; }
+}

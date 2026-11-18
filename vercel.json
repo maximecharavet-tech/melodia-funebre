@@ -14,6 +14,10 @@
       "maxDuration": 30,
       "includeFiles": "{documents/melodia-brochure-*.pdf,documents/melodia-{presentation-agences-partenaires,offre-pro,plaquette-ecoute-prestige,fiche-contact-julie-serve}.pdf,assets/data/modeles-julie.json}"
     },
+    "api/sequences-cron.js": {
+      "maxDuration": 60,
+      "includeFiles": "{documents/melodia-brochure-*.pdf,documents/melodia-{presentation-agences-partenaires,offre-pro,plaquette-ecoute-prestige,fiche-contact-julie-serve}.pdf,assets/data/modeles-julie.json}"
+    },
     "api/prospect-webhook.js": {
       "maxDuration": 30
     },

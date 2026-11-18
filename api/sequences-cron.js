@@ -142,6 +142,21 @@ async function envoyerViaRoute(owner, charge) {
   return { status: res.statusCode, corps: res.corps || {} };
 }
 
+export const SANS_REPONSE_MAX = 3;
+export const MOTIF_SANS_REPONSE = 'Trois messages sans réponse : appeler plutôt';
+const STATUTS_PARTIS = ['envoye', 'delivre', 'ouvert', 'clique', 'differe'];
+
+/** Messages réellement partis vers cette adresse (hors tests), depuis la dernière réponse s'il y en a une. */
+export async function envoisSansReponse(adresse, reponduLe) {
+  const a = String(adresse || '').trim();
+  const variantes = [...new Set([a.toLowerCase(), a])].map((x) => '"' + x.replace(/"/g, '') + '"');
+  let chemin = 'envois_prospect?select=id&mode=eq.envoi&statut=in.(' + STATUTS_PARTIS.join(',') + ')' +
+    '&destinataire=in.(' + encodeURIComponent(variantes.join(',')) + ')&limit=10';
+  if (reponduLe) chemin += '&envoye_le=gt.' + encodeURIComponent(new Date(reponduLe).toISOString());
+  const r = await sb(chemin);
+  return Array.isArray(r.data) ? r.data.length : 0;
+}
+
 /**
  * Traite les échéances. Exportée pour les tests ; l'entrée HTTP est plus bas.
  */
@@ -222,6 +237,16 @@ export async function traiterEcheances({ maintenant = Date.now(), budgetMs = BUD
     if (!etape.modele) {
       await maj(ins, { statut: 'pause', motif_sortie: 'Étape sans modèle' });
       bilan.pauses++; note(ins, 'pause', { motif: 'étape sans modèle' }); continue;
+    }
+
+    /* Trois messages déjà partis sans réponse : on n'en envoie pas un quatrième,
+       on propose un appel. La fiche n'est pas touchée ; seule l'inscription s'arrête. */
+    const deja = await envoisSansReponse(adresse, prospect.a_repondu_le);
+    if (deja >= SANS_REPONSE_MAX) {
+      await maj(ins, { statut: 'pause', motif_sortie: MOTIF_SANS_REPONSE });
+      await sb('taches', { methode: 'POST', corps: { owner: ins.owner, prospect_siret: ins.prospect_siret, type: 'appel',
+        du_le: iso, payload: { sequence_id: ins.sequence_id, etape: idx, texte: MOTIF_SANS_REPONSE, origine: 'sequence' } } });
+      bilan.pauses++; note(ins, 'pause', { motif: 'trois messages sans réponse' }); continue;
     }
 
     const r = await envoyer(String(ins.owner || '').toLowerCase(), {

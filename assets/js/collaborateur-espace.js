@@ -122,7 +122,7 @@
       id: 'suivi', nom: 'Suivi client',
       cartes: [
         { v: 'relances', t: 'À faire', d: 'Les relances dont la date est arrivée.' },
-        { v: 'rappels', t: 'Rappels', d: 'Vos propres rappels, sur cet appareil.' },
+        { v: 'rappels', t: 'Rappels', d: 'Vos rappels, retrouvés sur l’ordinateur comme sur le téléphone.' },
         { v: 'checklist', t: 'Parcours d’arrivée', d: 'Les gestes des premiers jours, à cocher.' },
         { v: 'faq', t: 'FAQ familles', d: 'Les réponses déjà tenues par la maison.' }
       ]
