@@ -12,10 +12,10 @@
 // Interrupteur : MEDIAS_GENERATION === 'true' ET HYPER_ENGINE_IMAGE_TOKEN
 // présent. Sans les deux, la route répond 503 GENERATION_INACTIVE.
 // ═══════════════════════════════════════════════════════════════
-import { createRequire } from 'module';
+import { readFileSync } from 'fs';
 
-const require = createRequire(import.meta.url);
-export const IDEES = require('./_medias-idees.json').idees;
+// lu depuis la racine du projet, comme assets/data/modeles-julie.json (fourni par includeFiles dans vercel.json)
+export const IDEES = JSON.parse(readFileSync('api/_medias-idees.json', 'utf8')).idees;
 const PAR_ID = Object.fromEntries(IDEES.map((i) => [i.id, i]));
 
 export const FORMATS = {
