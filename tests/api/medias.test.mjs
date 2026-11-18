@@ -156,9 +156,9 @@ beforeEach(() => {
     if (u.pathname === '/auth/v1/user') return init.headers.Authorization === 'Bearer bon' ? rep(200, { email: moteur.email || 'julie@melodia.test' }) : rep(401, {});
     if (u.pathname === '/rest/v1/roles') return rep(200, [{ email: moteur.email || 'julie@melodia.test', role }]);
     if (u.pathname === '/rest/v1/rpc/melodia_trop_souvent') return rep(404, 'PGRST202');
-    if (u.host === 'hyper-engine.ai' && u.pathname === '/api/image/tasks') return rep(202, { ok: true, taskId: 'imt_0123456789ab', eta_s: 60 });
-    if (u.host === 'hyper-engine.ai' && u.pathname === '/api/image/tasks/tick') return rep(200, { ok: true });
-    if (u.host === 'hyper-engine.ai') return rep(200, { status: moteur.statut, items: Array.from({ length: moteur.n }, (_, k) => ({ status: moteur.statut, url: moteur.statut === 'done' ? (k ? moteur.url.replace('img.png', 'img' + k + '.png') : moteur.url) : null })) });
+    if (u.host === 'www.hyper-engine.ai' && u.pathname === '/api/image/tasks') return rep(202, { ok: true, taskId: 'imt_0123456789ab', eta_s: 60 });
+    if (u.host === 'www.hyper-engine.ai' && u.pathname === '/api/image/tasks/tick') return rep(200, { ok: true });
+    if (u.host === 'www.hyper-engine.ai') return rep(200, { status: moteur.statut, items: Array.from({ length: moteur.n }, (_, k) => ({ status: moteur.statut, url: moteur.statut === 'done' ? (k ? moteur.url.replace('img.png', 'img' + k + '.png') : moteur.url) : null })) });
     if (u.host === 'cdn.moteur.test') return rep(200, null, 'image/png');
     if (u.pathname.startsWith('/storage/v1/object/medias-commerciaux/')) return moteur.bucket ? rep(200, {}) : rep(404, { error: 'Bucket not found' });
     if (u.pathname === '/storage/v1/object/list/medias-commerciaux') return moteur.bucket ? rep(200, []) : rep(400, {});
@@ -183,7 +183,7 @@ test('route : éteinte par défaut, 503 GENERATION_INACTIVE, rien ne part vers l
   assert.equal(res.statusCode, 503);
   assert.equal(res.corps.code, 'GENERATION_INACTIVE');
   assert.equal(res.corps.demande, undefined, 'la demande composée ne sort plus du serveur');
-  assert.ok(!appels.some((a) => a.u.host === 'hyper-engine.ai'));
+  assert.ok(!appels.some((a) => a.u.host === 'www.hyper-engine.ai'));
   const r2 = fausseReponse(); await route(req('POST', { format: 'post' }), r2); assert.equal(r2.statusCode, 400);
 });
 

@@ -28,7 +28,8 @@ const SB_ANON = process.env.SUPABASE_ANON_KEY ||
 const ROLES_PERMIS = ['commercial', 'master'];
 const JOUR = 24 * 60 * 60 * 1000;
 
-function moteur() { return (process.env.HYPER_ENGINE_URL || 'https://hyper-engine.ai').replace(/\/+$/, ''); }
+// hyper-engine.ai redirige (308) vers www : une redirection vers un autre hôte fait tomber l'en-tête Authorization, d'où l'adresse www directe.
+function moteur() { return (process.env.HYPER_ENGINE_URL || 'https://www.hyper-engine.ai').replace(/\/+$/, ''); }
 function entetesMoteur() {
   return { authorization: 'Bearer ' + String(process.env.HYPER_ENGINE_IMAGE_TOKEN || '').trim(), 'content-type': 'application/json', accept: 'application/json' };
 }
