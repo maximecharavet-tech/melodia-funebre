@@ -39,7 +39,7 @@ body { font-family: var(--ff-b); font-weight: 400; line-height: var(--lh-txt); -
 }
 .dash-eyebrow, .side-label, .kpi-label, .jm-gen-k, .jv2-kpi-label { font-size: var(--t-xs); }
 .btn { letter-spacing: .1em; }
-.mob-o-nom { letter-spacing: .04em; font-size: .78rem; }
+.mob-o-nom { letter-spacing: .02em; font-size: .78rem; }
 .mono { font-family: var(--ff-b); letter-spacing: .02em; }
 
 /* Méta et aides : Jost, lisible, sans capitales forcées */
