@@ -56,6 +56,9 @@ html.jv-sans-defilement, html.jv-sans-defilement body { overflow: hidden; }
 .jv-appel-h { font: 500 .7rem/1.2 var(--ff-m, monospace); letter-spacing: .12em; text-transform: uppercase; color: var(--or, #c9a84c); margin: 0 0 8px; }
 .jv-etape { padding: 8px 0; border-bottom: 1px solid var(--line-soft, rgba(255,255,255,.06)); font-size: .9rem; color: var(--silver, #d8d8dc); }
 .jv-etape-duree, .jv-dire { color: var(--ash, #8e8878); font-size: .8rem; }
+.jv-etape summary { cursor: pointer; min-height: 32px; }
+.jv-etape-duree { margin-left: .6rem; white-space: nowrap; }
+.jv-etape-duree::before { content: '· '; }
 .jv-pastilles { display: flex; flex-wrap: wrap; gap: 6px; }
 .jv-pastille { min-height: 38px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line, rgba(201,168,76,.12)); background: transparent; color: var(--silver, #d8d8dc); cursor: pointer; font-size: .82rem; text-align: left; }
 .jv-pastille[aria-expanded="true"] { border-color: var(--or, #c9a84c); color: var(--paper, #f2efe8); background: var(--or-soft, rgba(201,168,76,.07)); }
@@ -118,7 +121,8 @@ html.jv-sans-defilement, html.jv-sans-defilement body { overflow: hidden; }
 @media (max-width: 860px) { .jv-fiche-grille { grid-template-columns: 1fr; } }
 
 /* ─── Proposition PDF ─────────────────────────────────────── */
-.jv-prop-oeuvres { display: grid; gap: 6px; margin: 6px 0 12px; }
+.jv-prop-oeuvres { display: grid; gap: 6px; margin: 6px 0 12px; padding: 10px 12px 12px; border: 1px solid var(--line-soft, rgba(255,255,255,.06)); border-radius: 10px; min-width: 0; }
+.jv-prop-oeuvres legend { padding: 0 6px; }
 .jv-prop-oeuvres label { display: flex; gap: 10px; align-items: center; min-height: 40px; color: var(--silver, #d8d8dc); font-size: .9rem; }
 .jv-prop-calcul { padding: 12px 14px; border-radius: 10px; background: var(--surface, #0b0b11); color: var(--silver, #d8d8dc); font-size: .9rem; line-height: 1.5; }
 

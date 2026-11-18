@@ -461,7 +461,7 @@
     { titre: 'Aujourd’hui', vues: ['journee', 'appels', 'relances', 'rappels', 'agenda'] },
     { titre: 'Prospects', vues: ['pipeline', 'prospects', 'partenaires', 'recherche', 'import'] },
     { titre: 'Écrire', vues: ['composer', 'pret', 'lot', 'sequences', 'suivi', 'mails', 'modeles', 'boite', 'messagerie'] },
-    { titre: 'Ressources', vues: ['playbook', 'ecoute', 'kit', 'catalogue', 'traditions', 'faq', 'social', 'posts', 'plan', 'atelier', 'checklist'] },
+    { titre: 'Ressources', vues: ['playbook', 'ecoute', 'medias', 'kit', 'catalogue', 'traditions', 'faq', 'social', 'posts', 'plan', 'atelier', 'checklist'] },
     { titre: 'Mon poste', vues: ['resultats', 'accueil', 'analyse', 'simulateur', 'profil', 'julie', 'compte'] }
   ];
 

@@ -1,0 +1,898 @@
+{
+ "version": 1,
+ "site": "https://melodia-funebre.fr",
+ "medias": [
+  {
+   "id": "v-melodies-dorees",
+   "type": "visuel",
+   "titre": "Mélodies dorées",
+   "legende": "Parce que leurs souvenirs méritent une musique unique. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/melodies-dorees-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/melodies-dorees.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/melodies-dorees-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/melodies-dorees-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-resonnent-toujours",
+   "type": "visuel",
+   "titre": "Certains souvenirs",
+   "legende": "Parce que certains souvenirs méritent une musique unique. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/resonnent-toujours-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/resonnent-toujours.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/resonnent-toujours-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/resonnent-toujours-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-souvenirs-eternels",
+   "type": "visuel",
+   "titre": "Souvenirs éternels",
+   "legende": "Des souvenirs qui résonnent toujours. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/souvenirs-eternels-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/souvenirs-eternels.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/souvenirs-eternels-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/souvenirs-eternels-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-continuent-de-vibrer",
+   "type": "visuel",
+   "titre": "Continuer de vibrer",
+   "legende": "Des souvenirs qui continuent de vibrer. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/continuent-de-vibrer-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/continuent-de-vibrer.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/continuent-de-vibrer-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/continuent-de-vibrer-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-un-lien",
+   "type": "visuel",
+   "titre": "Un lien qui ne s’éteint pas",
+   "legende": "Plus qu’une musique, un lien qui ne s’éteint pas. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/un-lien-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/un-lien.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/un-lien-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/un-lien-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-sous-les-arches",
+   "type": "visuel",
+   "titre": "Sous les arches",
+   "legende": "Chaque souvenir mérite sa musique. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/sous-les-arches-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/sous-les-arches.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/sous-les-arches-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/sous-les-arches-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-plus-beaux-souvenirs",
+   "type": "visuel",
+   "titre": "Les plus beaux souvenirs",
+   "legende": "Parce que les plus beaux souvenirs méritent une musique unique. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/plus-beaux-souvenirs-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/plus-beaux-souvenirs.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/plus-beaux-souvenirs-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/plus-beaux-souvenirs-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-grand-mere",
+   "type": "visuel",
+   "titre": "Une grand-mère bien-aimée",
+   "legende": "Parce que leurs souvenirs méritent une musique unique. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/grand-mere-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/grand-mere.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/grand-mere-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/grand-mere-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-harmonie",
+   "type": "visuel",
+   "titre": "Harmonie",
+   "legende": "Parce que leurs souvenirs méritent une musique unique. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/harmonie-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/harmonie.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/harmonie-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/harmonie-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "v-celestes",
+   "type": "visuel",
+   "titre": "Souvenirs célestes",
+   "legende": "Des souvenirs qui résonnent toujours. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche, à partir de ce que vous nous racontez. melodia-funebre.fr",
+   "ratio": "9:16",
+   "vignette": "/assets/medias/visuels/celestes-vignette.webp",
+   "formats": [
+    {
+     "k": "original",
+     "label": "Affiche (9:16 · story)",
+     "url": "/assets/medias/visuels/celestes.jpg",
+     "l": 941,
+     "h": 1672
+    },
+    {
+     "k": "4x5",
+     "label": "Publication 4:5",
+     "url": "/assets/medias/visuels/celestes-4x5.jpg",
+     "l": 1080,
+     "h": 1350
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/visuels/celestes-1x1.jpg",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Personnages illustrés (aucune personne réelle).",
+   "modifiable": true
+  },
+  {
+   "id": "f-m01",
+   "type": "video",
+   "titre": "Les mots croisés du matin",
+   "legende": "Ses mots croisés du matin. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m01-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m01-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m01-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m01-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-m02",
+   "type": "video",
+   "titre": "Le banc du jardin",
+   "legende": "Son jardin. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m02-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m02-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m02-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m02-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-m03",
+   "type": "video",
+   "titre": "La route des peupliers",
+   "legende": "La route du dimanche. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m03-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m03-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m03-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m03-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-m04",
+   "type": "video",
+   "titre": "À la fenêtre",
+   "legende": "Racontez-le-nous. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m04-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m04-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m04-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m04-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-m05",
+   "type": "video",
+   "titre": "L’atelier",
+   "legende": "Nous composons sa chanson. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m05-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m05-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m05-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m05-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-m06",
+   "type": "video",
+   "titre": "La cérémonie",
+   "legende": "Une musique qui lui ressemble, le jour de la cérémonie. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m06-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m06-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m06-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m06-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-m07",
+   "type": "video",
+   "titre": "Le livret et le lys",
+   "legende": "Une chanson pour lui dire adieu, gardée pour toujours. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m07-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m07-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m07-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m07-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-m08",
+   "type": "video",
+   "titre": "Sur le parvis",
+   "legende": "Chaque vie mérite sa chanson. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 6,
+   "vignette": "/assets/medias/video/m08-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/medias/video/m08-9x16.mp4",
+     "l": 1080,
+     "h": 1920
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/medias/video/m08-16x9.mp4",
+     "l": 1920,
+     "h": 1080
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/m08-1x1.mp4",
+     "l": 1080,
+     "h": 1080
+    }
+   ],
+   "note": "Plan muet de 6 s, sans visage."
+  },
+  {
+   "id": "f-seuil",
+   "type": "video",
+   "titre": "Le seuil",
+   "legende": "Chaque vie mérite sa chanson. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 10,
+   "vignette": "/assets/medias/video/seuil-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/video/hero/01-seuil-9x16.mp4",
+     "l": 900,
+     "h": 1600
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/video/hero/01-seuil-16x9.mp4",
+     "l": 1600,
+     "h": 900
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/seuil-1x1.mp4",
+     "l": 900,
+     "h": 900
+    }
+   ],
+   "note": "Plan muet de 10 s, personnes de dos."
+  },
+  {
+   "id": "f-lys",
+   "type": "video",
+   "titre": "Les lys",
+   "legende": "Une chanson pour lui dire adieu. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
+   "ratio": "9:16",
+   "duree": 10,
+   "vignette": "/assets/medias/video/lys-vignette.webp",
+   "formats": [
+    {
+     "k": "9x16",
+     "label": "Story / Reels 9:16",
+     "url": "/assets/video/hero/05-lys-9x16.mp4",
+     "l": 900,
+     "h": 1600
+    },
+    {
+     "k": "16x9",
+     "label": "Paysage 16:9",
+     "url": "/assets/video/hero/05-lys-16x9.mp4",
+     "l": 1600,
+     "h": 900
+    },
+    {
+     "k": "1x1",
+     "label": "Carré 1:1",
+     "url": "/assets/medias/video/lys-1x1.mp4",
+     "l": 900,
+     "h": 900
+    }
+   ],
+   "note": "Plan muet de 10 s."
+  }
+ ],
+ "idees": [
+  {
+   "id": "lys",
+   "nom": "Lys et lumière douce",
+   "vignette": "/assets/medias/cartes/lys.webp",
+   "idee": "Des lys blancs dans un vase, près d’une fenêtre, dans une lumière douce de fin de journée."
+  },
+  {
+   "id": "bougie",
+   "nom": "Bougie du souvenir",
+   "vignette": "/assets/medias/cartes/bougie.webp",
+   "idee": "Une bougie allumée près d’un violon et de quelques fleurs blanches, dans la pénombre."
+  },
+  {
+   "id": "partition",
+   "nom": "Partition et piano",
+   "vignette": "/assets/medias/cartes/partition.webp",
+   "idee": "Un piano ancien avec une partition ouverte, une tasse et une lampe allumée dans un atelier calme."
+  },
+  {
+   "id": "colombes",
+   "nom": "Colombes au ciel",
+   "vignette": "/assets/medias/cartes/colombes.webp",
+   "idee": "Deux colombes blanches qui s’envolent dans un ciel du soir doré."
+  },
+  {
+   "id": "jardin",
+   "nom": "Jardin paisible",
+   "vignette": "/assets/medias/cartes/jardin.webp",
+   "idee": "Un banc en bois dans un jardin de roses blanches, une casquette et des gants posés dessus."
+  },
+  {
+   "id": "arches",
+   "nom": "Sous les arches",
+   "vignette": "/assets/medias/cartes/arches.webp",
+   "idee": "Des arches en pierre claire ouvrant sur un lac et des cyprès au coucher du soleil."
+  },
+  {
+   "id": "dorees",
+   "nom": "Mélodies dorées",
+   "vignette": "/assets/medias/cartes/dorees.webp",
+   "idee": "Un piano à queue avec des partitions, des bougies et des fleurs blanches, dans une lumière dorée."
+  },
+  {
+   "id": "crepuscule",
+   "nom": "Crépuscule sur le lac",
+   "vignette": "/assets/medias/cartes/crepuscule.webp",
+   "idee": "Un lac calme au crépuscule, entouré de collines et de cyprès, le ciel orangé."
+  },
+  {
+   "id": "lumiere",
+   "nom": "Lumière à la fenêtre",
+   "vignette": "/assets/medias/cartes/lumiere.webp",
+   "idee": "Un rayon de lumière douce à travers un rideau léger, sur un bouquet de fleurs blanches."
+  },
+  {
+   "id": "peupliers",
+   "nom": "Chemin des peupliers",
+   "vignette": "/assets/medias/cartes/peupliers.webp",
+   "idee": "Une route de campagne bordée de hauts peupliers, sous un ciel pâle."
+  }
+ ],
+ "styles": [
+  {
+   "id": "aquarelle",
+   "nom": "Aquarelle",
+   "vignette": "/assets/medias/styles/aquarelle.webp",
+   "desc": "Lavis transparents, papier visible, très doux."
+  },
+  {
+   "id": "huile",
+   "nom": "Peinture à l’huile",
+   "vignette": "/assets/medias/styles/huile.webp",
+   "desc": "Peinture classique, glacis riches, lumière chaude."
+  },
+  {
+   "id": "impressionnisme",
+   "nom": "Impressionnisme",
+   "vignette": "/assets/medias/styles/impressionnisme.webp",
+   "desc": "Touches fragmentées, lumière vibrante, plein air."
+  },
+  {
+   "id": "cubisme-doux",
+   "nom": "Cubisme doux",
+   "vignette": "/assets/medias/styles/cubisme-doux.webp",
+   "desc": "Plans géométriques apaisés, comme un vitrail moderne."
+  },
+  {
+   "id": "surrealisme",
+   "nom": "Surréalisme poétique",
+   "vignette": "/assets/medias/styles/surrealisme.webp",
+   "desc": "Rêve calme et poétique, ciel limpide, juxtapositions douces."
+  },
+  {
+   "id": "minimalisme",
+   "nom": "Minimalisme",
+   "vignette": "/assets/medias/styles/minimalisme.webp",
+   "desc": "Un seul sujet, beaucoup d'espace, grande sérénité."
+  },
+  {
+   "id": "art-nouveau",
+   "nom": "Art nouveau",
+   "vignette": "/assets/medias/styles/art-nouveau.webp",
+   "desc": "Lignes végétales fluides, ornement 1900, tons sauge et or."
+  },
+  {
+   "id": "art-deco",
+   "nom": "Art déco",
+   "vignette": "/assets/medias/styles/art-deco.webp",
+   "desc": "Symétrie élégante, lignes d'or fines, noir laqué."
+  },
+  {
+   "id": "eau-forte",
+   "nom": "Gravure à l’eau-forte",
+   "vignette": "/assets/medias/styles/eau-forte.webp",
+   "desc": "Gravure fine en hachures, encre sépia sur papier crème."
+  },
+  {
+   "id": "fusain",
+   "nom": "Fusain",
+   "vignette": "/assets/medias/styles/fusain.webp",
+   "desc": "Dessin au fusain velouté, noirs profonds, gestes calmes."
+  },
+  {
+   "id": "vitrail",
+   "nom": "Vitrail",
+   "vignette": "/assets/medias/styles/vitrail.webp",
+   "desc": "Verre coloré cerné de plomb, lumière qui traverse."
+  },
+  {
+   "id": "ukiyo-e",
+   "nom": "Estampe japonaise",
+   "vignette": "/assets/medias/styles/ukiyo-e.webp",
+   "desc": "Estampe japonaise ancienne, aplats doux, papier washi."
+  },
+  {
+   "id": "sumi-e",
+   "nom": "Lavis à l’encre (sumi-e)",
+   "vignette": "/assets/medias/styles/sumi-e.webp",
+   "desc": "Encre noire au pinceau, vide, méditation."
+  },
+  {
+   "id": "clair-obscur",
+   "nom": "Clair-obscur baroque",
+   "vignette": "/assets/medias/styles/clair-obscur.webp",
+   "desc": "Une seule lumière chaude qui sort le sujet de l'ombre."
+  },
+  {
+   "id": "pastel",
+   "nom": "Pastel",
+   "vignette": "/assets/medias/styles/pastel.webp",
+   "desc": "Craie veloutée sur papier teinté, tout en douceur."
+  },
+  {
+   "id": "enluminure",
+   "nom": "Enluminure",
+   "vignette": "/assets/medias/styles/enluminure.webp",
+   "desc": "Manuscrit ancien, feuille d'or, marges fleuries, sans texte."
+  },
+  {
+   "id": "symbolisme",
+   "nom": "Symbolisme",
+   "vignette": "/assets/medias/styles/symbolisme.webp",
+   "desc": "Atmosphère mystérieuse et rêveuse, brume dorée."
+  },
+  {
+   "id": "preraphaelite",
+   "nom": "Préraphaélite",
+   "vignette": "/assets/medias/styles/preraphaelite.webp",
+   "desc": "Détail botanique minutieux, couleurs joyaux, romantique."
+  },
+  {
+   "id": "argentique",
+   "nom": "Photographie argentique",
+   "vignette": "/assets/medias/styles/argentique.webp",
+   "desc": "Photo sur pellicule, grain doux, couleurs chaudes et vraies."
+  },
+  {
+   "id": "noir-blanc",
+   "nom": "Noir et blanc fine art",
+   "vignette": "/assets/medias/styles/noir-blanc.webp",
+   "desc": "Photographie noir et blanc, noirs riches, intemporelle."
+  },
+  {
+   "id": "papier-decoupe",
+   "nom": "Papier découpé",
+   "vignette": "/assets/medias/styles/papier-decoupe.webp",
+   "desc": "Couches de papier découpé, ombres douces, contre-jour doré."
+  },
+  {
+   "id": "mosaique",
+   "nom": "Mosaïque",
+   "vignette": "/assets/medias/styles/mosaique.webp",
+   "desc": "Petites tesselles de pierre et d'or, dignité antique."
+  },
+  {
+   "id": "pointillisme",
+   "nom": "Pointillisme",
+   "vignette": "/assets/medias/styles/pointillisme.webp",
+   "desc": "Image faite de petits points de couleur pure, lumineuse."
+  },
+  {
+   "id": "romantisme",
+   "nom": "Paysage romantique",
+   "vignette": "/assets/medias/styles/romantisme.webp",
+   "desc": "Grand paysage brumeux au crépuscule, paix et grandeur."
+  },
+  {
+   "id": "icone",
+   "nom": "Feuille d’or (icône)",
+   "vignette": "/assets/medias/styles/icone.webp",
+   "desc": "Tempera et fond d'or bruni, formes plates et solennelles."
+  },
+  {
+   "id": "linogravure",
+   "nom": "Linogravure",
+   "vignette": "/assets/medias/styles/linogravure.webp",
+   "desc": "Gravure taillée, traits francs, deux ou trois couleurs."
+  },
+  {
+   "id": "fresque",
+   "nom": "Fresque",
+   "vignette": "/assets/medias/styles/fresque.webp",
+   "desc": "Peinture murale sur chaux, tons mats et patinés."
+  },
+  {
+   "id": "cyanotype",
+   "nom": "Cyanotype",
+   "vignette": "/assets/medias/styles/cyanotype.webp",
+   "desc": "Tirage bleu de Prusse, silhouettes de fleurs en blanc."
+  }
+ ]
+}
