@@ -27,7 +27,8 @@
   var CLE_FAVORIS = 'melodia_medias_styles_favoris';
   var CLE_HISTO = 'melodia_medias_historique';
   var INTENSITES = { 1: 'Léger', 2: 'Marqué', 3: 'Affirmé' };
-  var VARIANTES = [['1', '1 image'], ['2', '2 variantes'], ['4', '4 variantes']];
+  var VARIANTES = [['1', '1'], ['2', '2'], ['3', '3'], ['4', '4']];
+  var INTENSITE_CHOIX = [['1', 'Léger'], ['2', 'Marqué']];
 
   var FORMATS_GEN = [['post', 'Post 1:1'], ['story', 'Story 9:16'], ['banniere', 'Bannière 16:9']];
   var DEVISE = 'Chaque vie mérite sa chanson.';
@@ -139,12 +140,12 @@
         }).join('') + '</ul>' : '') +
       selecteurStyles() +
       '<div class="jm-gen-l"><span class="jm-gen-k">Format</span>' + puces('format', FORMATS_GEN, g.format) + '</div>' +
-      '<div class="jm-gen-l"><span class="jm-gen-k">Nombre d’images</span>' + puces('variantes', VARIANTES, String(g.variantes)) + '</div>' +
+      '<div class="jm-gen-l"><span class="jm-gen-k">Variantes</span>' + puces('variantes', VARIANTES, String(g.variantes)) + '</div>' +
       '<label class="jm-case"><input type="checkbox" data-jm-signature' + (g.signature ? ' checked' : '') + '> Signature en bas : « ' + DEVISE + ' » et melodia-funebre.fr</label>' +
       '<label class="jm-case"><input type="checkbox" data-jm-mot-actif' + (g.motActif ? ' checked' : '') + '> Ajouter un mot (un prénom, une phrase)</label>' +
       (g.motActif ? '<input type="text" class="jm-champ" maxlength="60" data-jm-mot value="' + esc(g.mot) + '" placeholder="Ex. : En mémoire de Jeanne">' : '') +
       '<button type="button" class="btn btn-gold jm-generer" data-jm-generer' + (etat.enCours ? ' disabled' : '') + '>' + (etat.enCours ? 'Génération…' : 'Générer') + '</button>' +
-      '<p class="jm-aide">Le logo officiel Melodia est posé sur chaque image, tel quel : il n’est jamais généré.</p>' +
+      '<p class="jm-aide">Le logo officiel Melodia est posé sur chaque image, tel quel : il n’est jamais généré. Chaque variante compte dans les visuels du jour.</p>' +
       (etat.message ? '<p class="jm-msg" role="status">' + etat.message + '</p>' : '') +
       blocHistorique() + '</section>';
   }
@@ -158,10 +159,10 @@
       return (fa === -1 ? 999 : fa) - (fb === -1 ? 999 : fb);
     });
     var choisi = styleDe(g.style);
-    var tuile = function (id, nom, img, estFav) {
+    var tuile = function (id, nom, img, estFav, desc) {
       var actif = g.style === id;
       return '<li class="jm-style' + (actif ? ' est-actif' : '') + '">' +
-        '<button type="button" class="jm-style-b" data-jm-style="' + esc(id) + '" aria-pressed="' + actif + '">' +
+        '<button type="button" class="jm-style-b" data-jm-style="' + esc(id) + '" aria-pressed="' + actif + '"' + (desc ? ' title="' + esc(desc) + '"' : '') + '>' +
           (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" decoding="async" width="112" height="112">' : '<span class="jm-style-sans" aria-hidden="true">M</span>') +
           '<span>' + esc(nom) + '</span></button>' +
         (id ? '<button type="button" class="jm-favori' + (estFav ? ' est-actif' : '') + '" data-jm-favori="' + esc(id) + '" aria-pressed="' + estFav + '" title="' + (estFav ? 'Retirer des favoris' : 'Ajouter aux favoris') + '" aria-label="' + (estFav ? 'Retirer « ' : 'Ajouter « ') + esc(nom) + (estFav ? ' » des favoris' : ' » aux favoris') + '">★</button>' : '') +
@@ -169,11 +170,10 @@
     };
     return '<div class="jm-gen-bloc"><span class="jm-gen-k">Style artistique' + (choisi ? ' : <em>' + esc(choisi.nom) + '</em>' : '') + '</span>' +
       '<p class="jm-aide">Toutes les vignettes montrent le même sujet, pour comparer les styles. ★ : vos favoris passent en tête.</p>' +
-      '<ul class="jm-styles">' + tuile('', 'Sans style (Melodia)', '', false) +
-        l.map(function (x) { return tuile(x.id, x.nom, x.vignette, fav.indexOf(x.id) !== -1); }).join('') + '</ul>' +
-      (choisi ? '<label class="jm-intensite"><span class="jm-gen-k">Intensité du style : <b data-jm-intensite-v>' + INTENSITES[g.intensite] + '</b></span>' +
-        '<input type="range" min="1" max="3" step="1" value="' + g.intensite + '" data-jm-intensite aria-valuetext="' + INTENSITES[g.intensite] + '">' +
-        '<span class="jm-intensite-l"><span>Léger</span><span>Marqué</span><span>Affirmé</span></span></label>' : '') +
+      '<ul class="jm-styles">' + tuile('', 'Aucun style', '', false, 'Le style photo Melodia : or, ivoire, lumière douce.') +
+        l.map(function (x) { return tuile(x.id, x.nom, x.vignette, fav.indexOf(x.id) !== -1, x.desc); }).join('') + '</ul>' +
+      (choisi && choisi.desc ? '<p class="jm-style-desc">' + esc(choisi.desc) + '</p>' : '') +
+      (choisi ? '<div class="jm-gen-l jm-intensite"><span class="jm-gen-k">Intensité du style</span>' + puces('intensite', INTENSITE_CHOIX, Number(g.intensite) === 1 ? '1' : '2') + '</div>' : '') +
       '</div>';
   }
 
@@ -631,7 +631,7 @@
     var carte = carteGardee();
     etat.enCours = true; etat.message = 'Demande envoyée…'; rendre();
     try {
-      var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ texte: g.texte, format: g.format, carte: carte ? carte.id : '', style: g.style, intensite: g.intensite, variantes: Number(g.variantes) || 1 }) });
+      var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ texte: g.texte, format: g.format, carte: carte ? carte.id : '', style: g.style, intensite: Number(g.intensite) === 1 ? 1 : 2, variantes: Math.min(4, Math.max(1, Number(g.variantes) || 1)) }) });
       var d = await r.json().catch(function () { return {}; });
       if (r.status === 503 && d.code === 'GENERATION_INACTIVE') {
         etat.actif = false;
@@ -640,7 +640,8 @@
       }
       if (!r.ok || !d.tache) { etat.message = esc(d.error || 'La génération a échoué.'); return; }
       noterHistorique({ texte: g.texte, carte: carte ? carte.id : '', style: g.style, intensite: g.intensite, format: g.format });
-      etat.message = (Number(g.variantes) > 1 ? g.variantes + ' variantes' : 'Image') + ' en préparation (environ ' + Math.max(1, Math.round((d.eta || 60) / 60)) + ' min)…'; rendre();
+      var nv = Number(d.variantes) || 1;
+      etat.message = (nv > 1 ? nv + ' variantes' : 'Image') + ' en préparation (environ ' + Math.max(1, Math.round((d.eta || 60) / 60)) + ' min)…' + (d.plafonne ? ' Plafond du jour presque atteint : ' + nv + ' seulement.' : ''); rendre();
       var fin = Date.now() + 4 * 60 * 1000;
       while (Date.now() < fin) {
         await new Promise(function (ok) { setTimeout(ok, 6000); });

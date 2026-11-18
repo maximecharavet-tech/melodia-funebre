@@ -729,142 +729,170 @@
   {
    "id": "aquarelle",
    "nom": "Aquarelle",
-   "vignette": "/assets/medias/styles/aquarelle.webp"
+   "vignette": "/assets/medias/styles/aquarelle.webp",
+   "desc": "Lavis transparents, papier visible, très doux."
   },
   {
    "id": "huile",
    "nom": "Peinture à l’huile",
-   "vignette": "/assets/medias/styles/huile.webp"
+   "vignette": "/assets/medias/styles/huile.webp",
+   "desc": "Peinture classique, glacis riches, lumière chaude."
   },
   {
    "id": "impressionnisme",
    "nom": "Impressionnisme",
-   "vignette": "/assets/medias/styles/impressionnisme.webp"
+   "vignette": "/assets/medias/styles/impressionnisme.webp",
+   "desc": "Touches fragmentées, lumière vibrante, plein air."
   },
   {
    "id": "cubisme-doux",
    "nom": "Cubisme doux",
-   "vignette": "/assets/medias/styles/cubisme-doux.webp"
+   "vignette": "/assets/medias/styles/cubisme-doux.webp",
+   "desc": "Plans géométriques apaisés, comme un vitrail moderne."
   },
   {
    "id": "surrealisme",
    "nom": "Surréalisme poétique",
-   "vignette": "/assets/medias/styles/surrealisme.webp"
+   "vignette": "/assets/medias/styles/surrealisme.webp",
+   "desc": "Rêve calme et poétique, ciel limpide, juxtapositions douces."
   },
   {
    "id": "minimalisme",
    "nom": "Minimalisme",
-   "vignette": "/assets/medias/styles/minimalisme.webp"
+   "vignette": "/assets/medias/styles/minimalisme.webp",
+   "desc": "Un seul sujet, beaucoup d'espace, grande sérénité."
   },
   {
    "id": "art-nouveau",
    "nom": "Art nouveau",
-   "vignette": "/assets/medias/styles/art-nouveau.webp"
+   "vignette": "/assets/medias/styles/art-nouveau.webp",
+   "desc": "Lignes végétales fluides, ornement 1900, tons sauge et or."
   },
   {
    "id": "art-deco",
    "nom": "Art déco",
-   "vignette": "/assets/medias/styles/art-deco.webp"
+   "vignette": "/assets/medias/styles/art-deco.webp",
+   "desc": "Symétrie élégante, lignes d'or fines, noir laqué."
   },
   {
    "id": "eau-forte",
    "nom": "Gravure à l’eau-forte",
-   "vignette": "/assets/medias/styles/eau-forte.webp"
+   "vignette": "/assets/medias/styles/eau-forte.webp",
+   "desc": "Gravure fine en hachures, encre sépia sur papier crème."
   },
   {
    "id": "fusain",
    "nom": "Fusain",
-   "vignette": "/assets/medias/styles/fusain.webp"
+   "vignette": "/assets/medias/styles/fusain.webp",
+   "desc": "Dessin au fusain velouté, noirs profonds, gestes calmes."
   },
   {
    "id": "vitrail",
    "nom": "Vitrail",
-   "vignette": "/assets/medias/styles/vitrail.webp"
+   "vignette": "/assets/medias/styles/vitrail.webp",
+   "desc": "Verre coloré cerné de plomb, lumière qui traverse."
   },
   {
    "id": "ukiyo-e",
    "nom": "Estampe japonaise",
-   "vignette": "/assets/medias/styles/ukiyo-e.webp"
+   "vignette": "/assets/medias/styles/ukiyo-e.webp",
+   "desc": "Estampe japonaise ancienne, aplats doux, papier washi."
   },
   {
    "id": "sumi-e",
    "nom": "Lavis à l’encre (sumi-e)",
-   "vignette": "/assets/medias/styles/sumi-e.webp"
+   "vignette": "/assets/medias/styles/sumi-e.webp",
+   "desc": "Encre noire au pinceau, vide, méditation."
   },
   {
    "id": "clair-obscur",
    "nom": "Clair-obscur baroque",
-   "vignette": "/assets/medias/styles/clair-obscur.webp"
+   "vignette": "/assets/medias/styles/clair-obscur.webp",
+   "desc": "Une seule lumière chaude qui sort le sujet de l'ombre."
   },
   {
    "id": "pastel",
    "nom": "Pastel",
-   "vignette": "/assets/medias/styles/pastel.webp"
+   "vignette": "/assets/medias/styles/pastel.webp",
+   "desc": "Craie veloutée sur papier teinté, tout en douceur."
   },
   {
    "id": "enluminure",
    "nom": "Enluminure",
-   "vignette": "/assets/medias/styles/enluminure.webp"
+   "vignette": "/assets/medias/styles/enluminure.webp",
+   "desc": "Manuscrit ancien, feuille d'or, marges fleuries, sans texte."
   },
   {
    "id": "symbolisme",
    "nom": "Symbolisme",
-   "vignette": "/assets/medias/styles/symbolisme.webp"
+   "vignette": "/assets/medias/styles/symbolisme.webp",
+   "desc": "Atmosphère mystérieuse et rêveuse, brume dorée."
   },
   {
    "id": "preraphaelite",
    "nom": "Préraphaélite",
-   "vignette": "/assets/medias/styles/preraphaelite.webp"
+   "vignette": "/assets/medias/styles/preraphaelite.webp",
+   "desc": "Détail botanique minutieux, couleurs joyaux, romantique."
   },
   {
    "id": "argentique",
    "nom": "Photographie argentique",
-   "vignette": "/assets/medias/styles/argentique.webp"
+   "vignette": "/assets/medias/styles/argentique.webp",
+   "desc": "Photo sur pellicule, grain doux, couleurs chaudes et vraies."
   },
   {
    "id": "noir-blanc",
    "nom": "Noir et blanc fine art",
-   "vignette": "/assets/medias/styles/noir-blanc.webp"
+   "vignette": "/assets/medias/styles/noir-blanc.webp",
+   "desc": "Photographie noir et blanc, noirs riches, intemporelle."
   },
   {
    "id": "papier-decoupe",
    "nom": "Papier découpé",
-   "vignette": "/assets/medias/styles/papier-decoupe.webp"
+   "vignette": "/assets/medias/styles/papier-decoupe.webp",
+   "desc": "Couches de papier découpé, ombres douces, contre-jour doré."
   },
   {
    "id": "mosaique",
    "nom": "Mosaïque",
-   "vignette": "/assets/medias/styles/mosaique.webp"
+   "vignette": "/assets/medias/styles/mosaique.webp",
+   "desc": "Petites tesselles de pierre et d'or, dignité antique."
   },
   {
    "id": "pointillisme",
    "nom": "Pointillisme",
-   "vignette": "/assets/medias/styles/pointillisme.webp"
+   "vignette": "/assets/medias/styles/pointillisme.webp",
+   "desc": "Image faite de petits points de couleur pure, lumineuse."
   },
   {
    "id": "romantisme",
    "nom": "Paysage romantique",
-   "vignette": "/assets/medias/styles/romantisme.webp"
+   "vignette": "/assets/medias/styles/romantisme.webp",
+   "desc": "Grand paysage brumeux au crépuscule, paix et grandeur."
   },
   {
    "id": "icone",
    "nom": "Feuille d’or (icône)",
-   "vignette": "/assets/medias/styles/icone.webp"
+   "vignette": "/assets/medias/styles/icone.webp",
+   "desc": "Tempera et fond d'or bruni, formes plates et solennelles."
   },
   {
    "id": "linogravure",
    "nom": "Linogravure",
-   "vignette": "/assets/medias/styles/linogravure.webp"
+   "vignette": "/assets/medias/styles/linogravure.webp",
+   "desc": "Gravure taillée, traits francs, deux ou trois couleurs."
   },
   {
    "id": "fresque",
    "nom": "Fresque",
-   "vignette": "/assets/medias/styles/fresque.webp"
+   "vignette": "/assets/medias/styles/fresque.webp",
+   "desc": "Peinture murale sur chaux, tons mats et patinés."
   },
   {
    "id": "cyanotype",
    "nom": "Cyanotype",
-   "vignette": "/assets/medias/styles/cyanotype.webp"
+   "vignette": "/assets/medias/styles/cyanotype.webp",
+   "desc": "Tirage bleu de Prusse, silhouettes de fleurs en blanc."
   }
  ]
 }

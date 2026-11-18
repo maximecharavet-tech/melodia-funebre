@@ -89,7 +89,7 @@ test('styles artistiques : 20 à 30, sobres, sans nom d’artiste, vignettes pr�
 
 test('style, intensité et variantes : lus prudemment, interdits toujours présents', () => {
   const base = { texte: 'des lys blancs', format: 'post' };
-  let c = M.lireChoix({ ...base, style: 'inconnu', intensite: 9, variantes: 3 });
+  let c = M.lireChoix({ ...base, style: 'inconnu', intensite: 9, variantes: 7 });
   assert.equal(c.style, ''); assert.equal(c.intensite, 2); assert.equal(c.variantes, 1);
   const sans = M.composerDemande(c);
   assert.match(sans, /painterly photographic finish/);
@@ -220,7 +220,11 @@ test('variantes : 4 images demandées au moteur, comptées dans le plafond, tout
   assert.equal(corps.items.length, 4);
   assert.match(corps.items[0].prompt, /watercolor/); assert.match(corps.items[0].prompt, /fully affirmed/);
   res = fausseReponse(); await route(req('POST', { ...CHOIX, variantes: 2 }), res);
-  assert.equal(res.statusCode, 429, '4 + 2 dépasse le plafond de 5');
+  assert.equal(res.statusCode, 202, '4 + 2 > 5 : réduit à ce qui reste');
+  assert.equal(res.corps.variantes, 1); assert.equal(res.corps.plafonne, true);
+  assert.equal(JSON.parse(appels.filter((a) => a.u.pathname === '/api/image/tasks').pop().init.body).items.length, 1);
+  res = fausseReponse(); await route(req('POST', { ...CHOIX, variantes: 1 }), res);
+  assert.equal(res.statusCode, 429, 'plafond épuisé');
   moteur.n = 4;
   res = fausseReponse(); await route(req('GET', null, {}, { tache: 'imt_0123456789ab' }), res);
   assert.equal(res.corps.statut, 'fait'); assert.equal(res.corps.images.length, 4);
@@ -257,4 +261,30 @@ test('brut : relaie l’image du moteur (pour poser le logo), seulement allumé'
   res = fausseReponse(); res.send = (b) => { res.corps = b; return res; };
   await route(req('GET', null, {}, { brut: 'imt_0123456789ab' }), res);
   assert.equal(res.statusCode, 200); assert.equal(res.entetes['Content-Type'], 'image/png'); assert.ok(Buffer.isBuffer(res.corps));
+});
+
+test('styles : description publique courte, pré-prompt détaillé (technique, texture, composition), interdits gardés', () => {
+  const pub = JSON.parse(readFileSync(join(RACINE, 'assets/medias/medias.json'), 'utf8')).styles;
+  for (const s of M.STYLES) {
+    const p = pub.find((x) => x.id === s.id);
+    assert.ok(p.desc && p.desc.length <= 80 && p.desc === s.desc, 'description : ' + s.id);
+    assert.deepEqual(Object.keys(p).sort(), ['desc', 'id', 'nom', 'vignette']);
+    assert.match(s.prompt, /Texture:/, s.id); assert.match(s.prompt, /Composition:/, s.id);
+    for (const n of [1, 2]) {
+      const d = M.composerDemande(M.lireChoix({ texte: 'des lys blancs près d’une fenêtre', format: 'post', style: s.id, intensite: n }));
+      assert.ok(d.includes(s.prompt), s.id); assert.ok(d.endsWith(M.INTERDITS), 'interdits en dernier : ' + s.id);
+    }
+  }
+  // sans style : le style photo Melodia
+  const sans = M.composerDemande(M.lireChoix({ texte: 'des lys blancs', format: 'post' }));
+  assert.ok(sans.includes(M.STYLE)); assert.ok(sans.endsWith(M.INTERDITS));
+});
+
+test('console : « Aucun style » par défaut, intensité léger/marqué, 1 à 4 variantes, aucun pré-prompt côté navigateur', () => {
+  const js = readFileSync(join(RACINE, 'assets/js/julie/julie-medias.js'), 'utf8');
+  assert.match(js, /Aucun style/); assert.match(js, /style: '', intensite: 2/);
+  assert.match(js, /\['1', 'Léger'\], \['2', 'Marqué'\]/);
+  assert.match(js, /\['4', '4'\]/);
+  for (const s of M.STYLES) assert.ok(!js.includes(s.prompt.slice(0, 40)), 'pré-prompt absent du navigateur : ' + s.id);
+  assert.match(js, /poserLogo/, 'le logo reste posé par la console');
 });

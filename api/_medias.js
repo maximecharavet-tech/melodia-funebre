@@ -22,9 +22,9 @@ const PAR_ID = Object.fromEntries(IDEES.map((i) => [i.id, i]));
 export const STYLES = JSON.parse(readFileSync('api/_medias-styles.json', 'utf8')).styles;
 const STYLE_ID = Object.fromEntries(STYLES.map((s) => [s.id, s]));
 
-/* Intensité du style : 1 léger, 2 marqué (par défaut), 3 affirmé. */
+/* Intensité du style : 1 léger, 2 marqué (par défaut). 3 (affirmé) reste accepté pour les anciennes demandes. */
 export const INTENSITES = { 1: 'léger', 2: 'marqué', 3: 'affirmé' };
-export const VARIANTES = [1, 2, 4];
+export const VARIANTES = [1, 2, 3, 4];
 
 export const FORMATS = {
   post: { label: 'Post (1:1)', ratio: '1:1', l: 1080, h: 1080 },

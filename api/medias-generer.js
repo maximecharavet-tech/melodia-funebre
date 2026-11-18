@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // /api/medias-generer — « Générer un visuel Melodia » (console commerciale)
 //
-// POST { texte, format, carte?, style?, intensite?, variantes? } → lance 1, 2 ou 4 images (202 { tache, variantes })
+// POST { texte, format, carte?, style?, intensite?, variantes? } → lance 1 à 4 images (réduites à ce qui reste du plafond du jour) (202 { tache, variantes })
 // POST { garder: dataURL }         → range l'image COMPOSÉE (logo posé) dans « Mes créations »
 // GET  ?tache=imt_…                → avance et lit la tâche (une adresse par variante)
 // GET  ?brut=imt_…&n=0             → l'image brute d'une variante (même origine, pour poser le logo)
@@ -154,12 +154,12 @@ export default async function handler(req, res) {
       });
     }
     const plafond = plafondJour(process.env);
-    // chaque variante compte pour un visuel dans le plafond
-    for (let k = 0; k < choix.variantes; k++) {
-      if (await tropSouvent('medias-gen:' + qui.email, plafond, JOUR)) {
-        return res.status(429).json({ error: 'Plafond atteint : ' + plafond + ' visuels par 24 heures.', code: 'PLAFOND' });
-      }
-    }
+    // chaque variante compte pour un visuel dans le plafond ; s'il en reste moins que demandé, on en fait autant qu'il en reste
+    const demandees = choix.variantes;
+    let accordees = 0;
+    while (accordees < demandees && !(await tropSouvent('medias-gen:' + qui.email, plafond, JOUR))) accordees++;
+    if (!accordees) return res.status(429).json({ error: 'Plafond atteint : ' + plafond + ' visuels par 24 heures.', code: 'PLAFOND' });
+    choix.variantes = accordees;
     let r, d;
     try {
       r = await fetch(moteur() + '/api/image/tasks', {
@@ -174,7 +174,7 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Le moteur d’images ne répond pas.', code: 'MOTEUR' });
     }
     if (!r.ok || !d.taskId) return res.status(502).json({ error: (d && (d.message || d.error)) || 'Le moteur d’images a refusé la demande.', code: 'MOTEUR', statut: r.status });
-    return res.status(202).json({ ok: true, tache: d.taskId, format: choix.format, style: choix.style, variantes: choix.variantes, eta: d.eta_s || 60 });
+    return res.status(202).json({ ok: true, tache: d.taskId, format: choix.format, style: choix.style, variantes: choix.variantes, plafonne: choix.variantes < demandees, eta: d.eta_s || 60 });
   }
 
   // GET ?brut=… : l'image du moteur, relayée ici (même origine), pour que la console puisse y poser le logo
