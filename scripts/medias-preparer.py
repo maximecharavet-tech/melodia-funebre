@@ -65,7 +65,7 @@ def ff(*a):
 X264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '27', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-an', '-map_metadata', '-1', '-movflags', '+faststart', '-r', '24']
 
 def videos():
-  d = os.path.join(OUT, 'videos'); os.makedirs(d, exist_ok=True)
+  d = os.path.join(OUT, 'video'); os.makedirs(d, exist_ok=True)
   for i in range(1, 9):
     n = 'm0%d' % i
     a = os.path.join(CLIPS, 'melodia', n + '.mp4'); b = os.path.join(CLIPS, 'melodia-16x9', n + '.mp4')

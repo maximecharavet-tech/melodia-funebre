@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import { fausseReponse } from './_faux-serveur.mjs';
 
 process.env.SUPABASE_URL = 'https://faux.supabase.test';
@@ -33,6 +34,14 @@ test('catalogue : 10 vidéos et 10 visuels, chaque fichier présent, aucun nom d
       const p = join(RACINE, f.url);
       assert.ok(existsSync(p), f.url);
       assert.ok(statSync(p).size < 8 * 1024 * 1024, 'fichier trop lourd : ' + f.url);
+    }
+  }
+  // chaque fichier doit être suivi par git (un .gitignore « videos/ » l'avait déjà caché)
+  let suivis = null;
+  try { suivis = new Set(execFileSync('git', ['ls-files', 'assets/medias', 'assets/video/hero'], { cwd: RACINE, encoding: 'utf8' }).split('\n')); } catch (e) { suivis = null; }
+  if (suivis && suivis.size > 1) {
+    for (const m of medias) for (const u of [m.vignette, ...m.formats.map((f) => f.url)]) {
+      assert.ok(suivis.has(u.replace(/^\//, '')) || existsSync(join(RACINE, '.git')) === false, 'non suivi par git : ' + u);
     }
   }
   assert.doesNotMatch(brut, /grok|chatgpt|openai|imagine|midjourney|mureka|kokoro/i);

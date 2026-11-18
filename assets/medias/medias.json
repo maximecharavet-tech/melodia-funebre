@@ -339,26 +339,26 @@
    "legende": "Ses mots croisés du matin. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m01-vignette.webp",
+   "vignette": "/assets/medias/video/m01-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m01-9x16.mp4",
+     "url": "/assets/medias/video/m01-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m01-16x9.mp4",
+     "url": "/assets/medias/video/m01-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m01-1x1.mp4",
+     "url": "/assets/medias/video/m01-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -372,26 +372,26 @@
    "legende": "Son jardin. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m02-vignette.webp",
+   "vignette": "/assets/medias/video/m02-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m02-9x16.mp4",
+     "url": "/assets/medias/video/m02-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m02-16x9.mp4",
+     "url": "/assets/medias/video/m02-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m02-1x1.mp4",
+     "url": "/assets/medias/video/m02-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -405,26 +405,26 @@
    "legende": "La route du dimanche. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m03-vignette.webp",
+   "vignette": "/assets/medias/video/m03-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m03-9x16.mp4",
+     "url": "/assets/medias/video/m03-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m03-16x9.mp4",
+     "url": "/assets/medias/video/m03-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m03-1x1.mp4",
+     "url": "/assets/medias/video/m03-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -438,26 +438,26 @@
    "legende": "Racontez-le-nous. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m04-vignette.webp",
+   "vignette": "/assets/medias/video/m04-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m04-9x16.mp4",
+     "url": "/assets/medias/video/m04-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m04-16x9.mp4",
+     "url": "/assets/medias/video/m04-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m04-1x1.mp4",
+     "url": "/assets/medias/video/m04-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -471,26 +471,26 @@
    "legende": "Nous composons sa chanson. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m05-vignette.webp",
+   "vignette": "/assets/medias/video/m05-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m05-9x16.mp4",
+     "url": "/assets/medias/video/m05-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m05-16x9.mp4",
+     "url": "/assets/medias/video/m05-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m05-1x1.mp4",
+     "url": "/assets/medias/video/m05-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -504,26 +504,26 @@
    "legende": "Une musique qui lui ressemble, le jour de la cérémonie. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m06-vignette.webp",
+   "vignette": "/assets/medias/video/m06-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m06-9x16.mp4",
+     "url": "/assets/medias/video/m06-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m06-16x9.mp4",
+     "url": "/assets/medias/video/m06-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m06-1x1.mp4",
+     "url": "/assets/medias/video/m06-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -537,26 +537,26 @@
    "legende": "Une chanson pour lui dire adieu, gardée pour toujours. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m07-vignette.webp",
+   "vignette": "/assets/medias/video/m07-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m07-9x16.mp4",
+     "url": "/assets/medias/video/m07-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m07-16x9.mp4",
+     "url": "/assets/medias/video/m07-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m07-1x1.mp4",
+     "url": "/assets/medias/video/m07-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -570,26 +570,26 @@
    "legende": "Chaque vie mérite sa chanson. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 6,
-   "vignette": "/assets/medias/videos/m08-vignette.webp",
+   "vignette": "/assets/medias/video/m08-vignette.webp",
    "formats": [
     {
      "k": "9x16",
      "label": "Story / Reels 9:16",
-     "url": "/assets/medias/videos/m08-9x16.mp4",
+     "url": "/assets/medias/video/m08-9x16.mp4",
      "l": 1080,
      "h": 1920
     },
     {
      "k": "16x9",
      "label": "Paysage 16:9",
-     "url": "/assets/medias/videos/m08-16x9.mp4",
+     "url": "/assets/medias/video/m08-16x9.mp4",
      "l": 1920,
      "h": 1080
     },
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/m08-1x1.mp4",
+     "url": "/assets/medias/video/m08-1x1.mp4",
      "l": 1080,
      "h": 1080
     }
@@ -603,7 +603,7 @@
    "legende": "Chaque vie mérite sa chanson. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 10,
-   "vignette": "/assets/medias/videos/seuil-vignette.webp",
+   "vignette": "/assets/medias/video/seuil-vignette.webp",
    "formats": [
     {
      "k": "9x16",
@@ -622,7 +622,7 @@
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/seuil-1x1.mp4",
+     "url": "/assets/medias/video/seuil-1x1.mp4",
      "l": 900,
      "h": 900
     }
@@ -636,7 +636,7 @@
    "legende": "Une chanson pour lui dire adieu. Melodia Funèbre compose une chanson originale pour chaque hommage. melodia-funebre.fr",
    "ratio": "9:16",
    "duree": 10,
-   "vignette": "/assets/medias/videos/lys-vignette.webp",
+   "vignette": "/assets/medias/video/lys-vignette.webp",
    "formats": [
     {
      "k": "9x16",
@@ -655,7 +655,7 @@
     {
      "k": "1x1",
      "label": "Carré 1:1",
-     "url": "/assets/medias/videos/lys-1x1.mp4",
+     "url": "/assets/medias/video/lys-1x1.mp4",
      "l": 900,
      "h": 900
     }
