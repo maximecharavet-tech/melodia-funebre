@@ -99,10 +99,12 @@ function visuelAutorise(chemin) {
 }
 
 function urlPubliqueDe(chemin) {
+  /* Toujours le domaine public. VERCEL_URL et VERCEL_BRANCH_URL
+     pointent vers *.vercel.app, y compris en production : un prospect
+     ne doit jamais recevoir ce hôte. */
   const c = String(chemin || BROCHURE_CHEMIN).replace(/^\/+/, '');
-  const h = process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL;
-  if (h) return 'https://' + String(h).replace(/^https?:\/\//, '') + '/' + c;
-  return 'https://melodia-funebre.fr/' + c;
+  const base = (process.env.SITE_URL || 'https://melodia-funebre.fr').replace(/\/+$/, '');
+  return base + '/' + c;
 }
 
 function urlBrochurePublique() {

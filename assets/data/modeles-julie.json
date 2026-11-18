@@ -14,6 +14,7 @@
       "visuel": "/assets/img/campagne/affiche-partenaire.jpg",
       "visuelAlt": "Affiche Melodia : devenir partenaire",
       "pied": "prospection",
+      "reseaux": true,
       "bouton": {
         "texte": "Voir le partenariat",
         "url": "https://melodia-funebre.fr/professionnels?parrain=julie-serve"
@@ -31,6 +32,7 @@
       "visuel": "/assets/img/campagne/ce-que-les-mots.webp",
       "visuelAlt": "Visuel Melodia : ce que les mots ne disent pas toujours",
       "pied": "prospection",
+      "reseaux": true,
       "bouton": {
         "texte": "Écouter un exemple",
         "url": "https://melodia-funebre.fr/demos?parrain=julie-serve"
@@ -48,6 +50,7 @@
       "visuel": "/assets/img/campagne/poignee-de-main.webp",
       "visuelAlt": "Visuel Melodia : une poignée de main",
       "pied": "prospection",
+      "reseaux": true,
       "bouton": {
         "texte": "Proposer un échange",
         "url": "https://melodia-funebre.fr/contact?parrain=julie-serve"
@@ -65,6 +68,7 @@
       "visuel": "/assets/img/campagne/adieux-en-musique.jpg",
       "visuelAlt": "Des adieux en musique — Melodia Funèbre",
       "pied": "prospection",
+      "reseaux": true,
       "bouton": {
         "texte": "Écouter le catalogue",
         "url": "https://melodia-funebre.fr/demos?parrain=julie-serve"
@@ -82,6 +86,7 @@
       "visuel": "/assets/img/campagne/affiche-partenaire.jpg",
       "visuelAlt": "Affiche Melodia : devenir partenaire",
       "pied": "prospection",
+      "reseaux": true,
       "bouton": {
         "texte": "Lire les conditions",
         "url": "https://melodia-funebre.fr/professionnels?parrain=julie-serve"
@@ -99,6 +104,7 @@
       "visuel": "/assets/img/campagne/affiche-partenaire.jpg",
       "visuelAlt": "Affiche Melodia : devenir partenaire",
       "pied": "prospection",
+      "reseaux": true,
       "bouton": {
         "texte": "Ouvrir la brochure",
         "url": "https://melodia-funebre.fr/documents/melodia-brochure-professionnels.pdf"
@@ -116,6 +122,7 @@
       "visuel": "/assets/img/campagne/emotion-eternelle.webp",
       "visuelAlt": "Visuel Melodia : une émotion qui demeure",
       "pied": "prospection",
+      "reseaux": true,
       "bouton": {
         "texte": "Accéder à l’espace partenaires",
         "url": "https://melodia-funebre.fr/professionnels?parrain=julie-serve"

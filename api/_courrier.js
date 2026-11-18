@@ -33,6 +33,26 @@ let dernierAppelResend = 0;
 
 export const SITE = (process.env.SITE_URL || 'https://melodia-funebre.fr').replace(/\/+$/, '');
 
+/* Comptes officiels cités dans la signature des courriels de Julie.
+   Instagram et TikTok sont ceux de la maison. Le LinkedIn est le profil
+   de Julie Serve — à confirmer par Maxime s’il change. */
+export const RESEAUX_COURRIEL = [
+  { nom: 'Instagram', url: 'https://www.instagram.com/melodia_funebre' },
+  { nom: 'TikTok', url: 'https://www.tiktok.com/@melodia.funebre' },
+  { nom: 'LinkedIn (Julie Serve)', url: 'https://www.linkedin.com/in/julie-serve-0a3076224' }
+];
+
+/** Ligne sobre : Instagram · TikTok · LinkedIn (Julie Serve). Pas d’icône, pas d’injonction. */
+export function reseauxLigneHtml(couleurs) {
+  const lien = (couleurs && couleurs.lien) || '#ece6d6';
+  const sep = (couleurs && couleurs.sep) || '#a89a74';
+  return RESEAUX_COURRIEL.map((r, i) => {
+    const a = '<a href="' + echapper(r.url) + '" style="color:' + lien + ';text-decoration:none;">' + echapper(r.nom) + '</a>';
+    return i ? '<span style="color:' + sep + ';"> · </span>' + a : a;
+  }).join('');
+}
+
+
 /** Expéditeur des courriels transactionnels (famille, agence, maison) */
 export function expediteurCourrier() {
   return process.env.COURRIER_FROM || process.env.LEAD_FROM || null;
@@ -106,6 +126,7 @@ export function carteVisite(sig) {
           (sig.email ? ligne('<span style="color:' + or + ';">&#9993;</span>&nbsp; <a href="mailto:' + echapper(sig.email) + '" style="color:#ece6d6;text-decoration:none;">' + echapper(sig.email) + '</a>') : '') +
           (tel ? ligne('<span style="color:' + or + ';">&#9742;</span>&nbsp; <a href="tel:' + echapper(tel.replace(/[^\d+]/g, '')) + '" style="color:#ece6d6;text-decoration:none;">' + echapper(tel) + '</a>') : '') +
           ligne('<span style="color:' + or + ';">&#9670;</span>&nbsp; <a href="' + SITE + '" style="color:#ece6d6;text-decoration:none;">melodia-funebre.fr</a>') +
+          ligne(reseauxLigneHtml({ lien: '#ece6d6', sep: '#a89a74' })) +
         '</table>' +
         '<div style="font-family:Georgia,\'Times New Roman\',serif;font-style:italic;font-size:17px;color:' + or + ';margin-top:12px;">Des émotions qui rassemblent.</div>' +
       '</td>' +
