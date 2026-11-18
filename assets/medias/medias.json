@@ -724,5 +724,147 @@
    "vignette": "/assets/medias/cartes/peupliers.webp",
    "idee": "Une route de campagne bordée de hauts peupliers, sous un ciel pâle."
   }
+ ],
+ "styles": [
+  {
+   "id": "aquarelle",
+   "nom": "Aquarelle",
+   "vignette": "/assets/medias/styles/aquarelle.webp"
+  },
+  {
+   "id": "huile",
+   "nom": "Peinture à l’huile",
+   "vignette": "/assets/medias/styles/huile.webp"
+  },
+  {
+   "id": "impressionnisme",
+   "nom": "Impressionnisme",
+   "vignette": "/assets/medias/styles/impressionnisme.webp"
+  },
+  {
+   "id": "cubisme-doux",
+   "nom": "Cubisme doux",
+   "vignette": "/assets/medias/styles/cubisme-doux.webp"
+  },
+  {
+   "id": "surrealisme",
+   "nom": "Surréalisme poétique",
+   "vignette": "/assets/medias/styles/surrealisme.webp"
+  },
+  {
+   "id": "minimalisme",
+   "nom": "Minimalisme",
+   "vignette": "/assets/medias/styles/minimalisme.webp"
+  },
+  {
+   "id": "art-nouveau",
+   "nom": "Art nouveau",
+   "vignette": "/assets/medias/styles/art-nouveau.webp"
+  },
+  {
+   "id": "art-deco",
+   "nom": "Art déco",
+   "vignette": "/assets/medias/styles/art-deco.webp"
+  },
+  {
+   "id": "eau-forte",
+   "nom": "Gravure à l’eau-forte",
+   "vignette": "/assets/medias/styles/eau-forte.webp"
+  },
+  {
+   "id": "fusain",
+   "nom": "Fusain",
+   "vignette": "/assets/medias/styles/fusain.webp"
+  },
+  {
+   "id": "vitrail",
+   "nom": "Vitrail",
+   "vignette": "/assets/medias/styles/vitrail.webp"
+  },
+  {
+   "id": "ukiyo-e",
+   "nom": "Estampe japonaise",
+   "vignette": "/assets/medias/styles/ukiyo-e.webp"
+  },
+  {
+   "id": "sumi-e",
+   "nom": "Lavis à l’encre (sumi-e)",
+   "vignette": "/assets/medias/styles/sumi-e.webp"
+  },
+  {
+   "id": "clair-obscur",
+   "nom": "Clair-obscur baroque",
+   "vignette": "/assets/medias/styles/clair-obscur.webp"
+  },
+  {
+   "id": "pastel",
+   "nom": "Pastel",
+   "vignette": "/assets/medias/styles/pastel.webp"
+  },
+  {
+   "id": "enluminure",
+   "nom": "Enluminure",
+   "vignette": "/assets/medias/styles/enluminure.webp"
+  },
+  {
+   "id": "symbolisme",
+   "nom": "Symbolisme",
+   "vignette": "/assets/medias/styles/symbolisme.webp"
+  },
+  {
+   "id": "preraphaelite",
+   "nom": "Préraphaélite",
+   "vignette": "/assets/medias/styles/preraphaelite.webp"
+  },
+  {
+   "id": "argentique",
+   "nom": "Photographie argentique",
+   "vignette": "/assets/medias/styles/argentique.webp"
+  },
+  {
+   "id": "noir-blanc",
+   "nom": "Noir et blanc fine art",
+   "vignette": "/assets/medias/styles/noir-blanc.webp"
+  },
+  {
+   "id": "papier-decoupe",
+   "nom": "Papier découpé",
+   "vignette": "/assets/medias/styles/papier-decoupe.webp"
+  },
+  {
+   "id": "mosaique",
+   "nom": "Mosaïque",
+   "vignette": "/assets/medias/styles/mosaique.webp"
+  },
+  {
+   "id": "pointillisme",
+   "nom": "Pointillisme",
+   "vignette": "/assets/medias/styles/pointillisme.webp"
+  },
+  {
+   "id": "romantisme",
+   "nom": "Paysage romantique",
+   "vignette": "/assets/medias/styles/romantisme.webp"
+  },
+  {
+   "id": "icone",
+   "nom": "Feuille d’or (icône)",
+   "vignette": "/assets/medias/styles/icone.webp"
+  },
+  {
+   "id": "linogravure",
+   "nom": "Linogravure",
+   "vignette": "/assets/medias/styles/linogravure.webp"
+  },
+  {
+   "id": "fresque",
+   "nom": "Fresque",
+   "vignette": "/assets/medias/styles/fresque.webp"
+  },
+  {
+   "id": "cyanotype",
+   "nom": "Cyanotype",
+   "vignette": "/assets/medias/styles/cyanotype.webp"
+  }
  ]
 }

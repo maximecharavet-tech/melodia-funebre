@@ -65,3 +65,35 @@
   .jm-apercu-media video, .jm-apercu-media img, .jm-toile { max-height: 62dvh; }
   .jm-gen-l { grid-template-columns: 1fr; gap: 6px; }
 }
+
+/* Style artistique : vignettes d'exemple, favoris, intensité */
+.jm-styles { list-style: none; margin: 0; padding: 0 0 4px; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; max-height: 420px; overflow-y: auto; }
+.jm-style { position: relative; }
+.jm-style-b { width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 0 0 8px; border: 1px solid var(--line, rgba(201,168,76,.12)); border-radius: 10px; background: var(--surface, #0b0b11); color: var(--silver, #d8d8dc); cursor: pointer; overflow: hidden; font-size: .8rem; line-height: 1.25; text-align: center; }
+.jm-style-b img, .jm-style-sans { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.jm-style-sans { display: grid; place-items: center; font-family: "Cormorant Garamond", serif; font-size: 2.4rem; color: var(--or, #c9a84c); background: radial-gradient(circle at 50% 40%, rgba(201,168,76,.14), transparent 70%); }
+.jm-style-b span { padding: 0 6px; }
+.jm-style.est-actif .jm-style-b { border-color: var(--or, #c9a84c); color: var(--paper, #f2efe8); background: var(--or-soft, rgba(201,168,76,.07)); box-shadow: 0 0 0 1px var(--or, #c9a84c) inset; }
+.jm-style-b:focus-visible, .jm-favori:focus-visible, .jm-histo:focus-visible, .jm-variante:focus-visible { outline: 2px solid var(--or-bright, #e3c977); outline-offset: 2px; }
+.jm-favori { position: absolute; top: 4px; right: 4px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(5,5,9,.62); color: rgba(242,239,232,.55); cursor: pointer; font-size: 1rem; line-height: 1; }
+.jm-favori.est-actif { color: var(--or-bright, #e3c977); }
+.jm-intensite { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; max-width: 360px; }
+.jm-intensite input { accent-color: var(--or, #c9a84c); width: 100%; }
+.jm-intensite-l { display: flex; justify-content: space-between; font-size: .8rem; color: var(--bone, #c4bba6); }
+.jm-historique { margin-top: 6px; font-size: .86rem; }
+.jm-historique summary { cursor: pointer; color: var(--bone, #c4bba6); }
+.jm-historique ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.jm-histo { width: 100%; text-align: left; padding: 8px 12px; border: 1px solid var(--line, rgba(201,168,76,.12)); border-radius: 8px; background: transparent; color: var(--silver, #d8d8dc); cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.jm-histo small { color: var(--bone, #c4bba6); font-size: .8rem; }
+.jm-recommencer { margin-top: 8px; }
+.jm-legendes { margin-top: 10px; }
+.jm-legendes summary { cursor: pointer; color: var(--bone, #c4bba6); font-size: .86rem; }
+.jm-legende-l { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.jm-legende-l .btn, .jm-resultat label .btn { align-self: flex-start; }
+.jm-variantes-c { width: 100%; }
+.jm-variantes-g { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.jm-variante { width: 100%; padding: 0 0 8px; border: 1px solid var(--line, rgba(201,168,76,.12)); border-radius: 10px; background: var(--surface, #0b0b11); color: var(--silver, #d8d8dc); cursor: pointer; overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
+.jm-variante img { width: 100%; max-height: 42vh; object-fit: contain; background: #000; display: block; }
+.jm-gen-bloc { display: flex; flex-direction: column; gap: 8px; margin: 6px 0; }
+.jm-gen-bloc .jm-aide { margin: 0; }
+.jm-gen-bloc em { color: var(--or-bright, #e3c977); font-style: normal; text-transform: none; letter-spacing: 0; }

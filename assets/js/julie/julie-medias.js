@@ -24,19 +24,39 @@
   var SITE = 'https://melodia-funebre.fr';
   var LOGO = '/assets/img/logo-melodia-complet.jpg'; // fichier officiel 1600 px, posé tel quel
   var CLE_CREES = 'melodia_medias_crees';
+  var CLE_FAVORIS = 'melodia_medias_styles_favoris';
+  var CLE_HISTO = 'melodia_medias_historique';
+  var INTENSITES = { 1: 'Léger', 2: 'Marqué', 3: 'Affirmé' };
+  var VARIANTES = [['1', '1 image'], ['2', '2 variantes'], ['4', '4 variantes']];
 
   var FORMATS_GEN = [['post', 'Post 1:1'], ['story', 'Story 9:16'], ['banniere', 'Bannière 16:9']];
   var DEVISE = 'Chaque vie mérite sa chanson.';
   var FORMATS_EDIT = { post: [1080, 1080, 'Publication 1:1'], portrait: [1080, 1350, 'Portrait 4:5'], story: [1080, 1920, 'Story 9:16'], banniere: [1920, 1080, 'Bannière 16:9'] };
   var LEGENDE_CREE = 'Chaque vie mérite sa chanson. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche. melodia-funebre.fr';
 
-  var etat = { medias: null, erreur: '', filtre: 'tous', serveur: [], actif: null, stockage: null, idees: [], gen: { texte: '', carte: '', format: 'post', motActif: false, mot: '', signature: true }, enCours: false, message: '' };
+  var etat = { medias: null, erreur: '', filtre: 'tous', serveur: [], actif: null, stockage: null, idees: [], styles: [], gen: { texte: '', carte: '', style: '', intensite: 2, variantes: '1', format: 'post', motActif: false, mot: '', signature: true }, enCours: false, message: '' };
 
   /* ─── Données ─────────────────────────────────────────────────── */
   function lireCrees() {
     try { var l = JSON.parse(localStorage.getItem(CLE_CREES) || '[]'); return Array.isArray(l) ? l : []; } catch (e) { return []; }
   }
   function ecrireCrees(l) { try { localStorage.setItem(CLE_CREES, JSON.stringify(l.slice(0, 60))); } catch (e) { /* plein */ } }
+  function lireListe(cle) { try { var l = JSON.parse(localStorage.getItem(cle) || '[]'); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
+  function ecrireListe(cle, l) { try { localStorage.setItem(cle, JSON.stringify(l)); } catch (e) { /* plein */ } }
+  function favoris() { return lireListe(CLE_FAVORIS).filter(function (x) { return typeof x === 'string'; }); }
+  function basculerFavori(id) {
+    var f = favoris(), i = f.indexOf(id);
+    if (i === -1) f.unshift(id); else f.splice(i, 1);
+    ecrireListe(CLE_FAVORIS, f.slice(0, 40));
+  }
+  /* Historique des demandes : les 8 dernières, pour relancer en un geste. */
+  function historique() { return lireListe(CLE_HISTO).filter(function (h) { return h && h.texte; }); }
+  function noterHistorique(g) {
+    var h = { texte: String(g.texte).trim(), carte: g.carte || '', style: g.style || '', intensite: g.intensite || 2, format: g.format };
+    var l = historique().filter(function (x) { return !(x.texte === h.texte && x.style === h.style && x.format === h.format); });
+    l.unshift(h); ecrireListe(CLE_HISTO, l.slice(0, 8));
+  }
+  function styleDe(id) { return etat.styles.filter(function (x) { return x.id === id; })[0] || null; }
 
   /* Deux sortes de créations : « gardée » (image déjà composée, logo posé, rangée en ligne)
      et « locale » (image brute du moteur + réglages : on la recompose, logo compris, à chaque ouverture). */
@@ -71,6 +91,7 @@
       var cat = await r.json();
       etat.medias = cat.medias || [];
       etat.idees = cat.idees || [];
+      etat.styles = cat.styles || [];
     }
     if (session()) {
       try {
@@ -116,13 +137,54 @@
           return '<li><button type="button" class="jm-idee' + (g.carte === i.id ? ' est-actif' : '') + '" data-jm-idee="' + esc(i.id) + '" aria-pressed="' + (g.carte === i.id) + '">' +
             '<img src="' + esc(i.vignette) + '" alt="" loading="lazy" width="96" height="96"><span>' + esc(i.nom) + '</span></button></li>';
         }).join('') + '</ul>' : '') +
+      selecteurStyles() +
       '<div class="jm-gen-l"><span class="jm-gen-k">Format</span>' + puces('format', FORMATS_GEN, g.format) + '</div>' +
+      '<div class="jm-gen-l"><span class="jm-gen-k">Nombre d’images</span>' + puces('variantes', VARIANTES, String(g.variantes)) + '</div>' +
       '<label class="jm-case"><input type="checkbox" data-jm-signature' + (g.signature ? ' checked' : '') + '> Signature en bas : « ' + DEVISE + ' » et melodia-funebre.fr</label>' +
       '<label class="jm-case"><input type="checkbox" data-jm-mot-actif' + (g.motActif ? ' checked' : '') + '> Ajouter un mot (un prénom, une phrase)</label>' +
       (g.motActif ? '<input type="text" class="jm-champ" maxlength="60" data-jm-mot value="' + esc(g.mot) + '" placeholder="Ex. : En mémoire de Jeanne">' : '') +
       '<button type="button" class="btn btn-gold jm-generer" data-jm-generer' + (etat.enCours ? ' disabled' : '') + '>' + (etat.enCours ? 'Génération…' : 'Générer') + '</button>' +
       '<p class="jm-aide">Le logo officiel Melodia est posé sur chaque image, tel quel : il n’est jamais généré.</p>' +
-      (etat.message ? '<p class="jm-msg" role="status">' + etat.message + '</p>' : '') + '</section>';
+      (etat.message ? '<p class="jm-msg" role="status">' + etat.message + '</p>' : '') +
+      blocHistorique() + '</section>';
+  }
+
+  /* Style artistique : vignettes d'exemple (même sujet pour toutes), favoris en tête. */
+  function selecteurStyles() {
+    if (!etat.styles.length) return '';
+    var g = etat.gen, fav = favoris();
+    var l = etat.styles.slice().sort(function (a, b) {
+      var fa = fav.indexOf(a.id), fb = fav.indexOf(b.id);
+      return (fa === -1 ? 999 : fa) - (fb === -1 ? 999 : fb);
+    });
+    var choisi = styleDe(g.style);
+    var tuile = function (id, nom, img, estFav) {
+      var actif = g.style === id;
+      return '<li class="jm-style' + (actif ? ' est-actif' : '') + '">' +
+        '<button type="button" class="jm-style-b" data-jm-style="' + esc(id) + '" aria-pressed="' + actif + '">' +
+          (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" decoding="async" width="112" height="112">' : '<span class="jm-style-sans" aria-hidden="true">M</span>') +
+          '<span>' + esc(nom) + '</span></button>' +
+        (id ? '<button type="button" class="jm-favori' + (estFav ? ' est-actif' : '') + '" data-jm-favori="' + esc(id) + '" aria-pressed="' + estFav + '" title="' + (estFav ? 'Retirer des favoris' : 'Ajouter aux favoris') + '" aria-label="' + (estFav ? 'Retirer « ' : 'Ajouter « ') + esc(nom) + (estFav ? ' » des favoris' : ' » aux favoris') + '">★</button>' : '') +
+        '</li>';
+    };
+    return '<div class="jm-gen-bloc"><span class="jm-gen-k">Style artistique' + (choisi ? ' : <em>' + esc(choisi.nom) + '</em>' : '') + '</span>' +
+      '<p class="jm-aide">Toutes les vignettes montrent le même sujet, pour comparer les styles. ★ : vos favoris passent en tête.</p>' +
+      '<ul class="jm-styles">' + tuile('', 'Sans style (Melodia)', '', false) +
+        l.map(function (x) { return tuile(x.id, x.nom, x.vignette, fav.indexOf(x.id) !== -1); }).join('') + '</ul>' +
+      (choisi ? '<label class="jm-intensite"><span class="jm-gen-k">Intensité du style : <b data-jm-intensite-v>' + INTENSITES[g.intensite] + '</b></span>' +
+        '<input type="range" min="1" max="3" step="1" value="' + g.intensite + '" data-jm-intensite aria-valuetext="' + INTENSITES[g.intensite] + '">' +
+        '<span class="jm-intensite-l"><span>Léger</span><span>Marqué</span><span>Affirmé</span></span></label>' : '') +
+      '</div>';
+  }
+
+  function blocHistorique() {
+    var h = historique();
+    if (!h.length) return '';
+    return '<details class="jm-historique"><summary>Mes dernières demandes (' + h.length + ')</summary><ul>' + h.map(function (x, i) {
+      var st = styleDe(x.style);
+      return '<li><button type="button" class="jm-histo" data-jm-histo="' + i + '">' + esc(x.texte.length > 90 ? x.texte.slice(0, 88) + '…' : x.texte) +
+        '<small>' + esc((st ? st.nom + ' · ' + INTENSITES[x.intensite || 2] : 'Sans style') + ' · ' + ((FORMATS_GEN.filter(function (f) { return f[0] === x.format; })[0] || ['', ''])[1])) + '</small></button></li>';
+    }).join('') + '</ul></details>';
   }
 
   function vue() {
@@ -459,7 +521,7 @@
     // relais par le serveur (même origine) : la toile reste lisible et exportable
     if (c.tache && session()) {
       try {
-        var r = await fetch('/api/medias-generer?brut=' + encodeURIComponent(c.tache), { headers: J.entetes(), credentials: 'same-origin' });
+        var r = await fetch('/api/medias-generer?brut=' + encodeURIComponent(c.tache) + (c.n ? '&n=' + c.n : ''), { headers: J.entetes(), credentials: 'same-origin' });
         if (r.ok) return await charge(URL.createObjectURL(await r.blob()));
       } catch (e) { /* repli sur l'adresse directe */ }
     }
@@ -476,6 +538,13 @@
       '<div class="jm-partage jm-gros"><button type="button" class="btn btn-gold" data-r-telecharger>⇩ Télécharger</button>' +
       '<button type="button" class="btn btn-outline" data-r-partager>Partager</button>' +
       '<button type="button" class="btn btn-outline" data-r-garder>Garder dans Mes créations</button></div>' +
+      (c.texte ? '<button type="button" class="btn btn-sm btn-outline jm-recommencer" data-r-recommencer>↻ Recommencer avec le même style</button>' : '') +
+      '<details class="jm-legendes"><summary>Légendes prêtes par réseau</summary>' + Object.keys(LEGENDES).map(function (k) {
+        return '<div class="jm-legende-l"><span class="jm-gen-k">' + LEGENDES[k][0] + '</span><textarea class="jm-champ" rows="3" data-r-legende-t="' + k + '">' + esc(legende(k, o)) + '</textarea>' +
+          '<button type="button" class="btn btn-sm btn-outline" data-r-copier="' + k + '">Copier</button></div>';
+      }).join('') + '</details>' +
+      '<label class="jm-gen-l"><span class="jm-gen-k">Texte alternatif (accessibilité)</span><textarea class="jm-champ" rows="2" data-r-alt>' + esc(texteAlt(c, o)) + '</textarea>' +
+        '<button type="button" class="btn btn-sm btn-outline" data-r-copier="alt">Copier le texte alternatif</button></label>' +
       '<p class="jm-aide">Le logo est le fichier officiel, posé à l’identique ; sa variante (sur fond sombre ou clair) se choisit seule.</p></div>');
     var cv = d.querySelector('canvas'), img, logo;
     try {
@@ -487,7 +556,11 @@
     d.addEventListener('input', function (ev) {
       var k = ev.target.dataset && ev.target.dataset.r; if (!k) return;
       o[k] = ev.target.type === 'checkbox' ? ev.target.checked : ev.target.value; maj();
+      // le mot et la signature se reportent dans les légendes et le texte alternatif tant qu'ils n'ont pas été retouchés à la main
+      d.querySelectorAll('[data-r-legende-t]').forEach(function (t) { if (!t.dataset.touche) t.value = legende(t.dataset.rLegendeT, o); });
+      var al = d.querySelector('[data-r-alt]'); if (al && !al.dataset.touche) al.value = texteAlt(c, o);
     });
+    d.addEventListener('change', function (ev) { if (ev.target.matches('[data-r-legende-t], [data-r-alt]')) ev.target.dataset.touche = '1'; });
     function blob() { return new Promise(function (ok, ko) { try { cv.toBlob(function (b) { b ? ok(b) : ko(new Error('Export impossible.')); }, 'image/jpeg', 0.92); } catch (e) { ko(new Error('Export impossible : image d’une autre origine.')); } }); }
     var nom = 'melodia-visuel-' + o.format + '-' + new Date().toISOString().slice(0, 10) + '.jpg';
     d.addEventListener('click', async function (ev) {
@@ -498,11 +571,24 @@
         }
         if (ev.target.closest('[data-r-partager]')) {
           var f = new File([await blob()], nom, { type: 'image/jpeg' });
-          if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: LEGENDE_CREE }); return; }
-          await copier(LEGENDE_CREE);
+          var leg = (d.querySelector('[data-r-legende-t="instagram"]') || {}).value || LEGENDE_CREE;
+          if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: leg }); return; }
+          await copier(leg);
           return dire('Ce navigateur ne partage pas d’image : téléchargez-la puis publiez-la (légende copiée).');
         }
         if (ev.target.closest('[data-r-garder]')) return garder(c, o, cv);
+        var cp = ev.target.closest('[data-r-copier]');
+        if (cp) {
+          var z = cp.dataset.rCopier === 'alt' ? d.querySelector('[data-r-alt]') : d.querySelector('[data-r-legende-t="' + cp.dataset.rCopier + '"]');
+          if (z) { await copier(z.value); dire('Texte copié.'); }
+          return;
+        }
+        if (ev.target.closest('[data-r-recommencer]')) {
+          d.close();
+          etat.gen.texte = c.texte; etat.gen.carte = c.carte || ''; etat.gen.style = c.style || ''; etat.gen.intensite = c.intensite || 2;
+          etat.gen.format = c.format || etat.gen.format;
+          return generer();
+        }
       } catch (e) { if (!(e && e.name === 'AbortError')) dire(e.message || 'Action impossible.'); }
     });
   }
@@ -510,7 +596,8 @@
   async function garder(c, o, cv) {
     var data = '';
     try { data = cv.toDataURL('image/jpeg', 0.9); } catch (e) { data = ''; }
-    var titre = (c.carteNom || 'Visuel Melodia');
+    var st = styleDe(c.style);
+    var titre = (c.carteNom || 'Visuel Melodia') + (st ? ' · ' + st.nom : '');
     if (data && session()) {
       try {
         var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ garder: data }) });
@@ -522,8 +609,8 @@
       } catch (e) { /* repli local */ }
     }
     if (!c.tache) return dire('Impossible de garder cette image.');
-    var l = lireCrees().filter(function (x) { return x.tache !== c.tache; });
-    l.unshift({ id: c.tache, tache: c.tache, url: c.url, format: o.format, mot: o.mot, signature: o.signature, texte: c.texte, titre: titre, le: c.le || new Date().toISOString() });
+    var l = lireCrees().filter(function (x) { return !(x.tache === c.tache && (x.n || 0) === (c.n || 0)); });
+    l.unshift({ id: c.tache + (c.n ? '-' + c.n : ''), tache: c.tache, n: c.n || 0, url: c.url, format: o.format, mot: o.mot, signature: o.signature, texte: c.texte, carte: c.carte || '', style: c.style || '', intensite: c.intensite || 2, titre: titre, le: c.le || new Date().toISOString() });
     ecrireCrees(l); rendre();
     dire('Gardé dans Mes créations (dans ce navigateur).');
   }
@@ -544,7 +631,7 @@
     var carte = carteGardee();
     etat.enCours = true; etat.message = 'Demande envoyée…'; rendre();
     try {
-      var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ texte: g.texte, format: g.format, carte: carte ? carte.id : '' }) });
+      var r = await fetch('/api/medias-generer', { method: 'POST', headers: J.entetes(), credentials: 'same-origin', body: JSON.stringify({ texte: g.texte, format: g.format, carte: carte ? carte.id : '', style: g.style, intensite: g.intensite, variantes: Number(g.variantes) || 1 }) });
       var d = await r.json().catch(function () { return {}; });
       if (r.status === 503 && d.code === 'GENERATION_INACTIVE') {
         etat.actif = false;
@@ -552,7 +639,8 @@
         return;
       }
       if (!r.ok || !d.tache) { etat.message = esc(d.error || 'La génération a échoué.'); return; }
-      etat.message = 'Image en préparation (environ ' + Math.max(1, Math.round((d.eta || 60) / 60)) + ' min)…'; rendre();
+      noterHistorique({ texte: g.texte, carte: carte ? carte.id : '', style: g.style, intensite: g.intensite, format: g.format });
+      etat.message = (Number(g.variantes) > 1 ? g.variantes + ' variantes' : 'Image') + ' en préparation (environ ' + Math.max(1, Math.round((d.eta || 60) / 60)) + ' min)…'; rendre();
       var fin = Date.now() + 4 * 60 * 1000;
       while (Date.now() < fin) {
         await new Promise(function (ok) { setTimeout(ok, 6000); });
@@ -561,14 +649,52 @@
         if (e.statut === 'fait' && e.url) {
           etat.message = 'Visuel prêt.';
           etat.enCours = false; rendre();
-          return resultat({ tache: d.tache, url: e.url, format: d.format || g.format, texte: g.texte, mot: g.motActif ? g.mot : '', signature: g.signature, carteNom: carte ? carte.nom : '', le: new Date().toISOString() });
+          var base = { tache: d.tache, format: d.format || g.format, texte: g.texte, mot: g.motActif ? g.mot : '', signature: g.signature, carte: carte ? carte.id : '', carteNom: carte ? carte.nom : '', style: g.style, intensite: g.intensite, le: new Date().toISOString() };
+          var imgs = Array.isArray(e.images) && e.images.length ? e.images : [{ n: 0, url: e.url }];
+          if (imgs.length === 1) return resultat(Object.assign({}, base, { n: imgs[0].n || 0, url: imgs[0].url }));
+          return choisirVariante(base, imgs);
         }
+        if (e.statut === 'en-cours' && e.total > 1) { etat.message = 'Variantes prêtes : ' + (e.faites || 0) + ' sur ' + e.total + '…'; rendre(); }
         if (e.statut === 'echec' || !s.ok) { etat.message = esc(e.error || 'La génération a échoué.'); return; }
       }
       etat.message = 'Le moteur est lent : la tâche continue, revenez dans quelques minutes.';
     } catch (err) {
       etat.message = 'Réseau indisponible.';
     } finally { etat.enCours = false; rendre(); }
+  }
+
+  /* Plusieurs variantes : Julie choisit, puis la variante s'ouvre avec le logo posé. */
+  function choisirVariante(base, imgs) {
+    var d = dialogue('jm-edition jm-variantes', '<div class="jm-apercu-cote jm-variantes-c"><h2 class="jm-apercu-t">Choisissez votre variante</h2>' +
+      '<p class="jm-aide">Touchez une image : le logo officiel y sera posé, puis vous pourrez la télécharger, la partager ou la garder.</p>' +
+      '<ul class="jm-variantes-g">' + imgs.map(function (x, i) {
+        return '<li><button type="button" class="jm-variante" data-jm-variante="' + i + '"><img src="' + esc(x.url) + '" alt="Variante ' + (i + 1) + '" loading="lazy"><span>Variante ' + (i + 1) + '</span></button></li>';
+      }).join('') + '</ul></div>');
+    d.addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-jm-variante]'); if (!b) return;
+      var x = imgs[Number(b.dataset.jmVariante)] || imgs[0];
+      d.close();
+      resultat(Object.assign({}, base, { n: x.n || 0, url: x.url }));
+    });
+    return d;
+  }
+
+  /* ─── Légendes par réseau et texte alternatif ─────────────────── */
+  var LEGENDES = {
+    instagram: ['Instagram', function (mot) { return (mot ? mot + '\n\n' : '') + 'Une chanson originale, écrite et composée pour rendre hommage à celles et ceux que l’on aime.\n\nChaque vie mérite sa chanson.\nLien en bio · melodia-funebre.fr\n\n#hommage #souvenir #chansonoriginale #musique #deuil #melodiafunebre'; }],
+    facebook: ['Facebook', function (mot) { return (mot ? mot + '\n\n' : '') + 'Rendre hommage autrement : Melodia Funèbre compose une chanson originale à partir de vos souvenirs, pour accompagner un adieu ou un moment de mémoire.\n\nChaque vie mérite sa chanson.\n' + SITE; }],
+    linkedin: ['LinkedIn', function (mot) { return (mot ? mot + '\n\n' : '') + 'Melodia Funèbre compose des chansons originales pour les cérémonies et les hommages : un accompagnement humain, une musique unique, aux côtés des familles et des professionnels du funéraire.\n\n' + SITE; }],
+    whatsapp: ['WhatsApp', function (mot) { return (mot ? mot + ' · ' : '') + 'Chaque vie mérite sa chanson. Melodia Funèbre compose une chanson originale pour rendre hommage à un proche : ' + SITE; }]
+  };
+  function legende(k, o) { var l = LEGENDES[k]; return l ? l[1](String((o && o.mot) || '').trim()) : LEGENDE_CREE; }
+  function texteAlt(c, o) {
+    var t = String(c.texte || '').trim().replace(/[.\s]+$/, '');
+    var st = styleDe(c.style);
+    var a = 'Visuel Melodia Funèbre' + (t ? ' : ' + t.charAt(0).toLowerCase() + t.slice(1) : '') + (st ? ', en style ' + st.nom.toLowerCase() : '') + '.';
+    var mot = String((o && o.mot) || '').trim();
+    if (mot) a += ' Texte : « ' + mot + ' ».';
+    a += ' Logo Melodia Funèbre' + (o && o.signature === false ? '' : ' et mention « ' + DEVISE.replace(/\.$/, '') + ' »') + '.';
+    return a;
   }
 
   /* ─── Branchement ────────────────────────────────────────────── */
@@ -587,6 +713,19 @@
       if (fi) { etat.filtre = fi.dataset.jmFiltre; return rendre(); }
       var pu = ev.target.closest('[data-jm-gen] [data-v]');
       if (pu) { etat.gen[pu.parentNode.dataset.jmGen] = pu.dataset.v; return rendre(); }
+      var fv = ev.target.closest('[data-jm-favori]');
+      if (fv) { basculerFavori(fv.dataset.jmFavori); return rendre(); }
+      var sy = ev.target.closest('[data-jm-style]');
+      if (sy) { etat.gen.style = sy.dataset.jmStyle; return rendre(); }
+      var hi = ev.target.closest('[data-jm-histo]');
+      if (hi) {
+        var h = historique()[Number(hi.dataset.jmHisto)];
+        if (h) {
+          etat.gen.texte = h.texte; etat.gen.carte = h.carte || ''; etat.gen.style = styleDe(h.style) ? h.style : '';
+          etat.gen.intensite = INTENSITES[h.intensite] ? h.intensite : 2; etat.gen.format = h.format || 'post'; rendre();
+        }
+        return;
+      }
       var id = ev.target.closest('[data-jm-idee]');
       if (id) {
         var c = carteDe(id.dataset.jmIdee);
@@ -620,10 +759,15 @@
         if (!garde && etat.gen.carte) { etat.gen.carte = ''; view.querySelectorAll('.jm-idee.est-actif').forEach(function (b) { b.classList.remove('est-actif'); b.setAttribute('aria-pressed', 'false'); }); }
       }
       if (t.matches('[data-jm-mot]')) etat.gen.mot = t.value;
+      if (t.matches('[data-jm-intensite]')) {
+        etat.gen.intensite = Math.min(3, Math.max(1, Number(t.value) || 2));
+        t.setAttribute('aria-valuetext', INTENSITES[etat.gen.intensite]);
+        var v = view.querySelector('[data-jm-intensite-v]'); if (v) v.textContent = INTENSITES[etat.gen.intensite];
+      }
     });
   }
 
-  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, composer: composer, poserLogo: poserLogo, placeLogo: placeLogo, resultat: resultat, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
+  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, composer: composer, poserLogo: poserLogo, placeLogo: placeLogo, resultat: resultat, choisirVariante: choisirVariante, legende: legende, texteAlt: texteAlt, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
 
   window.MelodiaConsole.ajouterVue('medias', ['Ressources', 'Mes <em>médias</em>', function () { etat.charge = false; return vue(); }, brancher]);
   var hv = (location.hash || '').replace(/^#/, '').split('?')[0];

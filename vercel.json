@@ -33,7 +33,7 @@
     },
     "api/medias-generer.js": {
       "maxDuration": 30,
-      "includeFiles": "api/_medias-idees.json"
+      "includeFiles": "api/_medias-*.json"
     },
     "api/*.js": {
       "maxDuration": 30

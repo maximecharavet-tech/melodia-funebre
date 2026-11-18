@@ -25,6 +25,16 @@ Julie écrit librement « Décrivez votre image », choisit un format (Post 1:1,
 
 Côté serveur (`api/_medias.js`), toujours : l'enveloppe de style Melodia (`STYLE`) et les interdits de sécurité (`INTERDITS` : pas de texte, pas de logo généré, pas de visage réaliste d'enfant, pas de personne réelle connue, pas de cercueil, pas d'effet gadget). La demande composée ne sort jamais du serveur.
 
+### Styles artistiques (18/11, 03 h 30)
+
+28 styles choisis pour rester dans le ton (pré-prompts dans `api/_medias-styles.json`, côté serveur ; liste publique id/nom/vignette dans `assets/medias/medias.json`) : Aquarelle, Peinture à l'huile, Impressionnisme, Cubisme doux, Surréalisme poétique, Minimalisme, Art nouveau, Art déco, Gravure à l'eau-forte, Fusain, Vitrail, Estampe japonaise, Lavis à l'encre (sumi-e), Clair-obscur baroque, Pastel, Enluminure, Symbolisme, Préraphaélite, Photographie argentique, Noir et blanc fine art, Papier découpé, Mosaïque, Pointillisme, Paysage romantique, Feuille d'or (icône), Linogravure, Fresque, Cyanotype. Écartés : pop art, glitch, cyberpunk, dessin animé, manga, néon, vaporwave, graffiti, pixel art, 3D brillante, caricature. Aucun nom d'artiste : des époques et des techniques.
+
+Chaque pré-prompt décrit le médium, la technique, la palette (ramenée vers noir chaud / ivoire / or doux) et la texture. Les interdits de sécurité sont TOUJOURS ajoutés. Intensité du style (curseur, 3 crans) : « Léger » (touche du médium + enveloppe Melodia complète), « Marqué » (style + palette Melodia), « Affirmé » (toute l'image dans le médium + palette Melodia).
+
+Vignettes d'exemple : `assets/medias/styles/<id>.webp`, 512 px, toutes sur le même sujet (lys blancs dans un vase de verre et une bougie, près d'une fenêtre), générées gratuitement avec AI Horde (réseau communautaire, clé anonyme, aucun crédit dépensé) sur le modèle SDXL Juggernaut XL (licence CreativeML Open RAIL++-M, usage commercial permis), relues une à une (ni texte, ni visage, ni artefact). Script : `scripts/medias-vignettes-styles.py`.
+
+Autres ajouts : 1, 2 ou 4 variantes par demande (chacune compte dans le plafond ; Julie choisit la sienne, le logo y est posé ensuite) ; « Recommencer avec le même style » ; historique des 8 dernières demandes (navigateur) ; styles favoris (★, en tête de liste, navigateur) ; légendes prêtes par réseau (Instagram, Facebook, LinkedIn, WhatsApp) ; texte alternatif proposé automatiquement (accessibilité), modifiable et copiable.
+
 Logo : le fichier officiel `assets/img/logo-melodia-complet.jpg` (1600 px) est posé par la console sur CHAQUE résultat, proportions d'origine, marges de sécurité (zones d'interface des stories comprises). Variante automatique selon la clarté de la zone : fond sombre → mode « écran » (le noir du fichier disparaît, le dessin reste exact) ; fond clair → pastille noire du fichier d'origine. Option : signature (« Chaque vie mérite sa chanson. » + MELODIA-FUNEBRE.FR) et « Ajouter un mot » (désactivé par défaut), écrits par la console, jamais par le moteur. Puis Télécharger / Partager / Garder dans Mes créations.
 
 Moteur : API à jeton d'Image MAX Gen (Hyper Engine) : `POST /api/image/tasks`, `POST /api/image/tasks/tick`, `GET /api/image/tasks/:id`. L'image est relayée par `/api/medias-generer?brut=` (même origine) pour que le logo puisse être posé et l'image exportée.

@@ -18,6 +18,14 @@ import { readFileSync } from 'fs';
 export const IDEES = JSON.parse(readFileSync('api/_medias-idees.json', 'utf8')).idees;
 const PAR_ID = Object.fromEntries(IDEES.map((i) => [i.id, i]));
 
+// Styles artistiques (aquarelle, cubisme doux, vitrail…) : le pré-prompt de chaque style reste ici, côté serveur.
+export const STYLES = JSON.parse(readFileSync('api/_medias-styles.json', 'utf8')).styles;
+const STYLE_ID = Object.fromEntries(STYLES.map((s) => [s.id, s]));
+
+/* Intensité du style : 1 léger, 2 marqué (par défaut), 3 affirmé. */
+export const INTENSITES = { 1: 'léger', 2: 'marqué', 3: 'affirmé' };
+export const VARIANTES = [1, 2, 4];
+
 export const FORMATS = {
   post: { label: 'Post (1:1)', ratio: '1:1', l: 1080, h: 1080 },
   story: { label: 'Story (9:16)', ratio: '9:16', l: 1080, h: 1920 },
@@ -25,6 +33,9 @@ export const FORMATS = {
 };
 
 /* L'enveloppe de style : ce qui fait « Melodia » sur les affiches approuvées. */
+/* Version courte de l'enveloppe quand un style artistique est choisi : on garde la palette et le ton, on laisse la technique au style. */
+export const STYLE_PALETTE = 'Mood: refined, dignified and calm image for a funeral music tribute brand. Palette leaning on deep warm blacks, ivory and soft gold, gold only as light and thin highlights. Quiet, contemplative, timeless.';
+
 export const STYLE = 'Style: refined, dignified and calm image for a funeral music tribute brand. Palette of deep warm blacks, ivory and soft gold; gold appears only as light, reflections and thin highlights, never as a flat fill. Soft directional light (candlelight, late-afternoon sun, dusk), gentle contrast, subtle film grain, painterly photographic finish. Noble textures: pale stone, dark wood, laid paper, linen, patinated brass, white flowers (lilies, roses). Quiet, contemplative, timeless.';
 
 /* Les interdits de sécurité, toujours ajoutés. */
@@ -44,13 +55,26 @@ export function lireChoix(corps) {
   if (texte.length < 3) return { ok: false, error: 'Décrivez votre image en quelques mots.' };
   if (MOTS_REFUSES.test(texte)) return { ok: false, error: 'Cette description ne convient pas à Melodia.' };
   const carte = PAR_ID[d.carte] ? d.carte : '';
-  return { ok: true, format, texte, carte };
+  const style = STYLE_ID[d.style] ? d.style : '';
+  const i = Math.round(Number(d.intensite));
+  const intensite = INTENSITES[i] ? i : 2;
+  const v = Math.round(Number(d.variantes));
+  const variantes = VARIANTES.indexOf(v) !== -1 ? v : 1;
+  return { ok: true, format, texte, carte, style, intensite, variantes };
 }
 
 export function composerDemande(c) {
   const morceaux = ['Image to create: ' + c.texte + '.'];
   if (c.carte && PAR_ID[c.carte]) morceaux.push('Visual direction: ' + PAR_ID[c.carte].prompt);
-  morceaux.push(STYLE);
+  const st = c.style && STYLE_ID[c.style];
+  if (st) {
+    const n = INTENSITES[c.intensite] ? c.intensite : 2;
+    if (n === 1) morceaux.push('Artistic style, applied lightly (a gentle touch of this medium over a calm, natural rendering): ' + st.prompt + '.', STYLE);
+    else if (n === 3) morceaux.push('Artistic style, fully affirmed (the whole image is clearly rendered in this medium and technique): ' + st.prompt + '.', STYLE_PALETTE);
+    else morceaux.push('Artistic style: ' + st.prompt + '.', STYLE_PALETTE);
+  } else {
+    morceaux.push(STYLE);
+  }
   if (c.format === 'banniere') morceaux.push('Composition: wide 16:9 frame, keep the upper-left area calm and uncluttered for a logo.');
   else if (c.format === 'story') morceaux.push('Composition: vertical 9:16 frame, keep the top fifth and bottom fifth calm and uncluttered for a logo and a caption.');
   else morceaux.push('Composition: square frame, keep the top centre calm and uncluttered for a logo.');

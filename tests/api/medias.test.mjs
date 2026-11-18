@@ -68,6 +68,47 @@ test('demande libre : texte exigé, enveloppe Melodia et interdits toujours pré
   assert.ok(M.composerDemande({ texte: 'x'.repeat(400), format: 'story', carte: 'dorees' }).length < 2000, 'sous la limite du moteur');
 });
 
+test('styles artistiques : 20 à 30, sobres, sans nom d’artiste, vignettes présentes, pré-prompt gardé côté serveur', () => {
+  assert.ok(M.STYLES.length >= 20 && M.STYLES.length <= 30, 'nombre de styles : ' + M.STYLES.length);
+  assert.equal(new Set(M.STYLES.map((s) => s.id)).size, M.STYLES.length);
+  const pub = JSON.parse(readFileSync(join(RACINE, 'assets/medias/medias.json'), 'utf8')).styles;
+  assert.deepEqual(pub.map((s) => s.id), M.STYLES.map((s) => s.id));
+  for (const s of M.STYLES) {
+    assert.ok(s.nom && s.prompt.length > 80, s.id);
+    assert.doesNotMatch(s.prompt, /\b(pop art|glitch|cyberpunk|cartoon|anime|manga|neon|vaporwave|graffiti|pixel)\b/i, 'style hors ton : ' + s.id);
+    // aucun nom d'artiste (vivant ou non) : des époques et des techniques seulement
+    assert.doesNotMatch(s.prompt, /\b(Monet|Picasso|Braque|Dali|Dalí|Magritte|Klimt|Mucha|Hokusai|Hiroshige|Rembrandt|Caravaggio|Turner|Friedrich|Seurat|Signac|Matisse|Van Gogh|Rossetti|Millais|Waterhouse|Redon|Moreau|Adams|Kahlo|Banksy|Rutkowski)\b/i, s.id);
+    const p = pub.find((x) => x.id === s.id);
+    assert.ok(!('prompt' in p), 'le pré-prompt reste côté serveur');
+    assert.equal(p.vignette, '/assets/medias/styles/' + s.id + '.webp');
+    const f = join(RACINE, p.vignette);
+    assert.ok(existsSync(f), 'vignette manquante : ' + p.vignette);
+    assert.ok(statSync(f).size < 80 * 1024, 'vignette légère : ' + p.vignette);
+  }
+});
+
+test('style, intensité et variantes : lus prudemment, interdits toujours présents', () => {
+  const base = { texte: 'des lys blancs', format: 'post' };
+  let c = M.lireChoix({ ...base, style: 'inconnu', intensite: 9, variantes: 3 });
+  assert.equal(c.style, ''); assert.equal(c.intensite, 2); assert.equal(c.variantes, 1);
+  const sans = M.composerDemande(c);
+  assert.match(sans, /painterly photographic finish/);
+  for (const s of M.STYLES) {
+    for (const n of [1, 2, 3]) {
+      c = M.lireChoix({ ...base, style: s.id, intensite: n, variantes: 4 });
+      assert.equal(c.style, s.id); assert.equal(c.intensite, n); assert.equal(c.variantes, 4);
+      const d = M.composerDemande(c);
+      assert.ok(d.includes(s.prompt), s.id);
+      assert.ok(d.includes(M.INTERDITS), 'interdits : ' + s.id);
+      assert.match(d, /ivory/);
+      assert.ok(d.length < 2000, 'sous la limite du moteur : ' + s.id);
+      if (n === 1) assert.match(d, /applied lightly/);
+      if (n === 3) assert.match(d, /fully affirmed/);
+    }
+  }
+  assert.equal(M.lireChoix({ ...base, variantes: '2' }).variantes, 2);
+});
+
 test('cartes d’idées : 10, complètes, pré-prompt ajouté seulement si la carte est choisie, identiques au catalogue public', () => {
   assert.equal(M.IDEES.length, 10);
   const pub = JSON.parse(readFileSync(join(RACINE, 'assets/medias/medias.json'), 'utf8')).idees;
@@ -106,18 +147,18 @@ test('interrupteur : éteint sans MEDIAS_GENERATION=true ET jeton', () => {
 let original, appels, role, moteur;
 beforeEach(() => {
   original = globalThis.fetch; appels = []; role = 'commercial';
-  moteur = { statut: 'done', url: 'https://cdn.moteur.test/img.png', bucket: true };
+  moteur = { statut: 'done', url: 'https://cdn.moteur.test/img.png', bucket: true, n: 1 };
   globalThis.fetch = async (url, init = {}) => {
     const u = new URL(String(url));
     appels.push({ u, init });
     const rep = (status, corps, type) => ({ ok: status < 300, status, headers: { get: () => type || 'application/json' },
       json: async () => corps, text: async () => JSON.stringify(corps), arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer });
-    if (u.pathname === '/auth/v1/user') return init.headers.Authorization === 'Bearer bon' ? rep(200, { email: 'julie@melodia.test' }) : rep(401, {});
-    if (u.pathname === '/rest/v1/roles') return rep(200, [{ email: 'julie@melodia.test', role }]);
+    if (u.pathname === '/auth/v1/user') return init.headers.Authorization === 'Bearer bon' ? rep(200, { email: moteur.email || 'julie@melodia.test' }) : rep(401, {});
+    if (u.pathname === '/rest/v1/roles') return rep(200, [{ email: moteur.email || 'julie@melodia.test', role }]);
     if (u.pathname === '/rest/v1/rpc/melodia_trop_souvent') return rep(404, 'PGRST202');
     if (u.host === 'hyper-engine.ai' && u.pathname === '/api/image/tasks') return rep(202, { ok: true, taskId: 'imt_0123456789ab', eta_s: 60 });
     if (u.host === 'hyper-engine.ai' && u.pathname === '/api/image/tasks/tick') return rep(200, { ok: true });
-    if (u.host === 'hyper-engine.ai') return rep(200, { status: moteur.statut, items: [{ status: moteur.statut, url: moteur.statut === 'done' ? moteur.url : null }] });
+    if (u.host === 'hyper-engine.ai') return rep(200, { status: moteur.statut, items: Array.from({ length: moteur.n }, (_, k) => ({ status: moteur.statut, url: moteur.statut === 'done' ? (k ? moteur.url.replace('img.png', 'img' + k + '.png') : moteur.url) : null })) });
     if (u.host === 'cdn.moteur.test') return rep(200, null, 'image/png');
     if (u.pathname.startsWith('/storage/v1/object/medias-commerciaux/')) return moteur.bucket ? rep(200, {}) : rep(404, { error: 'Bucket not found' });
     if (u.pathname === '/storage/v1/object/list/medias-commerciaux') return moteur.bucket ? rep(200, []) : rep(400, {});
@@ -168,6 +209,28 @@ test('route allumée : lance, plafonne, suit la tâche et range l’image', asyn
   moteur.statut = 'running';
   res = fausseReponse(); await route(req('GET', null, {}, { tache: 'imt_0123456789ab' }), res); assert.equal(res.corps.statut, 'en-cours');
   res = fausseReponse(); await route(req('GET', null, {}, { tache: '../x' }), res); assert.equal(res.statusCode, 400);
+});
+
+test('variantes : 4 images demandées au moteur, comptées dans le plafond, toutes rendues', async () => {
+  process.env.MEDIAS_GENERATION = 'true'; process.env.HYPER_ENGINE_IMAGE_TOKEN = 'imx_test'; process.env.MEDIAS_GENERATION_JOUR = '5';
+  moteur.email = 'variantes@melodia.test'; // un plafond neuf, propre à ce test
+  let res = fausseReponse(); await route(req('POST', { ...CHOIX, style: 'aquarelle', intensite: 3, variantes: 4 }), res);
+  assert.equal(res.statusCode, 202); assert.equal(res.corps.variantes, 4); assert.equal(res.corps.style, 'aquarelle');
+  const corps = JSON.parse(appels.find((a) => a.u.pathname === '/api/image/tasks').init.body);
+  assert.equal(corps.items.length, 4);
+  assert.match(corps.items[0].prompt, /watercolor/); assert.match(corps.items[0].prompt, /fully affirmed/);
+  res = fausseReponse(); await route(req('POST', { ...CHOIX, variantes: 2 }), res);
+  assert.equal(res.statusCode, 429, '4 + 2 dépasse le plafond de 5');
+  moteur.n = 4;
+  res = fausseReponse(); await route(req('GET', null, {}, { tache: 'imt_0123456789ab' }), res);
+  assert.equal(res.corps.statut, 'fait'); assert.equal(res.corps.images.length, 4);
+  assert.match(res.corps.images[3].url, /imt_0123456789ab-3\.png$/);
+  // ?brut=…&n=2 : la troisième variante
+  const vus = [];
+  const f = globalThis.fetch; globalThis.fetch = async (url, init) => { vus.push(String(url)); return f(url, init); };
+  res = fausseReponse(); res.send = (b) => { res.corps = b; return res; };
+  await route(req('GET', null, {}, { brut: 'imt_0123456789ab', n: '2' }), res);
+  assert.equal(res.statusCode, 200); assert.ok(vus.includes('https://cdn.moteur.test/img2.png'));
 });
 
 test('liste : sans origine (GET de même origine) acceptée, dit si la génération est active', async () => {

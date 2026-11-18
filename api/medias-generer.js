@@ -1,9 +1,10 @@
 // ═══════════════════════════════════════════════════════════════
 // /api/medias-generer — « Générer un visuel Melodia » (console commerciale)
 //
-// POST { texte, format, carte? }  → lance une image (202 { tache })
+// POST { texte, format, carte?, style?, intensite?, variantes? } → lance 1, 2 ou 4 images (202 { tache, variantes })
 // POST { garder: dataURL }         → range l'image COMPOSÉE (logo posé) dans « Mes créations »
-// GET  ?tache=imt_…                → avance et lit la tâche
+// GET  ?tache=imt_…                → avance et lit la tâche (une adresse par variante)
+// GET  ?brut=imt_…&n=0             → l'image brute d'une variante (même origine, pour poser le logo)
 // GET  ?liste=1                    → « Mes créations » rangées
 //
 // Réservé aux collaborateurs (rôle commercial ou master, relu en base).
@@ -153,21 +154,27 @@ export default async function handler(req, res) {
       });
     }
     const plafond = plafondJour(process.env);
-    if (await tropSouvent('medias-gen:' + qui.email, plafond, JOUR)) {
-      return res.status(429).json({ error: 'Plafond atteint : ' + plafond + ' visuels par 24 heures.', code: 'PLAFOND' });
+    // chaque variante compte pour un visuel dans le plafond
+    for (let k = 0; k < choix.variantes; k++) {
+      if (await tropSouvent('medias-gen:' + qui.email, plafond, JOUR)) {
+        return res.status(429).json({ error: 'Plafond atteint : ' + plafond + ' visuels par 24 heures.', code: 'PLAFOND' });
+      }
     }
     let r, d;
     try {
       r = await fetch(moteur() + '/api/image/tasks', {
         method: 'POST', headers: entetesMoteur(),
-        body: JSON.stringify({ title: 'Melodia · ' + (choix.carte || 'libre'), enrich: false, items: [{ prompt: demande, ratio: FORMATS[choix.format].ratio }] })
+        body: JSON.stringify({
+          title: 'Melodia · ' + (choix.style || choix.carte || 'libre'), enrich: false,
+          items: Array.from({ length: choix.variantes }, () => ({ prompt: demande, ratio: FORMATS[choix.format].ratio }))
+        })
       });
       d = await r.json().catch(() => ({}));
     } catch (e) {
       return res.status(502).json({ error: 'Le moteur d’images ne répond pas.', code: 'MOTEUR' });
     }
     if (!r.ok || !d.taskId) return res.status(502).json({ error: (d && (d.message || d.error)) || 'Le moteur d’images a refusé la demande.', code: 'MOTEUR', statut: r.status });
-    return res.status(202).json({ ok: true, tache: d.taskId, format: choix.format, eta: d.eta_s || 60 });
+    return res.status(202).json({ ok: true, tache: d.taskId, format: choix.format, style: choix.style, variantes: choix.variantes, eta: d.eta_s || 60 });
   }
 
   // GET ?brut=… : l'image du moteur, relayée ici (même origine), pour que la console puisse y poser le logo
@@ -178,7 +185,8 @@ export default async function handler(req, res) {
     try {
       const r = await fetch(moteur() + '/api/image/tasks/' + t, { headers: entetesMoteur() });
       const d = await r.json().catch(() => ({}));
-      const url = ((d.items || [])[0] || {}).url;
+      const n = Math.max(0, Math.min(3, Math.floor(Number(q.n) || 0)));
+      const url = ((d.items || [])[n] || {}).url;
       if (!r.ok || !url || !/^https:\/\//.test(url)) return res.status(404).json({ error: 'Image introuvable.', code: 'IMAGE' });
       const i = await fetch(url);
       const type = String(i.headers.get('content-type') || 'image/png').split(';')[0];
@@ -203,13 +211,24 @@ export default async function handler(req, res) {
     const r = await fetch(moteur() + '/api/image/tasks/' + tache, { headers: entetesMoteur() });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) return res.status(502).json({ error: d.error || 'Tâche illisible.', code: 'MOTEUR' });
-    const it = (d.items || [])[0] || {};
-    if (it.status === 'done' && it.url) {
-      const rangee = await rangerBrut(qui.email, tache, it.url).catch(() => null);
-      return res.status(200).json({ ok: true, statut: 'fait', url: rangee || it.url, stockage: Boolean(rangee) });
+    const items = (d.items || []).slice(0, 4);
+    const finis = (it) => it && (it.status === 'done' || it.status === 'failed' || it.status === 'cancelled');
+    if (!items.length) {
+      if (d.status === 'failed' || d.status === 'cancelled') return res.status(200).json({ ok: true, statut: 'echec', error: 'Génération impossible.' });
+      return res.status(200).json({ ok: true, statut: 'en-cours' });
     }
-    if (it.status === 'failed' || d.status === 'failed' || d.status === 'cancelled') return res.status(200).json({ ok: true, statut: 'echec', error: it.error || 'Génération impossible.' });
-    return res.status(200).json({ ok: true, statut: 'en-cours' });
+    if (!items.every(finis) && d.status !== 'failed' && d.status !== 'cancelled') {
+      return res.status(200).json({ ok: true, statut: 'en-cours', faites: items.filter((it) => it.status === 'done').length, total: items.length });
+    }
+    const urls = [];
+    for (let k = 0; k < items.length; k++) {
+      const it = items[k];
+      if (it.status !== 'done' || !it.url) continue;
+      const rangee = await rangerBrut(qui.email, k ? tache + '-' + k : tache, it.url).catch(() => null);
+      urls.push({ n: k, url: rangee || it.url, stockage: Boolean(rangee) });
+    }
+    if (!urls.length) return res.status(200).json({ ok: true, statut: 'echec', error: (items[0] && items[0].error) || 'Génération impossible.' });
+    return res.status(200).json({ ok: true, statut: 'fait', url: urls[0].url, stockage: urls[0].stockage, images: urls });
   } catch (e) {
     return res.status(502).json({ error: 'Le moteur d’images ne répond pas.', code: 'MOTEUR' });
   }
