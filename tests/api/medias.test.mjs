@@ -64,7 +64,7 @@ test('demande libre : texte exigé, enveloppe Melodia et interdits toujours pré
   assert.match(d, /realistic faces of children/);
   assert.match(d, /coffin/);
   assert.match(d, /neon, glitter/);
-  assert.match(d, /upper-left area calm/);
+  assert.match(d, /Reserved logo zone: the upper-left corner/);
   assert.ok(M.composerDemande({ texte: 'x'.repeat(400), format: 'story', carte: 'dorees' }).length < 2000, 'sous la limite du moteur');
 });
 
