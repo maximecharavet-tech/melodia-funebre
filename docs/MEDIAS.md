@@ -46,7 +46,7 @@ Moteur : API à jeton d'Image MAX Gen (Hyper Engine) : `POST /api/image/tasks`, 
 | `MEDIAS_GENERATION` | `true` |
 | `HYPER_ENGINE_IMAGE_TOKEN` | jeton créé par Maxime sur hyper-engine.ai : `POST /api/image/tokens {"label":"Melodia","dailyMax":30}` (affiché une seule fois) |
 | `MEDIAS_GENERATION_JOUR` | facultatif, plafond par collaborateur et par 24 h (défaut 10, max 50) |
-| `HYPER_ENGINE_URL` | facultatif (défaut `https://hyper-engine.ai`) |
+| `HYPER_ENGINE_URL` | facultatif (défaut `https://www.hyper-engine.ai` : l’apex redirige et ferait perdre le jeton) |
 
 Côté Hyper Engine : la migration `0102_image_studio.sql` doit être appliquée (sinon 503 `schema_missing`) et le pare-feu Vercel doit laisser passer `/api/image/tasks*` (le « Security Checkpoint » répond aujourd'hui à un client automatique).
 
