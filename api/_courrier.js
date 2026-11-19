@@ -204,14 +204,31 @@ function ligneEcoute(l) {
    « STOP » à une famille qui attend l'hommage de son père serait
    déplacé, et juridiquement inutile puisqu'il s'agit d'un message
    attaché à l'exécution du contrat. */
+/* ─── Liens vers le site, dans le texte ───
+   Une adresse melodia-funebre.fr écrite dans le corps (brochure, site,
+   espace des agences) devient un lien sobre : or patiné, souligné fin,
+   adresse affichée sans « https:// ». Le texte brut garde l'adresse
+   entière. S'applique à un texte DÉJÀ échappé. */
+const RE_LIEN_SITE = /https:\/\/(?:www\.)?melodia-funebre\.fr(?:\/[^\s<>"']*)?/g;
+export function lierSite(htmlEchappe, couleur) {
+  return String(htmlEchappe || '').replace(RE_LIEN_SITE, (u) => {
+    const fin = u.match(/[.,;:!?)]+$/);
+    const url = fin ? u.slice(0, -fin[0].length) : u;
+    // affichée sans « https:// » ni paramètres (?parrain=…) : le lien, lui, les garde
+    const vu = url.replace(/^https:\/\/(?:www\.)?/, '').replace(/[?#].*$/, '').replace(/\/$/, '');
+    return '<a href="' + url + '" target="_blank" style="color:' + (couleur || '#806a30') + ';text-decoration:underline;' +
+      'text-decoration-thickness:1px;text-underline-offset:3px;word-break:break-word;">' + vu + '</a>' + (fin ? fin[0] : '');
+  });
+}
+
 function paragrapheSimple(t) {
   if (/^[·•-]\s/m.test(t)) {
     const items = t.split('\n').map((l) => l.replace(/^[·•-]\s*/, '').trim()).filter(Boolean);
     return '<ul style="margin:0 0 18px;padding-left:20px;color:#3d3a33;font-size:15px;line-height:1.7;">' +
-      items.map((i) => '<li style="margin-bottom:6px;">' + echapper(i) + '</li>').join('') + '</ul>';
+      items.map((i) => '<li style="margin-bottom:6px;">' + lierSite(echapper(i)) + '</li>').join('') + '</ul>';
   }
   return '<p style="margin:0 0 18px;color:#3d3a33;font-size:15px;line-height:1.7;">' +
-    echapper(t).replace(/\n/g, '<br>') + '</p>';
+    lierSite(echapper(t)).replace(/\n/g, '<br>') + '</p>';
 }
 
 /* Un paragraphe dont certaines lignes sont des liens d'écoute : le texte
@@ -240,10 +257,10 @@ export function gabarit(o) {
       if (/^[·•-]\s/m.test(t)) {
         const items = t.split('\n').map((l) => l.replace(/^[·•-]\s*/, '').trim()).filter(Boolean);
         return '<ul style="margin:0 0 18px;padding-left:20px;color:#3d3a33;font-size:15px;line-height:1.7;">' +
-          items.map((i) => '<li style="margin-bottom:6px;">' + echapper(i) + '</li>').join('') + '</ul>';
+          items.map((i) => '<li style="margin-bottom:6px;">' + lierSite(echapper(i)) + '</li>').join('') + '</ul>';
       }
       return '<p style="margin:0 0 18px;color:#3d3a33;font-size:15px;line-height:1.7;">' +
-        echapper(t).replace(/\n/g, '<br>') + '</p>';
+        lierSite(echapper(t)).replace(/\n/g, '<br>') + '</p>';
     }).join('');
 
   const bouton = o.lienTexte && o.lienUrl && o.cartesEcoute && estLienEcoute(o.lienUrl)
@@ -254,7 +271,9 @@ export function gabarit(o) {
       '<a href="' + echapper(o.lienUrl) + '" style="display:inline-block;padding:13px 26px;' +
       'font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:1.6px;text-transform:uppercase;' +
       'color:#1a1408;text-decoration:none;font-weight:600;">' + echapper(o.lienTexte) + '</a>' +
-      '</td></tr></table>'
+      '</td></tr></table>' +
+      (o.pied !== 'prospection' ? '' : '<p style="margin:10px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#8b8474;">' +
+      'Si le bouton ne s’affiche pas : ' + lierSite(echapper(o.lienUrl)) + '</p>')
     : '';
 
   /* Encadré de rappel : référence de commande, offre, prénom du défunt.
@@ -315,8 +334,8 @@ export function gabarit(o) {
     <tr><td style="height:3px;background:linear-gradient(90deg,#97803c,#e3c977,#97803c);font-size:0;line-height:0;">&nbsp;</td></tr>
 
     ${o.visuel && /^\/assets\/img\/(?:courriel|campagne)\/[a-z0-9-]+\.jpg$/i.test(o.visuel) ? `<tr><td style="padding:0;line-height:0;font-size:0;">
-      <img src="${SITE}${o.visuel}" width="600" alt="${echapper(o.visuelAlt || 'Melodia Funèbre')}"
-           style="display:block;width:100%;max-width:600px;height:auto;border:0;color:#5c5749;font-family:Georgia,serif;font-size:16px;line-height:1.4;">
+      <a href="${echapper(o.lienUrl || SITE)}" target="_blank" style="text-decoration:none;"><img src="${SITE}${o.visuel}" width="600" alt="${echapper(o.visuelAlt || 'Melodia Funèbre')}"
+           style="display:block;width:100%;max-width:600px;height:auto;border:0;color:#5c5749;font-family:Georgia,serif;font-size:16px;line-height:1.4;"></a>
     </td></tr>` : ''}
 
     <!-- Corps -->

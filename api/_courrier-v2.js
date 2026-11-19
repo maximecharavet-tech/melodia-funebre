@@ -35,7 +35,8 @@ import {
   SITE,
   echapper,
   carteVisite,
-  DISQUE_OR
+  DISQUE_OR,
+  lierSite
 } from './_courrier.js';
 import { htmlPiedProspection } from './_desabonnement.js';
 
@@ -154,7 +155,7 @@ function layoutLettre(o) {
   var texte = String(o.texte || '').split(/\n{2,}/).map(function (para) {
     return '<p style="margin:0 0 14px;font-family:Georgia,\'Times New Roman\',serif;' +
       'font-size:16px;line-height:1.6;color:#17150f;">' +
-      esc(para).replace(/\n/g, '<br>') +
+      lierSite(esc(para)).replace(/\n/g, '<br>') +
     '</p>';
   }).join('');
 
@@ -162,6 +163,7 @@ function layoutLettre(o) {
   if (o.lienUrl && o.lienTexte) {
     bouton = '<div style="margin:24px 0 8px;">' +
       boutonBulletproof({ texte: o.lienTexte, url: o.lienUrl, bg: '#c9a84c', fg: '#040407' }) +
+    '<p style="margin:10px 0 0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:#8e8878;">Si le bouton ne s’affiche pas : ' + lierSite(esc(o.lienUrl)) + '</p>' +
     '</div>';
   }
 
@@ -200,7 +202,7 @@ function layoutEditorial(o) {
   var texte = String(o.texte || '').split(/\n{2,}/).map(function (para) {
     return '<p style="margin:0 0 14px;font-family:Arial,sans-serif;font-size:15px;' +
       'line-height:1.65;color:#c4bba6;">' +
-      esc(para).replace(/\n/g, '<br>') +
+      lierSite(esc(para), '#e3c977').replace(/\n/g, '<br>') +
     '</p>';
   }).join('');
 
@@ -218,6 +220,7 @@ function layoutEditorial(o) {
   if (o.lienUrl && o.lienTexte) {
     bouton = '<div style="margin:26px 0 4px;">' +
       boutonBulletproof({ texte: o.lienTexte, url: o.lienUrl, bg: '#e3c977', fg: '#040407' }) +
+    '<p style="margin:10px 0 0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:#8e8878;">Si le bouton ne s’affiche pas : ' + lierSite(esc(o.lienUrl), '#e3c977') + '</p>' +
     '</div>';
   }
 
@@ -259,7 +262,7 @@ function layoutCarte(o) {
   var texte = String(o.texte || '').split(/\n{2,}/).map(function (para) {
     return '<p style="margin:0 0 14px;font-family:Georgia,\'Times New Roman\',serif;' +
       'font-size:16px;line-height:1.65;color:#17150f;">' +
-      esc(para).replace(/\n/g, '<br>') +
+      lierSite(esc(para)).replace(/\n/g, '<br>') +
     '</p>';
   }).join('');
 
@@ -277,6 +280,7 @@ function layoutCarte(o) {
   if (o.lienUrl && o.lienTexte) {
     bouton = '<div style="margin:22px 0 4px;">' +
       boutonBulletproof({ texte: o.lienTexte, url: o.lienUrl, bg: '#c9a84c', fg: '#040407' }) +
+    '<p style="margin:10px 0 0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:#8e8878;">Si le bouton ne s’affiche pas : ' + lierSite(esc(o.lienUrl)) + '</p>' +
     '</div>';
   }
 
