@@ -457,12 +457,13 @@
   }
 
   /* ─── Les cinq espaces du menu ───────────────────────────────────── */
+  /* Le menu tel que Julie le connaît (avant le 18/11), les vues nouvelles rangées dedans. */
   var ESPACES = [
-    { titre: 'Aujourd’hui', vues: ['journee', 'appels', 'relances', 'rappels', 'agenda'] },
-    { titre: 'Prospects', vues: ['pipeline', 'prospects', 'partenaires', 'recherche', 'import'] },
-    { titre: 'Écrire', vues: ['composer', 'pret', 'lot', 'sequences', 'suivi', 'mails', 'modeles', 'boite', 'messagerie'] },
-    { titre: 'Ressources', vues: ['playbook', 'ecoute', 'medias', 'kit', 'catalogue', 'traditions', 'faq', 'social', 'posts', 'plan', 'atelier', 'checklist'] },
-    { titre: 'Mon poste', vues: ['resultats', 'accueil', 'analyse', 'simulateur', 'profil', 'julie', 'compte'] }
+    { titre: 'Aujourd’hui', vues: ['journee', 'appels', 'pipeline', 'composer', 'sequences', 'suivi', 'envoyes', 'import'] },
+    { titre: 'Mon espace', vues: ['profil', 'julie', 'atelier', 'mails', 'pret', 'lot'] },
+    { titre: 'Prospection', vues: ['accueil', 'relances', 'recherche', 'prospects', 'partenaires', 'resultats'] },
+    { titre: 'Ma boîte à outils', vues: ['playbook', 'modeles', 'boite', 'compte', 'plan', 'traditions'] },
+    { titre: 'La maison', vues: ['agenda', 'messagerie', 'catalogue', 'social', 'posts', 'kit', 'medias', 'ecoute', 'faq', 'rappels', 'checklist', 'analyse', 'simulateur'] }
   ];
 
   return {

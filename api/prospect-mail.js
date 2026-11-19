@@ -624,7 +624,7 @@ export default async function handler(req, res) {
     try {
       const url = SB_URL + '/rest/v1/envois_prospect?select=id,destinataire,sujet,modele,mode,societe,piece_jointe,resend_id,statut,ouvert_nb,clique_nb,envoye_le,delivre_le,ouvert_le,clique_le,rejete_le,dernier_evenement' +
         '&collaborateur=eq.' + encodeURIComponent(qui.email) + '&statut=neq.echec' +
-        '&order=envoye_le.desc&limit=80';
+        '&order=envoye_le.desc&limit=' + Math.min(Math.max(parseInt(d.limite, 10) || 80, 1), 500);
       const r = await fetch(url, { headers: service });
       if (!r.ok) {
         const texte = await r.text();
