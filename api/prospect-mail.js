@@ -744,7 +744,8 @@ export default async function handler(req, res) {
       to: [e.to],
       subject: e.sujet,
       html: habiller(e, sig),
-      text: e.texte + '\n\n—\n' + sig.nom + (sig.role ? '\n' + sig.role : '') + '\n' + qui.email + '\n' + SITE +
+      /* Le lien du bouton, en clair aussi : le texte brut n'avait que l'adresse du site en pied. */
+      text: e.texte + ((e.lienUrl || lien.lienUrl) ? '\n\n' + ((e.lienTexte || lien.lienTexte) ? (e.lienTexte || lien.lienTexte) + ' : ' : '') + (e.lienUrl || lien.lienUrl) : '') + '\n\n—\n' + sig.nom + (sig.role ? '\n' + sig.role : '') + '\n' + qui.email + '\n' + SITE +
             (brochures.length ? '\nBrochures :\n' + brochures.map((b) => b.label + ' : ' + liensBrochure[b.id]).join('\n') : '') +
             '\n\n' + textePiedProspection(unsub),
       reply_to: qui.email,

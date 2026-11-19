@@ -16,13 +16,13 @@
       "pied": "prospection",
       "reseaux": true,
       "bouton": {
-        "texte": "Voir le partenariat",
-        "url": "https://melodia-funebre.fr/professionnels?parrain=julie-serve"
+        "texte": "Découvrir Melodia Funèbre",
+        "url": "https://melodia-funebre.fr/?parrain=julie-serve"
       },
       "objet": "Une chanson pour les familles de {agence}",
       "objetNu": "Une chanson originale pour vos familles",
       "titre": "Vous proposez, nous composons",
-      "texte": "Bonjour{civilite},\n\n{accroche}\n\nJe suis Julie Serve, de Melodia Funèbre. Je vous écris pour {agence}{ville_rel}, sans rien vous demander dans l’instant.\n\nAux obsèques, la musique n’a presque jamais connu le défunt. Nous composons, pour chaque personne, une chanson originale à partir de ce que la famille raconte. Elle est livrée en vingt-quatre heures, diffusable pendant la cérémonie, sans droit SACEM, et conservée par la famille — avec une page hommage et son QR code.\n\nPour {agence} :\n\n· vous conservez 60 % du montant, soit 179 € nets sur une offre Prestige à 299 €\n· aucun investissement, aucun stock, aucune charge technique\n· la première composition est offerte, pour que vous jugiez devant une famille\n\nLa brochure professionnelle est jointe à ce courriel. Vous pouvez aussi la consulter ici :\n{lien_brochure}\n\nSeriez-vous disponible quelques minutes cette semaine ?"
+      "texte": "Bonjour{civilite},\n\n{accroche}\n\nJe suis Julie Serve, de Melodia Funèbre. Je vous écris pour {agence}{ville_rel}, sans rien vous demander dans l’instant.\n\nAux obsèques, la musique n’a presque jamais connu le défunt. Nous composons, pour chaque personne, une chanson originale à partir de ce que la famille raconte. Elle est livrée en vingt-quatre heures, diffusable pendant la cérémonie, sans droit SACEM, et conservée par la famille — avec une page hommage et son QR code.\n\nPour {agence} :\n\n· vous conservez 60 % du montant, soit 179 € nets sur une offre Prestige à 299 €\n· aucun investissement, aucun stock, aucune charge technique\n· la première composition est offerte, pour que vous jugiez devant une famille\n\nLa brochure professionnelle est jointe à ce courriel. Vous pouvez aussi la consulter ici :\n{lien_brochure}\n\nLe site, pour voir et écouter ce que reçoivent les familles :\nhttps://melodia-funebre.fr\nLes conditions réservées aux agences :\nhttps://melodia-funebre.fr/professionnels\n\nSeriez-vous disponible quelques minutes cette semaine ?"
     },
     {
       "id": "pf-relance-j4",
@@ -40,7 +40,7 @@
       "objet": "Je me permets de revenir — {agence}",
       "objetNu": "Je me permets de revenir vers vous",
       "titre": "Un mot, sans insister",
-      "texte": "Bonjour{civilite},\n\nJe vous avais écrit au sujet d’un hommage musical original pour les familles de {agence}{ville_rel}. Je me permets de revenir une fois, calmement.\n\nSi le moment n’est pas le bon, vous n’avez rien à faire. Si vous voulez seulement entendre de quoi il s’agit, le catalogue est public : ce sont des exemples, pas des commandes en cours.\n\nLa première composition reste offerte, dans les mêmes conditions. La brochure est jointe à ce courriel :\n{lien_brochure}\n\nJe reste disponible si un échange court vous est utile."
+      "texte": "Bonjour{civilite},\n\nJe vous avais écrit au sujet d’un hommage musical original pour les familles de {agence}{ville_rel}. Je me permets de revenir une fois, calmement.\n\nSi le moment n’est pas le bon, vous n’avez rien à faire. Si vous voulez seulement entendre de quoi il s’agit, le catalogue est public : ce sont des exemples, pas des commandes en cours.\n\nLe site est ouvert, sans inscription :\nhttps://melodia-funebre.fr\n\nLa première composition reste offerte, dans les mêmes conditions. La brochure est jointe à ce courriel :\n{lien_brochure}\n\nJe reste disponible si un échange court vous est utile."
     },
     {
       "id": "pf-relance-j10",
@@ -58,7 +58,7 @@
       "objet": "Dernier message — {agence}",
       "objetNu": "Dernier message, puis je m’arrête",
       "titre": "Je vous laisse le choix",
-      "texte": "Bonjour{civilite},\n\nC’est mon dernier message à ce sujet, pour {agence}{ville_rel}. Après celui-ci, je ne reviendrai pas, sauf si vous me le demandez.\n\nSi un échange de quelques minutes vous est utile, je suis disponible. Si cela ne vous concerne pas, répondez simplement STOP : votre adresse est retirée, et je n’insiste pas.\n\nLa brochure reste à votre disposition :\n{lien_brochure}"
+      "texte": "Bonjour{civilite},\n\nC’est mon dernier message à ce sujet, pour {agence}{ville_rel}. Après celui-ci, je ne reviendrai pas, sauf si vous me le demandez.\n\nSi un échange de quelques minutes vous est utile, je suis disponible. Si cela ne vous concerne pas, répondez simplement STOP : votre adresse est retirée, et je n’insiste pas.\n\nLa brochure reste à votre disposition :\n{lien_brochure}\n\nEt le site, si vous souhaitez y revenir un jour :\nhttps://melodia-funebre.fr"
     },
     {
       "id": "pf-apres-appel",
