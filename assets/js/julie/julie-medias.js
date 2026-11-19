@@ -374,13 +374,22 @@
      or est posé en mode « écran » (son noir disparaît, le dessin reste
      exact) ; sur fond clair, il est posé sur sa propre pastille noire,
      comme le fichier d'origine, pour rester lisible. */
-  function clarte(x, bx, by, bw, bh) {
+  function clarte(x, bx, by, bw, bh) { return analyser(x, bx, by, bw, bh).moy; }
+  /* Ce qu'il y a sous le logo : clarté moyenne, clarté des points les plus clairs (95e centile),
+     part de points clairs et agitation (écart type). Toile illisible : fond Melodia supposé sombre et calme. */
+  function analyser(x, bx, by, bw, bh) {
     try {
       var d = x.getImageData(Math.max(0, bx | 0), Math.max(0, by | 0), Math.max(1, bw | 0), Math.max(1, bh | 0)).data;
-      var t = 0, n = 0;
-      for (var i = 0; i < d.length; i += 16) { t += (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255; n++; }
-      return n ? t / n : 0;
-    } catch (e) { return 0; } // toile illisible : fond Melodia supposé sombre
+      var l = [], t = 0, t2 = 0, clairs = 0;
+      for (var i = 0; i < d.length; i += 16) {
+        var v = (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255;
+        l.push(v); t += v; t2 += v * v; if (v > 0.3) clairs++;
+      }
+      if (!l.length) return { moy: 0, p95: 0, clairs: 0, ecart: 0 };
+      l.sort(function (u, w) { return u - w; });
+      var m = t / l.length;
+      return { moy: m, p95: l[Math.min(l.length - 1, Math.floor(l.length * 0.95))], clairs: clairs / l.length, ecart: Math.sqrt(Math.max(0, t2 / l.length - m * m)) };
+    } catch (e) { return { moy: 0, p95: 0, clairs: 0, ecart: 0 }; }
   }
   function placeLogo(W, H, ou, format) {
     var story = H / W > 1.5, large = W / H > 1.5;
@@ -392,31 +401,83 @@
     var y0 = ou === 'bas' ? H - bas - t : haut;
     return { x: x0, y: y0, t: t };
   }
+  /* Voile doux (ellipse) sous le logo : plein au centre, fondu vers les bords, jamais de bord net. */
+  function voile(x, cx, cy, rx, ry, couleur, a) {
+    x.save();
+    x.translate(cx, cy); x.scale(1, ry / rx);
+    var g = x.createRadialGradient(0, 0, 0, 0, 0, rx);
+    g.addColorStop(0, 'rgba(' + couleur + ',' + a + ')');
+    g.addColorStop(0.62, 'rgba(' + couleur + ',' + a + ')');
+    g.addColorStop(0.84, 'rgba(' + couleur + ',' + (a * 0.4).toFixed(3) + ')');
+    g.addColorStop(1, 'rgba(' + couleur + ',0)');
+    x.fillStyle = g; x.fillRect(-rx, -rx, rx * 2, rx * 2);
+    x.restore();
+  }
+  /* En mode « écran », le fond presque noir du fichier (halo sombre de 1 à 14/255) éclaircirait la zone en un carré
+     à peine visible. On en fait une copie dont seul ce fond est ramené au noir pur (point noir), les ors
+     étant remis à leur valeur par la même règle : le dessin, ses couleurs et ses proportions ne changent pas. */
+  var logoEcranCache = null;
+  function logoEcran(logo) {
+    if (logoEcranCache && logoEcranCache.src === logo) return logoEcranCache.cv;
+    try {
+      var cv = document.createElement('canvas'); cv.width = logo.naturalWidth; cv.height = logo.naturalHeight;
+      var c = cv.getContext('2d'); c.drawImage(logo, 0, 0);
+      var im = c.getImageData(0, 0, cv.width, cv.height), d = im.data, k = 14, f = 255 / (255 - k);
+      for (var i = 0; i < d.length; i += 4) {
+        d[i] = Math.max(0, d[i] - k) * f; d[i + 1] = Math.max(0, d[i + 1] - k) * f; d[i + 2] = Math.max(0, d[i + 2] - k) * f;
+      }
+      c.putImageData(im, 0, 0);
+      logoEcranCache = { src: logo, cv: cv };
+      return cv;
+    } catch (e) { return logo; } // toile protégée : le fichier tel quel
+  }
+  var SEUIL_CLAIR = 0.42;
+  var PART_CLAIRS_MAX = 0.25;
+  var SEUIL_SOMBRE = 0.3;      // en dessous : toujours « écran » (avec voile si besoin), jamais de pastille sur une image sombre      // au-delà : fond clair, pastille noire d'origine
+  var NOIR_VISE = 0.05;        // sous le logo « écran », les points clairs ne doivent pas dépasser cette clarté
   function poserLogo(x, W, H, logo, ou, format) {
     var p = placeLogo(W, H, ou, format);
     var ratio = logo.naturalHeight / logo.naturalWidth || 1;
     var l = p.t, h = Math.round(p.t * ratio);
-    var c = clarte(x, p.x, p.y, l, h);
+    var cx = p.x + l / 2, cy = p.y + h / 2;
+    var a0 = analyser(x, p.x, p.y, l, h);
+    var agite = a0.p95 > 0.16 || a0.ecart > 0.07 || a0.clairs > 0.02;
+    var voileA = 0;
     x.save();
     x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
-    if (c < 0.42) {
-      // fond sombre : un léger voile sous le logo pour la lisibilité, puis le logo en « écran »
-      var g = x.createRadialGradient(p.x + l / 2, p.y + h / 2, l * 0.1, p.x + l / 2, p.y + h / 2, l * 0.7);
-      g.addColorStop(0, 'rgba(4,4,7,0.55)'); g.addColorStop(1, 'rgba(4,4,7,0)');
-      x.fillStyle = g; x.fillRect(p.x - l * 0.3, p.y - h * 0.3, l * 1.6, h * 1.6);
+    // « écran » seulement si le fond est sombre ET surtout sombre : un fond coloré et clair par endroits
+    // (plus d'un quart de points clairs) reçoit la pastille d'origine, plus nette qu'un grand voile ;
+    // le halo ivoire n'est mis que sur une image claire.
+    var ecran = a0.moy < SEUIL_SOMBRE || (a0.moy < SEUIL_CLAIR && a0.clairs < PART_CLAIRS_MAX);
+    if (ecran) {
+      // fond sombre : logo or en « écran » (son noir disparaît). Tout point clair dessous traverserait le
+      // dessin (pétale derrière le « F ») : on assombrit doucement la zone jusqu'à un noir presque pur.
+      voileA = agite ? Math.min(0.97, Math.max(0.7, 1 - NOIR_VISE / Math.max(a0.p95, 0.01))) : 0.55;
+      voile(x, cx, cy, l * 0.95, h * 0.95, '4,4,7', voileA);
+      var a1 = analyser(x, p.x + l * 0.08, p.y + h * 0.08, l * 0.84, h * 0.84);
+      if (a1.p95 > NOIR_VISE * 1.6) { // encore des reflets : seconde passe, plus serrée
+        voile(x, cx, cy, l * 0.8, h * 0.8, '4,4,7', Math.min(0.92, 1 - NOIR_VISE / Math.max(a1.p95, 0.01)));
+        voileA = Math.min(0.99, voileA + 0.3);
+      }
       x.globalCompositeOperation = 'screen';
-      x.drawImage(logo, p.x, p.y, l, h);
+      x.drawImage(logoEcran(logo), p.x, p.y, l, h);
     } else {
-      // fond clair : pastille noire du fichier d'origine
+      // fond clair : pastille noire du fichier d'origine (logo exact, dessin et fond d'origine).
+      // Sur un fond chargé, un halo ivoire doux détache la pastille ; sinon une ombre légère suffit.
+      if (agite && a0.moy >= SEUIL_CLAIR) { voile(x, cx, cy, l * 0.82, h * 0.82, '244,241,234', 0.75); voileA = 0.75; }
       var r = Math.round(l * 0.12);
+      x.save();
+      x.shadowColor = 'rgba(0,0,0,.28)'; x.shadowBlur = Math.round(l * 0.06); x.shadowOffsetY = Math.round(l * 0.012);
+      x.fillStyle = '#040407';
+      x.beginPath(); if (x.roundRect) x.roundRect(p.x, p.y, l, h, r); else x.rect(p.x, p.y, l, h); x.fill();
+      x.restore();
       x.beginPath();
       if (x.roundRect) x.roundRect(p.x, p.y, l, h, r); else x.rect(p.x, p.y, l, h);
       x.closePath(); x.clip();
-      x.fillStyle = '#040407'; x.fillRect(p.x, p.y, l, h);
       x.drawImage(logo, p.x, p.y, l, h);
     }
     x.restore();
-    return { x: p.x, y: p.y, l: l, h: h, variante: c < 0.42 ? 'clair' : 'sombre' };
+    return { x: p.x, y: p.y, l: l, h: h, variante: ecran ? 'clair' : 'sombre', voile: Number(voileA.toFixed(2)), agite: agite, mesure: { moy: +a0.moy.toFixed(3), p95: +a0.p95.toFixed(3), clairs: +a0.clairs.toFixed(3), ecart: +a0.ecart.toFixed(3) } };
   }
 
   /* Le visuel final d'une génération : image en plein cadre, logo, mot, signature. */
@@ -768,7 +829,7 @@
     });
   }
 
-  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, composer: composer, poserLogo: poserLogo, placeLogo: placeLogo, resultat: resultat, choisirVariante: choisirVariante, legende: legende, texteAlt: texteAlt, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
+  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, composer: composer, poserLogo: poserLogo, placeLogo: placeLogo, analyser: analyser, resultat: resultat, choisirVariante: choisirVariante, legende: legende, texteAlt: texteAlt, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
 
   window.MelodiaConsole.ajouterVue('medias', ['Ressources', 'Mes <em>médias</em>', function () { etat.charge = false; return vue(); }, brancher]);
   var hv = (location.hash || '').replace(/^#/, '').split('?')[0];
