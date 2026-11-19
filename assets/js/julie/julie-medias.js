@@ -480,30 +480,142 @@
     return { x: p.x, y: p.y, l: l, h: h, variante: ecran ? 'clair' : 'sombre', voile: Number(voileA.toFixed(2)), agite: agite, mesure: { moy: +a0.moy.toFixed(3), p95: +a0.p95.toFixed(3), clairs: +a0.clairs.toFixed(3), ecart: +a0.ecart.toFixed(3) } };
   }
 
-  /* Le visuel final d'une génération : image en plein cadre, logo, mot, signature. */
+  /* ─── Visuel final d'une génération (v2 : « bandeau ») ──────────────
+     Le moteur d'images n'obéit pas toujours à la consigne « zone du logo vide ».
+     On ne lui demande donc plus rien de certain : la scène est posée SOUS un
+     bandeau uni (en haut pour le post et la story, à gauche pour la bannière),
+     de la teinte sombre de la scène elle-même, fondu en dégradé sur toute la
+     largeur. Le logo officiel est posé sur ce fond uni : rien derrière lui,
+     jamais de voile local. Le pied (mot, devise, adresse) repose de même sur
+     un fond uni, ce qui efface aussi les faux sigles que le moteur dessine
+     parfois en bas d'image. */
+  var TON_DEFAUT = { r: 4, g: 4, b: 7, lum: 0.016, sombre: true };
+  function lumDe(r, g, b) { return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; }
+  /* L'image réduite en petit (lecture rapide) : pixels RGBA, ou null si la toile est protégée. */
+  function petite(img, n) {
+    try {
+      var k = n / Math.max(img.width, img.height), w = Math.max(8, Math.round(img.width * k)), h = Math.max(8, Math.round(img.height * k));
+      var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      var c = cv.getContext('2d'); c.drawImage(img, 0, 0, w, h);
+      return { w: w, h: h, d: c.getImageData(0, 0, w, h).data };
+    } catch (e) { return null; }
+  }
+  /* Teinte du fond de la scène : médiane des points les plus sombres de ses bords (haut, côtés). */
+  function tonScene(px) {
+    if (!px) return TON_DEFAUT;
+    var l = [];
+    for (var y = 0; y < px.h; y++) for (var x = 0; x < px.w; x++) {
+      if (y > px.h * 0.18 && x > px.w * 0.1 && x < px.w * 0.9) continue;
+      var i = (y * px.w + x) * 4; l.push([lumDe(px.d[i], px.d[i + 1], px.d[i + 2]), px.d[i], px.d[i + 1], px.d[i + 2]]);
+    }
+    if (!l.length) return TON_DEFAUT;
+    l.sort(function (u, v) { return u[0] - v[0]; });
+    var m = l[Math.floor(l.length * 0.3)];
+    if (m[0] < SEUIL_CLAIR) {
+      // fond sombre : la teinte de la scène, ramenée assez bas pour que l'or du logo chante (≤ 6 %)
+      var f = m[0] > 0.06 ? 0.06 / m[0] : 1;
+      return { r: Math.round(m[1] * f), g: Math.round(m[2] * f), b: Math.round(m[3] * f), lum: m[0] * f, sombre: true };
+    }
+    return { r: m[1], g: m[2], b: m[3], lum: m[0], sombre: false };
+  }
+  /* Où commence le sujet : première ligne (dans le tiers central, sous le logo) et première colonne
+     (dans la hauteur centrale, à côté du logo) qui s'écartent nettement du fond. */
+  function bordsSujet(px, ton) {
+    if (!px) return { haut: 0.2, gauche: 0.2, bas: 0.9 };
+    function ecarte(x, y) { var i = (y * px.w + x) * 4; return Math.abs(lumDe(px.d[i], px.d[i + 1], px.d[i + 2]) - ton.lum) > 0.25; }
+    var x, y, n, x0 = Math.floor(px.w * 0.35), x1 = Math.ceil(px.w * 0.65), y0 = Math.floor(px.h * 0.15), y1 = Math.ceil(px.h * 0.85);
+    for (y = 0; y < px.h; y++) { n = 0; for (x = x0; x < x1; x++) if (ecarte(x, y)) n++; if (n / (x1 - x0) > 0.04) break; }
+    var haut = y / px.h;
+    for (x = 0; x < px.w; x++) { n = 0; for (y = y0; y < y1; y++) if (ecarte(x, y)) n++; if (n / (y1 - y0) > 0.04) break; }
+    var gauche = x / px.w;
+    for (y = px.h - 1; y > 0; y--) { n = 0; for (x = x0; x < x1; x++) if (ecarte(x, y)) n++; if (n / (x1 - x0) > 0.04) break; }
+    var bas = (y + 1) / px.h;
+    return { haut: Math.min(haut, 0.6), gauche: Math.min(gauche, 0.6), bas: Math.max(bas, Math.min(haut, 0.6) + 0.3) };
+  }
+  function rgba(t, a) { return 'rgba(' + t.r + ',' + t.g + ',' + t.b + ',' + a + ')'; }
+  /* Dégradé vers le ton, de a0 à a1, en courbe douce (smoothstep, huit arrêts) : aucune marche visible. */
+  function fondu(x, ton, x0, y0, x1, y1, a0, a1, rx, ry, rw, rh) {
+    var g = x.createLinearGradient(x0, y0, x1, y1);
+    for (var k = 0; k <= 8; k++) { var t = k / 8, e = t * t * (3 - 2 * t); g.addColorStop(t, rgba(ton, (a0 + (a1 - a0) * e).toFixed(3))); }
+    x.fillStyle = g; x.fillRect(rx, ry, rw, rh);
+  }
+  /* Mise en page : bandeau du logo, place de la scène (plein cadre, décalée sous le bandeau), pied. Pure (testable). */
+  function plan(W, H, ratioLogo, bords, iw, ih, pied) {
+    var story = H / W > 1.5, large = W / H > 1.5;
+    var m = Math.round(Math.min(W, H) * (story ? 0.06 : 0.05));
+    var r = { story: story, large: large }, s, couvre;
+    if (large) {
+      var tl = Math.round(H * 0.34), hl = Math.round(tl * ratioLogo);
+      r.logo = { x: Math.round(m * 1.4), y: Math.round((H - hl) / 2 - H * 0.04), l: tl, h: hl };
+      r.bande = Math.round(m * 2.8 + tl);               // fin du bandeau uni (à gauche)
+      r.fondu = Math.round(W * 0.12);
+      var L = r.bande + r.fondu * 0.25;                   // le sujet commence au-delà du bandeau uni
+      couvre = H / ih;
+      s = Math.min(Math.max(couvre, (W - L) / ((1 - bords.gauche) * iw)), couvre * 1.6);
+      r.scene = { w: iw * s, h: ih * s };
+      r.scene.x = Math.min(L - bords.gauche * r.scene.w, r.bande);
+      if (r.scene.x + r.scene.w < W) r.scene.x = Math.max(r.bande - r.fondu, W - r.scene.w);
+      r.scene.y = (H - r.scene.h) / 2;
+      r.cx = r.bande + (W - r.bande) / 2;
+    } else {
+      var t = Math.round(story ? W * 0.34 : W * 0.21), h = Math.round(t * ratioLogo);
+      var haut = story ? Math.round(H * 0.075) : m;
+      r.logo = { x: Math.round((W - t) / 2), y: haut, l: t, h: h };
+      r.bande = haut + h + Math.round(m * 0.5);         // fin du bandeau uni (en haut)
+      r.fondu = Math.round(H * (story ? 0.1 : 0.14));
+      var T = r.bande + r.fondu * 0.25;
+      couvre = W / iw;
+      // le sujet (du haut des fleurs au pied du vase) doit tenir entre le bandeau et le pied ;
+      // plein cadre s'il y tient, sinon la scène est réduite et ses côtés fondus dans le ton
+      var place = (pied || H) - T - Math.round(H * 0.02);
+      s = Math.max(couvre * 0.68, Math.min(couvre, place / (Math.max(0.3, (bords.bas || 0.9) - bords.haut) * ih)));
+      r.scene = { w: iw * s, h: ih * s };
+      r.scene.x = (W - r.scene.w) / 2;
+      r.scene.y = Math.min(T - bords.haut * r.scene.h, r.bande);
+      // plein cadre : pas de vide sous la scène ; scène réduite : elle reste où le sujet tient
+      if (s >= couvre - 1e-6 && r.scene.y + r.scene.h < H) r.scene.y = Math.max(r.bande - r.fondu, H - r.scene.h);
+      r.cx = W / 2;
+    }
+    r.marge = m;
+    return r;
+  }
   function composer(cv, img, logo, o) {
     var F = FORMATS_EDIT[o.format] || FORMATS_EDIT.post, W = F[0], H = F[1];
     cv.width = W; cv.height = H;
     var x = cv.getContext('2d');
-    x.fillStyle = '#040407'; x.fillRect(0, 0, W, H);
-    var rc = Math.max(W / img.width, H / img.height), w = img.width * rc, h = img.height * rc;
-    x.imageSmoothingQuality = 'high';
-    x.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+    var px = petite(img, 96), ton = tonScene(px), bords = bordsSujet(px, ton);
+    var ratio = logo ? (logo.naturalHeight / logo.naturalWidth || 1) : 1;
     var story = H / W > 1.5, large = W / H > 1.5;
     var bas = story ? Math.round(H * 0.13) : Math.round(Math.min(W, H) * 0.05);
     var t2 = Math.round(Math.min(W, H) * (large ? 0.03 : 0.026));
     var tm = Math.round(Math.min(W, H) * (large ? 0.065 : 0.06));
-    var zone = (o.signature ? t2 * 3.4 : 0) + (o.mot ? tm * 1.6 : 0);
-    var clair = zone ? clarte(x, 0, H - bas - zone, W, zone) >= 0.5 : false;
-    if (zone) {
-      // voile discret en bas pour la lecture
-      var gr = x.createLinearGradient(0, H - bas - zone * 1.6, 0, H);
-      var c0 = clair ? 'rgba(244,241,234,0)' : 'rgba(4,4,7,0)', c1 = clair ? 'rgba(244,241,234,0.7)' : 'rgba(4,4,7,0.7)';
-      gr.addColorStop(0, c0); gr.addColorStop(1, c1); x.fillStyle = gr; x.fillRect(0, H - bas - zone * 1.6, W, bas + zone * 1.6);
+    var zone = (o.signature ? t2 * 3.4 : 0) + (o.mot ? tm * 1.6 * Math.min(2, couperN(x, o.mot, tm, W * 0.84)) : 0);
+    var haut = zone ? H - bas - zone - t2 : H - Math.round(H * 0.06);
+    var P = plan(W, H, ratio, bords, img.width, img.height, haut);
+    x.fillStyle = rgba(ton, 1); x.fillRect(0, 0, W, H);
+    x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+    var sc = P.scene;
+    x.drawImage(img, sc.x, sc.y, sc.w, sc.h);
+    // bords de la scène restés dans le cadre : fondus dans le ton (aucune arête)
+    var fe = Math.round(Math.min(W, H) * 0.12);
+    if (sc.x > 0.5) { fondu(x, ton, sc.x, 0, sc.x + fe, 0, 1, 0, sc.x, 0, fe, H); fondu(x, ton, sc.x + sc.w, 0, sc.x + sc.w - fe, 0, 1, 0, sc.x + sc.w - fe, 0, fe, H); }
+    if (sc.y > 0.5) fondu(x, ton, 0, sc.y, 0, sc.y + fe, 1, 0, 0, sc.y, W, fe);
+    if (sc.y + sc.h < H - 0.5) fondu(x, ton, 0, sc.y + sc.h, 0, sc.y + sc.h - fe, 1, 0, 0, sc.y + sc.h - fe, W, fe);
+    // bandeau du logo : uni, puis dégradé sur toute la largeur (ou hauteur)
+    if (P.large) {
+      x.fillStyle = rgba(ton, 1); x.fillRect(0, 0, P.bande, H);
+      fondu(x, ton, P.bande, 0, P.bande + P.fondu, 0, 1, 0, P.bande, 0, P.fondu, H);
+    } else {
+      x.fillStyle = rgba(ton, 1); x.fillRect(0, 0, W, P.bande);
+      fondu(x, ton, 0, P.bande, 0, P.bande + P.fondu, 1, 0, 0, P.bande, W, P.fondu);
     }
-    var cx = large ? W / 2 : W / 2;
+    // pied : fond uni sous le texte (et sous les faux sigles du moteur)
+    var ff = Math.round(H * 0.08);
+    fondu(x, ton, 0, haut - ff, 0, haut, 0, 1, 0, haut - ff, W, ff);
+    x.fillStyle = rgba(ton, 1); x.fillRect(0, haut, W, H - haut);
+    var clair = !ton.sombre;
     x.textAlign = 'center'; x.textBaseline = 'alphabetic';
-    var y = H - bas;
+    var y = H - bas, cx = P.cx;
     if (o.signature) {
       x.font = '400 ' + t2 + 'px Jost, Arial, sans-serif';
       x.fillStyle = clair ? '#806a30' : '#c9a84c';
@@ -519,7 +631,29 @@
       x.fillStyle = clair ? '#17150f' : '#f2efe8';
       couper(x, o.mot, W * 0.84).slice(0, 2).reverse().forEach(function (l) { x.fillText(l, cx, y); y -= tm * 1.15; });
     }
-    return logo ? poserLogo(x, W, H, logo, 'haut', o.format) : null;
+    if (!logo) return null;
+    var L = P.logo;
+    x.save();
+    if (ton.sombre) {
+      // fond uni sombre : logo or en « écran », son noir se fond exactement dans le ton
+      x.globalCompositeOperation = 'screen';
+      x.drawImage(logoEcran(logo), L.x, L.y, L.l, L.h);
+    } else {
+      // fond clair : la pastille noire d'origine, coins adoucis, ombre légère
+      var rr = Math.round(L.l * 0.12);
+      x.shadowColor = 'rgba(0,0,0,.22)'; x.shadowBlur = Math.round(L.l * 0.05); x.shadowOffsetY = Math.round(L.l * 0.01);
+      x.fillStyle = '#040407';
+      x.beginPath(); if (x.roundRect) x.roundRect(L.x, L.y, L.l, L.h, rr); else x.rect(L.x, L.y, L.l, L.h); x.fill();
+      x.shadowColor = 'transparent';
+      x.beginPath(); if (x.roundRect) x.roundRect(L.x, L.y, L.l, L.h, rr); else x.rect(L.x, L.y, L.l, L.h); x.closePath(); x.clip();
+      x.drawImage(logo, L.x, L.y, L.l, L.h);
+    }
+    x.restore();
+    return { x: L.x, y: L.y, l: L.l, h: L.h, variante: ton.sombre ? 'clair' : 'sombre', mise: 'bandeau', ton: ton, bande: P.bande, scene: sc };
+  }
+  function couperN(x, t, tm, max) {
+    x.font = '300 ' + tm + 'px "Cormorant Garamond", Georgia, serif';
+    return couper(x, t, max).length;
   }
   function couper(x, t, max) {
     var mots = String(t).split(/ +/), l = [], c = '';
@@ -829,7 +963,7 @@
     });
   }
 
-  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, composer: composer, poserLogo: poserLogo, placeLogo: placeLogo, analyser: analyser, resultat: resultat, choisirVariante: choisirVariante, legende: legende, texteAlt: texteAlt, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
+  window.MelodiaJulieMedias = { vue: vue, dessiner: dessiner, composer: composer, plan: plan, tonScene: tonScene, bordsSujet: bordsSujet, poserLogo: poserLogo, placeLogo: placeLogo, analyser: analyser, resultat: resultat, choisirVariante: choisirVariante, legende: legende, texteAlt: texteAlt, liensPartage: liensPartage, nomFichier: nomFichier, reinitialiser: function () { etat.medias = null; etat.charge = false; } };
 
   window.MelodiaConsole.ajouterVue('medias', ['Ressources', 'Mes <em>médias</em>', function () { etat.charge = false; return vue(); }, brancher]);
   var hv = (location.hash || '').replace(/^#/, '').split('?')[0];

@@ -37,21 +37,4 @@ Autres ajouts : 1 à 4 variantes par demande (chacune compte dans le plafond ; s
 
 Zone du logo : la demande envoyée au moteur réserve la zone du logo pour chaque format (post : 34 % du haut ; story : 30 % du haut ; bannière : coin haut gauche, 26 % × 40 %) — fond calme, aucun sujet, sujet centré plus bas. Filet de sécurité à la pose : la console mesure le fond sous le logo (clarté moyenne, 95e centile, part de points clairs, agitation). Fond sombre : logo en « écran » sur un voile sombre doux, renforcé jusqu'à un noir presque pur si des pétales ou reflets passent dessous (le fond presque noir du fichier est ramené au noir pur pour ne pas dessiner de carré). Fond clair ou très coloré : pastille noire d'origine, avec halo ivoire doux sur une image claire chargée. Jamais de déformation : proportions d'origine.
 
-Logo : le fichier officiel `assets/img/logo-melodia-complet.jpg` (1600 px) est posé par la console sur CHAQUE résultat, proportions d'origine, marges de sécurité (zones d'interface des stories comprises). Variante automatique selon la clarté de la zone : fond sombre → mode « écran » (le noir du fichier disparaît, le dessin reste exact) ; fond clair → pastille noire du fichier d'origine. Option : signature (« Chaque vie mérite sa chanson. » + MELODIA-FUNEBRE.FR) et « Ajouter un mot » (désactivé par défaut), écrits par la console, jamais par le moteur. Puis Télécharger / Partager / Garder dans Mes créations.
-
-Moteur : API à jeton d'Image MAX Gen (Hyper Engine) : `POST /api/image/tasks`, `POST /api/image/tasks/tick`, `GET /api/image/tasks/:id`. L'image est relayée par `/api/medias-generer?brut=` (même origine) pour que le logo puisse être posé et l'image exportée.
-
-Éteint par défaut. Pour l'allumer (Vercel, projet melodia-funebre, Production) :
-
-| Variable | Valeur |
-|---|---|
-| `MEDIAS_GENERATION` | `true` |
-| `HYPER_ENGINE_IMAGE_TOKEN` | jeton créé par Maxime sur hyper-engine.ai : `POST /api/image/tokens {"label":"Melodia","dailyMax":30}` (affiché une seule fois) |
-| `MEDIAS_GENERATION_JOUR` | facultatif, plafond par collaborateur et par 24 h (défaut 10, max 50) |
-| `HYPER_ENGINE_URL` | facultatif (défaut `https://www.hyper-engine.ai` : l’apex redirige et ferait perdre le jeton) |
-
-Côté Hyper Engine : la migration `0102_image_studio.sql` doit être appliquée (sinon 503 `schema_missing`) et le pare-feu Vercel doit laisser passer `/api/image/tasks*` (le « Security Checkpoint » répond aujourd'hui à un client automatique).
-
-Rangement : bucket `medias-commerciaux` (migration `supabase/migrations/20261118_14_medias_commerciaux.sql`, non appliquée) : `gardes/` (images composées, logo posé, listées dans Mes créations) et `bruts/` (copie brute du moteur). Sans lui, « Garder » range l'image brute et ses réglages dans le navigateur, et la console la recompose (logo compris) à chaque ouverture.
-
-« Modifier » (affiches existantes) utilise la même pose du logo.
+Mise en page v2 « bandeau » (19/11/2026) : le moteur n'obéit pas toujours à la zone réservée (lys et pétales derrière « MELODIA FUNÈBRE » sur les essais réels du 19/11). La console ne dépend donc plus de lui : le visuel d'une génération est composé avec un bandeau uni — en haut (post, story), à gauche (bannière) — de la teinte sombre de la scène elle-même (médiane des bords, ramenée sous 6 % de clarté), fondu sur toute la largeur en dégradé doux (smoothstep). Le logo officiel repose sur ce fond uni : rien derrière lui, plus de voile local. La scène est placée sous le bandeau d'après la position mesurée du sujet (première ligne claire dans le tiers central, et première colonne pour la bannière) ; en post, si le sujet (fleurs → pied du vase) ne tient pas entre le bandeau et le pied, la scène est réduite et ses bords fondus dans le même ton. Le pied (mot, devise, adresse) repose aussi sur un fond uni, ce qui efface les faux sigles que le moteur dessine parfois en bas d'image. Sur fond de scène clair, la pastille noire d'origine est posée sur le bandeau clair.
