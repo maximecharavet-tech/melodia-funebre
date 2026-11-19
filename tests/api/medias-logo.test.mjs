@@ -101,3 +101,39 @@ test('demande : jamais plus de 2000 caractères (limite du moteur), zone du logo
     assert.ok(d.includes(M.compositionLogo(f)) && d.endsWith(M.INTERDITS));
   }
 });
+
+/* v2 « bandeau » : le logo repose sur un fond uni, quelle que soit l'image du moteur. */
+test('bandeau v2 : le logo tient dans le bandeau uni et le sujet commence en dessous (ou à côté)', () => {
+  const C = console_();
+  const ratio = LOGO.naturalHeight / LOGO.naturalWidth;
+  const cas = [
+    ['post', 1080, 1080, 1024, 1024], ['story', 1080, 1920, 736, 1312], ['banniere', 1920, 1080, 1312, 736],
+    ['post', 1080, 1080, 1312, 736], ['story', 1080, 1920, 1024, 1024]
+  ];
+  for (const [f, W, H, iw, ih] of cas) {
+    for (const bords of [{ haut: 0, gauche: 0, bas: 1 }, { haut: 0.18, gauche: 0.08, bas: 0.9 }, { haut: 0.4, gauche: 0.3, bas: 0.95 }]) {
+      const P = C.plan(W, H, ratio, bords, iw, ih, H * 0.84);
+      const L = P.logo, nom = f + ' ' + JSON.stringify(bords) + ' ' + iw + 'x' + ih;
+      assert.ok(L.x >= 0 && L.y >= 0 && L.x + L.l <= W && L.y + L.h <= H, 'logo dans le cadre : ' + nom);
+      if (P.large) {
+        assert.ok(L.x + L.l <= P.bande, 'logo dans le bandeau gauche : ' + nom);
+        assert.ok(P.scene.x + bords.gauche * P.scene.w >= P.bande - 1, 'sujet à droite du bandeau : ' + nom);
+      } else {
+        assert.ok(L.y + L.h <= P.bande, 'logo dans le bandeau haut : ' + nom);
+        assert.ok(P.scene.y + bords.haut * P.scene.h >= P.bande - 1, 'sujet sous le bandeau : ' + nom);
+      }
+    }
+  }
+});
+
+test('bandeau v2 : plus de voile local sous le logo ; ton de fond tiré de la scène, assombri pour l’or', () => {
+  const js = readFileSync(join(RACINE, 'assets/js/julie/julie-medias.js'), 'utf8');
+  const corps = js.slice(js.indexOf('function composer('), js.indexOf('function couperN('));
+  assert.doesNotMatch(corps, /voile\(|poserLogo\(/, 'composer ne pose plus de voile local');
+  const C = console_();
+  const px = { w: 10, h: 10, d: new Uint8ClampedArray(400).fill(60) };
+  for (let i = 3; i < 400; i += 4) px.d[i] = 255;
+  const t = C.tonScene(px);
+  assert.equal(t.sombre, true); assert.ok(t.lum <= 0.0601, 'ton ≤ 6 % : ' + t.lum);
+  assert.equal(C.tonScene(null).sombre, true);
+});
