@@ -47,7 +47,7 @@
 
 import { entetesOrigine, origineAutorisee } from './_courrier.js';
 
-const URL_BASE = process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co';
+const URL_BASE = process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co';
 const CLE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 /* Les rôles qu'un compte créé ici peut recevoir. « master » n'y est

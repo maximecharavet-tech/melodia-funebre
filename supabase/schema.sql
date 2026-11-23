@@ -1,12 +1,10 @@
 -- ═══════════════════════════════════════════════════════════════
 -- MELODIA FUNÈBRE — schéma Supabase
 --
--- NE PAS coller ce fichier sur le projet live partagé
--- (awvgmkoozerfggdvvubi). D'autres produits y vivent dans public,
--- notamment toutes les tables quant_*. Les déplacer de schéma
--- casserait ces produits : ce dépôt ne le fait pas, et ne touche
--- pas à leurs lignes. L'isolation resterait une opération à part,
--- décidée avec chaque produit.
+-- Le live Melodia est le projet dédié lgqmfzbxceitddrqqfdf
+-- (organisation Melodia Funèbre). Ne pas recoller ce fichier sur
+-- l'ancien projet partagé awvgmkoozerfggdvvubi, où d'autres produits
+-- vivent encore dans public (notamment les tables quant_*).
 --
 -- Le live n'est plus ce fichier. Les fonctions d'accès sont dans le
 -- schéma « app » (est_maison, est_master, mon_role, mon_agence),

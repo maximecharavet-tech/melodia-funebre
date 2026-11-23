@@ -27,7 +27,7 @@ async function utilisateurCourant(req) {
   const auth = String((req.headers && req.headers.authorization) || '');
   const jwt = auth.startsWith('Bearer ') ? auth.slice(7) : '';
   if (!jwt) return null;
-  const url = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+  const url = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
   const key = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!key) return null;
   try {
@@ -41,7 +41,7 @@ async function utilisateurCourant(req) {
 }
 
 async function chercherProspect(filtre) {
-  const url = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+  const url = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!key) return null;
   try {
@@ -56,7 +56,7 @@ async function chercherProspect(filtre) {
 }
 
 async function dejaEnvoye(email) {
-  const url = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+  const url = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!key) return null;
   const ilYA30J = new Date(Date.now() - 30 * 86400_000).toISOString();

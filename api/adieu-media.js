@@ -12,7 +12,7 @@
 
 import { origineAutorisee, entetesOrigine, tropSouvent } from './_courrier.js';
 
-const URL_BASE = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const URL_BASE = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const PLAFOND = 25 * 1024 * 1024;
 const TYPES = {

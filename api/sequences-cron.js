@@ -62,7 +62,7 @@ const PAUSES_ESSAI_H = [1, 4, 12];
 const STATUTS_SORTIE = ['interesse', 'demo_offerte', 'partenaire', 'activee', 'refus'];
 const RE_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-function sbUrl() { return (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, ''); }
+function sbUrl() { return (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, ''); }
 
 function reponse(res, status, corps) {
   res.statusCode = status;
