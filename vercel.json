@@ -411,7 +411,7 @@
         },
         {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; script-src 'self' https://www.paypal.com https://www.sandbox.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://www.paypal.com https://www.sandbox.paypal.com https://vitals.vercel-insights.com; font-src 'self'; frame-src https://www.paypal.com https://www.sandbox.paypal.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' https://www.paypal.com https://www.sandbox.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://lgqmfzbxceitddrqqfdf.supabase.co; media-src 'self' blob: https://lgqmfzbxceitddrqqfdf.supabase.co; connect-src 'self' https://lgqmfzbxceitddrqqfdf.supabase.co https://www.paypal.com https://www.sandbox.paypal.com https://vitals.vercel-insights.com; font-src 'self'; frame-src https://www.paypal.com https://www.sandbox.paypal.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         }
       ]
     },
@@ -420,7 +420,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://lgqmfzbxceitddrqqfdf.supabase.co; media-src 'self' blob: https://lgqmfzbxceitddrqqfdf.supabase.co; connect-src 'self' https://lgqmfzbxceitddrqqfdf.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
         },
         {
           "key": "Permissions-Policy",
@@ -436,7 +436,7 @@
         },
         {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://lgqmfzbxceitddrqqfdf.supabase.co; media-src 'self' blob: https://lgqmfzbxceitddrqqfdf.supabase.co; connect-src 'self' https://lgqmfzbxceitddrqqfdf.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
         }
       ]
     },
@@ -445,7 +445,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://lgqmfzbxceitddrqqfdf.supabase.co; media-src 'self' blob: https://lgqmfzbxceitddrqqfdf.supabase.co; connect-src 'self' https://lgqmfzbxceitddrqqfdf.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
         },
         {
           "key": "X-Robots-Tag",
@@ -453,7 +453,7 @@
         },
         {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://awvgmkoozerfggdvvubi.supabase.co; media-src 'self' blob: https://awvgmkoozerfggdvvubi.supabase.co; connect-src 'self' https://awvgmkoozerfggdvvubi.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://lgqmfzbxceitddrqqfdf.supabase.co; media-src 'self' blob: https://lgqmfzbxceitddrqqfdf.supabase.co; connect-src 'self' https://lgqmfzbxceitddrqqfdf.supabase.co https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com; font-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'"
         }
       ]
     },

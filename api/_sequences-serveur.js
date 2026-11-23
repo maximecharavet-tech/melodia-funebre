@@ -20,7 +20,7 @@
 // ═══════════════════════════════════════════════════════════════
 import { entetesService } from './_courrier.js';
 
-const URL_BASE = () => (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const URL_BASE = () => (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
 const MODELES_OK = /^[a-z0-9-]{2,60}$/;
 
 async function sb(chemin, { methode = 'GET', corps, prefer } = {}) {

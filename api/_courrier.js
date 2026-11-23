@@ -518,7 +518,7 @@ export function entetesOrigine(req, res, methodes) {
  * de l'instance, pour que l'appel ne réponde pas 500. Ce repli ne
  * prétend pas être un plafond global.
  */
-const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const SB_URL = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
 const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 /**

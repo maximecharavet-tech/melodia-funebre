@@ -81,7 +81,7 @@ function run() {
   test('clé service JWT', o.cleServiceValide('eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIn0.sig') === true);
   test('clé service sb_secret', o.cleServiceValide('sb_secret_xxxxxxxxxxxxxxxxxxxx') === true);
   test('clé service vide', o.cleServiceValide('') === false && o.cleServiceValide('   ') === false);
-  test('clé service URL tableau de bord', o.cleServiceValide('https://supabase.com/dashboard/project/awvgmkoozerfggdvvubi/settings/api-keys') === false);
+  test('clé service URL tableau de bord', o.cleServiceValide('https://supabase.com/dashboard/project/lgqmfzbxceitddrqqfdf/settings/api-keys') === false);
   test('journal 200', o.interpreterLectureJournal(200, '[]').ok === true);
   test('journal table absente', o.interpreterLectureJournal(404, '{"code":"PGRST205"}').absent === true);
   test('journal Invalid API key', (() => { const r = o.interpreterLectureJournal(401, '{"message":"Invalid API key","hint":"Double check your Supabase `anon` or `service_role` API key."}'); return r.ok === false && r.absent === false; })());

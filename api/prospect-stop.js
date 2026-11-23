@@ -10,7 +10,7 @@
 import { verifierJeton, normaliserEmail, SITE } from './_desabonnement.js';
 import { entetesService } from './_courrier.js';
 
-const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const SB_URL = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
 
 function lireParams(req) {
   const q = req.query || {};

@@ -11,7 +11,7 @@
 import { entetesOrigine, origineAutorisee, entetesService, tropSouvent } from './_courrier.js';
 import { lireJeton, journalAvecEcoute } from './_ecoute.js';
 
-const SB_URL = () => (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const SB_URL = () => (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
 
 function corpsDe(req) {
   let b = req.body;

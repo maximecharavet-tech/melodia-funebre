@@ -69,11 +69,11 @@ import {
   resoudreBrochures
 } from './_prospect-outils.js';
 
-const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const SB_URL = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
 /* La clé « anon » est publique par construction (elle est dans le source
    du site) : elle sert seulement à demander à Supabase qui porte le jeton. */
 const SB_ANON = process.env.SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3dmdta29vemVyZmdnZHZ2dWJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NjA1MTUsImV4cCI6MjEwNDEzNjUxNX0.FfvtgMMC7KqbANL7Zz4Ecwd9br5o7_ToDPCIZoB23sw';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxncW1memJ4Y2VpdGRkcnFxZmRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU0NjY5NjcsImV4cCI6MjExMTA0Mjk2N30.X6lWGmkYLiemxjKDU_lqAVCE7mXhH7m4Ddn-E4-CnV8';
 const SB_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const ROLES_PERMIS = ['commercial', 'master'];
 const LOT_MAX = 50;

@@ -16,7 +16,7 @@ import { entetesService } from './_courrier.js';
 
 export const config = { api: { bodyParser: false } };
 
-const SB_URL = (process.env.SUPABASE_URL || 'https://awvgmkoozerfggdvvubi.supabase.co').replace(/\/+$/, '');
+const SB_URL = (process.env.SUPABASE_URL || 'https://lgqmfzbxceitddrqqfdf.supabase.co').replace(/\/+$/, '');
 
 function lireCorps(req) {
   if (typeof req.body === 'string') return Promise.resolve(req.body);

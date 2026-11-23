@@ -1,9 +1,12 @@
 # Supabase — état : ACTIF
 
-Le projet `awvgmkoozerfggdvvubi` (région eu-west-1, Irlande) est en
-service depuis le 5 septembre 2026. Tables, règles de sécurité,
-dossier de stockage et rôle du fondateur sont posés et vérifiés. Le
-site est branché dessus.
+Depuis le 23 novembre 2026, Melodia vise le projet dédié
+`lgqmfzbxceitddrqqfdf` (organisation Melodia Funèbre, eu-west-1).
+Le projet partagé historique `awvgmkoozerfggdvvubi` n'est plus
+celui du site.
+
+Le projet dédié reprend le schéma, les données, les deux comptes
+auth et les règles de sécurité. Région : eu-west-1.
 
 Le compte du fondateur (`contact@melodia-funebre.fr`) existe, son
 adresse est confirmée et le rôle `master` lui est attribué. Il n'y a
