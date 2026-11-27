@@ -314,6 +314,7 @@ const PLAN = [
   ['rejoindre.html', '0.8', 'monthly'],
   ['contact.html', '0.7', 'yearly'],
   ['application.html', '0.6', 'monthly'],
+  ['telechargements.html', '0.7', 'monthly'],
   ['cgv.html', '0.4', 'yearly'],
   ['mentions-legales.html', '0.3', 'yearly'],
   ['confidentialite.html', '0.3', 'yearly']

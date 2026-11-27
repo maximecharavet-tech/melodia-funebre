@@ -100,6 +100,10 @@ composition est offerte pour être présentée à une famille.
   le tunnel de commande.
 - [Professionnels](https://melodia-funebre.fr/professionnels) : le
   partenariat pompes funèbres et le simulateur de revenus.
+- [Téléchargements](https://melodia-funebre.fr/telechargements) : le
+  questionnaire famille pour les conseillers funéraires, en application
+  Android utilisable sans réseau (version de démonstration) et en PDF à
+  remplir à la main.
 - [Contact](https://melodia-funebre.fr/contact) : demande de rappel
   et formulaire.
 
