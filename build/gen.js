@@ -109,6 +109,7 @@ const MENU = [
       ['/contact', 'Prendre rendez-vous', 'Une démonstration de vingt minutes']] }],
     vedette: { href: '/professionnels#calculateur', sur: 'Pour votre agence', titre: '179 € nets', texte: 'par hommage Prestige vendu. Sans stock, sans charge technique.' } },
   { href: '/demos', label: 'Écouter' },
+  { href: '/telechargements', label: 'Téléchargements' },
   { id: 'maison', label: 'La maison', colonnes: [
     { titre: 'Melodia Funèbre', liens: [
       ['/qui-sommes-nous', 'Qui sommes-nous', 'Une maison française'],
