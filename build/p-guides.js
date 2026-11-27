@@ -255,8 +255,8 @@ ${affiche('instruments-du-monde',
         <table>
           <thead><tr><th>Pour</th><th>Ce qui fonctionne le mieux</th></tr></thead>
           <tbody>
-            <tr><td>Un père</td><td>Ce qu'il écoutait lui, même si ce n'est pas « de circonstance ». Un père se reconnaît à ses goûts, pas à la solennité.</td></tr>
-            <tr><td>Une mère</td><td>Souvent une voix féminine, et souvent un morceau lié à la maison — la cuisine, la voiture, les vacances.</td></tr>
+            <tr><td>Un père</td><td>Ce qu'il écoutait lui, même si ce n'est pas « de circonstance ». Un père se reconnaît à ses goûts, pas à la solennité. Voir <a href="/chanson-pour-papa-decede">une chanson pour papa</a>.</td></tr>
+            <tr><td>Une mère</td><td>Souvent une voix féminine, et souvent un morceau lié à la maison — la cuisine, la voiture, les vacances. Voir <a href="/chanson-pour-maman-decedee">une chanson d’hommage pour maman</a>.</td></tr>
             <tr><td>Un conjoint</td><td>Le morceau du mariage, s'il existe. Il fait pleurer toute la salle, et c'est exactement ce qu'il doit faire.</td></tr>
             <tr><td>Un enfant</td><td>Quelque chose de court et de lumineux. Les cérémonies d'enfants supportent mal la longueur.</td></tr>
             <tr><td>Un ami, un collègue</td><td>Ce qui rappelle le groupe : la chanson des soirées, du club, de l'équipe.</td></tr>
@@ -584,6 +584,7 @@ ${P.afficheCampagne('certaines-melodies',
           <li><strong>Une habitude</strong>, la plus petite possible. Le café à cinq heures, la radio dans l'atelier, les mots croisés du dimanche. C'est ce détail-là que l'assemblée reconnaît.</li>
         </ul>
         <p>Ce qu'il ne faut pas chercher : les dates, les décorations, le résumé d'une carrière. Une chanson qui récite un état civil ne touche personne.</p>
+        <p>Pour une mère, nous avons détaillé ce qu’il faut raconter d’elle et le moment où la faire entendre dans <a href="/chanson-pour-maman-decedee">une chanson d’hommage pour maman</a> ; pour un père, dans <a href="/chanson-pour-papa-decede">une chanson pour papa</a>.</p>
       </div>
     </div>
   </section>`,
