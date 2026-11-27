@@ -62,6 +62,14 @@ if (fs.existsSync(fichierContenu)) {
   }
 }
 
+/* ─── Feuille réduite ───
+   Avant les pages : l'empreinte ?v= de chaque page est calculée sur
+   style.min.css, qui doit donc déjà être à jour (build/css-min.js). */
+{
+  const r = require('./css-min.js')(RACINE);
+  console.log('  style.min.css          ' + Math.round(r.avant / 1024) + ' Ko → ' + Math.round(r.apres / 1024) + ' Ko');
+}
+
 /* ─── Génération ─── */
 const { page: pageBrute } = require('./gen.js');
 const { fusionnee, liensVersPiliers } = require('./redirections.js');

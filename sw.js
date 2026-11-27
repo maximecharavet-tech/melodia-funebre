@@ -40,7 +40,7 @@
    mégaoctets sur le forfait de quelqu'un qui voulait lire une page.
    ═══════════════════════════════════════════════════════════════ */
 
-const VERSION = 'e5965770a0';
+const VERSION = 'bbce39fe78';
 const COQUILLE = 'melodia-coquille-' + VERSION;
 const ACTIFS   = 'melodia-actifs-'   + VERSION;
 const SONS     = 'melodia-sons-'     + VERSION;
@@ -62,12 +62,12 @@ const PRECHARGE = [
   "/404",
   "/assets/img/icons/icon-48.png?v=08368217",
   "/assets/img/icons/icon-180.png?v=77f4ddbf",
-  "/assets/css/style.css?v=c6b3669b",
+  "/assets/css/style.min.css?v=2c6103b5",
   "/assets/img/intro-logo-360.webp?v=f1f2e4f6",
   "/assets/img/logo-melodia-160.webp?v=d5ed7d92",
   "/assets/img/maxime-128.webp?v=59ad45f3",
   "/assets/img/hyper-engine-80.webp?v=0f6180f0",
-  "/assets/js/content.js?v=b3438db0",
+  "/assets/js/content.js?v=519135cc",
   "/assets/js/main.js?v=5bb569f1",
   "/assets/js/application.js?v=7f9b3448",
   "/assets/js/rappel.js?v=1840ff2c",
@@ -75,7 +75,7 @@ const PRECHARGE = [
   "/assets/js/ornements.js?v=b37cef91",
   "/assets/js/motion.js?v=59d24715",
   "/assets/js/hero-film.js?v=6e0c662c",
-  "/assets/js/catalogue.js?v=937566dc",
+  "/assets/js/catalogue.js?v=c01d35f7",
   "/assets/js/vendor/motion-mini-14.12.min.js?v=c2bb143b",
   "/assets/js/recueil.js?v=8f46517e",
   "/assets/js/lumiere-3d.js?v=0bf7cd76",

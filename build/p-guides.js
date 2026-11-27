@@ -124,7 +124,7 @@ function proposition(texte) {
    précède. Une légende qui décrit ce qu'on voit déjà ne sert à rien. */
 const affiche = (nom, alt, legende) => `      <figure class="guide-photo guide-photo-haute reveal">
         <img src="assets/img/guides/${nom}-941.webp"
-             srcset="assets/img/guides/${nom}-480.webp 480w, assets/img/guides/${nom}-941.webp 941w"
+             srcset="assets/img/guides/${nom}-480.webp 480w, assets/img/guides/${nom}-640.webp 640w, assets/img/guides/${nom}-760.webp 760w, assets/img/guides/${nom}-941.webp 941w"
              sizes="(max-width: 700px) 84vw, 368px"
              width="941" height="1672" loading="lazy" decoding="async"
              alt="${alt}">

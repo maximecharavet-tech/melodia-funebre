@@ -300,7 +300,7 @@ ${BASE_CONTENU ? `<link rel="preconnect" href="${BASE_CONTENU}" crossorigin>\n` 
 <meta name="format-detection" content="telephone=no">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jost-normal-latin-b58a58.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="${versionne('assets/css/style.css')}">
+<link rel="stylesheet" href="${versionne('assets/css/style.min.css')}">
 <noscript><style>
 /* Les blocs révélés au défilement partent à opacité zéro : sans JavaScript
    pour les révéler, la page se servirait presque vide. On les rétablit. */
@@ -559,7 +559,10 @@ function intro() {
 function comblerHommages(html) {
   if (html.indexOf('{{HOMMAGES}}') === -1) return html;
   const { TRACKS, enLettres } = require('./data.js');
-  return html.split('{{HOMMAGES}}').join(enLettres(TRACKS.length));
+  /* Un message laissé de son vivant n'est pas un hommage : il a sa page
+     (/de-son-vivant) et n'entre pas dans le compte. */
+  const n = TRACKS.filter((t) => (t.categorie || 'hommage') === 'hommage').length;
+  return html.split('{{HOMMAGES}}').join(enLettres(n));
 }
 
 /* ─── Espaces insécables ───

@@ -242,7 +242,8 @@ function oeuvresPubliees() {
   return TRACKS;
 }
 function filtresVitrine() {
-  const O = oeuvresPubliees();
+  /* La vitrine est celle des hommages : même filtre que catalogue.js. */
+  const O = oeuvresPubliees().filter((o) => (o.categorie || 'hommage') === 'hommage');
   const styles = [];
   O.forEach((o) => { if (o.style && styles.indexOf(o.style) === -1) styles.push(o.style); });
   if (styles.length < 2) return '';
@@ -252,7 +253,9 @@ function filtresVitrine() {
 }
 function vitrineBarre() {
   const filtres = filtresVitrine();
-  const total = oeuvresPubliees().length;
+  /* Le compte ne retient que les hommages : un message de son vivant
+     peut figurer dans la vitrine, mais ce n'est pas un hommage. */
+  const total = oeuvresPubliees().filter((o) => (o.categorie || 'hommage') === 'hommage').length;
   return `      <div class="cat-barre reveal">
         <p class="cat-compte"><span data-catalogue-libelle>${total} ${total > 1 ? 'hommages' : 'hommage'}</span> composés à ce jour</p>
         <button type="button" class="btn btn-gold" data-tout-ecouter>
@@ -774,9 +777,15 @@ function afficheCampagne(id, alt, legende) {
      croirait deux fois plus fine qu'elle n'est. Une largeur déclarée
      à deux endroits finit toujours par diverger à l'un des deux. */
   const largeurPlein = largeurFichier(path.join(__dirname, '..', plein)) || m.largeur;
+  /* Largeurs intermédiaires (scripts/variantes-images.py) : sans elles,
+     un téléphone n'avait le choix qu'entre 480 et la pleine taille, et
+     prenait la pleine taille. Seules celles qui existent sont annoncées. */
+  const intermediaires = (id, max) => [640, 760]
+    .filter((w) => w < max && fs.existsSync(path.join(__dirname, '..', M.DOSSIER + id + '-' + w + '.webp')))
+    .map((w) => M.DOSSIER + id + '-' + w + '.webp ' + w + 'w');
   return `      <figure class="guide-photo guide-photo-haute reveal">
         <img src="${plein}"
-             srcset="${M.DOSSIER + m.leger} 480w, ${plein} ${largeurPlein}w"
+             srcset="${[M.DOSSIER + m.leger + ' 480w'].concat(intermediaires(m.id, largeurPlein), [plein + ' ' + largeurPlein + 'w']).join(', ')}"
              sizes="(max-width: 700px) 84vw, 368px"
              width="${m.largeur}" height="${m.hauteur}" loading="lazy" decoding="async"
              alt="${esc(alt)}">
