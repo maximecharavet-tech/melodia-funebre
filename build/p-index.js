@@ -371,6 +371,7 @@ ${P.testimonials()}
       </div>
       <div class="reveal">
 ${P.faq(null, true)}
+        <p style="margin-top:1.6rem;color:var(--bone);">Pour une mère, nous avons détaillé ce qu’il faut raconter d’elle et le moment où la faire entendre dans <a href="/chanson-pour-maman-decedee">une chanson d’hommage pour maman</a> ; pour un père, dans <a href="/chanson-pour-papa-decede">une chanson pour papa</a>.</p>
       </div>
       <div class="center reveal" style="margin-top:2.5rem;">
         <p class="lead" style="margin-bottom:1.4rem;">Une question qui n'est pas ici ?</p>

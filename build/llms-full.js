@@ -39,6 +39,8 @@ function texte(html) {
        .replace(/<summary\b[^>]*>/gi, '\n\n### ').replace(/<\/summary>/gi, '\n\n')
        .replace(/<(br|hr)\b[^>]*>/gi, '\n')
        .replace(/<\/(p|div|section|article|figure|figcaption|blockquote|ul|ol|dl|tr|table|header|footer|details)>/gi, '\n\n')
+       /* Balises de texte : rien à la place, sinon « commander , » ; les autres : un espace. */
+       .replace(/<\/?(a|em|strong|b|i|span|abbr|small|sup|sub|time|mark)\b[^>]*>/gi, '')
        .replace(/<[^>]+>/g, ' ');
   m = decoder(m);
   return m.split('\n')

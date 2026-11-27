@@ -22,16 +22,60 @@ const PUBLIE = '2026-11-01';
 /* ═══════════════════════════════════════════════════════════════
    1 — CHANSON POUR MAMAN DÉCÉDÉE
    ═══════════════════════════════════════════════════════════════ */
+/* Refonte de novembre 2026. La Search Console montrait cette page en
+   deuxième page de Google (positions 11 à 23) sur « chanson hommage
+   maman décédée », « chanson deuil maman », « chanson enterrement
+   maman décédée », « chanson d’une maman décédée pour ses enfants »,
+   « chanson hommage à sa mère décédée ». Plutôt qu’une seconde page
+   sur la même intention — qui lui aurait pris ses impressions, la
+   leçon des pages fusionnées en 301 —, c’est celle-ci qui s’étoffe, à
+   la même adresse : comment la chanson se compose, ce qu’elle coûte,
+   les hommages réels écrits pour des mères et des grands-mères, le
+   questionnaire à remplir à la main, et des réponses citables. Prix
+   et livrables : ceux de data.js (repris de content.json), rien
+   d’autre. */
+const { OFFERS } = require('./data.js');
+const { oeuvre, lien } = require('./citations.js');
+const CHANSON = require('./chanson-maman.js');
+const prix = (nom) => { const o = OFFERS.find((x) => x.name === nom); return o ? o.price + ' €' : ''; };
+const ESSENTIEL = prix('Essentiel'), PRESTIGE = prix('Prestige'), MEMORIAL = prix('Mémorial');
+
+/* Les hommages du catalogue écrits pour une mère ou une grand-mère.
+   Chaque ligne ne dit que ce que la fiche d'écoute dit déjà ; une
+   œuvre retirée du catalogue disparaît de la liste sans casser la
+   génération. */
+const MERES = [
+  ['Le Jardin du Temps', 'Pour Monique, jardinière d’Avignon. Sa fille voulait « quelque chose qui sente le matin » : voix féminine, cordes, guitare en arpèges.'],
+  ['Sous le lierre', 'Pour Yvette, la mamie d’une maison toujours pleine. Une valse musette, avec un chœur d’enfants sur le refrain.'],
+  ['Personne n’oublie ton rire', 'Pour Odette, « super mamie », qui cuisinait sans balance et à la table de qui Paul, Thomas, Virginie et Nolan ont grandi. Orgue Hammond et chœur gospel.']
+];
+const listeMeres = MERES.map(([titre, texte]) => {
+  const t = oeuvre(titre, 'p-situations.js');
+  return t ? `          <li><a href="${lien(t)}"><em>${t.title}</em></a> (${t.style.toLowerCase()}) — ${texte}</li>` : '';
+}).filter(Boolean).join('\n');
+
 const maman = page({
   file: 'chanson-pour-maman-decedee.html',
   fil: 'Pour une maman',
-  title: 'Chanson pour maman décédée | Melodia Funèbre',
-  desc: "Une chanson pour maman décédée : choisir un morceau existant ou faire écrire la sienne, ce qu’il faut raconter, et comment la faire entendre aux obsèques.",
+  title: 'Chanson hommage pour une maman décédée | Melodia Funèbre',
+  desc: `Une chanson d’hommage pour votre maman décédée, écrite d’après ce que vous racontez d’elle : quoi raconter, quand la faire entendre aux obsèques. Dès ${ESSENTIEL}.`,
+  image: '/assets/img/og/chanson-pour-maman-decedee.jpg',
+  imageAlt: 'Melodia Funèbre — Une chanson d’hommage pour maman',
   datePublished: PUBLIE,
-  h1: 'Une chanson<br><em>pour maman.</em>',
+  h1: 'Une chanson d’hommage<br><em>pour maman.</em>',
   situation: "Pour un fils ou une fille qui cherche quoi faire entendre aux obsèques de sa mère.",
-  chapeau: "Il existe de très belles chansons sur les mères. Le plus souvent, pourtant, aucune ne parle de la vôtre : de sa cuisine, de sa voix au téléphone, de la façon dont elle disait votre prénom. Cette page vous aide à choisir — un morceau connu, ou une chanson écrite pour elle — et à préparer le moment où elle sera entendue.",
-  corps: `
+  chapeau: "Il existe de très belles chansons sur les mères. Le plus souvent, pourtant, aucune ne parle de la vôtre : de sa cuisine, de sa voix au téléphone, de la façon dont elle disait votre prénom. Écoutez d’abord une chanson d’exemple, en voix de femme ou d’homme, et lisez ses paroles. Cette page vous aide ensuite à choisir — un morceau connu, ou une chanson d’hommage écrite pour elle —, à préparer ce qu’il faut raconter, et le moment où elle sera entendue.",
+  /* La platine du catalogue, et le petit script qui relie le livret
+     à la voix en cours d'écoute. */
+  scripts: ['assets/js/catalogue.js', 'assets/js/livret.js'],
+  metas: CHANSON.metas,
+  /* Le visuel de fond : une lampe allumée à une fenêtre, à la nuit
+     tombante — la dernière image de la chanson. */
+  classeTete: 'tete-lampe',
+  decorTete: '<div class="tete-lampe-lueur" aria-hidden="true"></div>',
+  corps: `${CHANSON.ecoute()}
+${CHANSON.paroles(ESSENTIEL)}
+
   <section class="section-sm" style="padding-top:2.6rem;">
     <div class="wrap">
       <div class="prose reveal">
@@ -57,6 +101,7 @@ const maman = page({
           <li>un lieu : la maison, le marché, la plage de chaque été ;</li>
           <li>ce qu’elle laisse derrière elle — les enfants, les petits-enfants, une recette, une manière de recevoir.</li>
         </ul>
+        <p>Si vous êtes plusieurs frères et sœurs, mettez-vous d’accord sur deux ou trois souvenirs plutôt que sur dix : une chanson de deux à trois minutes en porte peu, mais elle les porte bien. Les petits-enfants ont souvent le détail le plus juste — un surnom, une friandise, un jeu.</p>
         <p>C’est ainsi qu’est née <em>Le Jardin du Temps</em> : une jardinière d’Avignon, des roses anciennes, du jasmin blanc, et une fille qui voulait « quelque chose qui sente le matin ».</p>
 ${extrait('Le Jardin du Temps', 'Écrite d’après ce que sa fille a raconté')}
       </div>
@@ -66,9 +111,32 @@ ${extrait('Le Jardin du Temps', 'Écrite d’après ce que sa fille a raconté')
   <section class="section-sm">
     <div class="wrap">
       <div class="prose reveal">
+        <h2 id="composer">Comment sa chanson est composée</h2>
+        <p>Vous n’avez rien à écrire ni à préparer. La maison pose les questions et fait le reste :</p>
+        <ol>
+          <li><strong>Vous commandez en ligne</strong>, ou vous demandez simplement à être rappelé.</li>
+          <li><strong>Un entretien téléphonique de cinq minutes.</strong> Son prénom, trois traits de caractère, son métier ou sa passion, une habitude quotidienne, et si vous le souhaitez une anecdote.</li>
+          <li><strong>Le texte s’écrit</strong> à partir de ce que vous avez dit : ses gestes, ses lieux, ses mots à elle.</li>
+          <li><strong>La musique est composée et enregistrée</strong> dans le style qui lui ressemble.</li>
+          <li><strong>Une relecture humaine</strong> avant l’envoi : aucun hommage n’est livré sans avoir été écouté.</li>
+          <li><strong>Vous recevez le fichier par courriel sous vingt-quatre heures</strong> après l’entretien. Pour une cérémonie imminente, une priorité permet une livraison en six heures.</li>
+        </ol>
+        <p>Si vous préférez écrire plutôt que parler, le <a href="/telechargements">questionnaire famille</a> reprend les mêmes questions, à remplir à la main : vous le remettez à votre agence funéraire, ou vous l’envoyez scanné ou photographié à <a href="mailto:contact@melodia-funebre.fr">contact@melodia-funebre.fr</a>. Il se télécharge <a href="/documents/melodia-questionnaire-famille.pdf">en PDF</a>.</p>
+        <p>Trois formules, prix TTC : <strong>Essentiel ${ESSENTIEL}</strong> (une œuvre originale de deux à trois minutes), <strong>Prestige ${PRESTIGE}</strong> (deux versions au choix, une révision offerte, la version instrumentale et les paroles en PDF), <strong>Mémorial ${MEMORIAL}</strong> (un mini-album de trois titres, des révisions illimitées, un livret souvenir imprimé et la priorité six heures incluse). Dans tous les cas, l’œuvre vous est cédée avec ses droits d’usage : aucune déclaration SACEM pour la diffuser.</p>
+        <p style="margin-top:1.6rem;"><a href="/offres" class="btn btn-gold">Voir les offres et commander</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="prose reveal">
         <h2 id="registre">Le style : le sien, pas celui des obsèques</h2>
-        <p>Rien n’oblige une chanson d’adieu à être lente ou triste. Une mère qui dansait le samedi soir supportera mal un piano funèbre ; une mamie qui tenait une maison toujours pleine appelle peut-être un accordéon. Le catalogue en donne des exemples réels : <em>Sous le lierre</em> en musette pour Yvette, <em>Personne n’oublie ton rire</em> en gospel pour Odette, <em>Le vent connaît ton nom</em> au piano, avec un Ave Maria, parce que la famille de Chantal voulait que sa foi y soit.</p>
-        <p>Si elle était croyante et que la cérémonie a lieu à l’église, vérifiez ce que le rite permet avant de choisir : nous l’avons détaillé <a href="/rites">tradition par tradition</a>.</p>
+        <p>Rien n’oblige une chanson d’adieu à être lente ou triste. Une mère qui dansait le samedi soir supportera mal un piano funèbre ; une mamie qui tenait une maison toujours pleine appelle peut-être un accordéon. Le catalogue en donne des exemples réels, écrits pour des mères et des grands-mères :</p>
+        <ul class="liste-or">
+${listeMeres}
+        </ul>
+        <p>Pour Chantal, <em>Le vent connaît ton nom</em> mêle le piano et un Ave Maria, parce que sa famille voulait que sa foi y soit. Si elle était croyante et que la cérémonie a lieu à l’église, vérifiez ce que le rite permet avant de choisir : nous l’avons détaillé <a href="/rites">tradition par tradition</a>.</p>
       </div>
     </div>
   </section>
@@ -77,15 +145,39 @@ ${extrait('Le Jardin du Temps', 'Écrite d’après ce que sa fille a raconté')
     <div class="wrap">
       <div class="prose reveal">
         <h2 id="ceremonie">Le moment où elle sera entendue</h2>
-        <p>Une chanson pour une mère se place en général au recueillement, après les prises de parole : la salle est prête à écouter. Prévenez celui ou celle qui conduit la cérémonie, dites en une phrase qu’elle a été écrite pour elle, et laissez un silence après la dernière note. Pour le reste — clé USB, copie de secours, essai de son — les vérifications sont les mêmes que pour toute musique d’obsèques, et nous les avons réunies dans <a href="/musique-obseques">notre guide sur la musique d’un enterrement</a>.</p>
+        <p>Une chanson pour une mère se place en général au recueillement, après les prises de parole : la salle est prête à écouter. Prévenez celui ou celle qui conduit la cérémonie, dites en une phrase qu’elle a été écrite pour elle, et laissez un silence après la dernière note.</p>
+        <ul>
+          <li><strong>À l’entrée</strong>, un morceau qu’elle aimait, ou la version instrumentale de sa chanson — voir <a href="/musique-obseques-instrumentale">la musique sans paroles</a>.</li>
+          <li><strong>Au recueillement</strong>, sa chanson, entendue en entier.</li>
+          <li><strong>En crémation</strong>, le moment de la disparition du cercueil demande un morceau qui tienne jusqu’au bout : nous l’expliquons dans <a href="/musique-cremation">la musique en crémation</a>.</li>
+          <li><strong>En cérémonie civile</strong>, rien n’est imposé, et une chanson écrite pour elle y trouve naturellement sa place : <a href="/musique-ceremonie-civile">un déroulé simple</a>.</li>
+        </ul>
+        <p>Pour le reste — clé USB, copie de secours, essai de son — les vérifications sont les mêmes que pour toute musique d’obsèques, et nous les avons réunies dans <a href="/musique-obseques">notre guide sur la musique d’un enterrement</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="prose reveal">
+        <h2 id="vivant">Si elle est encore là</h2>
+        <p>Une chanson peut aussi être composée de son vivant : elle l’entend, elle peut la corriger, et elle reste pour ses enfants. C’est ce que les enfants de Ruth ont fait pour elle, à quatre-vingt-cinq ans. Nous l’expliquons sur la page <a href="/de-son-vivant">de son vivant</a>.</p>
       </div>
     </div>
   </section>`,
   questions: [
-    { q: "Quelle chanson passer aux obsèques de sa maman ?",
-      texte: "Celle qui lui ressemble plutôt que celle qui parle « des mamans » en général : un morceau qu’elle aimait vraiment, dont vous avez relu toutes les paroles, ou une chanson écrite pour elle à partir de ses gestes, de ses lieux et de ce qu’elle vous a transmis." },
-    { q: "Peut-on faire écrire une chanson avec le prénom de sa mère ?",
-      texte: "Oui. C’est l’objet même d’une chanson d’hommage : son prénom, les lieux de sa vie et ses gestes sont dans le texte. La famille raconte, la maison écrit et compose, et l’œuvre est livrée sous vingt-quatre heures." },
+    { q: "Quelle chanson passer à l’enterrement de sa maman ?",
+      texte: "Celle qui lui ressemble plutôt que celle qui parle « des mamans » en général : un morceau qu’elle aimait vraiment, dont vous avez relu toutes les paroles, ou une chanson d’hommage écrite pour elle à partir de ses gestes, de ses lieux et de ce qu’elle vous a transmis. Elle se place en général au recueillement, après les prises de parole." },
+    { q: "Comment faire écrire une chanson d’hommage pour sa mère décédée ?",
+      texte: "Melodia Funèbre compose une chanson originale à partir d’un entretien téléphonique de cinq minutes : son prénom, trois traits de caractère, son métier ou sa passion, une habitude, une anecdote. Le texte est écrit pour elle, la musique composée dans son style, relue par un humain, et le fichier est livré sous vingt-quatre heures après l’entretien." },
+    { q: "Combien coûte une chanson personnalisée pour une maman décédée ?",
+      texte: `Trois formules, prix TTC : Essentiel ${ESSENTIEL}, Prestige ${PRESTIGE} (révision, version instrumentale et paroles en PDF inclus), Mémorial ${MEMORIAL} (mini-album de trois titres, révisions illimitées, livret imprimé, priorité six heures). Aucune redevance SACEM n’est à déclarer pour la diffuser.` },
+    { q: "Existe-t-il une chanson d’une maman décédée pour ses enfants ?",
+      texte: "Les chansons du répertoire parlent de toutes les mères. Une chanson d’hommage, elle, est écrite pour une seule : ce que ses enfants racontent d’elle devient le texte, avec son prénom et leurs souvenirs. Et si elle est encore là, une chanson peut être composée de son vivant ; elle l’entend, la corrige, et elle reste pour ses enfants." },
+    { q: "Peut-on avoir les paroles de la chanson ?",
+      texte: "Oui. Le texte est écrit pour elle et vous appartient avec l’œuvre ; l’offre Prestige et l’offre Mémorial comprennent les paroles imprimables en PDF, que l’on peut glisser dans le livret de la cérémonie." },
+    { q: "Peut-on choisir une voix de femme ou une voix d’homme ?",
+      texte: "Oui. La voix se choisit à l’entretien : celle d’une fille ou celle d’un fils, plus grave ou plus claire, selon ce qui vous ressemble. La chanson d’exemple de cette page, « Maman, ça va aller », s’écoute dans les deux voix." },
     { q: "Faut-il que la chanson soit triste ?",
       texte: "Non. Le style se choisit d’après elle : musette, gospel, folk, piano… Une chanson lumineuse peut être plus juste qu’une chanson lente, si c’est ainsi qu’on se souvient d’elle." },
     { q: "Peut-on la faire entendre aussi à ses petits-enfants plus tard ?",
@@ -93,6 +185,21 @@ ${extrait('Le Jardin du Temps', 'Écrite d’après ce que sa fille a raconté')
     { q: "Les obsèques ont lieu dans deux jours, est-ce encore possible ?",
       texte: "Oui. La livraison se fait sous vingt-quatre heures après l’entretien, et une priorité existe pour les cérémonies imminentes, avec une livraison possible en six heures." }
   ],
+  jsonldPlus: [CHANSON.jsonld, {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': 'https://melodia-funebre.fr/chanson-pour-maman-decedee#service',
+    name: 'Chanson d’hommage personnalisée pour une maman décédée',
+    serviceType: 'Composition musicale personnalisée pour cérémonie funéraire',
+    description: "Une chanson originale écrite et composée pour une mère disparue, d’après un entretien téléphonique de cinq minutes avec sa famille, relue par un humain et livrée sous vingt-quatre heures, cédée avec ses droits d’usage.",
+    provider: { '@id': 'https://melodia-funebre.fr/#organisation' },
+    areaServed: { '@type': 'Country', name: 'France' },
+    audience: { '@type': 'Audience', audienceType: 'Enfants et familles en deuil d’une mère' },
+    offers: OFFERS.map((o) => ({
+      '@type': 'Offer', name: o.name, price: String(o.price), priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock', url: 'https://melodia-funebre.fr/offres'
+    }))
+  }],
   proposition: "Si aucun morceau ne lui ressemble, nous écrivons et composons sa chanson d’après ce que vous nous racontez d’elle, et vous la recevez avant la cérémonie.",
   bouton: 'Écouter des hommages composés',
   voisines: [

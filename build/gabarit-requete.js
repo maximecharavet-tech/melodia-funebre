@@ -144,7 +144,7 @@ function jsonld(p) {
       author: { '@id': SITE + '/#organisation' },
       publisher: { '@id': SITE + '/#organisation' },
       mainEntityOfPage: url,
-      image: SITE + '/assets/img/og-melodia.jpg',
+      image: SITE + (p.image || '/assets/img/og-melodia.jpg'),
       /* Aucune « dateModified » : figée dans le code, elle mentirait
          dès la première retouche, et les moteurs s'en servent pour
          juger la fraîcheur. La date de publication, elle, reste vraie. */
@@ -162,7 +162,7 @@ function jsonld(p) {
       }))
     },
     P.jsonldFil(p.fil, '/' + p.file.replace('.html', ''))
-  ];
+  ].concat(p.jsonldPlus || []);
 }
 
 /* ─── Une affiche au milieu du texte ───
@@ -263,9 +263,18 @@ function page(p) {
     file: p.file,
     title: p.title,
     desc: p.desc,
+    /* Vignette de partage propre à la page, quand elle en a une. */
+    image: p.image,
+    imageAlt: p.imageAlt,
+    /* Facultatifs : une page qui porte un lecteur (la page « maman »)
+       a besoin de son script et de ses balises og:audio. Les autres
+       n'en déclarent pas et ne changent pas. */
+    scripts: p.scripts,
+    metas: p.metas,
+    ogType: p.ogType,
     jsonld: jsonld(p),
     body: `
-  <section class="page-head">
+  <section class="page-head${p.classeTete ? ' ' + p.classeTete : ''}">${p.decorTete || ''}
     <div class="wrap">
       <div class="eyebrow reveal in">${esc(p.fil)}</div>
       <h1 class="h-xl reveal in reveal-d1" style="margin-top:.8rem;">${p.h1}</h1>

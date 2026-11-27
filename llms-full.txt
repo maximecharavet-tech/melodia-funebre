@@ -66,7 +66,7 @@ De tes éclats de rire dans le couloir
 De ta façon de dire « ça ira »
 
 Les mots de la famille
-rieur bricoleur fidèle
+rieurbricoleurfidèle
 
 Piano classique
 
@@ -82,7 +82,7 @@ Et tant qu'un cœur prononcera ton nom,
 Tu ne disparaîtras jamais.
 
 Les mots de la famille
-lumineux inachevé aimé
+lumineuxinachevéaimé
 
 Musette
 
@@ -98,7 +98,7 @@ Tu avais rempli toute une vie
 De petits bonheurs, de grandes envies
 
 Les mots de la famille
-généreuse rieuse rassembleuse
+généreuserieuserassembleuse
 
 Ballade rock
 
@@ -114,7 +114,7 @@ Pierre, l'éternel sourire
 Qui danse avec le vent
 
 Les mots de la famille
-intrépide généreux amoureux
+intrépidegénéreuxamoureux
 
 Funk · Nord de la France
 
@@ -130,7 +130,7 @@ Tu as sillonné l'Europe entière
 Avec ton funk dans les oreilles
 
 Les mots de la famille
-increvable rieur fidèle
+increvablerieurfidèle
 
 Rock · Lyon
 
@@ -146,7 +146,7 @@ Et tu t'en es allé comme une guitare électrique
 Vers la scène d'en haut, là où les rockers ne s'éteignent jamais
 
 Les mots de la famille
-fidèle bruyant tendre
+fidèlebruyanttendre
 
 Reggae · Paris et le monde
 
@@ -162,7 +162,7 @@ Et tu t'en es allé comme un son de reggae
 Vers les terres d'en haut, là où les voyageurs ne s'arrêtent jamais
 
 Les mots de la famille
-libre voyageur rieur
+librevoyageurrieur
 
 Folk acoustique
 
@@ -178,7 +178,7 @@ Nous garderons ta lumière
 Au creux de nos mains.
 
 Les mots de la famille
-généreuse voyageuse pudique
+généreusevoyageusepudique
 
 Gospel
 
@@ -192,7 +192,7 @@ personne n'oublie ton rire
 Il arrivait avant toi dans la pièce
 
 Les mots de la famille
-généreuse rieuse voyageuse
+généreuserieusevoyageuse
 
 Piano classique
 
@@ -207,7 +207,7 @@ Il le murmure aux montagnes,
 Il le confie aux étoiles.
 
 Les mots de la famille
-voyageuse douce croyante
+voyageusedoucecroyante
 
 Gospel · Paris
 
@@ -222,7 +222,7 @@ Mais il manque quelque chose dans ses rues
 Une lumière, un rire, une voix
 
 Les mots de la famille
-parisien supporter aimant
+parisiensupporteraimant
 
 Polyphonie corse · Corse
 
@@ -238,7 +238,7 @@ Et tu t'en es allé comme s'en vont les bergers
 Vers les pâturages d'en haut, vers le ciel éternel
 
 Les mots de la famille
-montagnard fidèle taiseux
+montagnardfidèletaiseux
 
 Celtique · Bréhat
 
@@ -254,7 +254,7 @@ Et tu t'en es allé comme s'en vont les bateaux
 Vers l'île d'Ys, vers le pays d'après
 
 Les mots de la famille
-marin courageux fidèle
+marincourageuxfidèle
 
 Bélé antillais · Martinique
 
@@ -270,7 +270,7 @@ Et tu t'en es allé comme se lève le soleil
 Ibo pa mouri janmen — les esprits ne meurent jamais
 
 Les mots de la famille
-rythmé conteur joyeux
+rythméconteurjoyeux
 
 Musique du monde
 
@@ -284,7 +284,7 @@ Ton prénom tient dans deux langues
 Celle du village et celle d'ici
 
 Les mots de la famille
-taiseux nourricier fidèle
+taiseuxnourricierfidèle
 
 Chanson française · Nantes
 
@@ -298,7 +298,7 @@ Quatre paires de mains sur la même canne
 Quatre silences appris au bord de l'eau
 
 Les mots de la famille
-patient taquin silencieux
+patienttaquinsilencieux
 
 Folk acoustique · Avignon
 
@@ -312,7 +312,7 @@ Elle a planté tout ce qu'elle n'a pas dit
 Et le jasmin lui répond chaque avril
 
 Les mots de la famille
-douce obstinée matinale
+douceobstinéematinale
 
 Bossa nova · Marseille
 
@@ -326,7 +326,7 @@ Ne pleurez pas, mettez la musique plus fort
 J'ai encore un pas de danse à vous apprendre
 
 Les mots de la famille
-joyeux bruyant généreux
+joyeuxbruyantgénéreux
 
 R&B
 
@@ -342,7 +342,7 @@ La main qui rassure,
 La voix qui dit : « Je suis là. »
 
 Les mots de la famille
-dévoué à l'écoute discret
+dévouéà l'écoutediscret
 
 Country americana
 
@@ -359,7 +359,7 @@ Une maison, quelques rêves
 Et l’amour comme unique richesse
 
 Les mots de la famille
-patient bâtisseur fidèle
+patientbâtisseurfidèle
 
 Chaque œuvre a bien été composée pour une personne. Les prénoms et les récits qui les accompagnent ont été modifiés : nous ne publions jamais l’histoire d’une famille.
 
@@ -537,7 +537,7 @@ Les offres
 
 Essentiel
 
-149 €
+149€
 
 TVA non applicable
 art. 293 B du CGI
@@ -565,7 +565,7 @@ Choisir Essentiel
 Le plus choisi
 Prestige
 
-299 €
+299€
 
 TVA non applicable
 art. 293 B du CGI
@@ -588,7 +588,7 @@ Choisir Prestige
 
 Mémorial
 
-499 €
+499€
 
 TVA non applicable
 art. 293 B du CGI
@@ -672,7 +672,7 @@ Investissement
 
 Brief famille
 
-1 re
+1re
 
 Composition offerte
 
@@ -712,6 +712,8 @@ Selon le rite, et pas toujours. Nous composons volontiers autour d'un verset ou 
 Oui. Le catalogue en comporte un, composé pour une femme de quatre-vingt-cinq ans dont les enfants voulaient lui dire de son vivant ce qu'on dit trop souvent après. La démarche est la même : un entretien, un texte, une œuvre. Elle vaut aussi pour un anniversaire, des noces d'or ou un départ. Nous lui avons consacré une page : <a href="/de-son-vivant">offrir la chanson d'une vie, de son vivant</a>.
 
 Nous. La composition s'appuie sur des outils de création musicale assistée, mais le texte, la mélodie et le mixage sont relus, corrigés et validés à la main avant l'envoi. Aucun hommage ne part sans avoir été écouté en entier par un humain.
+
+Pour une mère, nous avons détaillé ce qu’il faut raconter d’elle et le moment où la faire entendre dans une chanson d’hommage pour maman ; pour un père, dans une chanson pour papa.
 
 Une question qui n'est pas ici ?
 
@@ -760,7 +762,7 @@ Paiement sécurisé, entretien sous vingt-quatre heures, aucun droit de diffusio
 
 Essentiel
 
-149 €
+149€
 
 TVA non applicable
 art. 293 B du CGI
@@ -786,7 +788,7 @@ L'hommage sobre et juste, pour l'essentiel du souvenir.
 Le plus choisi
 Prestige
 
-299 €
+299€
 
 TVA non applicable
 art. 293 B du CGI
@@ -807,7 +809,7 @@ L'hommage complet : plus de choix, plus de sérénité.
 
 Mémorial
 
-499 €
+499€
 
 TVA non applicable
 art. 293 B du CGI
@@ -1023,7 +1025,7 @@ Téléphone
 
 Vivement recommandé : l'entretien se fait au téléphone.
 
-J'accepte que ces informations soient utilisées pour composer l'hommage, conformément à la politique de confidentialité . *
+J'accepte que ces informations soient utilisées pour composer l'hommage, conformément à la politique de confidentialité. *
 
 ### Tout est prêt.
 
@@ -1033,13 +1035,13 @@ Aucun prélèvement n'est effectué tant que vous n'avez pas validé le paiement
 
 Votre hommage
 
-Offre Prestige
+OffrePrestige
 
-Pour —
+Pour—
 
-Style —
+Style—
 
-Total 299 €
+Total299 €
 
 Livré 24 h après l'entretien
 
@@ -1137,7 +1139,7 @@ Ton prix dépasse celui des perles
 Tu as marché entre deux terres avec foi
 
 Les mots de la famille
-croyante debout rassembleuse
+croyantedeboutrassembleuse
 
 Ces œuvres ont été offertes à des personnes bien vivantes, qui les ont écoutées. Les prénoms et les récits ont été modifiés, comme pour le reste du catalogue.
 
@@ -1202,7 +1204,7 @@ une cérémonie.
 
 Essentiel
 
-149 €
+149€
 
 TVA non applicable
 art. 293 B du CGI
@@ -1230,7 +1232,7 @@ Choisir Essentiel
 Le plus choisi
 Prestige
 
-299 €
+299€
 
 TVA non applicable
 art. 293 B du CGI
@@ -1253,7 +1255,7 @@ Choisir Prestige
 
 Mémorial
 
-499 €
+499€
 
 TVA non applicable
 art. 293 B du CGI
@@ -1442,7 +1444,7 @@ De tes éclats de rire dans le couloir
 De ta façon de dire « ça ira »
 
 Les mots de la famille
-rieur bricoleur fidèle
+rieurbricoleurfidèle
 
 Piano classique
 
@@ -1458,7 +1460,7 @@ Et tant qu'un cœur prononcera ton nom,
 Tu ne disparaîtras jamais.
 
 Les mots de la famille
-lumineux inachevé aimé
+lumineuxinachevéaimé
 
 Musette
 
@@ -1474,7 +1476,7 @@ Tu avais rempli toute une vie
 De petits bonheurs, de grandes envies
 
 Les mots de la famille
-généreuse rieuse rassembleuse
+généreuserieuserassembleuse
 
 Ballade rock
 
@@ -1490,7 +1492,7 @@ Pierre, l'éternel sourire
 Qui danse avec le vent
 
 Les mots de la famille
-intrépide généreux amoureux
+intrépidegénéreuxamoureux
 
 Funk · Nord de la France
 
@@ -1506,7 +1508,7 @@ Tu as sillonné l'Europe entière
 Avec ton funk dans les oreilles
 
 Les mots de la famille
-increvable rieur fidèle
+increvablerieurfidèle
 
 Rock · Lyon
 
@@ -1522,7 +1524,7 @@ Et tu t'en es allé comme une guitare électrique
 Vers la scène d'en haut, là où les rockers ne s'éteignent jamais
 
 Les mots de la famille
-fidèle bruyant tendre
+fidèlebruyanttendre
 
 Reggae · Paris et le monde
 
@@ -1538,7 +1540,7 @@ Et tu t'en es allé comme un son de reggae
 Vers les terres d'en haut, là où les voyageurs ne s'arrêtent jamais
 
 Les mots de la famille
-libre voyageur rieur
+librevoyageurrieur
 
 Folk acoustique
 
@@ -1554,7 +1556,7 @@ Nous garderons ta lumière
 Au creux de nos mains.
 
 Les mots de la famille
-généreuse voyageuse pudique
+généreusevoyageusepudique
 
 Gospel
 
@@ -1568,7 +1570,7 @@ personne n'oublie ton rire
 Il arrivait avant toi dans la pièce
 
 Les mots de la famille
-généreuse rieuse voyageuse
+généreuserieusevoyageuse
 
 Piano classique
 
@@ -1583,7 +1585,7 @@ Il le murmure aux montagnes,
 Il le confie aux étoiles.
 
 Les mots de la famille
-voyageuse douce croyante
+voyageusedoucecroyante
 
 Gospel · Paris
 
@@ -1598,7 +1600,7 @@ Mais il manque quelque chose dans ses rues
 Une lumière, un rire, une voix
 
 Les mots de la famille
-parisien supporter aimant
+parisiensupporteraimant
 
 Polyphonie corse · Corse
 
@@ -1614,7 +1616,7 @@ Et tu t'en es allé comme s'en vont les bergers
 Vers les pâturages d'en haut, vers le ciel éternel
 
 Les mots de la famille
-montagnard fidèle taiseux
+montagnardfidèletaiseux
 
 Celtique · Bréhat
 
@@ -1630,7 +1632,7 @@ Et tu t'en es allé comme s'en vont les bateaux
 Vers l'île d'Ys, vers le pays d'après
 
 Les mots de la famille
-marin courageux fidèle
+marincourageuxfidèle
 
 Bélé antillais · Martinique
 
@@ -1646,7 +1648,7 @@ Et tu t'en es allé comme se lève le soleil
 Ibo pa mouri janmen — les esprits ne meurent jamais
 
 Les mots de la famille
-rythmé conteur joyeux
+rythméconteurjoyeux
 
 Musique du monde
 
@@ -1660,7 +1662,7 @@ Ton prénom tient dans deux langues
 Celle du village et celle d'ici
 
 Les mots de la famille
-taiseux nourricier fidèle
+taiseuxnourricierfidèle
 
 Chanson française · Nantes
 
@@ -1674,7 +1676,7 @@ Quatre paires de mains sur la même canne
 Quatre silences appris au bord de l'eau
 
 Les mots de la famille
-patient taquin silencieux
+patienttaquinsilencieux
 
 Folk acoustique · Avignon
 
@@ -1688,7 +1690,7 @@ Elle a planté tout ce qu'elle n'a pas dit
 Et le jasmin lui répond chaque avril
 
 Les mots de la famille
-douce obstinée matinale
+douceobstinéematinale
 
 Bossa nova · Marseille
 
@@ -1702,7 +1704,7 @@ Ne pleurez pas, mettez la musique plus fort
 J'ai encore un pas de danse à vous apprendre
 
 Les mots de la famille
-joyeux bruyant généreux
+joyeuxbruyantgénéreux
 
 R&B
 
@@ -1718,7 +1720,7 @@ La main qui rassure,
 La voix qui dit : « Je suis là. »
 
 Les mots de la famille
-dévoué à l'écoute discret
+dévouéà l'écoutediscret
 
 Country americana
 
@@ -1735,7 +1737,7 @@ Une maison, quelques rêves
 Et l’amour comme unique richesse
 
 Les mots de la famille
-patient bâtisseur fidèle
+patientbâtisseurfidèle
 
 Chaque œuvre a bien été composée pour une personne. Les prénoms et les récits qui les accompagnent ont été modifiés : nous ne publions jamais l’histoire d’une famille.
 
@@ -1768,7 +1770,7 @@ Vingt registres de départ, ajustés pendant l'entretien. Ceux que nous avons d�
 
 Chaleureux · Habité
 
-Constantine dans ton cœur Pour Bob, 79 ans
+Constantine dans ton cœurPour Bob, 79 ans
 
 Écouter
 
@@ -1776,7 +1778,7 @@ Constantine dans ton cœur Pour Bob, 79 ans
 
 Épuré · Intemporel
 
-Jusqu'au jour où l'on se retrouve Pour Jason, 38 ans
+Jusqu'au jour où l'on se retrouvePour Jason, 38 ans
 
 Écouter
 
@@ -1784,7 +1786,7 @@ Jusqu'au jour où l'on se retrouve Pour Jason, 38 ans
 
 Tendre · Populaire
 
-Sous le lierre Pour Yvette, la mamie de la maison
+Sous le lierrePour Yvette, la mamie de la maison
 
 Écouter
 
@@ -1792,7 +1794,7 @@ Sous le lierre Pour Yvette, la mamie de la maison
 
 Ample · Émouvant
 
-Qui danse avec le vent Pour Pierre, 40 ans
+Qui danse avec le ventPour Pierre, 40 ans
 
 Écouter
 
@@ -1800,7 +1802,7 @@ Qui danse avec le vent Pour Pierre, 40 ans
 
 Joyeux · Entraînant
 
-Le roi de la route Pour Bernard, 69 ans
+Le roi de la routePour Bernard, 69 ans
 
 Écouter
 
@@ -1808,7 +1810,7 @@ Le roi de la route Pour Bernard, 69 ans
 
 Franc · Électrique
 
-Le rocker au cœur d'or Pour Gilbert, rocker de Lyon
+Le rocker au cœur d'orPour Gilbert, rocker de Lyon
 
 Écouter
 
@@ -1816,7 +1818,7 @@ Le rocker au cœur d'or Pour Gilbert, rocker de Lyon
 
 Léger · Solaire
 
-Ta lumière reste Pour Anthony, routard de la vie
+Ta lumière restePour Anthony, routard de la vie
 
 Écouter
 
@@ -1824,7 +1826,7 @@ Ta lumière reste Pour Anthony, routard de la vie
 
 Simple · Sincère
 
-Paula, le vent te porte Pour Paula, 54 ans
+Paula, le vent te portePour Paula, 54 ans
 
 Écouter
 
@@ -1832,7 +1834,7 @@ Paula, le vent te porte Pour Paula, 54 ans
 
 Lumineux · Choral
 
-Personne n'oublie ton rire Pour Odette, super mamie
+Personne n'oublie ton rirePour Odette, super mamie
 
 Écouter
 
@@ -1840,7 +1842,7 @@ Personne n'oublie ton rire Pour Odette, super mamie
 
 Nu · Puissant
 
-Vers les pâturages d'en haut Pour Antone, berger du Niolu
+Vers les pâturages d'en hautPour Antone, berger du Niolu
 
 Écouter
 
@@ -1848,7 +1850,7 @@ Vers les pâturages d'en haut Pour Antone, berger du Niolu
 
 Ancien · Marin
 
-Vers l'île d'Ys Pour Yann, marin de Bréhat
+Vers l'île d'YsPour Yann, marin de Bréhat
 
 Écouter
 
@@ -1856,7 +1858,7 @@ Vers l'île d'Ys Pour Yann, marin de Bréhat
 
 Vivant · Enraciné
 
-Enfant de la mer Pour Dorian, tambouyé de Fort-de-France
+Enfant de la merPour Dorian, tambouyé de Fort-de-France
 
 Écouter
 
@@ -1864,7 +1866,7 @@ Enfant de la mer Pour Dorian, tambouyé de Fort-de-France
 
 Grave · Dansant
 
-Eshet Chayil, femme de valeur Pour Ruth, 85 ans
+Eshet Chayil, femme de valeurPour Ruth, 85 ans
 
 Écouter
 
@@ -1872,7 +1874,7 @@ Eshet Chayil, femme de valeur Pour Ruth, 85 ans
 
 Voyageur · Métissé
 
-Peppe, tesoro Pour Giuseppe, 80 ans
+Peppe, tesoroPour Giuseppe, 80 ans
 
 Écouter
 
@@ -1880,7 +1882,7 @@ Peppe, tesoro Pour Giuseppe, 80 ans
 
 Écrit · Familier
 
-Le Papi Pêcheur Pour Maurice, 78 ans
+Le Papi PêcheurPour Maurice, 78 ans
 
 Écouter
 
@@ -1888,7 +1890,7 @@ Le Papi Pêcheur Pour Maurice, 78 ans
 
 Suave · Nostalgique
 
-Saudade Noite Pour Sergio, 69 ans
+Saudade NoitePour Sergio, 69 ans
 
 Écouter
 
@@ -1896,7 +1898,7 @@ Saudade Noite Pour Sergio, 69 ans
 
 Souple · Moderne
 
-La lumière que tu laissais Pour Mathieu, soignant
+La lumière que tu laissaisPour Mathieu, soignant
 
 Écouter
 
@@ -1904,7 +1906,7 @@ La lumière que tu laissais Pour Mathieu, soignant
 
 Rugueux · Tendre
 
-Une lumière sur le porche Pour Mitch, papy de sept petits-enfants
+Une lumière sur le porchePour Mitch, papy de sept petits-enfants
 
 Écouter
 
@@ -1993,7 +1995,7 @@ Sous 2 heures ouvrées
 
 ### L'écriture des paroles
 
-Vos mots deviennent des couplets. On ne cherche pas le poème : on cherche lui . Les détails concrets — la canne à pêche, le jasmin, la 4L bleue — valent mieux que dix métaphores. Les paroles vous sont soumises si vous le souhaitez.
+Vos mots deviennent des couplets. On ne cherche pas le poème : on cherche lui. Les détails concrets — la canne à pêche, le jasmin, la 4L bleue — valent mieux que dix métaphores. Les paroles vous sont soumises si vous le souhaitez.
 
 Quelques heures
 
@@ -2344,7 +2346,7 @@ Investissement
 
 De la demande à l'œuvre
 
-1 re
+1re
 
 Composition offerte
 
@@ -2367,7 +2369,7 @@ trésorier avant tout engagement.
 
 ## Une fois le rite respecté, il reste à choisir
 
-Savoir ce que la tradition permet ne dit pas quel morceau passer. Si c'est là que vous en êtes, nous avons écrit un guide sur le choix de la musique aux obsèques : combien de morceaux, à quel moment, et ce qu'il faut vérifier avant le jour. Pour une crémation, les contraintes sont différentes et nous les détaillons à part ; et sur la question des droits d'auteur , la réponse est plus simple qu'on ne le croit.
+Savoir ce que la tradition permet ne dit pas quel morceau passer. Si c'est là que vous en êtes, nous avons écrit un guide sur le choix de la musique aux obsèques : combien de morceaux, à quel moment, et ce qu'il faut vérifier avant le jour. Pour une crémation, les contraintes sont différentes et nous les détaillons à part ; et sur la question des droits d'auteur, la réponse est plus simple qu'on ne le croit.
 
 La seule affiche de la maison qui ne montre ni plaque gravée, ni cercueil, ni au-delà. Sur une page qui sert des familles de plusieurs confessions, c’est la condition pour en poser une.
 
@@ -2702,17 +2704,17 @@ Nous fournissons le fichier de gravure, en vectoriel et au format de la plaque. 
 
 Le fichier de gravure est fourni en vectoriel, aux dimensions de la plaque.
 
-Plaque commémorative Granit, laiton ou inox, posée près de la sépulture.
+Plaque commémorativeGranit, laiton ou inox, posée près de la sépulture.
 
-Carte souvenir Remise aux proches le jour de la cérémonie.
+Carte souvenirRemise aux proches le jour de la cérémonie.
 
-Livret de cérémonie En dernière page, près du mot de la famille.
+Livret de cérémonieEn dernière page, près du mot de la famille.
 
-Urne Discrètement gravé sous la base ou au dos.
+UrneDiscrètement gravé sous la base ou au dos.
 
-Faire-part Pour ceux qui n'ont pas pu se déplacer.
+Faire-partPour ceux qui n'ont pas pu se déplacer.
 
-Votre propre support Nous fournissons le fichier, vous décidez de la forme.
+Votre propre supportNous fournissons le fichier, vous décidez de la forme.
 
 Pour le dirigeant
 
@@ -2740,11 +2742,11 @@ ne rien inventer.
 
 Melodia Funèbre ouvre son réseau de partenaires. Nous n'afficherons ni avis fabriqués, ni logos d'agences qui n'ont rien signé, ni chiffres qui n'existent pas. Ce que vous pouvez vérifier, en revanche :
 
-Écoutez le catalogue Des hommages réellement composés, écoutables en entier, sans inscription. Écouter →
+Écoutez le catalogueDes hommages réellement composés, écoutables en entier, sans inscription.Écouter →
 
-Voyez la page famille La démonstration complète, telle qu'une famille la reçoit. Voir un hommage →
+Voyez la page familleLa démonstration complète, telle qu'une famille la reçoit.Voir un hommage →
 
-Parlez au fondateur Pas à un commercial. Maxime Charavet répond lui-même. Demander un rappel →
+Parlez au fondateurPas à un commercial. Maxime Charavet répond lui-même.Demander un rappel →
 
 Ce que nous vous fournissons
 
@@ -3028,15 +3030,15 @@ Aucun investissement, aucun stock, aucun minimum. Vous ne réglez que les hommag
 
 ### Ce qui est convenu
 
-- Marge agence 60 % du montant réglé par la famille, sur chaque hommage. C'est le même taux pour les trois offres et pour les options.
+- Marge agence60 % du montant réglé par la famille, sur chaque hommage. C'est le même taux pour les trois offres et pour les options.
 
-- Ce que cela fait 89 € nets sur l'offre Essentiel à 149 €, 179 € sur Prestige à 299 €, 299 € sur Mémorial à 499 €.
+- Ce que cela fait89 € nets sur l'offre Essentiel à 149 €, 179 € sur Prestige à 299 €, 299 € sur Mémorial à 499 €.
 
-- Options Version longue, instruments rares, langue étrangère, plaque à QR code à 79 € — même taux.
+- OptionsVersion longue, instruments rares, langue étrangère, plaque à QR code à 79 € — même taux.
 
-- Règlement Mensuel, sur facture récapitulative. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée.
+- RèglementMensuel, sur facture récapitulative. Aucun investissement, aucun stock, aucun minimum, aucun engagement de durée.
 
-- Exclusivité Un nombre limité d'agences par bassin de population. La disponibilité de votre secteur se vérifie en un appel.
+- ExclusivitéUn nombre limité d'agences par bassin de population. La disponibilité de votre secteur se vérifie en un appel.
 
 Ces conditions sont les mêmes pour tout le monde : il n'y a pas de grille cachée, et rien ne dépend du volume que vous ferez.
 
@@ -3173,13 +3175,13 @@ sans nous croire sur parole.
 
 - Un appel. Demandez à être rappelé : c’est une personne de la maison qui vous rappelle, et vous pouvez lui demander son prénom.
 
-- Une adresse, en clair. Le fondateur s’appelle Maxime Charavet et lit contact@melodia-funebre.fr . Écrivez-lui, vous verrez bien.
+- Une adresse, en clair. Le fondateur s’appelle Maxime Charavet et lit contact@melodia-funebre.fr. Écrivez-lui, vous verrez bien.
 
 - Une signature au bas de chaque page. Descendez jusqu’au pied de n’importe quelle page de ce site : son nom et son portrait y sont, sur toutes.
 
-- Des œuvres qu’on peut écouter en entier. Il y en a vingt, chacune avec le récit de la personne pour qui elle a été écrite. Ils sont là , sans formulaire à remplir et sans adresse à donner.
+- Des œuvres qu’on peut écouter en entier. Il y en a vingt, chacune avec le récit de la personne pour qui elle a été écrite. Ils sont là, sans formulaire à remplir et sans adresse à donner.
 
-- Un accompagnement écrit dans l’offre. L’offre Mémorial comprend l’accompagnement du fondateur lui-même — c’est inscrit dans nos tarifs , pas dans une promesse commerciale.
+- Un accompagnement écrit dans l’offre. L’offre Mémorial comprend l’accompagnement du fondateur lui-même — c’est inscrit dans nos tarifs, pas dans une promesse commerciale.
 
 Et si vous préférez un visage à une voix, dites-le en demandant le rappel :
 nous nous arrangerons.
@@ -3214,7 +3216,7 @@ Vous avez peu de temps, peu d'envie de chercher, et la crainte de mal faire. Voi
 
 La plupart des cérémonies, religieuses comme civiles, tiennent en trois moments musicaux : l'entrée, le recueillement, la sortie. Certaines familles en ajoutent un quatrième, pendant un dépôt de fleurs ou une lecture. Au-delà, la cérémonie se dilue et l'assemblée décroche — les officiants le disent tous.
 
-Une cérémonie dure en général entre trente et quarante-cinq minutes , et la musique en occupe huit à douze. Ce n'est pas beaucoup : chaque morceau compte.
+Une cérémonie dure en général entre trente et quarante-cinq minutes, et la musique en occupe huit à douze. Ce n'est pas beaucoup : chaque morceau compte.
 
 Huit à douze minutes de musique dans une cérémonie qui en dure quarante. C’est peu — et c’est ce dont on se souvient.
 
@@ -3243,7 +3245,7 @@ Un morceau qu'il aimait, même joyeux. Personne ne vous en voudra.
 
 ## Comment choisir, quand on n'a pas d'idée
 
-La question n'est pas « quelle est la belle musique d'enterrement ». C'est « qu'est-ce qui lui ressemble » . Les cérémonies dont les familles nous reparlent des années après ne sont jamais celles où l'on a passé le morceau qu'il fallait passer.
+La question n'est pas « quelle est la belle musique d'enterrement ». C'est « qu'est-ce qui lui ressemble ». Les cérémonies dont les familles nous reparlent des années après ne sont jamais celles où l'on a passé le morceau qu'il fallait passer.
 
 Handpan, oud, flûte, kalimba, bol chantant. Il n’existe pas d’instrument de circonstance : le bon est celui qu’il aurait reconnu.
 
@@ -3275,9 +3277,9 @@ Ce ne sont pas des règles, seulement ce que nous observons le plus souvent — 
 
 Pour Ce qui fonctionne le mieux
 
-Un père Ce qu'il écoutait lui, même si ce n'est pas « de circonstance ». Un père se reconnaît à ses goûts, pas à la solennité.
+Un père Ce qu'il écoutait lui, même si ce n'est pas « de circonstance ». Un père se reconnaît à ses goûts, pas à la solennité. Voir une chanson pour papa.
 
-Une mère Souvent une voix féminine, et souvent un morceau lié à la maison — la cuisine, la voiture, les vacances.
+Une mère Souvent une voix féminine, et souvent un morceau lié à la maison — la cuisine, la voiture, les vacances. Voir une chanson d’hommage pour maman.
 
 Un conjoint Le morceau du mariage, s'il existe. Il fait pleurer toute la salle, et c'est exactement ce qu'il doit faire.
 
@@ -3305,11 +3307,11 @@ Le portrait, la partition, les fleurs : tout cela se prépare à l’avance. Le 
 
 ## Deux cas particuliers
 
-Si la cérémonie est religieuse , la tradition impose ses propres règles, et elles ne se ressemblent pas d'un rite à l'autre : ce qui est admis à l'église catholique ne l'est pas dans une liturgie orthodoxe, et la prière funéraire musulmane n'accueille pas de musique instrumentale. Nous les avons détaillées une par une sur la page consacrée aux rites .
+Si la cérémonie est religieuse, la tradition impose ses propres règles, et elles ne se ressemblent pas d'un rite à l'autre : ce qui est admis à l'église catholique ne l'est pas dans une liturgie orthodoxe, et la prière funéraire musulmane n'accueille pas de musique instrumentale. Nous les avons détaillées une par une sur la page consacrée aux rites.
 
-Si c'est une crémation , l'organisation du crématorium ajoute une contrainte de durée et un moment très particulier, celui de la disparition du cercueil. Nous en parlons dans le guide sur la musique en crémation .
+Si c'est une crémation, l'organisation du crématorium ajoute une contrainte de durée et un moment très particulier, celui de la disparition du cercueil. Nous en parlons dans le guide sur la musique en crémation.
 
-Et sur les droits d'auteur , la question revient toujours : a-t-on le droit de diffuser une chanson du commerce à des obsèques ? Réponse courte : oui, presque toujours, et ce n'est en général pas à la famille de s'en occuper.
+Et sur les droits d'auteur, la question revient toujours : a-t-on le droit de diffuser une chanson du commerce à des obsèques ? Réponse courte : oui, presque toujours, et ce n'est en général pas à la famille de s'en occuper.
 
 Quinze secondes, sans commandes et sans son : une affiche qui bouge, au bout d’un guide qu’on vient de lire en entier.
 
@@ -3414,7 +3416,7 @@ Une œuvre composée spécialement pour une personne, et pour elle seule, n'appa
 
 C'est une différence qui compte moins le jour de la cérémonie que les semaines suivantes, quand une famille veut transmettre ce qu'elle a entendu. Nous cédons les droits d'usage avec l'œuvre, précisément pour cela.
 
-Le détail de ce que couvre cette cession figure dans nos conditions générales .
+Le détail de ce que couvre cette cession figure dans nos conditions générales.
 
 ## Les questions qu'on nous pose
 
@@ -3475,13 +3477,13 @@ Une crémation n'est pas un enterrement plus court. Elle a son horaire, sa salle
 
 Un crématorium enchaîne les cérémonies sur des créneaux, en général de trente à quarante-cinq minutes, salle comprise. C'est la contrainte que les familles découvrent le plus tard, et celle qui coûte le plus cher émotionnellement : une cérémonie construite pour une heure se retrouve compressée, et c'est presque toujours la musique qu'on sacrifie en premier.
 
-Demandez la durée exacte de votre créneau dès le premier rendez-vous , et construisez la cérémonie à l'intérieur. Trois morceaux de trois minutes, c'est neuf minutes sur trente-cinq : c'est tenable. Cinq morceaux, ce ne l'est pas.
+Demandez la durée exacte de votre créneau dès le premier rendez-vous, et construisez la cérémonie à l'intérieur. Trois morceaux de trois minutes, c'est neuf minutes sur trente-cinq : c'est tenable. Cinq morceaux, ce ne l'est pas.
 
 Neuf minutes sur trente-cinq. C’est peu, et c’est pourtant tout ce dont on se souviendra de la salle.
 
 ## Le moment de la disparition
 
-À la fin de la cérémonie, le cercueil quitte la salle — il descend, glisse derrière un rideau, ou la porte se referme selon les établissements. C'est l'instant le plus dur de la journée , plus dur que la mise en terre pour beaucoup de familles, parce qu'il est net et sans retour.
+À la fin de la cérémonie, le cercueil quitte la salle — il descend, glisse derrière un rideau, ou la porte se referme selon les établissements. C'est l'instant le plus dur de la journée, plus dur que la mise en terre pour beaucoup de familles, parce qu'il est net et sans retour.
 
 Trois choses que nous avons appris à conseiller pour ce moment :
 
@@ -3503,9 +3505,9 @@ Apportez un fichier MP3 sur clé USB, avec une copie de secours, et remettez à 
 
 ## Crémation et rite religieux
 
-La crémation est admise par l'Église catholique depuis 1963, avec une cérémonie qui peut précéder au lieu de culte. D'autres traditions ne l'admettent pas : le judaïsme et l'islam prescrivent l'inhumation. Quand une cérémonie religieuse précède la crémation, ce sont les règles du rite qui s'appliquent pour la musique — nous les avons détaillées tradition par tradition .
+La crémation est admise par l'Église catholique depuis 1963, avec une cérémonie qui peut précéder au lieu de culte. D'autres traditions ne l'admettent pas : le judaïsme et l'islam prescrivent l'inhumation. Quand une cérémonie religieuse précède la crémation, ce sont les règles du rite qui s'appliquent pour la musique — nous les avons détaillées tradition par tradition.
 
-Pour tout ce qui concerne le choix du morceau lui-même, le guide général sur la musique aux obsèques vaut aussi pour une crémation. Et sur la question des droits, tout est ici .
+Pour tout ce qui concerne le choix du morceau lui-même, le guide général sur la musique aux obsèques vaut aussi pour une crémation. Et sur la question des droits, tout est ici.
 
 ## Les questions qu'on nous pose
 
@@ -3564,7 +3566,7 @@ Une chanson d'hommage, c'est le morceau qu'on garde après la cérémonie. Deux 
 
 ## Les deux chemins
 
-Choisir une chanson existante est le réflexe naturel, et souvent le bon : si un morceau était le sien , rien ne le remplacera. Une famille qui hésite doit d'abord chercher de ce côté — dans ce qu'il écoutait en conduisant, ce qu'il chantait faux, ce qui passait à son mariage.
+Choisir une chanson existante est le réflexe naturel, et souvent le bon : si un morceau était le sien, rien ne le remplacera. Une famille qui hésite doit d'abord chercher de ce côté — dans ce qu'il écoutait en conduisant, ce qu'il chantait faux, ce qui passait à son mariage.
 
 Faire écrire une chanson répond à un autre besoin. Non pas « quel morceau lui ressemble », mais « comment raconter cette vie-là ». Un morceau existant parle de quelqu'un d'autre ; une chanson composée parle de lui, avec son métier, ses habitudes, son prénom.
 
@@ -3597,15 +3599,17 @@ Après la cérémonie, un morceau existant redevient un morceau comme un autre. 
 
 C'est la partie qui inquiète le plus, et c'est la plus simple. On ne demande pas un récit de vie. Quatre choses suffisent, et elles viennent en cinq minutes :
 
-- Son prénom , et celui par lequel on l'appelait vraiment. « Mémé Jeanne » vaut mieux que « Jeanne Marie Thérèse ».
+- Son prénom, et celui par lequel on l'appelait vraiment. « Mémé Jeanne » vaut mieux que « Jeanne Marie Thérèse ».
 
-- Trois traits de caractère , même contradictoires. Têtue et généreuse, c'est déjà un personnage.
+- Trois traits de caractère, même contradictoires. Têtue et généreuse, c'est déjà un personnage.
 
 - Son métier ou sa passion — ce qui occupait ses journées et ses mains.
 
-- Une habitude , la plus petite possible. Le café à cinq heures, la radio dans l'atelier, les mots croisés du dimanche. C'est ce détail-là que l'assemblée reconnaît.
+- Une habitude, la plus petite possible. Le café à cinq heures, la radio dans l'atelier, les mots croisés du dimanche. C'est ce détail-là que l'assemblée reconnaît.
 
 Ce qu'il ne faut pas chercher : les dates, les décorations, le résumé d'une carrière. Une chanson qui récite un état civil ne touche personne.
+
+Pour une mère, nous avons détaillé ce qu’il faut raconter d’elle et le moment où la faire entendre dans une chanson d’hommage pour maman ; pour un père, dans une chanson pour papa.
 
 ## Les questions qu'on nous pose
 
@@ -3795,28 +3799,106 @@ Obsèques dans moins de 72 heures ? Nous composons en priorité, livraison possi
 
 ---
 
-Page : Chanson pour maman décédée | Melodia Funèbre
+Page : Chanson hommage pour une maman décédée | Melodia Funèbre
 Adresse : https://melodia-funebre.fr/chanson-pour-maman-decedee
-Résumé : Une chanson pour maman décédée : choisir un morceau existant ou faire écrire la sienne, ce qu’il faut raconter, et comment la faire entendre aux obsèques.
+Résumé : Une chanson d’hommage pour votre maman décédée, écrite d’après ce que vous racontez d’elle : quoi raconter, quand la faire entendre aux obsèques. Dès 149 €.
 
 Pour une maman
 
-# Une chanson
+# Une chanson d’hommage
 pour maman.
 
 Pour un fils ou une fille qui cherche quoi faire entendre aux obsèques de sa mère.
 
-Il existe de très belles chansons sur les mères. Le plus souvent, pourtant, aucune ne parle de la vôtre : de sa cuisine, de sa voix au téléphone, de la façon dont elle disait votre prénom. Cette page vous aide à choisir — un morceau connu, ou une chanson écrite pour elle — et à préparer le moment où elle sera entendue.
+Il existe de très belles chansons sur les mères. Le plus souvent, pourtant, aucune ne parle de la vôtre : de sa cuisine, de sa voix au téléphone, de la façon dont elle disait votre prénom. Écoutez d’abord une chanson d’exemple, en voix de femme ou d’homme, et lisez ses paroles. Cette page vous aide ensuite à choisir — un morceau connu, ou une chanson d’hommage écrite pour elle —, à préparer ce qu’il faut raconter, et le moment où elle sera entendue.
 
 Sommaire
+
+- Écoutez-la,en deux voix.
+
+- Mot pour mot,ce qu’elle disait.
 
 - Un morceau connu, ou le sien
 
 - Ce qu’il faut raconter d’elle
 
+- Comment sa chanson est composée
+
 - Le style : le sien, pas celui des obsèques
 
 - Le moment où elle sera entendue
+
+- Si elle est encore là
+
+Une chanson d’exemple
+
+## Écoutez-la,
+en deux voix.
+
+Maman, ça va aller n’a été écrite pour aucune maman en particulier : c’est un
+exemple, pour entendre ce que nous composons. Un enfant devenu grand parle à sa mère,
+de ses bras le soir jusqu’au dernier soir, où c’est lui qui lui tient la main.
+Choisissez la voix : celle d’une fille, ou celle d’un fils.
+
+Maman, ça va aller · voix de femme
+
+Maman, ça va aller · voix d’homme
+
+Paroles et musique : composé par Melodia Funèbre.
+La chanson de votre maman sera écrite pour elle seule, avec son prénom et vos souvenirs.
+
+Lire les paroles
+
+Les paroles
+
+## Mot pour mot,
+ce qu’elle disait.
+
+Maman, ça va aller
+
+Paroles et musique · composé par Melodia Funèbre
+
+Couplet I
+
+Maman, tes bras le soir,C’était toute ma maison.Tu chantais à mi-voixToujours la même chanson.
+
+Tes mains sentaient le savon,Le café, le pain grillé.Tu disais « dors, mon tout-petit,Demain tout sera passé. »
+
+Refrain
+
+Maman, maman,Redis-moi « ça va aller »,Ta main sur mon front,Et la nuit pouvait passer.Maman, maman,Je n’ai pas apprisÀ vivre sans t’appeler.
+
+Couplet II
+
+Tu me disais « couvre-toi »,« Mange un peu », « appelle-moi ».Je riais, je partais,Je ne me retournais pas.
+
+Un jour, devant mes enfants,Ta voix est sortie de moi :Les mêmes mots, la même chanson,Le soir, à mi-voix.
+
+Refrain · bis
+
+Maman, maman,Redis-moi « ça va aller », …
+
+Pont · presque murmuré
+
+Le dernier soir, c’est moiQui ai pris ta main.J’ai chanté tout basTa vieille chanson à toi.
+
+Tu as souri, je crois…Et tu t’es endormieComme je m’endormaisAutrefois dans tes bras.
+
+Dernier refrain
+
+Maman, maman,À mon tour, « ça va aller »,Ma main sur ton front,Et la nuit peut passer.Maman, maman,Je n’ai pas apprisÀ vivre sans t’appeler…Alors je t’appelle encore.
+
+Fin
+
+Maman…Je laisse la lampe allumée.
+
+Ici, la phrase de la mère est « ça va aller ». Pour la vôtre, ce sera la sienne :
+celle qu’elle répétait, mot pour mot. Le texte s’écrit à partir de ce que vous nous
+racontez d’elle, en cinq minutes au téléphone, et vous recevez sa chanson sous
+vingt-quatre heures, dès 149 €.
+
+Faire écrire la chanson de votre maman
+Le questionnaire à remplir
 
 ## Un morceau connu, ou le sien
 
@@ -3840,32 +3922,92 @@ Une chanson pour une mère ne tient pas à ses qualités — « douce », « cou
 
 - ce qu’elle laisse derrière elle — les enfants, les petits-enfants, une recette, une manière de recevoir.
 
+Si vous êtes plusieurs frères et sœurs, mettez-vous d’accord sur deux ou trois souvenirs plutôt que sur dix : une chanson de deux à trois minutes en porte peu, mais elle les porte bien. Les petits-enfants ont souvent le détail le plus juste — un surnom, une friandise, un jeu.
+
 C’est ainsi qu’est née Le Jardin du Temps : une jardinière d’Avignon, des roses anciennes, du jasmin blanc, et une fille qui voulait « quelque chose qui sente le matin ».
 
 Elle a planté tout ce qu'elle n'a pas dit
 Et le jasmin lui répond chaque avril
 
-Écrite d’après ce que sa fille a raconté — Le Jardin du Temps , pour Monique, 75 ans
+Écrite d’après ce que sa fille a raconté — Le Jardin du Temps, pour Monique, 75 ans
+
+## Comment sa chanson est composée
+
+Vous n’avez rien à écrire ni à préparer. La maison pose les questions et fait le reste :
+
+- Vous commandez en ligne, ou vous demandez simplement à être rappelé.
+
+- Un entretien téléphonique de cinq minutes. Son prénom, trois traits de caractère, son métier ou sa passion, une habitude quotidienne, et si vous le souhaitez une anecdote.
+
+- Le texte s’écrit à partir de ce que vous avez dit : ses gestes, ses lieux, ses mots à elle.
+
+- La musique est composée et enregistrée dans le style qui lui ressemble.
+
+- Une relecture humaine avant l’envoi : aucun hommage n’est livré sans avoir été écouté.
+
+- Vous recevez le fichier par courriel sous vingt-quatre heures après l’entretien. Pour une cérémonie imminente, une priorité permet une livraison en six heures.
+
+Si vous préférez écrire plutôt que parler, le questionnaire famille reprend les mêmes questions, à remplir à la main : vous le remettez à votre agence funéraire, ou vous l’envoyez scanné ou photographié à contact@melodia-funebre.fr. Il se télécharge en PDF.
+
+Trois formules, prix TTC : Essentiel 149 € (une œuvre originale de deux à trois minutes), Prestige 299 € (deux versions au choix, une révision offerte, la version instrumentale et les paroles en PDF), Mémorial 499 € (un mini-album de trois titres, des révisions illimitées, un livret souvenir imprimé et la priorité six heures incluse). Dans tous les cas, l’œuvre vous est cédée avec ses droits d’usage : aucune déclaration SACEM pour la diffuser.
+
+Voir les offres et commander
 
 ## Le style : le sien, pas celui des obsèques
 
-Rien n’oblige une chanson d’adieu à être lente ou triste. Une mère qui dansait le samedi soir supportera mal un piano funèbre ; une mamie qui tenait une maison toujours pleine appelle peut-être un accordéon. Le catalogue en donne des exemples réels : Sous le lierre en musette pour Yvette, Personne n’oublie ton rire en gospel pour Odette, Le vent connaît ton nom au piano, avec un Ave Maria, parce que la famille de Chantal voulait que sa foi y soit.
+Rien n’oblige une chanson d’adieu à être lente ou triste. Une mère qui dansait le samedi soir supportera mal un piano funèbre ; une mamie qui tenait une maison toujours pleine appelle peut-être un accordéon. Le catalogue en donne des exemples réels, écrits pour des mères et des grands-mères :
 
-Si elle était croyante et que la cérémonie a lieu à l’église, vérifiez ce que le rite permet avant de choisir : nous l’avons détaillé tradition par tradition .
+- Le Jardin du Temps (folk acoustique) — Pour Monique, jardinière d’Avignon. Sa fille voulait « quelque chose qui sente le matin » : voix féminine, cordes, guitare en arpèges.
+
+- Sous le lierre (musette) — Pour Yvette, la mamie d’une maison toujours pleine. Une valse musette, avec un chœur d’enfants sur le refrain.
+
+- Personne n'oublie ton rire (gospel) — Pour Odette, « super mamie », qui cuisinait sans balance et à la table de qui Paul, Thomas, Virginie et Nolan ont grandi. Orgue Hammond et chœur gospel.
+
+Pour Chantal, Le vent connaît ton nom mêle le piano et un Ave Maria, parce que sa famille voulait que sa foi y soit. Si elle était croyante et que la cérémonie a lieu à l’église, vérifiez ce que le rite permet avant de choisir : nous l’avons détaillé tradition par tradition.
 
 ## Le moment où elle sera entendue
 
-Une chanson pour une mère se place en général au recueillement, après les prises de parole : la salle est prête à écouter. Prévenez celui ou celle qui conduit la cérémonie, dites en une phrase qu’elle a été écrite pour elle, et laissez un silence après la dernière note. Pour le reste — clé USB, copie de secours, essai de son — les vérifications sont les mêmes que pour toute musique d’obsèques, et nous les avons réunies dans notre guide sur la musique d’un enterrement .
+Une chanson pour une mère se place en général au recueillement, après les prises de parole : la salle est prête à écouter. Prévenez celui ou celle qui conduit la cérémonie, dites en une phrase qu’elle a été écrite pour elle, et laissez un silence après la dernière note.
+
+- À l’entrée, un morceau qu’elle aimait, ou la version instrumentale de sa chanson — voir la musique sans paroles.
+
+- Au recueillement, sa chanson, entendue en entier.
+
+- En crémation, le moment de la disparition du cercueil demande un morceau qui tienne jusqu’au bout : nous l’expliquons dans la musique en crémation.
+
+- En cérémonie civile, rien n’est imposé, et une chanson écrite pour elle y trouve naturellement sa place : un déroulé simple.
+
+Pour le reste — clé USB, copie de secours, essai de son — les vérifications sont les mêmes que pour toute musique d’obsèques, et nous les avons réunies dans notre guide sur la musique d’un enterrement.
+
+## Si elle est encore là
+
+Une chanson peut aussi être composée de son vivant : elle l’entend, elle peut la corriger, et elle reste pour ses enfants. C’est ce que les enfants de Ruth ont fait pour elle, à quatre-vingt-cinq ans. Nous l’expliquons sur la page de son vivant.
 
 ## Les questions qu'on nous pose
 
-### Quelle chanson passer aux obsèques de sa maman ?
+### Quelle chanson passer à l’enterrement de sa maman ?
 
-Celle qui lui ressemble plutôt que celle qui parle « des mamans » en général : un morceau qu’elle aimait vraiment, dont vous avez relu toutes les paroles, ou une chanson écrite pour elle à partir de ses gestes, de ses lieux et de ce qu’elle vous a transmis.
+Celle qui lui ressemble plutôt que celle qui parle « des mamans » en général : un morceau qu’elle aimait vraiment, dont vous avez relu toutes les paroles, ou une chanson d’hommage écrite pour elle à partir de ses gestes, de ses lieux et de ce qu’elle vous a transmis. Elle se place en général au recueillement, après les prises de parole.
 
-### Peut-on faire écrire une chanson avec le prénom de sa mère ?
+### Comment faire écrire une chanson d’hommage pour sa mère décédée ?
 
-Oui. C’est l’objet même d’une chanson d’hommage : son prénom, les lieux de sa vie et ses gestes sont dans le texte. La famille raconte, la maison écrit et compose, et l’œuvre est livrée sous vingt-quatre heures.
+Melodia Funèbre compose une chanson originale à partir d’un entretien téléphonique de cinq minutes : son prénom, trois traits de caractère, son métier ou sa passion, une habitude, une anecdote. Le texte est écrit pour elle, la musique composée dans son style, relue par un humain, et le fichier est livré sous vingt-quatre heures après l’entretien.
+
+### Combien coûte une chanson personnalisée pour une maman décédée ?
+
+Trois formules, prix TTC : Essentiel 149 €, Prestige 299 € (révision, version instrumentale et paroles en PDF inclus), Mémorial 499 € (mini-album de trois titres, révisions illimitées, livret imprimé, priorité six heures). Aucune redevance SACEM n’est à déclarer pour la diffuser.
+
+### Existe-t-il une chanson d’une maman décédée pour ses enfants ?
+
+Les chansons du répertoire parlent de toutes les mères. Une chanson d’hommage, elle, est écrite pour une seule : ce que ses enfants racontent d’elle devient le texte, avec son prénom et leurs souvenirs. Et si elle est encore là, une chanson peut être composée de son vivant ; elle l’entend, la corrige, et elle reste pour ses enfants.
+
+### Peut-on avoir les paroles de la chanson ?
+
+Oui. Le texte est écrit pour elle et vous appartient avec l’œuvre ; l’offre Prestige et l’offre Mémorial comprennent les paroles imprimables en PDF, que l’on peut glisser dans le livret de la cérémonie.
+
+### Peut-on choisir une voix de femme ou une voix d’homme ?
+
+Oui. La voix se choisit à l’entretien : celle d’une fille ou celle d’un fils, plus grave ou plus claire, selon ce qui vous ressemble. La chanson d’exemple de cette page, « Maman, ça va aller », s’écoute dans les deux voix.
 
 ### Faut-il que la chanson soit triste ?
 
@@ -3959,7 +4101,7 @@ Jean avait quarante ans. Parisien, supporter du Paris Saint-Germain, mari de Cat
 Paris peut bien continuer sans toi
 Mais il manque quelque chose dans ses rues
 
-Composée pour un père de deux enfants — Jean, Paris , pour Jean, 40 ans
+Composée pour un père de deux enfants — Jean, Paris, pour Jean, 40 ans
 
 On n’y trouve ni « papa » ni « héros » : une ville, une absence, et ce qu’il y manque désormais. C’est ce déplacement qui rend une chanson pour un père supportable à entendre en public.
 
@@ -4058,7 +4200,7 @@ Sommaire
 
 - Le dépôt de fleurs ou le défilé devant le cercueil. C’est un temps qui dure, dont on ne connaît pas la longueur à l’avance. Une musique sans couplets supporte d’être coupée n’importe où.
 
-- La crémation, au moment du départ du cercueil. Il faut une musique qui tienne sans rien raconter ; nous en parlons en détail dans le guide sur la crémation .
+- La crémation, au moment du départ du cercueil. Il faut une musique qui tienne sans rien raconter ; nous en parlons en détail dans le guide sur la crémation.
 
 - Derrière une lecture. Très bas, sous un texte lu, un instrumental soutient la voix au lieu de lui faire concurrence.
 
@@ -4070,7 +4212,7 @@ On pense d’abord au piano ou à l’orgue, et ils conviennent souvent. Mais un
 
 - La salle. Les basses très profondes passent mal dans une salle conçue pour la parole ; les instruments médiums portent mieux.
 
-- Le rite. Certaines traditions n’admettent pas d’instruments pendant l’office — la liturgie orthodoxe, la prière funéraire musulmane, l’enterrement juif traditionnel. Le détail est sur la page des rites .
+- Le rite. Certaines traditions n’admettent pas d’instruments pendant l’office — la liturgie orthodoxe, la prière funéraire musulmane, l’enterrement juif traditionnel. Le détail est sur la page des rites.
 
 ## La même œuvre, avec et sans voix
 
@@ -4177,7 +4319,7 @@ La plupart des cérémonies, civiles comme religieuses, tiennent en trois moment
 
 - La sortie. Quelque chose qui tienne pendant qu’on se lève : rien qui s’éteigne trop vite.
 
-Au-delà de quatre ou cinq morceaux, la cérémonie se dilue. Si elle se tient au crématorium, le créneau impose sa propre durée : voyez le guide sur la crémation .
+Au-delà de quatre ou cinq morceaux, la cérémonie se dilue. Si elle se tient au crématorium, le créneau impose sa propre durée : voyez le guide sur la crémation.
 
 ## Qui s’occupe de quoi
 
@@ -4190,7 +4332,7 @@ C’est dans une cérémonie civile qu’une chanson composée pour le défunt p
 Ne pleurez pas, mettez la musique plus fort
 J'ai encore un pas de danse à vous apprendre
 
-Composée pour un danseur infatigable — Saudade Noite , pour Sergio, 69 ans
+Composée pour un danseur infatigable — Saudade Noite, pour Sergio, 69 ans
 
 ## Les questions qu'on nous pose
 
@@ -4343,7 +4485,7 @@ Votre CV
 PDF uniquement, 5 Mo au maximum. Facultatif — mais il nous fait gagner l'entretien de tri.
 
 J'accepte que ces informations et mon CV soient conservés le temps de l'étude de ma
-candidature, conformément à la politique de confidentialité . *
+candidature, conformément à la politique de confidentialité. *
 
 Vos données ne servent qu'au recrutement. Elles ne sont ni revendues, ni versées à une liste de diffusion.
 
@@ -4425,7 +4567,7 @@ Votre demande
 
 Votre message *
 
-Ce bouton ouvre votre logiciel de messagerie avec le message pré-rempli. Vous pouvez aussi écrire directement à contact@melodia-funebre.fr .
+Ce bouton ouvre votre logiciel de messagerie avec le message pré-rempli. Vous pouvez aussi écrire directement à contact@melodia-funebre.fr.
 
 Réponses rapides
 
@@ -4466,13 +4608,13 @@ Android
 
 ## Chrome vous le propose
 
-Ouvrez le menu du navigateur, puis Installer l'application . Selon la version, Chrome l'offre aussi tout seul en bas de l'écran.
+Ouvrez le menu du navigateur, puis Installer l'application. Selon la version, Chrome l'offre aussi tout seul en bas de l'écran.
 
 iPhone et iPad
 
 ## Par le bouton Partager
 
-Apple n'ouvre aucune boîte de dialogue : il faut toucher Partager , puis Sur l'écran d'accueil . Et uniquement depuis Safari — les autres navigateurs n'ont pas accès à cette fonction sur iPhone.
+Apple n'ouvre aucune boîte de dialogue : il faut toucher Partager, puis Sur l'écran d'accueil. Et uniquement depuis Safari — les autres navigateurs n'ont pas accès à cette fonction sur iPhone.
 
 Ce que ça change
 
@@ -4586,13 +4728,13 @@ L'application
 
 ## Une vie, une chanson.
 
-La personne Prénom, surnom, prononciation
+La personnePrénom, surnom, prononciation
 
-Sa vie Traits, habitudes, anecdotes
+Sa vieTraits, habitudes, anecdotes
 
-La musique Style, voix, instruments
+La musiqueStyle, voix, instruments
 
-Le récapitulatif Pour le conseiller
+Le récapitulatifPour le conseiller
 
 Installation
 
@@ -4636,7 +4778,7 @@ Cinq pages A4, à imprimer et à laisser à la famille. De larges lignes pour é
 
 - 2 La famille le remplit à son rythme, au stylo. Seules les questions marquées ◆ sont indispensables.
 
-- 3 Il revient à votre agence, ou scanné ou photographié à contact@melodia-funebre.fr . Nous composons à partir de là.
+- 3 Il revient à votre agence, ou scanné ou photographié à contact@melodia-funebre.fr. Nous composons à partir de là.
 
 PDF · 5 pages A4 · 2,3 Mo
 
@@ -4709,7 +4851,7 @@ Pour les agences partenaires, la facturation intervient mensuellement sur récap
 
 ## Article 5 — Délai de livraison
 
-L'œuvre est livrée dans un délai de vingt-quatre heures à compter de l'entretien téléphonique , et non de la commande. L'option « priorité 6 heures » ramène ce délai à six heures ouvrées.
+L'œuvre est livrée dans un délai de vingt-quatre heures à compter de l'entretien téléphonique, et non de la commande. L'option « priorité 6 heures » ramène ce délai à six heures ouvrées.
 
 La livraison s'effectue par courrier électronique et dans l'espace client, au format MP3 320 kbps, complété des formats prévus par l'offre souscrite.
 
@@ -4723,7 +4865,7 @@ Une révision consiste en la reprise de l'œuvre — texte, mélodie ou interpr�
 
 Conformément à l'article L. 221-28 3° du Code de la consommation, le droit de rétractation ne peut être exercé pour les biens confectionnés selon les spécifications du consommateur ou nettement personnalisés — ce qui est le cas d'une œuvre composée pour une personne déterminée.
 
-Engagement volontaire de Melodia Funèbre : le client peut néanmoins annuler sa commande sans frais et obtenir le remboursement intégral des sommes versées tant que la composition n'a pas débuté , c'est-à-dire jusqu'à l'entretien téléphonique. Passé ce stade, l'œuvre étant en cours de réalisation sur mesure, l'annulation n'ouvre plus droit à remboursement, mais les révisions prévues à l'article 6 restent acquises.
+Engagement volontaire de Melodia Funèbre : le client peut néanmoins annuler sa commande sans frais et obtenir le remboursement intégral des sommes versées tant que la composition n'a pas débuté, c'est-à-dire jusqu'à l'entretien téléphonique. Passé ce stade, l'œuvre étant en cours de réalisation sur mesure, l'annulation n'ouvre plus droit à remboursement, mais les révisions prévues à l'article 6 restent acquises.
 
 ## Article 8 — Cession des droits d'usage
 
@@ -4735,7 +4877,7 @@ Chaque œuvre est composée spécifiquement pour le client et lui est cédée av
 
 - conservation et transmission aux générations suivantes.
 
-L'œuvre étant originale, sa diffusion n'entraîne aucune déclaration ni redevance auprès d'un organisme de gestion collective .
+L'œuvre étant originale, sa diffusion n'entraîne aucune déclaration ni redevance auprès d'un organisme de gestion collective.
 
 Toute exploitation commerciale de l'œuvre — vente, mise à disposition payante, utilisation publicitaire — reste soumise à autorisation écrite préalable de Melodia Funèbre.
 
@@ -4747,9 +4889,9 @@ Les éléments biographiques confiés lors de l'entretien servent exclusivement 
 
 Toute réclamation peut être adressée à contact@melodia-funebre.fr ou au .
 
-Conformément à l'article L. 612-1 du Code de la consommation, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d'un litige : [médiateur à désigner — adhésion obligatoire pour les professionnels vendant aux consommateurs] .
+Conformément à l'article L. 612-1 du Code de la consommation, le consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d'un litige : [médiateur à désigner — adhésion obligatoire pour les professionnels vendant aux consommateurs].
 
-La plateforme européenne de règlement en ligne des litiges est accessible à l'adresse ec.europa.eu/consumers/odr .
+La plateforme européenne de règlement en ligne des litiges est accessible à l'adresse ec.europa.eu/consumers/odr.
 
 À défaut de résolution amiable, le litige relève des tribunaux français compétents.
 
@@ -4777,9 +4919,9 @@ Composé pour Bob, 79 ans
 
 Né là-bas, arrivé ici, et jamais tout à fait reparti de ni l’un ni l’autre. Une vie de mains dans le cambouis et de dimanches à rallonge, une veste marron qu’il refusait de remplacer, et cette manie de dire « juste un petit moment » quand on lui demandait de rester. Sa famille voulait qu’on entende son rire, pas son absence. Rhodes, contrebasse, balais sur la caisse claire et une trompette sourdine — la musique qu’il mettait le dimanche.
 
-Les mots de la famille rieur bricoleur fidèle
+Les mots de la famillerieurbricoleurfidèle
 
-Soul jazz Chaleureux · Habité
+Soul jazzChaleureux · Habité
 
 ## Un extrait des paroles
 
@@ -4837,9 +4979,9 @@ Composé pour Jason, 38 ans
 
 Trente-huit ans, et des phrases restées inachevées. Sa famille n'a pas demandé une chanson triste : elle a demandé qu'il soit encore là quelque part — dans la lumière au bord des fenêtres, dans le vent qui traverse les arbres. Piano de concert, violoncelle, voix soul et chœurs, sur un tempo qui ne presse personne.
 
-Les mots de la famille lumineux inachevé aimé
+Les mots de la famillelumineuxinachevéaimé
 
-Piano classique Épuré · Intemporel
+Piano classiqueÉpuré · Intemporel
 
 ## Un extrait des paroles
 
@@ -4897,9 +5039,9 @@ Composé pour Yvette, la mamie de la maison
 
 Une maison qui ne désemplissait pas, des cartables dans l’entrée et toujours une place de plus à table. Elle avait rencontré Marcel un soir d’été, il lui avait offert trois roses, et ils n’ont plus jamais cessé d’agrandir la table. Sa famille voulait une valse, pas un chant grave : accordéon, violon, clarinette et contrebasse, avec un chœur d’enfants sur le refrain — ceux-là mêmes qui criaient « Mamie, encore un tour ! ».
 
-Les mots de la famille généreuse rieuse rassembleuse
+Les mots de la famillegénéreuserieuserassembleuse
 
-Musette Tendre · Populaire
+MusetteTendre · Populaire
 
 ## Un extrait des paroles
 
@@ -4957,9 +5099,9 @@ Composé pour Pierre, 40 ans
 
 Quarante ans, et ce rire qui déchirait l'orage. Il grimpait sans harnais, sautait dans le vide pour se sentir vivre, ramenait des routes du bout du monde — mais son vrai courage, disait sa famille, c'était d'aimer sans filet. Une seule étoile brillait au creux de ses aventures : Emeline. Elle a demandé que la chanson ne soit pas triste, et qu'on y entende ce qu'il lui aurait dit lui-même — qu'il est désormais l'air qui caresse sa peau, le voyageur infini. Piano en ouverture, guitare électrique en solo, et une fin qui s'éteint sur un arpège.
 
-Les mots de la famille intrépide généreux amoureux
+Les mots de la familleintrépidegénéreuxamoureux
 
-Ballade rock Ample · Émouvant
+Ballade rockAmple · Émouvant
 
 ## Un extrait des paroles
 
@@ -5017,9 +5159,9 @@ Composé pour Bernard, 69 ans
 
 Né un matin de 1957 dans une famille modeste du Nord, d'un père à l'usine et d'une mère à l'école. À dix-huit ans son premier camion, un vieux Saviem qu'il bichonnait comme un enfant — et quarante ans d'autoroutes, de Paris à Berlin, de Marseille à Amsterdam, le funk dans les oreilles. Il a rencontré Marie un mardi soir de novembre dans un restoroute près de Lyon : elle servait les cafés. Sept enfants sont venus, puis quinze petits-enfants qu'il emmenait en balade le dimanche dans le vieux camion, en leur disant que la vie ressemble à la route — des virages, des lignes droites, des embouteillages, mais l'important est de garder le rythme. Le jour de l'adieu, ses copains chauffeurs sont venus de toute l'Europe, klaxons en l'air. Basse slappée, section de cuivres, Rhodes et batterie qui ne ralentit jamais.
 
-Les mots de la famille increvable rieur fidèle
+Les mots de la familleincrevablerieurfidèle
 
-Funk Joyeux · Entraînant
+FunkJoyeux · Entraînant
 
 ## Un extrait des paroles
 
@@ -5077,9 +5219,9 @@ Composé pour Gilbert, rocker de Lyon
 
 Né un soir de 1956 dans un quartier populaire de Lyon. À quinze ans il entend à la radio une voix qui hurlait comme un loup — c'était Johnny, et il a couru acheter son premier 45 tours. À dix-huit ans, une vieille Triumph retapée de ses mains, et toutes les routes de France pour suivre la tournée : Paris, Marseille, Toulouse. Il a épousé Martine, qui supportait les vinyles et les week-ends sur la route. À soixante-dix ans il est allé au dernier concert, au Stade de France ; il a levé les bras comme à vingt ans et dit à son fils : « un jour, tu iras pour moi ». Il est rentré, a mis son vinyle préféré, et s'est endormi le sourire aux lèvres. Aujourd'hui les motos sont alignées devant son garage et ses petits-enfants ont découvert Johnny ce soir-là. Guitares électriques, orgue Hammond, et une foule qui chante.
 
-Les mots de la famille fidèle bruyant tendre
+Les mots de la famillefidèlebruyanttendre
 
-Rock Franc · Électrique
+RockFranc · Électrique
 
 ## Un extrait des paroles
 
@@ -5137,9 +5279,9 @@ Composé pour Anthony, routard de la vie
 
 Né en 1976 dans une banlieue grise, loin des tropiques, avec le one-drop dans le cœur. À dix-huit ans, son premier sac : Kingston, Addis-Abeba, les étoiles du Sahara. Il parlait cinq langues, mais le patwa était son cœur, et il revenait à Noël avec des masques d'Afrique et des pierres d'Inde. L'année de ses cinquante ans il est reparti pour l'Éthiopie — « cette fois, je reste un peu plus longtemps » — et n'est jamais revenu. Ses amis ont ramené son sac à dos, mis Exodus à fond dans le jardin de son vieux squat parisien, et dansé jusqu'au lever du soleil. Melodica, basse lourde, batterie one-drop et échos dub.
 
-Les mots de la famille libre voyageur rieur
+Les mots de la famillelibrevoyageurrieur
 
-Reggae Léger · Solaire
+ReggaeLéger · Solaire
 
 ## Un extrait des paroles
 
@@ -5197,9 +5339,9 @@ Composé pour Paula, 54 ans
 
 Cinquante-quatre années à semer de l'amour sur les chemins du monde. Elle aimait partir sans savoir où, suivre une route, un soleil, un parfum d'ailleurs — et partout où elle allait, quelque chose la ramenait vers les siens. Elle savait écouter les silences des autres, donner sans compter, aimer sans faire de bruit. Elle cachait parfois ses larmes derrière ses sourires, et trouvait toujours une raison d'aimer encore. Flûte amérindienne, guitare en fingerpicking, voix rauque et polyphonie masculine.
 
-Les mots de la famille généreuse voyageuse pudique
+Les mots de la famillegénéreusevoyageusepudique
 
-Folk acoustique Simple · Sincère
+Folk acoustiqueSimple · Sincère
 
 ## Un extrait des paroles
 
@@ -5257,9 +5399,9 @@ Composé pour Odette, super mamie
 
 Elle cuisinait sans balance, juste à l'œil, et les fêtes attendaient ses plats plutôt que l'inverse. Elle repartait la valise trop pleine et revenait avec le soleil dans la voix. Paul, Thomas, Virginie et Nolan ont grandi à sa table. Orgue Hammond et chœur gospel.
 
-Les mots de la famille généreuse rieuse voyageuse
+Les mots de la famillegénéreuserieusevoyageuse
 
-Gospel Lumineux · Choral
+GospelLumineux · Choral
 
 ## Un extrait des paroles
 
@@ -5315,9 +5457,9 @@ Composé pour Chantal, 79 ans
 
 Elle aimait les chansons, celles qui font partir l'âme bien avant les pieds. Elle est partie vers le Sud, et la vie y a posé Orlando sur son chemin. Sa famille a demandé que sa foi y soit, et un Ave Maria. Flûte amérindienne, harpe, violoncelles, chœur.
 
-Les mots de la famille voyageuse douce croyante
+Les mots de la famillevoyageusedoucecroyante
 
-Piano classique Épuré · Intemporel
+Piano classiqueÉpuré · Intemporel
 
 ## Un extrait des paroles
 
@@ -5374,9 +5516,9 @@ Composé pour Jean, 40 ans
 
 Parisien dans l'âme et supporter du Paris Saint-Germain, mari de Catia, père de Lucas et Julie. Sa famille a parlé de la ville qu'il aimait, des terrasses et des soirs de match au Parc — puis de ce qui passait avant tout le reste : eux quatre. Piano et saxophone, sur une montée gospel.
 
-Les mots de la famille parisien supporter aimant
+Les mots de la familleparisiensupporteraimant
 
-Gospel Lumineux · Choral
+GospelLumineux · Choral
 
 ## Un extrait des paroles
 
@@ -5433,9 +5575,9 @@ Composé pour Antone, berger du Niolu
 
 Né dans le Niolu, sous le Monte Cintu. Berger comme son père et son grand-père : à douze ans il connaissait déjà chaque pierre, chaque source, chaque printemps des sentiers. Il a épousé Maria aux yeux noirs, fille de berger elle aussi, et ils ont eu cinq enfants — trois garçons, deux filles, tous nés sous le toit des ancêtres. Quand la maladie l'a cloué au lit, il a demandé qu'on ouvre la fenêtre pour voir le village une dernière fois. Polyphonie à trois voix d'hommes, cetera, pirula et ghiterra ; les couplets sont en corse, les refrains en français.
 
-Les mots de la famille montagnard fidèle taiseux
+Les mots de la famillemontagnardfidèletaiseux
 
-Polyphonie corse Nu · Puissant
+Polyphonie corseNu · Puissant
 
 ## Un extrait des paroles
 
@@ -5493,9 +5635,9 @@ Composé pour Yann, marin de Bréhat
 
 Né un matin de brume à Bréhat, entre l'écume et les mâts. Son père sentait le sel, sa mère le goémon. À douze ans il montait sur son premier dundee, direction l'Islande. Il a épousé Marie aux cheveux couleur de lin ; ils ont eu quatre enfants, deux filles et deux garçons, et la maison sentait le cidre et le pain noir. Quand la maladie l'a cloué dans son lit, il a demandé qu'on ouvre la fenêtre pour voir la mer une dernière fois. Harpe celtique, bombarde, biniou kozh et violon ; le chant passe du breton au français.
 
-Les mots de la famille marin courageux fidèle
+Les mots de la famillemarincourageuxfidèle
 
-Celtique Ancien · Marin
+CeltiqueAncien · Marin
 
 ## Un extrait des paroles
 
@@ -5553,9 +5695,9 @@ Composé pour Dorian, tambouyé de Fort-de-France
 
 Né un matin de 1948 à Fort-de-France, entre la mer et les cannes. Son père ramenait les poissons volants, sa mère les histoires d'avant. À dix ans il tenait déjà le tambou et faisait lever tout le quartier. Il connaissait les poissons, les étoiles et les rivières. Il a épousé Yolande ; ils ont eu quatre enfants, deux garçons et deux filles, et la maison n'a jamais manqué de rires ni de musique. Le soir, devant la case, il racontait les légendes aux petits. Quand la maladie est venue, il a demandé qu'on joue du bélé : il a dansé une dernière fois, et il a souri. Tambou bélé, ti-bwa, chacha et guitare ; les couplets en français, un passage en créole.
 
-Les mots de la famille rythmé conteur joyeux
+Les mots de la famillerythméconteurjoyeux
 
-Bélé antillais Vivant · Enraciné
+Bélé antillaisVivant · Enraciné
 
 ## Un extrait des paroles
 
@@ -5613,9 +5755,9 @@ Composé pour Ruth, 85 ans
 
 Née à Paris un soir de janvier, dans une maison modeste où l'on récitait le Shema. Un matin de septembre, elle est partie avec une valise et un Tehillim, et a pleuré en embrassant le sable du chemin. Là-bas elle a trouvé Avraham, et de leur amour sont nés quatre enfants : David, Moshe, Isaac et Sharone. Avraham est parti trop tôt ; elle a serré ses enfants et n'a pas plié. Aujourd'hui, trente voix et plus se lèvent autour de sa table. Violon klezmer, oud, kinnor et chofar, sur le texte d'Eshet Chayil que l'on chante aux femmes de la maison.
 
-Les mots de la famille croyante debout rassembleuse
+Les mots de la famillecroyantedeboutrassembleuse
 
-Klezmer Grave · Dansant
+KlezmerGrave · Dansant
 
 ## Un extrait des paroles
 
@@ -5673,9 +5815,9 @@ Composé pour Giuseppe, 80 ans
 
 Il avait quitté le Sud pour l'usine et gardé le Sud dans l'assiette. Il n'a jamais dit « je t'aime » : il disait « mangia », et cela suffisait. Sa famille voulait sa cuisine, son accent qu'il n'a pas voulu perdre, et les dimanches de tutta la famiglia. Accordéon, piano, violoncelle.
 
-Les mots de la famille taiseux nourricier fidèle
+Les mots de la familletaiseuxnourricierfidèle
 
-Musique du monde Voyageur · Métissé
+Musique du mondeVoyageur · Métissé
 
 ## Un extrait des paroles
 
@@ -5731,9 +5873,9 @@ Composé pour Maurice, 78 ans
 
 Pêcheur en bord de Loire pendant quarante ans. Sa famille a parlé de sa patience, de ses gestes précis, de la façon dont il a appris à pêcher à chacun de ses quatre petits-enfants. Guitare et accordéon, sur un tempo de marche tranquille.
 
-Les mots de la famille patient taquin silencieux
+Les mots de la famillepatienttaquinsilencieux
 
-Chanson française Écrit · Familier
+Chanson françaiseÉcrit · Familier
 
 ## Un extrait des paroles
 
@@ -5789,9 +5931,9 @@ Composé pour Monique, 75 ans
 
 Jardinière d'Avignon. Roses anciennes, jasmin blanc, les mains dans la terre à chaque printemps. Sa fille voulait « quelque chose qui sente le matin ». Voix féminine, cordes chaleureuses, guitare en arpèges.
 
-Les mots de la famille douce obstinée matinale
+Les mots de la familledouceobstinéematinale
 
-Folk acoustique Simple · Sincère
+Folk acoustiqueSimple · Sincère
 
 ## Un extrait des paroles
 
@@ -5847,9 +5989,9 @@ Composé pour Sergio, 69 ans
 
 Brésilien de Marseille, danseur infatigable. Sa famille voulait de la joie, pas des larmes : « il aurait détesté qu'on pleure ». Guitare nylon, brosses sur la caisse claire, une dernière samba pour la route.
 
-Les mots de la famille joyeux bruyant généreux
+Les mots de la famillejoyeuxbruyantgénéreux
 
-Bossa nova Suave · Nostalgique
+Bossa novaSuave · Nostalgique
 
 ## Un extrait des paroles
 
@@ -5905,9 +6047,9 @@ Composé pour Mathieu, soignant
 
 Il a passé sa vie dans les couloirs de nuit, là où les autres ont peur. Une main posée doucement, un sourire au milieu de l'inquiétude, et cette façon étrange de rendre le monde moins lourd. Il savait écouter les silences, entendre les douleurs que personne ne disait. Quand la porte de l'hôpital se refermait derrière lui, il lui restait la musique : le R&B, les basses, les voix qui montent dans la nuit. Piano, saxophone ténor, Rhodes et chœur soul.
 
-Les mots de la famille dévoué à l'écoute discret
+Les mots de la familledévouéà l'écoutediscret
 
-R&B Souple · Moderne
+R&BSouple · Moderne
 
 ## Un extrait des paroles
 
@@ -5965,9 +6107,9 @@ Composé pour Mitch, papy de sept petits-enfants
 
 Un vieux garage en bois où dormaient les outils et les années, chaque rayure sur le métal portant le secret d’un été. Sarah l’attendait sous le porche, au bord de la rivière ; sont venus trois enfants, puis sept petits-enfants courant dans la poussière. Une americana qui passe du français à l’anglais sans prévenir, comme on passe d’une génération à l’autre : guitare aux doigts, pedal steel, fiddle et contrebasse, avec un chœur d’enfants pour la fin.
 
-Les mots de la famille patient bâtisseur fidèle
+Les mots de la famillepatientbâtisseurfidèle
 
-Country americana Rugueux · Tendre
+Country americanaRugueux · Tendre
 
 ## Un extrait des paroles
 
