@@ -266,6 +266,12 @@ function page(p) {
     /* Vignette de partage propre à la page, quand elle en a une. */
     image: p.image,
     imageAlt: p.imageAlt,
+    /* Facultatifs : une page qui porte un lecteur (la page « maman »)
+       a besoin de son script et de ses balises og:audio. Les autres
+       n'en déclarent pas et ne changent pas. */
+    scripts: p.scripts,
+    metas: p.metas,
+    ogType: p.ogType,
     jsonld: jsonld(p),
     body: `
   <section class="page-head">

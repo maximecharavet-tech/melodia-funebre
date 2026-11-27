@@ -36,6 +36,7 @@ const PUBLIE = '2026-11-01';
    d’autre. */
 const { OFFERS } = require('./data.js');
 const { oeuvre, lien } = require('./citations.js');
+const CHANSON = require('./chanson-maman.js');
 const prix = (nom) => { const o = OFFERS.find((x) => x.name === nom); return o ? o.price + ' €' : ''; };
 const ESSENTIEL = prix('Essentiel'), PRESTIGE = prix('Prestige'), MEMORIAL = prix('Mémorial');
 
@@ -63,8 +64,14 @@ const maman = page({
   datePublished: PUBLIE,
   h1: 'Une chanson d’hommage<br><em>pour maman.</em>',
   situation: "Pour un fils ou une fille qui cherche quoi faire entendre aux obsèques de sa mère.",
-  chapeau: "Il existe de très belles chansons sur les mères. Le plus souvent, pourtant, aucune ne parle de la vôtre : de sa cuisine, de sa voix au téléphone, de la façon dont elle disait votre prénom. Cette page vous aide à choisir — un morceau connu, ou une chanson d’hommage écrite pour elle —, à préparer ce qu’il faut raconter, et le moment où elle sera entendue.",
-  corps: `
+  chapeau: "Il existe de très belles chansons sur les mères. Le plus souvent, pourtant, aucune ne parle de la vôtre : de sa cuisine, de sa voix au téléphone, de la façon dont elle disait votre prénom. Écoutez d’abord une chanson d’exemple, en voix de femme ou d’homme, et lisez ses paroles. Cette page vous aide ensuite à choisir — un morceau connu, ou une chanson d’hommage écrite pour elle —, à préparer ce qu’il faut raconter, et le moment où elle sera entendue.",
+  /* La platine du catalogue, et le petit script qui relie le livret
+     à la voix en cours d'écoute. */
+  scripts: ['assets/js/catalogue.js', 'assets/js/livret.js'],
+  metas: CHANSON.metas,
+  corps: `${CHANSON.ecoute()}
+${CHANSON.paroles(ESSENTIEL)}
+
   <section class="section-sm" style="padding-top:2.6rem;">
     <div class="wrap">
       <div class="prose reveal">
@@ -165,6 +172,8 @@ ${listeMeres}
       texte: "Les chansons du répertoire parlent de toutes les mères. Une chanson d’hommage, elle, est écrite pour une seule : ce que ses enfants racontent d’elle devient le texte, avec son prénom et leurs souvenirs. Et si elle est encore là, une chanson peut être composée de son vivant ; elle l’entend, la corrige, et elle reste pour ses enfants." },
     { q: "Peut-on avoir les paroles de la chanson ?",
       texte: "Oui. Le texte est écrit pour elle et vous appartient avec l’œuvre ; l’offre Prestige et l’offre Mémorial comprennent les paroles imprimables en PDF, que l’on peut glisser dans le livret de la cérémonie." },
+    { q: "Peut-on choisir une voix de femme ou une voix d’homme ?",
+      texte: "Oui. La voix se choisit à l’entretien : celle d’une fille ou celle d’un fils, plus grave ou plus claire, selon ce qui vous ressemble. La chanson d’exemple de cette page, « Maman, ça va aller », s’écoute dans les deux voix." },
     { q: "Faut-il que la chanson soit triste ?",
       texte: "Non. Le style se choisit d’après elle : musette, gospel, folk, piano… Une chanson lumineuse peut être plus juste qu’une chanson lente, si c’est ainsi qu’on se souvient d’elle." },
     { q: "Peut-on la faire entendre aussi à ses petits-enfants plus tard ?",
@@ -172,7 +181,7 @@ ${listeMeres}
     { q: "Les obsèques ont lieu dans deux jours, est-ce encore possible ?",
       texte: "Oui. La livraison se fait sous vingt-quatre heures après l’entretien, et une priorité existe pour les cérémonies imminentes, avec une livraison possible en six heures." }
   ],
-  jsonldPlus: [{
+  jsonldPlus: [CHANSON.jsonld, {
     '@context': 'https://schema.org',
     '@type': 'Service',
     '@id': 'https://melodia-funebre.fr/chanson-pour-maman-decedee#service',

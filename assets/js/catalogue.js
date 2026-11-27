@@ -27,13 +27,30 @@
        famille. Seul le moment change, pas l'auteur du récit. */
     vivant:  { qui: 'Pour', brief: 'Les mots de la famille', partage: 'Partager cette œuvre' },
     /* Laissé par la personne elle-même : les mots sont les siens. */
-    message: { qui: 'De',   brief: 'Ce qu’il nous a demandé',  partage: 'Partager ce message' }
+    message: { qui: 'De',   brief: 'Ce qu’il nous a demandé',  partage: 'Partager ce message' },
+    /* Une chanson d'exemple, montrée sur une page de situation (la
+       page « maman ») : elle n'est composée pour personne en
+       particulier. Pas de « Pour », pas de « mots de la famille ». */
+    exemple: { qui: '',     brief: 'La musique',               partage: 'Partager cette chanson' }
   };
 
   var grille = document.querySelector('[data-catalogue]');
   if (!grille) return;
 
   var REDUIT = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Réglages portés par le bloc lui-même, tous facultatifs : le
+     catalogue des réalisations n'en pose aucun et garde son
+     comportement. La page « maman » montre une seule chanson en deux
+     voix : l'ordre y est fixe (femme, puis homme), la frise dit
+     « deux voix » et non « deux hommages », et la fin d'une voix
+     n'enchaîne pas sur l'autre — on compare, on n'écoute pas en
+     boucle. */
+  var OPT = {
+    ordreFixe: grille.getAttribute('data-ordre') === 'fixe',
+    friseTitre: grille.getAttribute('data-frise-titre') || '',
+    enchainer: grille.getAttribute('data-enchainer') !== 'non'
+  };
 
   var PLAY  = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
   var PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/></svg>';
@@ -64,6 +81,7 @@
      une famille n'a pas toujours de photo qu'elle accepte de voir
      publiée, et une fiche sans visage doit rester aussi soignée. */
   function initiale(o) {
+    if (o.ini) return String(o.ini).charAt(0);
     var s = (o.who || o.title || '').trim();
     return s ? s.charAt(0).toUpperCase() : '♪';
   }
@@ -324,7 +342,7 @@
        « De son vivant » : la platine lit donc le registre au lieu de
        supposer. */
     var reg = REGISTRES[o.categorie] || REGISTRES.hommage;
-    platine.querySelector('[data-qui]').textContent = o.who ? reg.qui + ' ' + o.who : '';
+    platine.querySelector('[data-qui]').textContent = o.who ? (reg.qui ? reg.qui + ' ' : '') + o.who : '';
 
     var r = platine.querySelector('[data-recit]');
     r.textContent = o.story || '';
@@ -366,6 +384,19 @@
     elJeton.setAttribute('aria-label', 'Écouter ' + (o.title || 'cet hommage'));
 
     marquerFrise();
+    signaler();
+  }
+
+  /* Les autres blocs de la page (les paroles, sur la page « maman »)
+     savent ainsi quelle œuvre est en scène et si elle joue, sans lire
+     l'intérieur de la platine. */
+  function signaler() {
+    var o = OEUVRES[cur];
+    try {
+      document.dispatchEvent(new CustomEvent('melodia:platine', {
+        detail: { id: o ? o.id : '', titre: o ? o.title : '', qui: o ? o.who : '', joue: joue }
+      }));
+    } catch (e) { /* navigateur ancien : rien ne dépend de ce signal */ }
   }
 
   /* ═══ Commandes ═══ */
@@ -430,7 +461,7 @@
   });
   audio.addEventListener('ended', function () {
     var p = visibles.indexOf(cur);
-    if (p >= 0 && p < visibles.length - 1) sauter(1); else arreter();
+    if (OPT.enchainer && p >= 0 && p < visibles.length - 1) sauter(1); else arreter();
   });
   audio.addEventListener('error', function () {
     if (!audio.getAttribute('src')) return;   /* arreter() vide la source */
@@ -643,6 +674,7 @@
     majBarre();
     majBoutonTout();
     marquerFrise();
+    signaler();
   }
 
   function marquerFrise() {
@@ -719,7 +751,7 @@
     });
     /* Seuls les hommages comptent : un message de son vivant n'en est pas un. */
     var nH = visibles.filter(function (i) { return estHommage(OEUVRES[i]); }).length;
-    fTitre.textContent = nH + (nH > 1 ? ' hommages composés' : ' hommage composé');
+    fTitre.textContent = OPT.friseTitre || (nH + (nH > 1 ? ' hommages composés' : ' hommage composé'));
 
     /* Si l'œuvre en scène vient d'être filtrée, on passe à la première
        qui reste plutôt que de laisser une platine orpheline. */
@@ -787,7 +819,9 @@
     return t;
   }
   function calculerVisibles() {
-    if (!TIRAGE || TIRAGE.length !== OEUVRES.length) TIRAGE = melanger(OEUVRES.length);
+    if (!TIRAGE || TIRAGE.length !== OEUVRES.length) {
+      TIRAGE = OPT.ordreFixe ? OEUVRES.map(function (_, i) { return i; }) : melanger(OEUVRES.length);
+    }
     visibles = TIRAGE.filter(function (i) {
       var o = OEUVRES[i];
       return o && (!filtreActif || o.style === filtreActif);

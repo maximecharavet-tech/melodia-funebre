@@ -6217,3 +6217,141 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 @media (prefers-reduced-motion: reduce) {
   .lumiere-3d::before, .lumiere-3d::after, .lumiere-3d .l3d-toile { transition: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LA CHANSON D'EXEMPLE — page « maman »
+   La platine est celle du catalogue ; seul le repli sans JavaScript
+   et le livret des paroles sont propres à cette page.
+   ═══════════════════════════════════════════════════════════════ */
+.exemple-platine:not(.platine-active) { display: grid; gap: 1rem; max-width: 40rem; margin: 2rem auto 0; }
+.exemple-voix { margin: 0; padding: 1rem 1.2rem; border: 1px solid var(--line); }
+.exemple-voix figcaption { font-family: var(--ff-d); font-size: 1.15rem; color: var(--paper); margin-bottom: .6rem; }
+.exemple-voix audio { width: 100%; }
+.exemple-vers-paroles {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-family: var(--ff-m); font-size: 0.807rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--or); text-decoration: none; padding: .6rem .2rem;
+}
+.exemple-vers-paroles svg { width: 16px; height: 16px; transition: transform .4s var(--ease-out); }
+.exemple-vers-paroles:hover { color: var(--or-bright); }
+.exemple-vers-paroles:hover svg { transform: translateY(3px); }
+
+/* ─── Le livret ───
+   Une page de livret de disque, sur l'ivoire : le texte en Cormorant,
+   les refrains posés sur un fond à peine plus chaud, entre deux filets
+   d'or. Sur grand écran, deux pages et le pli au milieu ; sur un
+   téléphone, une seule colonne. Tout est centré, comme un poème. */
+.livret-section { scroll-margin-top: 5rem; }
+.livret-tete { text-align: center; max-width: 44rem; margin: 0 auto; }
+.livret-titre {
+  font-family: var(--ff-d); font-weight: 300; font-size: clamp(2rem, 6.4vw, 3.3rem); line-height: 1.05;
+  margin: 2rem 0 .6rem; color: var(--ivory-ink);
+}
+.livret-titre em {
+  font-style: italic;
+  background: var(--or-grad-ivoire); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.livret-credit {
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ivory-soft); margin: 0;
+}
+.livret-ecoute {
+  display: inline-flex; align-items: center; gap: .55rem; margin: 1.2rem 0 0;
+  padding: .35rem .85rem; border: 1px solid rgba(107, 88, 40, .35); border-radius: 999px;
+  font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--or-ivoire);
+}
+.livret-ecoute[hidden] { display: none; }
+.livret-vu { display: inline-flex; align-items: flex-end; gap: 2px; height: 11px; }
+.livret-vu i { width: 2px; height: 100%; background: var(--or-ivoire); transform-origin: bottom; animation: livretVu 1s ease-in-out infinite; }
+.livret-vu i:nth-child(2) { animation-delay: -.35s; }
+.livret-vu i:nth-child(3) { animation-delay: -.7s; }
+@keyframes livretVu { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+
+.livret {
+  position: relative; display: grid; grid-template-columns: 1fr; gap: 0;
+  max-width: 62rem; margin: clamp(2.4rem, 6vw, 3.6rem) auto 0;
+  padding: clamp(1.6rem, 5vw, 3.4rem) clamp(1rem, 4vw, 3rem);
+  background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.2));
+  border: 1px solid var(--ivory-line);
+  box-shadow: 0 30px 60px -40px rgba(23, 21, 15, .35);
+}
+/* Deux filets d'or aux coins, comme le cadre d'une page imprimée */
+.livret::before, .livret::after {
+  content: ''; position: absolute; width: 46px; height: 46px; pointer-events: none;
+  border: 1px solid rgba(128, 106, 48, .55);
+}
+.livret::before { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+.livret::after { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
+.livret-pli { display: none; }
+@media (min-width: 900px) {
+  .livret { grid-template-columns: 1fr 1px 1fr; column-gap: clamp(2rem, 4vw, 3.4rem); }
+  .livret-pli { display: block; background: linear-gradient(180deg, transparent, rgba(128,106,48,.45) 18%, rgba(128,106,48,.45) 82%, transparent); }
+}
+.livret-page { display: grid; gap: clamp(1.8rem, 4vw, 2.4rem); align-content: start; }
+@media (max-width: 899px) { .livret-page + .livret-pli + .livret-page { margin-top: clamp(1.8rem, 4vw, 2.4rem); } }
+
+.lv-partie { text-align: center; }
+.lv-nom {
+  margin: 0 0 .9rem; font-family: var(--ff-m); font-size: 0.8rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--or-ivoire);
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+}
+.lv-nom::before, .lv-nom::after { content: ''; width: 1.6rem; height: 1px; background: rgba(128,106,48,.4); }
+.lv-nom b { font-family: var(--ff-d); font-size: 1rem; font-weight: 500; letter-spacing: .06em; }
+.lv-nom i { font-style: normal; color: var(--ivory-soft); letter-spacing: .14em; }
+.lv-strophe {
+  margin: 0 auto; max-width: 26rem;
+  font-family: var(--ff-d); font-weight: 400; font-size: clamp(1.14rem, 3.4vw, 1.32rem); line-height: 1.62;
+  color: var(--ivory-ink);
+}
+.lv-strophe + .lv-strophe { margin-top: 1rem; }
+.lv-v { display: block; }
+.lv-cle {
+  font-style: italic; color: var(--or-ivoire);
+}
+
+/* Le refrain : un fond plus chaud, l'italique, deux filets d'or. Il
+   doit se repérer d'un coup d'œil quand on suit la chanson. */
+.lv-refrain {
+  position: relative; padding: 1.3rem 1rem 1.4rem;
+  background: linear-gradient(180deg, rgba(235,230,219,.0), rgba(235,230,219,.85) 18%, rgba(235,230,219,.85) 82%, rgba(235,230,219,0));
+}
+.lv-refrain::before, .lv-refrain::after {
+  content: ''; position: absolute; left: 50%; width: min(14rem, 60%); height: 1px; transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(128,106,48,.6), transparent);
+}
+.lv-refrain::before { top: 0; }
+.lv-refrain::after { bottom: 0; }
+.lv-refrain .lv-strophe { font-style: italic; font-size: clamp(1.22rem, 3.7vw, 1.45rem); }
+.lv-reprise .lv-strophe { color: var(--ivory-soft); }
+.lv-etc { color: var(--or-ivoire); letter-spacing: .2em; }
+.lv-final .lv-v:last-child { margin-top: .5rem; color: var(--or-ivoire); }
+
+/* Le pont : chanté presque à voix basse, il s'imprime plus petit. */
+.lv-pont .lv-strophe { font-style: italic; font-size: clamp(1.06rem, 3.1vw, 1.2rem); color: var(--ivory-soft); letter-spacing: .01em; }
+
+.lv-fin .lv-strophe { font-style: italic; }
+.lv-lampe { display: block; width: 26px; height: 26px; margin: 1rem auto 0; color: var(--or-ivoire); }
+.livret.en-ecoute .lv-lampe, .livret-section.en-ecoute .lv-lampe { filter: drop-shadow(0 0 6px rgba(201,168,76,.55)); }
+
+/* L'apparition, vers par vers, quand la strophe entre à l'écran. Le
+   bloc lui-même ne bouge pas : seul le texte se dépose. Le réglage
+   « moins d'animation » coupe tout, par la règle générale du site. */
+@media (prefers-reduced-motion: no-preference) {
+  .lv-partie.reveal { transform: none; }
+  .lv-partie .lv-v { opacity: 0; transform: translateY(6px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out); transition-delay: calc(var(--i, 0) * 70ms); }
+  .lv-partie.in .lv-v { opacity: 1; transform: none; }
+}
+
+.livret-pied { text-align: center; max-width: 44rem; margin: clamp(2.4rem, 6vw, 3.4rem) auto 0; }
+.livret-pied p { color: var(--ivory-soft); line-height: 1.75; margin: 0; }
+@media (max-width: 560px) {
+  .livret-pied .hero-actions { flex-direction: column; align-items: stretch; }
+}
+@media print {
+  .livret { box-shadow: none; }
+  .lv-partie .lv-v { opacity: 1 !important; transform: none !important; }
+}
+/* Deux jetons seulement : ils se tiennent au milieu, pas contre le bord. */
+.exemple-platine .frise-piste { justify-content: safe center; }
