@@ -274,7 +274,7 @@ function page(p) {
     ogType: p.ogType,
     jsonld: jsonld(p),
     body: `
-  <section class="page-head">
+  <section class="page-head${p.classeTete ? ' ' + p.classeTete : ''}">${p.decorTete || ''}
     <div class="wrap">
       <div class="eyebrow reveal in">${esc(p.fil)}</div>
       <h1 class="h-xl reveal in reveal-d1" style="margin-top:.8rem;">${p.h1}</h1>

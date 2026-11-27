@@ -143,6 +143,7 @@ function ecoute() {
         </figure>`).join('\n');
   return `
   <section class="section-sm exemple-ecoute" style="padding-top:2.6rem;">
+    <div class="exemple-fond" aria-hidden="true"></div>
     <div class="wrap">
       <div class="center reveal">
         <div class="eyebrow">Une chanson d’exemple</div>

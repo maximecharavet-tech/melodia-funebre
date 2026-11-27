@@ -6355,3 +6355,61 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
 }
 /* Deux jetons seulement : ils se tiennent au milieu, pas contre le bord. */
 .exemple-platine .frise-piste { justify-content: safe center; }
+
+/* ─── Le visuel de fond de la page « maman » ───
+   Une lampe allumée derrière un rideau de dentelle, à la nuit tombante :
+   la dernière image de la chanson (« je laisse la lampe allumée »).
+   Pas de visage, pas de texte. Sur ordinateur la lampe tient le tiers
+   droit et le titre reste sur la nuit, à gauche ; sur téléphone l'image
+   est verticale et un voile plus dense passe sous tout le texte. Le
+   bas fond dans l'encre de la page : aucune couture avec la suite. */
+.tete-lampe { position: relative; isolation: isolate; overflow: hidden; padding-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+.tete-lampe::before {
+  content: ''; position: absolute; inset: 0; z-index: -3;
+  background: url('/assets/img/maman/fond-lampe-1280.jpg') 78% 46% / cover no-repeat;
+  background-image: image-set(url('/assets/img/maman/fond-lampe-1280.webp') type('image/webp'), url('/assets/img/maman/fond-lampe-1280.jpg') type('image/jpeg'));
+}
+.tete-lampe::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(4,4,7,.55) 0, rgba(4,4,7,0) 22%, rgba(4,4,7,0) 62%, var(--ink) 100%),
+    linear-gradient(90deg, rgba(4,4,7,.94) 0, rgba(4,4,7,.86) 36%, rgba(4,4,7,.42) 62%, rgba(4,4,7,.12) 100%);
+}
+/* La flamme respire, très lentement : une lueur posée sur la lampe. */
+.tete-lampe-lueur {
+  position: absolute; z-index: -2; pointer-events: none;
+  left: 76.5%; top: 64%; width: 26vw; aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,214,140,.30) 0, rgba(227,201,119,.10) 38%, transparent 68%);
+  mix-blend-mode: screen; opacity: .8;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tete-lampe-lueur { animation: lampeRespire 7s ease-in-out infinite; }
+}
+@keyframes lampeRespire { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+/* Sur téléphone, le texte passerait devant la fenêtre : l'image se
+   montre d'abord, en couverture, et le titre vient en dessous, sur la
+   nuit. L'image portrait est posée en haut à pleine largeur. */
+@media (max-width: 760px) {
+  .tete-lampe { padding-top: calc(4.5rem + 72vw); }
+  .tete-lampe::before {
+    background: url('/assets/img/maman/fond-lampe-portrait-720.jpg') 50% -8vw / 100% auto no-repeat;
+    background-image: image-set(url('/assets/img/maman/fond-lampe-portrait-720.webp') type('image/webp'), url('/assets/img/maman/fond-lampe-portrait-720.jpg') type('image/jpeg'));
+    background-color: var(--ink);
+  }
+  .tete-lampe::after {
+    background: linear-gradient(180deg, rgba(4,4,7,.5) 0, rgba(4,4,7,.05) 14%, rgba(4,4,7,.1) calc(2rem + 58vw), rgba(4,4,7,.86) calc(4.5rem + 76vw), var(--ink) calc(8rem + 110vw));
+  }
+  .tete-lampe-lueur { left: 61%; top: calc(-8vw + 92vw); width: 56vw; }
+}
+
+/* Derrière la platine, la même nuit, floutée et presque éteinte : un
+   halo chaud qui porte le disque d'or sans rien lui disputer. */
+.exemple-ecoute { position: relative; isolation: isolate; }
+.exemple-fond {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
+  background: url('/assets/img/maman/fond-lampe-flou-640.jpg') 70% 55% / cover no-repeat;
+  background-image: image-set(url('/assets/img/maman/fond-lampe-flou-640.webp') type('image/webp'), url('/assets/img/maman/fond-lampe-flou-640.jpg') type('image/jpeg'));
+  -webkit-mask: radial-gradient(ellipse 70% 60% at 50% 55%, #000 0, rgba(0,0,0,.45) 55%, transparent 85%);
+          mask: radial-gradient(ellipse 70% 60% at 50% 55%, #000 0, rgba(0,0,0,.45) 55%, transparent 85%);
+}
+.exemple-fond::after { content: ''; position: absolute; inset: 0; background: rgba(4,4,7,.45); }

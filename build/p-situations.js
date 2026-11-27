@@ -69,6 +69,10 @@ const maman = page({
      à la voix en cours d'écoute. */
   scripts: ['assets/js/catalogue.js', 'assets/js/livret.js'],
   metas: CHANSON.metas,
+  /* Le visuel de fond : une lampe allumée à une fenêtre, à la nuit
+     tombante — la dernière image de la chanson. */
+  classeTete: 'tete-lampe',
+  decorTete: '<div class="tete-lampe-lueur" aria-hidden="true"></div>',
   corps: `${CHANSON.ecoute()}
 ${CHANSON.paroles(ESSENTIEL)}
 
