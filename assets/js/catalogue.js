@@ -717,7 +717,9 @@
       fPiste.appendChild(b);
       pastilles.push(b);
     });
-    fTitre.textContent = visibles.length + (visibles.length > 1 ? ' hommages composés' : ' hommage composé');
+    /* Seuls les hommages comptent : un message de son vivant n'en est pas un. */
+    var nH = visibles.filter(function (i) { return estHommage(OEUVRES[i]); }).length;
+    fTitre.textContent = nH + (nH > 1 ? ' hommages composés' : ' hommage composé');
 
     /* Si l'œuvre en scène vient d'être filtrée, on passe à la première
        qui reste plutôt que de laisser une platine orpheline. */
@@ -809,12 +811,14 @@
   }
 
   /* ═══ Compteurs affichés ailleurs sur la page ═══ */
+  function estHommage(o) { return !!o && (o.categorie || 'hommage') === 'hommage'; }
   function majCompteurs() {
+    var nH = OEUVRES.filter(estHommage).length;
     Array.prototype.forEach.call(document.querySelectorAll('[data-catalogue-total]'), function (e) {
       e.textContent = String(OEUVRES.length);
     });
     Array.prototype.forEach.call(document.querySelectorAll('[data-catalogue-libelle]'), function (e) {
-      e.textContent = OEUVRES.length + (OEUVRES.length > 1 ? ' hommages' : ' hommage');
+      e.textContent = nH + (nH > 1 ? ' hommages' : ' hommage');
     });
   }
 

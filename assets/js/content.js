@@ -96,7 +96,23 @@
 
   function appliquerDemos(c) {
     if (!c.demos) return;
-    var actives = visibles(c.demos).filter(function (d) { return d && d.audio; });
+    /* La page dit quel registre elle montre : ses fiches rendues au
+       serveur portent leur catégorie (« hommage », « vivant »…). Sans ce
+       filtre, l'accueil et /demos remontaient le message de son vivant
+       parmi les hommages (21 au lieu de 20), et /de-son-vivant
+       recevait tout le catalogue des hommages. */
+    var registres = { hommage: false };
+    try {
+      var bloc = document.getElementById('oeuvres-data');
+      var deja = bloc ? JSON.parse(bloc.textContent) || [] : [];
+      if (deja.length) {
+        registres = {};
+        deja.forEach(function (o) { registres[(o && o.categorie) || 'hommage'] = true; });
+      } else { registres = { hommage: true }; }
+    } catch (e) { registres = { hommage: true }; }
+    var actives = visibles(c.demos).filter(function (d) {
+      return d && d.audio && registres[d.categorie || 'hommage'];
+    });
     if (!actives.length) return;
 
     /* Le catalogue des réalisations : c'est lui qui affiche les fiches
@@ -106,7 +122,8 @@
       return {
         id: d.id, title: d.title, who: d.who, lieu: d.lieu, style: d.style,
         audio: d.audio, story: d.story, lyrics: d.lyrics, brief: d.brief,
-        photo: d.photo || '', mention: d.mention || ''
+        photo: d.photo || '', mention: d.mention || '',
+        categorie: d.categorie || 'hommage'
       };
     });
     if (window.MelodiaCatalogue) window.MelodiaCatalogue.monter(window.MELODIA_OEUVRES);
@@ -230,7 +247,7 @@
   /* Le contenu reçu est recopié plutôt que modifié sur place : il est
      aussi remis à d'autres modules par l'événement de fin. */
   function comblerJetons(c) {
-    var n = visibles(c.demos || []).filter(function (d) { return d && d.audio; }).length;
+    var n = visibles(c.demos || []).filter(function (d) { return d && d.audio && (d.categorie || 'hommage') === 'hommage'; }).length;
     if (!n) return c;
     var mot = enLettres(n);
     var passe = function (v) {

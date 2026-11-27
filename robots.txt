@@ -28,62 +28,47 @@ Disallow: /api/
 # ─── Robots d'indexation et de réponse des systèmes d'IA ───
 # Autorisés : c'est par eux que passe une part croissante des
 # questions « peut-on faire composer une chanson pour des obsèques ».
+#
+# Ils sont réunis en UN seul groupe, qui répète « Disallow: /api/ ».
+# Un robot nommé dans un groupe ignore entièrement le groupe « * » :
+# quand chacun avait son propre « Allow: / », tous ces robots avaient
+# en réalité le droit de charger /api/, que la règle générale voulait
+# fermer. Le groupe unique corrige cela sans rien retirer d'autre.
+#
+# Ajouts de novembre 2026 : les agents « à la demande » (l'assistant
+# ouvre la page parce qu'un utilisateur vient de poser la question),
+# l'assistant français Le Chat, DuckDuckGo, Vertex AI, et Common Crawl,
+# dont le corpus public nourrit une grande partie des modèles.
 
 User-agent: GPTBot
-Allow: /
-
 User-agent: OAI-SearchBot
-Allow: /
-
 User-agent: ChatGPT-User
-Allow: /
-
 User-agent: ClaudeBot
-Allow: /
-
 User-agent: Claude-Web
-Allow: /
-
 User-agent: Claude-SearchBot
-Allow: /
-
 User-agent: anthropic-ai
-Allow: /
-
 User-agent: PerplexityBot
-Allow: /
-
 User-agent: Perplexity-User
-Allow: /
-
 User-agent: Google-Extended
-Allow: /
-
 User-agent: Applebot
-Allow: /
-
 User-agent: Applebot-Extended
-Allow: /
-
 User-agent: Bingbot
-Allow: /
-
 User-agent: Amazonbot
-Allow: /
-
 User-agent: Meta-ExternalAgent
-Allow: /
-
 User-agent: cohere-ai
-Allow: /
-
 User-agent: YouBot
-Allow: /
-
 User-agent: Bytespider
+User-agent: Claude-User
+User-agent: MistralAI-User
+User-agent: DuckAssistBot
+User-agent: Google-CloudVertexBot
+User-agent: CCBot
 Allow: /
+Disallow: /api/
 
 Sitemap: https://melodia-funebre.fr/sitemap.xml
 
 # Résumé lisible du service, à l'intention des systèmes qui lisent le
 # web pour répondre à des questions : https://melodia-funebre.fr/llms.txt
+# Texte intégral des pages publiques, régénéré à chaque mise à jour :
+# https://melodia-funebre.fr/llms-full.txt

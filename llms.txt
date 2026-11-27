@@ -39,6 +39,14 @@ une seule personne et n'est vendue qu'une fois.
   Prestige comprend une révision, l'offre Mémorial des révisions
   illimitées.
 
+- La chanson peut-elle être dans une autre langue que le français ?
+  Oui. Le catalogue comporte un hommage en polyphonie corse (couplets
+  en corse, refrains en français), un hommage passant du breton au
+  français, et un hommage mêlant le français et l'hébreu.
+- Comment joindre la maison ? Par le formulaire de rappel ou par
+  courriel (contact@melodia-funebre.fr). Urgences traitées sept jours
+  sur sept, réponse sous deux heures ouvrées.
+
 ## Offres
 
 - **Essentiel — 149 €** : une œuvre originale de 2 à 3 minutes,
@@ -106,6 +114,23 @@ composition est offerte pour être présentée à une famille.
   remplir à la main.
 - [Contact](https://melodia-funebre.fr/contact) : demande de rappel
   et formulaire.
+- [De son vivant](https://melodia-funebre.fr/de-son-vivant) : une œuvre
+  originale composée pour quelqu'un qui est encore là (anniversaire,
+  noces d'or, départ) ; il l'entend, peut la corriger, et elle reste.
+- [Qui sommes-nous](https://melodia-funebre.fr/qui-sommes-nous) : la
+  maison, ce qu'aucun outil ne fait à sa place, et comment vérifier
+  qu'il y a quelqu'un au bout du téléphone.
+- [Installer l'application](https://melodia-funebre.fr/application) :
+  ajouter Melodia Funèbre à l'écran d'accueil, sur iPhone comme sur
+  Android ; les hommages restent écoutables sans réseau.
+- [Nous rejoindre](https://melodia-funebre.fr/rejoindre) : recrutement
+  de commerciaux et de compositeurs, rémunération à la commission.
+- Fiches d'écoute : chaque œuvre du catalogue a sa propre page, à
+  l'adresse https://melodia-funebre.fr/ecouter/<titre> (par exemple
+  [Sous le lierre](https://melodia-funebre.fr/ecouter/sous-le-lierre)),
+  avec l'histoire racontée par la famille, un extrait des paroles et
+  l'enregistrement. La liste complète est dans le
+  [plan du site](https://melodia-funebre.fr/sitemap.xml).
 
 ## Pages piliers
 
@@ -134,6 +159,11 @@ défunt », « chanson pour obsèques »…) redirigent vers elles.
   même œuvre en version chantée et instrumentale.
 - [Musique pour une cérémonie civile](https://melodia-funebre.fr/musique-ceremonie-civile)
   : un déroulé simple quand aucun rite n'impose rien.
+
+- [QR code sur une tombe](https://melodia-funebre.fr/qr-code-memorial)
+  : ce qu'un QR code gravé sur une sépulture permet, ce qu'il faut
+  vérifier avant de le sceller, et les questions de durée, de vie
+  privée et d'autorisation.
 
 ## Guides pratiques
 
@@ -168,6 +198,16 @@ cherche sans rien commander.
 - Pays desservi : France
 - Courriel : contact@melodia-funebre.fr
 - Site : https://melodia-funebre.fr
+- Création : 2026
+- Comptes publics : [Facebook](https://www.facebook.com/share/1GUX4Ht8M8/),
+  [Instagram](https://www.instagram.com/melodia_funebre),
+  [TikTok](https://www.tiktok.com/@melodia.funebre)
+
+## Pour aller plus loin
+
+Le texte intégral des pages publiques, régénéré à chaque mise à jour
+du site, est disponible en un seul fichier :
+https://melodia-funebre.fr/llms-full.txt
 
 ## Ce que ce site ne prétend pas
 

@@ -8,7 +8,7 @@ const files = [
   'assets/js/vendor/julie_v2.wasm', 'assets/js/vendor/julie-wasm-glue.js', 'assets/js/vendor/julie-fallback.js', 'assets/js/julie/julie-core.js', 'assets/js/julie/julie-compat.js', 'assets/js/julie/julie-motion.js', 'assets/js/julie/julie-journee.js', 'assets/js/julie/julie-pipeline.js', 'assets/js/julie/julie-sequences.js', 'assets/js/julie/julie-csv.js', 'assets/js/julie/julie-dashboard.js', 'assets/js/julie/julie-apercu.js', 'assets/js/julie/julie-composeur.js', 'assets/js/julie/julie-onboarding.js', 'assets/js/julie/julie-mobile.js', 'assets/js/julie/julie-bridge.js', 'assets/js/julie/julie-vente.js', 'assets/js/julie/julie-actions.js', 'assets/js/julie/julie-taches.js', 'assets/js/julie/julie-appel.js', 'assets/js/julie/julie-fiche.js', 'assets/js/julie/julie-proposition.js', 'assets/js/julie/julie-partenaires.js', 'assets/js/julie/julie-medias.js', 'assets/css/julie-medias.css', 'assets/medias/medias.json', 'api/medias-generer.js', 'api/_medias.js', 'api/ecoute.js', 'api/_ecoute.js', 'assets/css/julie-vente.css', 'assets/css/julie.css', 'assets/css/julie-motion.css', 'assets/css/julie-dashboard.css', 'assets/css/julie-apercu.css', 'assets/css/julie-ui.css', 'api/_courrier-v2.js', 'api/prospect-ia.js', 'api/prospect-doublon.js',
   'chanson-hommage.html', 'qr-code-memorial.html',
   'mentions-legales.html', 'cgv.html', 'confidentialite.html', '404.html',
-  'assets/css/style.css', 'assets/css/dashboard.css',
+  'assets/css/style.css', 'assets/css/style.min.css', 'assets/css/dashboard.css',
   'assets/js/main.js', 'assets/js/catalogue.js', 'assets/js/order.js', 'assets/js/atelier-music.js',
   'assets/js/content.js', 'assets/js/proprietaire.js', 'assets/js/intranet.js', 'assets/js/livraison.js', 'assets/js/rappel.js', 'assets/js/commercial.js', 'assets/js/courrier.js', 'assets/js/ornements.js', 'api/lead.js', 'api/prospects.js', 'assets/data/content.json',
   'api/_courrier.js', 'api/famille.js', 'api/prospect-mail.js', 'api/prospect-webhook.js',
@@ -989,6 +989,48 @@ try {
   } else {
     console.log('  ok   ' + regardees + ' images mesurées, aucune de plus de ' +
       Math.round(POIDS / 1024) + ' Ko servie à plus de ' + MARGE + '× sa largeur d’affichage');
+  }
+}
+
+/* ─── Ce que lisent les moteurs et les assistants ───
+   Un bloc JSON-LD mal formé est ignoré en silence par Google : aucune
+   erreur visible, simplement plus de données structurées. On les
+   relit donc tous. Chaque page indexée doit aussi se déclarer comme
+   page (WebPage ou sous-type) et nommer la maison qui la publie.
+   robots.txt : un robot nommé ignore le groupe « * », donc chaque
+   groupe doit fermer /api/ lui-même. */
+{
+  const mauvais = [];
+  let blocs = 0, pages = 0;
+  const TYPES_PAGE = /"@type":"(WebPage|AboutPage|ContactPage|CollectionPage|ItemPage)"/;
+  for (const f of fs.readdirSync('.').filter((x) => x.endsWith('.html'))) {
+    const src = fs.readFileSync(f, 'utf8');
+    for (const m of src.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      blocs++;
+      try { JSON.parse(m[1]); } catch (e) { mauvais.push(f + ' : JSON-LD illisible (' + e.message + ')'); }
+    }
+    if (/content="noindex/.test(src) || f === '404.html') continue;
+    pages++;
+    if (!TYPES_PAGE.test(src)) mauvais.push(f + ' : aucune entité WebPage');
+    if (!/"@type":"Organization"/.test(src)) mauvais.push(f + ' : la maison (Organization) n’est pas déclarée');
+  }
+  const robots = fs.readFileSync('robots.txt', 'utf8');
+  const groupes = robots.split(/\n\s*\n/).filter((g) => /^User-agent:/m.test(g));
+  groupes.forEach((g) => {
+    if (!/^Disallow: \/api\/$/m.test(g)) {
+      mauvais.push('robots.txt : un groupe n’interdit pas /api/ (' + (g.match(/^User-agent: (.+)$/m) || [])[1] + ')');
+    }
+  });
+  if (!/^Sitemap: https:\/\/melodia-funebre\.fr\/sitemap\.xml$/m.test(robots)) mauvais.push('robots.txt : Sitemap absent');
+  for (const f of ['llms.txt', 'llms-full.txt']) {
+    if (!fs.existsSync(f) || fs.statSync(f).size < 1000) mauvais.push(f + ' absent ou vide');
+  }
+  if (mauvais.length) {
+    console.error('  DONNÉES POUR MOTEURS ET ASSISTANTS :');
+    mauvais.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log('  ok   ' + blocs + ' blocs JSON-LD valides, ' + pages + ' pages indexées déclarées (page + maison), robots.txt et llms*.txt cohérents');
   }
 }
 

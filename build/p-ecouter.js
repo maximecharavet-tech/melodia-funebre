@@ -149,8 +149,19 @@ module.exports = (function () {
       .filter((v, k) => v && v !== t)
       .map((v) => ({ title: v.title, who: v.who, style: v.style, slug: slugs[liste.indexOf(v)] }));
 
-    const desc = (t.story || '').replace(/\s+/g, ' ').trim().slice(0, 155) ||
-      `Un hommage musical en ${t.style.toLowerCase()}, composé pour ${t.who}.`;
+    /* La description coupait l'histoire au 155e caractère, au milieu
+       d'un mot (« il lui a »). Elle commence maintenant par ce qu'est
+       la page — un hommage, son style, pour qui — puis l'histoire,
+       arrêtée sur un mot entier et marquée d'une ellipse. */
+    const DESC_MAX = 158;
+    const style = /[A-Z]&[A-Z]|[A-Z]{2,}/.test(t.style) ? t.style : t.style.toLowerCase();
+    const tete = `Hommage musical (${style}), composé pour ${t.who.replace(/^Pour\s+/i, '')}. `;
+    const histoire = (t.story || '').replace(/\s+/g, ' ').trim();
+    let desc = tete + histoire;
+    if (desc.length > DESC_MAX) {
+      const coupe = desc.slice(0, DESC_MAX - 1);
+      desc = coupe.slice(0, coupe.lastIndexOf(' ')).replace(/[\s,;:—–-]+$/, '') + '…';
+    }
 
     return {
       file: 'ecouter-' + slug + '.html',

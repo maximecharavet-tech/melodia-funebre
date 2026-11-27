@@ -133,7 +133,7 @@ ${HUMAIN.map(([t, p], i) => `        <div class="carte reveal reveal-d${(i % 3) 
            et le WebM passe en premier. -->
       <figure class="equipe equipe-nue reveal">
         <video class="atelier-film" data-ambiance muted loop playsinline preload="none"
-               poster="assets/img/campagne/atelier.jpg"
+               poster="assets/img/campagne/atelier-poster.webp"
                width="1264" height="720"
                aria-label="L’atelier de Melodia Funèbre : la caméra traverse la salle où plusieurs personnes travaillent devant des stations audio, puis s’arrête sur deux d’entre elles penchées sur un même écran.">
           <source src="assets/img/campagne/atelier.webm" type="video/webm">
@@ -145,7 +145,7 @@ ${HUMAIN.map(([t, p], i) => `        <div class="carte reveal reveal-d${(i % 3) 
       <div class="atelier-duo" style="margin-top:1.8rem;">
         <figure class="equipe equipe-nue reveal">
           <img src="assets/img/maison/atelier-clavier-1264.webp"
-               srcset="assets/img/maison/atelier-clavier-640.webp 640w, assets/img/maison/atelier-clavier-1264.webp 1264w"
+               srcset="assets/img/maison/atelier-clavier-640.webp 640w, assets/img/maison/atelier-clavier-900.webp 900w, assets/img/maison/atelier-clavier-1264.webp 1264w"
                sizes="(max-width: 860px) 92vw, 520px"
                width="1264" height="720" loading="lazy" decoding="async"
                alt="Un compositeur de la maison, tourné vers un collègue, devant deux claviers maîtres et une console de mixage.">
@@ -153,7 +153,7 @@ ${HUMAIN.map(([t, p], i) => `        <div class="carte reveal reveal-d${(i % 3) 
         </figure>
         <figure class="equipe equipe-nue reveal reveal-d1">
           <img src="assets/img/maison/atelier-ecoute-1264.webp"
-               srcset="assets/img/maison/atelier-ecoute-640.webp 640w, assets/img/maison/atelier-ecoute-1264.webp 1264w"
+               srcset="assets/img/maison/atelier-ecoute-640.webp 640w, assets/img/maison/atelier-ecoute-900.webp 900w, assets/img/maison/atelier-ecoute-1264.webp 1264w"
                sizes="(max-width: 860px) 92vw, 520px"
                width="1264" height="720" loading="lazy" decoding="async"
                alt="Plusieurs membres de la maison réunis autour d’un même écran de montage audio, en train d’écouter ensemble.">
@@ -188,7 +188,7 @@ ${HUMAIN.map(([t, p], i) => `        <div class="carte reveal reveal-d${(i % 3) 
       <div class="fondateur-bloc">
         <figure class="fondateur-portrait reveal">
           <img src="assets/img/ventures/maxime-bureau-960.webp"
-               srcset="assets/img/ventures/maxime-bureau-480.webp 480w, assets/img/ventures/maxime-bureau-960.webp 960w"
+               srcset="assets/img/ventures/maxime-bureau-480.webp 480w, assets/img/ventures/maxime-bureau-720.webp 720w, assets/img/ventures/maxime-bureau-960.webp 960w"
                sizes="(max-width: 860px) 88vw, 380px"
                width="960" height="1060" loading="lazy" decoding="async"
                alt="Maxime Charavet à son bureau, devant le logo mural de Melodia Funèbre et la devise « Plus qu’une entreprise, une mission de vie ».">
