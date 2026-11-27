@@ -374,3 +374,12 @@ fs.writeFileSync(path.join(RACINE, 'sitemap.xml'),
   entrees + '\n</urlset>\n');
 fs.writeFileSync(REGISTRE, JSON.stringify(dates, null, 2) + '\n');
 console.log('  sitemap.xml            ' + PLAN.length + ' adresses');
+
+/* ─── llms-full.txt ───
+   Le texte intégral des pages publiques, pour les assistants qui lisent
+   le web (voir build/llms-full.js). Produit après les pages, dont il
+   n'est qu'une copie sans mise en forme. */
+{
+  const r = require('./llms-full.js')(PLAN, RACINE, SITE_URL);
+  console.log('  llms-full.txt          ' + r.pages + ' pages, ' + Math.round(r.octets / 1024) + ' Ko');
+}

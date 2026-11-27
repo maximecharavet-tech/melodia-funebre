@@ -204,6 +204,60 @@ function titreCourt(titre) {
   return (nu + MARQUE).length <= LIMITE ? nu + MARQUE : nu;
 }
 
+/* ─── La page, en tant qu'entité ───
+   Chaque page indexée déclare ce qu'elle est (une page « à propos », de
+   contact, une collection d'œuvres, une fiche d'œuvre…), à quel site
+   elle appartient et qui la publie. C'est ce lien explicite page → site
+   → maison qui permet aux moteurs et aux assistants de rattacher une
+   réponse lue sur n'importe quelle page à la même entité, sans deviner.
+
+   L'entité « maison » (Organization) est répétée sur les pages qui ne
+   la déclaraient pas encore : une référence « @id » vers une autre page
+   n'est pas suivie par tous les lecteurs, et les fiches d'écoute
+   renvoyaient à une organisation qu'elles ne définissaient nulle part.
+   Rien n'est ajouté qui ne figure déjà dans parts.js (jsonldOrg). */
+/* Chaque page lit le contenu publié dans la base (content.js) : ouvrir
+   la connexion dès l'en-tête évite d'attendre la négociation TLS au
+   moment de la requête (Lighthouse l'estimait à 300 ms). L'adresse est
+   reprise de config.js pour ne pas l'écrire deux fois. */
+const BASE_CONTENU = (() => {
+  try {
+    const c = require('fs').readFileSync(require('path').join(__dirname, '..', 'assets/js/config.js'), 'utf8');
+    const m = c.match(/SUPABASE_URL:\s*'(https:\/\/[^']+)'/);
+    return m ? m[1].replace(/\/+$/, '') : '';
+  } catch (e) { return ''; }
+})();
+
+const TYPES_DE_PAGE = {
+  'qui-sommes-nous.html': 'AboutPage',
+  'contact.html': 'ContactPage',
+  'demos.html': 'CollectionPage',
+  'de-son-vivant.html': 'CollectionPage'
+};
+function grapheDePage(p, url, image) {
+  if (p.noindex || !p.file || p.file === '404.html') return '';
+  const type = p.pageType || TYPES_DE_PAGE[p.file] ||
+               (/^ecouter-/.test(p.file) ? 'ItemPage' : 'WebPage');
+  const noeuds = [{
+    '@context': 'https://schema.org',
+    '@type': type,
+    '@id': url + '#page',
+    url: url,
+    name: p.title.replace(/\s*\|\s*Melodia Funèbre$/, ''),
+    description: p.desc,
+    inLanguage: 'fr-FR',
+    isPartOf: { '@id': SITE + '/#site' },
+    publisher: { '@id': SITE + '/#organisation' },
+    ...(type === 'AboutPage' || type === 'ContactPage' ? { about: { '@id': SITE + '/#organisation' } } : {}),
+    primaryImageOfPage: { '@type': 'ImageObject', url: image }
+  }];
+  const deja = JSON.stringify(p.jsonld || []);
+  const { jsonldOrg, jsonldSite } = require('./parts.js');
+  if (deja.indexOf('"Organization"') === -1) noeuds.push(jsonldOrg);
+  if (deja.indexOf('"WebSite"') === -1) noeuds.push(jsonldSite);
+  return '\n<script type="application/ld+json">' + JSON.stringify(noeuds) + '</script>';
+}
+
 function head(p) {
   /* L'adresse peut être réécrite : « ecouter-x.html » est servi à
      « /ecouter/x », et c'est cette adresse-là qui doit être canonique
@@ -241,7 +295,7 @@ ${p.metas || ''}
 <link rel="icon" type="image/png" sizes="48x48" href="${versionne('assets/img/icons/icon-48.png')}">
 <link rel="apple-touch-icon" href="/assets/img/icons/icon-180.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="apple-mobile-web-app-title" content="Melodia">
+${BASE_CONTENU ? `<link rel="preconnect" href="${BASE_CONTENU}" crossorigin>\n` : ''}<meta name="apple-mobile-web-app-title" content="Melodia">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <link rel="preload" href="/assets/fonts/cormorant-garamond-normal-latin-abcaa8.woff2" as="font" type="font/woff2" crossorigin>
@@ -254,7 +308,7 @@ ${p.metas || ''}
 /* Sans script, le méga-menu s'ouvre au survol. */
 .nav-groupe:hover .mega{opacity:1!important;visibility:visible!important;transform:none!important;clip-path:none!important}.nav-groupe:hover .mega li,.nav-groupe:hover .mm-titre{opacity:1!important;transform:none!important}
 </style></noscript>
-${p.jsonld ? '<script type="application/ld+json">' + JSON.stringify(p.jsonld) + '</script>' : ''}${p.intro ? `
+${p.jsonld ? '<script type="application/ld+json">' + JSON.stringify(p.jsonld) + '</script>' : ''}${grapheDePage(p, url, image)}${p.intro ? `
 <script>/* Avant le premier rendu : le seuil ne se rejoue pas dans la même session. */
 try{if(sessionStorage.getItem('melodia_intro'))document.documentElement.className+=' intro-off';}catch(e){}</script>
 <noscript><style>.intro{display:none!important}</style></noscript>` : ''}`;

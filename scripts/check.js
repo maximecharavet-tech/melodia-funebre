@@ -992,6 +992,48 @@ try {
   }
 }
 
+/* ─── Ce que lisent les moteurs et les assistants ───
+   Un bloc JSON-LD mal formé est ignoré en silence par Google : aucune
+   erreur visible, simplement plus de données structurées. On les
+   relit donc tous. Chaque page indexée doit aussi se déclarer comme
+   page (WebPage ou sous-type) et nommer la maison qui la publie.
+   robots.txt : un robot nommé ignore le groupe « * », donc chaque
+   groupe doit fermer /api/ lui-même. */
+{
+  const mauvais = [];
+  let blocs = 0, pages = 0;
+  const TYPES_PAGE = /"@type":"(WebPage|AboutPage|ContactPage|CollectionPage|ItemPage)"/;
+  for (const f of fs.readdirSync('.').filter((x) => x.endsWith('.html'))) {
+    const src = fs.readFileSync(f, 'utf8');
+    for (const m of src.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      blocs++;
+      try { JSON.parse(m[1]); } catch (e) { mauvais.push(f + ' : JSON-LD illisible (' + e.message + ')'); }
+    }
+    if (/content="noindex/.test(src) || f === '404.html') continue;
+    pages++;
+    if (!TYPES_PAGE.test(src)) mauvais.push(f + ' : aucune entité WebPage');
+    if (!/"@type":"Organization"/.test(src)) mauvais.push(f + ' : la maison (Organization) n’est pas déclarée');
+  }
+  const robots = fs.readFileSync('robots.txt', 'utf8');
+  const groupes = robots.split(/\n\s*\n/).filter((g) => /^User-agent:/m.test(g));
+  groupes.forEach((g) => {
+    if (!/^Disallow: \/api\/$/m.test(g)) {
+      mauvais.push('robots.txt : un groupe n’interdit pas /api/ (' + (g.match(/^User-agent: (.+)$/m) || [])[1] + ')');
+    }
+  });
+  if (!/^Sitemap: https:\/\/melodia-funebre\.fr\/sitemap\.xml$/m.test(robots)) mauvais.push('robots.txt : Sitemap absent');
+  for (const f of ['llms.txt', 'llms-full.txt']) {
+    if (!fs.existsSync(f) || fs.statSync(f).size < 1000) mauvais.push(f + ' absent ou vide');
+  }
+  if (mauvais.length) {
+    console.error('  DONNÉES POUR MOTEURS ET ASSISTANTS :');
+    mauvais.forEach((x) => console.error('         ' + x));
+    ok = false;
+  } else {
+    console.log('  ok   ' + blocs + ' blocs JSON-LD valides, ' + pages + ' pages indexées déclarées (page + maison), robots.txt et llms*.txt cohérents');
+  }
+}
+
 /* Le message de fin doit dire ce qui ne va pas. « Des fichiers
    manquent » sur un écart de tarif envoie chercher au mauvais
    endroit. */

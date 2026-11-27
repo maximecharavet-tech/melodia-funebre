@@ -41,6 +41,35 @@ module.exports = {
   jsonld: [P.jsonldFil('Téléchargements', '/telechargements'), {
     '@context': 'https://schema.org', '@type': 'FAQPage',
     mainEntity: QUESTIONS.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a } }))
+  }, {
+    /* L'application et le PDF en entités nommées, avec les seuls faits
+       affichés sur la page : Android 6 et plus, APK de 6,3 Mo, gratuit,
+       version de démonstration. Ni note ni avis : il n'en existe pas. */
+    '@context': 'https://schema.org', '@type': 'MobileApplication',
+    '@id': 'https://melodia-funebre.fr/telechargements#application',
+    name: 'Melodia Funèbre — Questionnaire famille (version de démonstration)',
+    description: "Application Android pour les conseillers funéraires : la famille y remplit le questionnaire qui sert à composer la chanson d'hommage. Fonctionne sans réseau ; les réponses restent sur l'appareil.",
+    operatingSystem: 'Android 6.0 ou ultérieur',
+    applicationCategory: 'BusinessApplication',
+    inLanguage: 'fr-FR',
+    fileSize: '6,3 Mo',
+    downloadUrl: 'https://melodia-funebre.fr' + APK,
+    installUrl: 'https://melodia-funebre.fr/telechargements',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    audience: { '@type': 'BusinessAudience', name: 'Conseillers funéraires et agences de pompes funèbres' },
+    screenshot: 'https://melodia-funebre.fr/' + IMG + 'tablette-accueil-900.webp',
+    publisher: { '@id': 'https://melodia-funebre.fr/#organisation' }
+  }, {
+    '@context': 'https://schema.org', '@type': 'DigitalDocument',
+    '@id': 'https://melodia-funebre.fr/telechargements#questionnaire-pdf',
+    name: 'Questionnaire famille Melodia Funèbre (PDF à remplir à la main)',
+    description: "Les mêmes questions que l'application, numérotées de 1.1 à 6.4, à imprimer et remplir à la main, puis à remettre à l'agence ou à envoyer, scanné ou photographié, à contact@melodia-funebre.fr. La chanson est composée à partir de ces réponses.",
+    encodingFormat: 'application/pdf',
+    inLanguage: 'fr-FR',
+    url: 'https://melodia-funebre.fr' + PDF,
+    isAccessibleForFree: true,
+    publisher: { '@id': 'https://melodia-funebre.fr/#organisation' }
   }],
   body: `
 <style>

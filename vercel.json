@@ -72,6 +72,17 @@
       "permanent": true
     },
     {
+      "source": "/((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "melodia-funebre.vercel.app"
+        }
+      ],
+      "destination": "https://melodia-funebre.fr/$1",
+      "permanent": true
+    },
+    {
       "source": "/chanson-hommage-defunt",
       "destination": "/chanson-hommage",
       "permanent": true
@@ -246,6 +257,19 @@
         {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/(llms|llms-full)\\.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
         }
       ]
     },

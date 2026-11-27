@@ -381,7 +381,20 @@ const jsonldOrg = {
   /* Pas de « telephone » : ces données sont publiques et indexées. */
   email: 'contact@melodia-funebre.fr',
   image: SITE + '/assets/img/logo-melodia.jpg',
-  logo: { '@type': 'ImageObject', url: SITE + '/assets/img/logo-melodia.jpg' },
+  logo: { '@type': 'ImageObject', url: SITE + '/assets/img/logo-melodia.jpg', width: 1024, height: 1024 },
+  /* La devise affichée sur le site, et les sujets sur lesquels la
+     maison publie : c'est ce qui permet à un assistant de la citer
+     sur une question de musique d'obsèques plutôt que de la confondre
+     avec une homonyme. Rien ici qui ne soit déjà écrit sur le site. */
+  slogan: 'Chaque vie mérite une chanson',
+  knowsAbout: [
+    "Chanson d'hommage personnalisée pour obsèques",
+    'Musique de funérailles et de crémation',
+    'Musique de cérémonie civile',
+    "Droits d'auteur et SACEM aux obsèques",
+    'Rites funéraires et musique',
+    'QR code mémorial'
+  ],
   founder: { '@type': 'Person', name: 'Maxime Charavet' },
   /* « sameAs » relie la fiche de la maison à ses comptes publics :
      c'est ce qui permet à Google de comprendre que les comptes Facebook,
