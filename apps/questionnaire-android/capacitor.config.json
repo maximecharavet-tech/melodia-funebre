@@ -1,0 +1,10 @@
+{
+  "appId": "fr.melodiafunebre.questionnaire",
+  "appName": "Melodia Questionnaire",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#fbf8f1",
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  }
+}
