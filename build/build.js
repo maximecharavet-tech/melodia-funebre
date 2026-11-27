@@ -66,7 +66,7 @@ if (fs.existsSync(fichierContenu)) {
 const { page: pageBrute } = require('./gen.js');
 const { fusionnee, liensVersPiliers } = require('./redirections.js');
 const page = (p) => liensVersPiliers(pageBrute(p));
-const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-vivant', 'p-agences', 'p-maison', 'p-hyper', 'p-rejoindre', 'p-contact', 'p-application', 'p-compte', 'p-404'];
+const pages = ['p-index', 'p-processus', 'p-demos', 'p-rites', 'p-offres', 'p-vivant', 'p-agences', 'p-maison', 'p-hyper', 'p-rejoindre', 'p-contact', 'p-application', 'p-telechargements', 'p-compte', 'p-404'];
 
 let total = 0;
 for (const m of pages) {
