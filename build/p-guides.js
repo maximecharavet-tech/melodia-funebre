@@ -307,11 +307,11 @@ ${affiche('instruments-du-monde',
           <tbody>
             <tr><td>Un père</td><td>Ce qu'il écoutait lui, même si ce n'est pas « de circonstance ». Un père se reconnaît à ses goûts, pas à la solennité. Voir <a href="/chanson-pour-papa-decede">une chanson pour papa</a>.</td></tr>
             <tr><td>Une mère</td><td>Souvent une voix féminine, et souvent un morceau lié à la maison — la cuisine, la voiture, les vacances. Voir <a href="/chanson-pour-maman-decedee">une chanson d’hommage pour maman</a>.</td></tr>
-            <tr><td>Un conjoint</td><td>Le morceau du mariage, s'il existe. Il fait pleurer toute la salle, et c'est exactement ce qu'il doit faire.</td></tr>
+            <tr><td>Un conjoint</td><td>Le morceau du mariage, s'il existe. Il fait pleurer toute la salle, et c'est exactement ce qu'il doit faire. <a href="/chanson-pour-mari-epouse-decede">Une chanson pour un mari ou une épouse</a>, si le morceau du couple ne suffit pas.</td></tr>
             <tr><td>Un enfant</td><td>Quelque chose de court et de lumineux. Les cérémonies d'enfants supportent mal la longueur.</td></tr>
-            <tr><td>Un ami, un collègue</td><td>Ce qui rappelle le groupe : la chanson des soirées, du club, de l'équipe.</td></tr>
-            <tr><td>Un grand-père, une grand-mère</td><td>La musique de sa génération, pas de la vôtre : un air de sa jeunesse, une chanson de bal, un chant qu'il ou elle connaissait par cœur. Les petits-enfants peuvent y ajouter un morceau qui leur appartient, à condition qu'il se comprenne sans explication.</td></tr>
-            <tr><td>Un frère, une sœur</td><td>Un morceau de l'enfance commune : la radio de la cuisine, un disque des parents, une chanson de vacances. Ce que les autres invités ne connaissent pas, un mot de présentation le leur donne.</td></tr>
+            <tr><td>Un ami, un collègue</td><td>Ce qui rappelle le groupe : la chanson des soirées, du club, de l'équipe. <a href="/chanson-pour-ami-decede">Une chanson pour un ami</a>, écrite avec sa famille.</td></tr>
+            <tr><td>Un grand-père, une grand-mère</td><td>La musique de sa génération, pas de la vôtre : un air de sa jeunesse, une chanson de bal, un chant qu'il ou elle connaissait par cœur. Les petits-enfants peuvent y ajouter un morceau qui leur appartient, à condition qu'il se comprenne sans explication. <a href="/chanson-pour-grand-parent-decede">Une chanson pour un grand-parent</a>.</td></tr>
+            <tr><td>Un frère, une sœur</td><td>Un morceau de l'enfance commune : la radio de la cuisine, un disque des parents, une chanson de vacances. Ce que les autres invités ne connaissent pas, un mot de présentation le leur donne. <a href="/chanson-pour-frere-soeur-decede">Une chanson pour un frère ou une sœur</a>.</td></tr>
             <tr><td>Une personne très âgée</td><td>La musique de sa jeunesse à elle, pas de la vôtre. L'écart est souvent de quarante ans.</td></tr>
           </tbody>
         </table>
@@ -645,7 +645,7 @@ ${P.afficheCampagne('certaines-melodies',
           <li><strong>Une habitude</strong>, la plus petite possible. Le café à cinq heures, la radio dans l'atelier, les mots croisés du dimanche. C'est ce détail-là que l'assemblée reconnaît.</li>
         </ul>
         <p>Ce qu'il ne faut pas chercher : les dates, les décorations, le résumé d'une carrière. Une chanson qui récite un état civil ne touche personne.</p>
-        <p>Pour une mère, nous avons détaillé ce qu’il faut raconter d’elle et le moment où la faire entendre dans <a href="/chanson-pour-maman-decedee">une chanson d’hommage pour maman</a> ; pour un père, dans <a href="/chanson-pour-papa-decede">une chanson pour papa</a>.</p>
+        <p>Pour une mère, nous avons détaillé ce qu’il faut raconter d’elle et le moment où la faire entendre dans <a href="/chanson-pour-maman-decedee">une chanson d’hommage pour maman</a> ; pour un père, dans <a href="/chanson-pour-papa-decede">une chanson pour papa</a>. D’autres situations ont leur page : <a href="/chanson-pour-grand-parent-decede">un grand-parent</a>, <a href="/chanson-pour-frere-soeur-decede">un frère ou une sœur</a>, <a href="/chanson-pour-mari-epouse-decede">un mari ou une épouse</a>, <a href="/chanson-pour-ami-decede">un ami</a>.</p>
       </div>
     </div>
   </section>`,

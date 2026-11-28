@@ -216,6 +216,14 @@ const AFFICHES = {
      la légende le dit. */
   'hommage-musical-defunt':           ['melodies-generations',
     'Un hommage musical n\u2019est pas la mise en terre : c\u2019est la veill\u00e9e, l\u2019anniversaire, le d\u00e9voilement d\u2019une st\u00e8le.'],
+  'chanson-pour-grand-parent-decede': ['melodie-pour-toujours',
+    'Un grand-parent a grandi avec une autre musique que la v\u00f4tre : c\u2019est la sienne qu\u2019on cherche.'],
+  'chanson-pour-frere-soeur-decede':  ['ce-que-les-mots',
+    'Ce que vous seul savez de lui ou d\u2019elle tient en quelques d\u00e9tails. C\u2019est cela qu\u2019on met en musique.'],
+  'chanson-pour-mari-epouse-decede':  ['adieux-en-musique',
+    'Ce qu\u2019on dit \u00e0 celui ou celle qu\u2019on aimait, et ce qu\u2019on garde pour soi.'],
+  'chanson-pour-ami-decede':          ['souvenirs-ukulele',
+    'Les amis connaissent la musique qu\u2019il mettait. Ils sont les mieux plac\u00e9s pour la reconna\u00eetre.'],
   'dernier-hommage-musical':          ['plaque-et-telephone',
     'Ce qu\u2019il en reste, des ann\u00e9es plus tard, tient dans un carr\u00e9 grav\u00e9 sur une plaque.']
 };

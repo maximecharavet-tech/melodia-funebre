@@ -205,6 +205,9 @@ ${listeMeres}
   bouton: 'Écouter des hommages composés',
   voisines: [
     ['/chanson-pour-papa-decede', 'Une chanson pour papa', "Si c’est votre père que vous accompagnez"],
+    ['/chanson-pour-grand-parent-decede', 'Une chanson pour un grand-parent', "Si c’est une grand-mère ou un grand-père que vous accompagnez"],
+    ['/chanson-pour-mari-epouse-decede', 'Une chanson pour un mari ou une épouse', "Si c’est votre conjoint que vous accompagnez"],
+    ['/chanson-pour-frere-soeur-decede', 'Une chanson pour un frère ou une sœur', "Si c’est un frère ou une sœur que vous accompagnez"],
     ['/chanson-hommage', 'La chanson d’hommage, tout savoir', "Si vous voulez savoir comment elle s’écrit et ce qu’elle coûte"],
     ['/qr-code-memorial', 'La plaque QR mémorial', "Si vous voulez qu’on puisse l’écouter sur sa tombe"]
   ]
@@ -319,6 +322,9 @@ ${extrait('Jean, Paris', 'Composée pour un père de deux enfants')}
   bouton: 'Écouter des hommages composés',
   voisines: [
     ['/chanson-pour-maman-decedee', 'Une chanson pour maman', "Si c’est votre mère que vous accompagnez"],
+    ['/chanson-pour-grand-parent-decede', 'Une chanson pour un grand-parent', "Si c’est un grand-père ou une grand-mère que vous accompagnez"],
+    ['/chanson-pour-mari-epouse-decede', 'Une chanson pour un mari ou une épouse', "Si c’est votre conjoint que vous accompagnez"],
+    ['/chanson-pour-ami-decede', 'Une chanson pour un ami', "Si c’est un ami que vous accompagnez"],
     ['/musique-obseques', 'Quelle musique pour un enterrement', "Si vous devez aussi choisir l’entrée et la sortie"],
     ['/processus', 'Comment se compose un hommage', "Si vous voulez savoir ce qui se passe après l’appel"]
   ]

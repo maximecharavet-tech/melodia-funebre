@@ -91,7 +91,7 @@ for (const m of pages) {
 for (const module of ['./p-legal.js', './p-guides.js',
                       './p-chansons.js', './p-fabrication.js',
                       './p-ceremonie.js', './p-memoire.js',
-                      './p-situations.js']) {
+                      './p-situations.js', './p-proches.js']) {
   for (const p of require(module)) {
     /* Fusionnée dans un pilier : redirigée en 301, plus générée, et
        l'ancien fichier effacé pour qu'il ne serve plus rien. */
@@ -317,6 +317,10 @@ const PLAN = [
      à une situation précise, qu'aucun pilier ne couvre. */
   ['chanson-pour-maman-decedee.html', '0.8', 'monthly'],
   ['chanson-pour-papa-decede.html', '0.8', 'monthly'],
+  ['chanson-pour-grand-parent-decede.html', '0.8', 'monthly'],
+  ['chanson-pour-frere-soeur-decede.html', '0.8', 'monthly'],
+  ['chanson-pour-mari-epouse-decede.html', '0.8', 'monthly'],
+  ['chanson-pour-ami-decede.html', '0.8', 'monthly'],
   ['musique-obseques-instrumentale.html', '0.8', 'monthly'],
   ['musique-ceremonie-civile.html', '0.8', 'monthly'],
   ['rejoindre.html', '0.8', 'monthly'],
