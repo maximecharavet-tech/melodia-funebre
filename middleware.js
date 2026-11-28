@@ -8,7 +8,12 @@
    navigateur. C'est une porte qui ferme l'adresse à qui n'est pas
    passé par la page de connexion. Après un déploiement, ouvrir
    /compte une fois suffit à reposer le témoin si une session existe
-   déjà sur l'appareil. */
+   déjà sur l'appareil.
+
+   On lit l'en-tête Cookie à la main : l'objet « request.cookies »
+   n'existe que dans Next.js, et le faisait échouer ici (500).
+   Pour laisser passer, on renvoie l'en-tête interne « x-middleware-next »,
+   celui qu'utilise la fonction next() de Vercel. */
 
 export const config = {
   matcher: [
@@ -22,8 +27,10 @@ export const config = {
 };
 
 export default function middleware(request) {
-  const temoin = request.cookies.get('melodia_console');
-  if (temoin && temoin.value) return;
+  const brut = request.headers.get('cookie') || '';
+  if (/(?:^|;\s*)melodia_console=1(?:;|$)/.test(brut)) {
+    return new Response(null, { headers: { 'x-middleware-next': '1' } });
+  }
   return new Response('Not Found', {
     status: 404,
     headers: {
