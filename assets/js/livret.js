@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
    MELODIA — Le livret des paroles, relié à la platine
 
-   Sur la page « maman », les paroles sont posées sous le disque d'or.
+   Sur les pages « maman » et « papa », les paroles sont posées sous le disque d'or.
    Ce script ne fait qu'une chose : dire, en tête du livret, quelle
    voix est en train de chanter. La platine (catalogue.js) l'annonce
    par l'événement « melodia:platine » ; sans lui, le livret reste un

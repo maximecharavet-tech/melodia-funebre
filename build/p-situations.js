@@ -37,6 +37,7 @@ const PUBLIE = '2026-11-01';
 const { OFFERS } = require('./data.js');
 const { oeuvre, lien } = require('./citations.js');
 const CHANSON = require('./chanson-maman.js');
+const CHANSON_PAPA = require('./chanson-papa.js');
 const prix = (nom) => { const o = OFFERS.find((x) => x.name === nom); return o ? o.price + ' €' : ''; };
 const ESSENTIEL = prix('Essentiel'), PRESTIGE = prix('Prestige'), MEMORIAL = prix('Mémorial');
 
@@ -215,13 +216,23 @@ ${listeMeres}
 const papa = page({
   file: 'chanson-pour-papa-decede.html',
   fil: 'Pour un papa',
-  title: 'Chanson pour papa décédé | Melodia Funèbre',
-  desc: "Une chanson pour papa décédé : dire ce qu’il n’a jamais dit, choisir un style qui lui ressemble, et réussir le moment où elle passe aux obsèques.",
+  title: 'Chanson hommage pour un papa décédé | Melodia Funèbre',
+  desc: `Une chanson d’hommage pour votre papa décédé, écrite d’après ce qu’il montrait sans le dire, dans un style qui lui ressemble. Dès ${ESSENTIEL}.`,
+  image: '/assets/img/og/chanson-pour-papa-decede.jpg',
+  imageAlt: 'Melodia Funèbre — Une chanson d’hommage pour papa',
   datePublished: PUBLIE,
-  h1: 'Une chanson<br><em>pour papa.</em>',
+  h1: 'Une chanson d’hommage<br><em>pour papa.</em>',
   situation: "Pour un enfant qui veut que les obsèques de son père lui ressemblent vraiment.",
-  chapeau: "Beaucoup de pères parlaient peu. Ils montraient : un outil prêté, un trajet en voiture, une passion transmise sans un mot. C’est souvent ce que la famille a le plus de mal à dire à voix haute le jour des obsèques — et ce qu’une chanson dit le mieux.",
-  corps: `
+  chapeau: "Beaucoup de pères parlaient peu. Ils montraient : un outil prêté, un trajet en voiture, une passion transmise sans un mot. C’est souvent ce que la famille a le plus de mal à dire à voix haute le jour des obsèques — et ce qu’une chanson dit le mieux. Écoutez d’abord une chanson d’exemple, en deux versions, et lisez ses paroles. Cette page vous aide ensuite à choisir un style qui lui ressemble, et le moment où elle sera entendue.",
+  scripts: ['assets/js/catalogue.js', 'assets/js/livret.js'],
+  metas: CHANSON_PAPA.metas,
+  /* Le visuel de fond : une voiture arrêtée à la tombée du jour,
+     le manteau du père sur le siège — les images de la chanson. */
+  classeTete: 'tete-papa',
+  decorTete: '<div class="tete-papa-lueur" aria-hidden="true"></div>',
+  corps: `${CHANSON_PAPA.ecoute()}
+${CHANSON_PAPA.paroles(ESSENTIEL)}
+
   <section class="section-sm" style="padding-top:2.6rem;">
     <div class="wrap">
       <div class="prose reveal">
@@ -269,16 +280,41 @@ ${extrait('Jean, Paris', 'Composée pour un père de deux enfants')}
   </section>`,
   questions: [
     { q: "Quelle chanson pour l’enterrement de son papa ?",
-      texte: "Une chanson qui parle de lui et pas des pères en général : un morceau qu’il écoutait vraiment, dans son style, ou une chanson écrite d’après ce qu’il faisait, ce qu’il transmettait et ce qu’il aimait. Le style peut être le sien, rock ou funk compris." },
+      texte: "Une chanson qui parle de lui et pas des pères en général : un morceau qu’il écoutait vraiment, dans son style, ou une chanson écrite d’après ce qu’il faisait, ce qu’il transmettait et ce qu’il aimait. Le style peut être le sien, rock ou funk compris. Elle se place en général au recueillement, après les prises de parole." },
+    { q: "Comment faire écrire une chanson d’hommage pour son père décédé ?",
+      texte: "Melodia Funèbre compose une chanson originale à partir d’un entretien téléphonique de cinq minutes : son prénom, ce qu’il faisait, sa passion, une habitude, une expression à lui. Le texte est écrit pour lui, la musique composée dans son style, relue par un humain, et le fichier est livré sous vingt-quatre heures après l’entretien." },
+    { q: "Combien coûte une chanson personnalisée pour un papa décédé ?",
+      texte: `Trois formules, prix TTC : Essentiel ${ESSENTIEL}, Prestige ${PRESTIGE} (révision, version instrumentale et paroles en PDF inclus), Mémorial ${MEMORIAL} (mini-album de trois titres, révisions illimitées, livret imprimé, priorité six heures). Aucune redevance SACEM n’est à déclarer pour la diffuser.` },
     { q: "Mon père parlait peu, de quoi la chanson peut-elle parler ?",
-      texte: "De ce qu’il faisait plutôt que de ce qu’il disait : un savoir-faire transmis, une passion, une habitude, une expression. Ce sont ces détails qui permettent à l’assemblée de le reconnaître dès le premier couplet." },
+      texte: "De ce qu’il faisait plutôt que de ce qu’il disait : un savoir-faire transmis, une passion, une habitude, une expression. Ce sont ces détails qui permettent à l’assemblée de le reconnaître dès le premier couplet. La chanson d’exemple de cette page, « Allez, monte », part de là." },
     { q: "Peut-on citer les enfants et petits-enfants dans la chanson ?",
       texte: "Oui, et c’est fréquent : les prénoms des proches, ce qu’il leur a transmis, ce qu’il laisse. Il suffit de les donner lors de l’entretien." },
+    { q: "Peut-on avoir les paroles de la chanson ?",
+      texte: "Oui. Le texte est écrit pour lui et vous appartient avec l’œuvre ; l’offre Prestige et l’offre Mémorial comprennent les paroles imprimables en PDF, que l’on peut glisser dans le livret de la cérémonie." },
+    { q: "Peut-on choisir entre plusieurs versions ?",
+      texte: "Oui. La voix et le caractère de l’enregistrement se choisissent à l’entretien, selon ce qui vous ressemble. La chanson d’exemple de cette page, « Allez, monte », s’écoute en deux versions." },
     { q: "Peut-on avoir une version sans voix pour l’entrée ?",
       texte: "Oui. L’offre Prestige comprend une version instrumentale seule en plus de la version chantée, ce qui permet de faire entendre la même œuvre à l’entrée puis au recueillement." },
-    { q: "En combien de temps la chanson est-elle prête ?",
-      texte: "Sous vingt-quatre heures après l’entretien téléphonique. Pour une cérémonie imminente, une priorité permet une livraison en six heures." }
+    { q: "Faut-il que la chanson soit triste ?",
+      texte: "Non. Le style se choisit d’après lui : rock, funk, chanson française, orchestre… Une chanson lumineuse peut être plus juste qu’une chanson lente, si c’est ainsi qu’on se souvient de lui." },
+    { q: "Les obsèques ont lieu dans deux jours, est-ce encore possible ?",
+      texte: "Oui. La livraison se fait sous vingt-quatre heures après l’entretien, et une priorité existe pour les cérémonies imminentes, avec une livraison possible en six heures." }
   ],
+  jsonldPlus: [CHANSON_PAPA.jsonld, {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': 'https://melodia-funebre.fr/chanson-pour-papa-decede#service',
+    name: 'Chanson d’hommage personnalisée pour un papa décédé',
+    serviceType: 'Composition musicale personnalisée pour cérémonie funéraire',
+    description: "Une chanson originale écrite et composée pour un père disparu, d’après un entretien téléphonique de cinq minutes avec sa famille, relue par un humain et livrée sous vingt-quatre heures, cédée avec ses droits d’usage.",
+    provider: { '@id': 'https://melodia-funebre.fr/#organisation' },
+    areaServed: { '@type': 'Country', name: 'France' },
+    audience: { '@type': 'Audience', audienceType: 'Enfants et familles en deuil d’un père' },
+    offers: OFFERS.map((o) => ({
+      '@type': 'Offer', name: o.name, price: String(o.price), priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock', url: 'https://melodia-funebre.fr/offres'
+    }))
+  }],
   proposition: "Si sa chanson n’existe pas encore, nous l’écrivons et la composons d’après ce que vous nous racontez de lui, dans le style qui lui ressemble.",
   bouton: 'Écouter des hommages composés',
   voisines: [

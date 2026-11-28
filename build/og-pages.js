@@ -18,7 +18,10 @@ const SORTIE = path.join(RACINE, 'assets/img/og');
 const CARTES = [
   { fichier: 'chanson-pour-maman-decedee.jpg', sceau: 'M', registre: 'Pour une maman',
     titre: 'Une chanson d’hommage pour maman', sous: 'Écrite d’après ce que vous racontez d’elle',
-    mots: ['son prénom', 'ses gestes', 'sa musique'] }
+    mots: ['son prénom', 'ses gestes', 'sa musique'] },
+  { fichier: 'chanson-pour-papa-decede.jpg', sceau: 'P', registre: 'Pour un papa',
+    titre: 'Une chanson d’hommage pour papa', sous: 'Écrite d’après ce que vous racontez de lui',
+    mots: ['son prénom', 'ses preuves', 'sa musique'] }
 ];
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');

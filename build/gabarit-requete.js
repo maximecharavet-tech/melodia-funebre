@@ -45,7 +45,7 @@ const esc = (x) => String(x == null ? '' : x)
 function sommaire(corps) {
   const titres = [];
   corps.replace(/<h2 id="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g, (_, id, t) => {
-    titres.push([id, t.replace(/<[^>]+>/g, '').trim()]);
+    titres.push([id, t.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()]);
     return '';
   });
   if (titres.length < 2) return '';
