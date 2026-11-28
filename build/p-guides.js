@@ -30,6 +30,43 @@
 
 const { ICON, MAIL, SITE } = require('./gen.js');
 const P = require('./parts.js');
+const { voisines } = require('./gabarit-requete.js');
+
+/* ─── Les renvois d'un guide à l'autre ───
+   Les cinq guides ne se citaient presque pas : chacun était une
+   impasse, atteinte par le menu et le pied de page seulement. Or un
+   lien posé dans le corps d'une page, avec la raison d'y aller,
+   pèse plus pour les moteurs — et pour la famille — qu'un lien de
+   pied de page. Chaque guide renvoie donc vers trois voisins, avec
+   la situation qui justifie le détour. Mêmes données que
+   gabarit-requete.js (voisines), pour une seule mise en page. */
+const RENVOIS = {
+  'musique-obseques.html': [
+    ['/musique-cremation', 'La musique en crémation', 'Si la cérémonie a lieu au crématorium'],
+    ['/musique-obseques-instrumentale', 'La musique sans paroles', 'Si vous hésitez entre une chanson et un instrumental'],
+    ['/chanson-hommage', 'La chanson d’hommage', 'Si aucun morceau existant ne lui ressemble']
+  ],
+  'musique-sacem-obseques.html': [
+    ['/musique-obseques', 'Quelle musique pour un enterrement', 'Si vous devez encore choisir les morceaux'],
+    ['/chanson-hommage', 'La chanson d’hommage', 'Si vous préférez une œuvre qui n’a aucun droit à déclarer'],
+    ['/offres', 'Les offres et les tarifs', 'Si vous voulez savoir ce que coûte une œuvre originale']
+  ],
+  'musique-cremation.html': [
+    ['/musique-obseques', 'Quelle musique pour un enterrement', 'Si vous construisez toute la cérémonie'],
+    ['/musique-obseques-instrumentale', 'La musique sans paroles', 'Si le créneau est court et que les paroles n’y ont pas leur place'],
+    ['/musique-sacem-obseques', 'Les droits d’auteur aux obsèques', 'Si vous vous demandez qui doit déclarer la musique']
+  ],
+  'chanson-hommage.html': [
+    ['/offres', 'Les offres et les tarifs', 'Si vous voulez comparer les trois formules'],
+    ['/processus', 'Comment se compose un hommage', 'Si vous voulez savoir ce qui se passe après l’appel'],
+    ['/musique-obseques', 'Quelle musique pour un enterrement', 'Si vous devez aussi placer la chanson dans la cérémonie']
+  ],
+  'qr-code-memorial.html': [
+    ['/chanson-hommage', 'La chanson d’hommage', 'Si la page souvenir doit faire entendre une chanson écrite pour lui'],
+    ['/offres', 'Les offres et les tarifs', 'Si vous voulez savoir ce que coûte la plaque, proposée en option'],
+    ['/musique-obseques', 'Quelle musique pour un enterrement', 'Si vous préparez aussi la cérémonie']
+  ]
+};
 
 /* Un guide se décrit par ses questions : elles servent à la fois de
    sommaire lisible, de contenu de page, et de données structurées.
@@ -102,6 +139,7 @@ function proposition(texte) {
         <p>${texte}</p>
         <div class="hero-actions" style="margin-top:1.6rem;">
           <a href="/demos" class="btn btn-outline">${ICON.note} Écouter des hommages composés</a>
+          <a href="/offres" class="btn btn-ghost">Voir les offres et les tarifs</a>
           <button type="button" class="btn btn-ghost" data-rappel>${ICON.phone} Être rappelé</button>
         </div>
       </div>
@@ -148,6 +186,7 @@ function guide(g) {
 ${g.corps}
 ${questions(g)}
 ${proposition(g.proposition)}
+${voisines(RENVOIS[g.file])}
 ${P.partage(g.h1texte, g.desc)}
 ${P.urgency()}`
   };
@@ -180,8 +219,8 @@ const MOMENTS = [
 const guide1 = guide({
   file: 'musique-obseques.html',
   fil: 'Guide',
-  title: 'Quelle musique pour un enterrement ? | Melodia Funèbre',
-  desc: "Combien de morceaux, à quels moments, comment choisir sans se tromper, et les vérifications qui évitent l'accident du jour même.",
+  title: 'Musique d’obsèques : quelle musique pour un enterrement ?',
+  desc: "Quelle musique pour des obsèques ? Combien de morceaux, à quels moments, comment choisir, et les vérifications qui évitent l'accident du jour même.",
   h1: 'Quelle musique<br><em>pour un enterrement ?</em>',
   h1texte: 'Quelle musique pour un enterrement ?',
   chapeau: "Vous avez peu de temps, peu d'envie de chercher, et la crainte de mal faire. Voici ce qu'il faut savoir : combien de morceaux prévoir, à quel moment, comment choisir, et les quelques vérifications qui évitent le seul vrai accident — celui du jour même.",
@@ -212,6 +251,17 @@ ${MOMENTS.map((m) => `        <div class="card reveal">
           <p>${m.d}</p>
           <p style="color:var(--or-patina);font-size:.88rem;margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line-soft);">${m.e}</p>
         </div>`).join('\n')}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LES MOTS ═══ -->
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="prose reveal">
+        <h2>Musique funèbre, marche funèbre, hymne, chanson : de quoi parle-t-on ?</h2>
+        <p>Les mots se mélangent quand on cherche vite. <strong>Une musique funèbre</strong> désigne largement tout ce qui accompagne un deuil. <strong>Une marche funèbre</strong> est une pièce lente, à pas régulier, écrite pour accompagner un cortège : celle de Chopin, troisième mouvement de sa deuxième sonate pour piano, est la plus connue — et donc la plus entendue. <strong>Un hymne</strong> est un chant d'assemblée, surtout présent dans les cérémonies religieuses : on le chante ensemble plutôt que de l'écouter. <strong>Une chanson d'hommage</strong>, enfin, parle de la personne ; c'est ce qui la distingue du reste, elle ne pourrait pas être passée pour quelqu'un d'autre.</p>
+        <p>Aucune de ces catégories n'est meilleure qu'une autre, et une cérémonie solide en mêle souvent deux : un instrumental à l'entrée, une chanson au recueillement. Pour choisir l'instrumental, voir <a href="/musique-obseques-instrumentale">la musique d'obsèques sans paroles</a> ; pour la chanson, <a href="/chanson-hommage">la chanson d'hommage, en choisir une ou la faire écrire</a>.</p>
       </div>
     </div>
   </section>
@@ -260,6 +310,8 @@ ${affiche('instruments-du-monde',
             <tr><td>Un conjoint</td><td>Le morceau du mariage, s'il existe. Il fait pleurer toute la salle, et c'est exactement ce qu'il doit faire.</td></tr>
             <tr><td>Un enfant</td><td>Quelque chose de court et de lumineux. Les cérémonies d'enfants supportent mal la longueur.</td></tr>
             <tr><td>Un ami, un collègue</td><td>Ce qui rappelle le groupe : la chanson des soirées, du club, de l'équipe.</td></tr>
+            <tr><td>Un grand-père, une grand-mère</td><td>La musique de sa génération, pas de la vôtre : un air de sa jeunesse, une chanson de bal, un chant qu'il ou elle connaissait par cœur. Les petits-enfants peuvent y ajouter un morceau qui leur appartient, à condition qu'il se comprenne sans explication.</td></tr>
+            <tr><td>Un frère, une sœur</td><td>Un morceau de l'enfance commune : la radio de la cuisine, un disque des parents, une chanson de vacances. Ce que les autres invités ne connaissent pas, un mot de présentation le leur donne.</td></tr>
             <tr><td>Une personne très âgée</td><td>La musique de sa jeunesse à elle, pas de la vôtre. L'écart est souvent de quarante ans.</td></tr>
           </tbody>
         </table>
@@ -323,11 +375,20 @@ ${P.filmCampagne('ame-des-souvenirs',
       texte: "Deux à quatre minutes. En dessous, l'entrée ou la sortie n'a pas le temps de se faire ; au-delà, l'assemblée assise décroche. Prévoyez surtout où couper le morceau, et dites-le à la personne qui gère le son."
     },
     {
+      q: 'Quelle différence entre une musique funèbre, une marche funèbre et une chanson d\'hommage ?',
+      texte: "La musique funèbre est le terme général. La marche funèbre est une pièce lente, à pas régulier, pour accompagner un cortège ; celle de Chopin est la plus connue. L'hymne est un chant d'assemblée, surtout religieux. La chanson d'hommage, elle, parle de la personne : elle ne pourrait pas être passée pour quelqu'un d'autre."
+    },
+    {
+      q: 'Quelle musique pour l\'enterrement d\'un grand-père ou d\'une grand-mère ?',
+      texte: "Celle de sa génération plutôt que de la vôtre : un air de sa jeunesse, une chanson de bal, un chant qu'il ou elle connaissait par cœur. Les petits-enfants peuvent y ajouter un morceau qui leur appartient, à condition qu'il se comprenne sans explication."
+    },
+    {
       q: 'Peut-on faire écrire une chanson pour le défunt plutôt qu\'en choisir une ?',
-      texte: "Oui. C'est un service récent et encore peu répandu en France : une œuvre originale est composée à partir de ce que la famille raconte du défunt — son métier, ses habitudes, une anecdote. Elle ne parle que de lui, et n'a aucun droit d'auteur à déclarer puisqu'elle n'appartient à aucun répertoire."
+      texte: "Oui. C'est un service récent et encore peu répandu en France : une œuvre originale est composée à partir de ce que la famille raconte du défunt — son métier, ses habitudes, une anecdote. Elle ne parle que de lui, et n'a aucun droit d'auteur à déclarer puisqu'elle n'appartient à aucun répertoire.",
+      html: "<p>Oui. C'est un service récent et encore peu répandu en France : une œuvre originale est composée à partir de ce que la famille raconte du défunt — son métier, ses habitudes, une anecdote. Elle ne parle que de lui, et n'a aucun droit d'auteur à déclarer puisqu'elle n'appartient à aucun répertoire. Le détail est dans <a href=\"/chanson-hommage\">le guide de la chanson d'hommage</a>, et les trois formules sont présentées sur <a href=\"/offres\">la page des offres</a>.</p>"
     }
   ],
-  proposition: "Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter dix-sept, composées pour de vraies personnes, avant de décider quoi que ce soit."
+  proposition: "Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter vingt, des hommages de démonstration, avant de décider quoi que ce soit."
 });
 
 
@@ -533,8 +594,8 @@ ${P.afficheCampagne('adieux-en-musique',
 const guide4 = guide({
   file: 'chanson-hommage.html',
   fil: 'Guide',
-  title: "Chanson d'hommage pour un défunt | Melodia Funèbre",
-  desc: "Choisir une chanson existante ou en faire composer une : ce qui change, ce que ça coûte, les délais, et comment décrire quelqu'un à qui doit l'écrire.",
+  title: "Chanson d’hommage pour un défunt : choisir ou faire écrire",
+  desc: "Une chanson pour un défunt : en choisir une existante ou la faire composer. Ce qui change, ce que ça coûte, les délais, et comment décrire la personne.",
   h1: "Chanson d'hommage :<br><em>en choisir une, ou la faire écrire.</em>",
   h1texte: "Chanson d'hommage : en choisir une, ou la faire écrire",
   chapeau: "Une chanson d'hommage, c'est le morceau qu'on garde après la cérémonie. Deux chemins existent : prendre une œuvre qui existe déjà, ou en faire écrire une pour lui seul. Voici ce qui les sépare vraiment — le temps, le prix, le droit, et ce que chacun donne à entendre.",

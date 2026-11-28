@@ -111,6 +111,7 @@ function proposition(texte, bouton) {
         <p>${texte}</p>
         <div class="hero-actions" style="margin-top:1.6rem;">
           <a href="/demos" class="btn btn-outline">${ICON.note} ${esc(bouton || 'Écouter des hommages composés')}</a>
+          <a href="/offres" class="btn btn-ghost">Voir les offres et les tarifs</a>
           <button type="button" class="btn btn-ghost" data-rappel>${ICON.phone} Être rappelé</button>
         </div>
       </div>
@@ -292,4 +293,4 @@ ${P.urgency()}`
   };
 }
 
-module.exports = { page };
+module.exports = { page, voisines };

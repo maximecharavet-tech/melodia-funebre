@@ -5,7 +5,7 @@
    Deux circuits, le bon s'affiche tout seul :
 
    • MANUEL (circuit courant) — le brief part dans le presse-papiers,
-     Suno s'ouvre, vous composez avec votre abonnement, puis vous
+     l'atelier externe s'ouvre, vous composez avec votre abonnement, puis vous
      rattachez le lien de l'hommage terminé à la commande.
 
    • AUTOMATIQUE — dès qu'une clé musicale est renseignée côté serveur,
@@ -39,20 +39,18 @@
     var auto = config && config.configured;
     var etiquette = auto
       ? '<span style="color:var(--green);">Automatique</span> · ' + esc(config.engine || 'API') + ' · ' + esc(config.model)
-      : '<span style="color:var(--or);">Mode manuel</span> · Suno, votre abonnement';
+      : '<span style="color:var(--or);">Mode manuel</span> · atelier externe, votre abonnement';
 
     var stock = window.MelodiaLivraison;
     var distant = stock && stock.mode === 'supabase';
 
     var blocManuel =
       '<div style="border:1px solid var(--line-strong); border-radius:6px; padding:1.3rem; background:rgba(201,168,76,.04);">' +
-        '<div class="mono" style="color:var(--or-patina); margin-bottom:1rem;">Étape 1 — composer sur Suno</div>' +
+        '<div class="mono" style="color:var(--or-patina); margin-bottom:1rem;">Étape 1 — composer dans l’atelier</div>' +
         '<p style="font-size:.9rem; color:var(--bone); line-height:1.7; margin-bottom:1.1rem;">' +
-          'Le bouton copie le titre, la direction musicale et les paroles, puis ouvre Suno. ' +
-          'Sur place : <b style="color:var(--paper);">Create</b> → onglet <b style="color:var(--paper);">Custom</b> → ' +
-          'collez les paroles dans <b style="color:var(--paper);">Lyrics</b> et le style dans ' +
-          '<b style="color:var(--paper);">Style of Music</b>. Puis téléchargez le MP3.</p>' +
-        '<button class="btn btn-gold" style="width:100%;" id="mus-suno">Copier le brief et ouvrir Suno</button>' +
+          'Le bouton copie le titre, la direction musicale et les paroles, puis ouvre l’atelier. ' +
+          'Sur place, collez les paroles et le style dans les champs prévus, puis téléchargez le MP3.</p>' +
+        '<button class="btn btn-gold" style="width:100%;" id="mus-atelier">Copier le brief et ouvrir l’atelier</button>' +
 
         '<div class="mono" style="color:var(--or-patina); margin:1.8rem 0 1rem;">Étape 2 — déposer le MP3</div>' +
         '<div class="depot" id="mus-depot" tabindex="0" role="button" aria-label="Déposer le fichier audio">' +
@@ -69,7 +67,7 @@
           '<summary style="cursor:pointer; font-family:var(--ff-m); font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ash);">Ou rattacher un lien</summary>' +
           '<div style="margin-top:.9rem;">' +
             '<div class="field" style="margin-bottom:.7rem;">' +
-              '<input class="field-input" id="mus-lien" type="url" placeholder="https://suno.com/song/… ou https://…/hommage.mp3">' +
+              '<input class="field-input" id="mus-lien" type="url" placeholder="https://…/hommage.mp3">' +
             '</div>' +
             '<button class="btn btn-outline btn-sm" id="mus-attacher">Rattacher ce lien</button>' +
           '</div>' +
@@ -401,15 +399,16 @@
     if (!config) config = await window.MelodiaAI.musicConfig();
     hote.innerHTML = panneau();
 
-    $('mus-suno').addEventListener('click', function () {
+    $('mus-atelier').addEventListener('click', function () {
       var l = ($('at-lyrics') || {}).value || '';
       if (!l.trim()) { message('Écrivez d\'abord les paroles, à gauche.', 'err'); return; }
       var h = $('at-title-h');
       window.MelodiaAI.manualExport(
         h ? h.textContent.replace(/[«»]/g, '').trim() : 'Hommage Melodia',
-        l, ($('at-style-prompt') || {}).value || ''
+        l, ($('at-style-prompt') || {}).value || '',
+        config && config.manualUrl
       );
-      message('Brief copié. Suno s\'ouvre : mode Custom, collez les paroles puis le style. Revenez ensuite coller le lien ci-dessous.', 'info');
+      message('Brief copié. L’atelier s’ouvre : collez les paroles puis le style. Revenez ensuite rattacher le fichier ou le lien ci-dessous.', 'info');
     });
 
     $('mus-attacher').addEventListener('click', attacherLien);

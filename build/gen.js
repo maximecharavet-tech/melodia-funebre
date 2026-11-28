@@ -276,7 +276,7 @@ function head(p) {
 <title>${titreCourt(p.title)}</title>
 <meta name="description" content="${p.desc}">
 <link rel="canonical" href="${url}">
-${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : ''}<meta property="og:type" content="${p.ogType || 'website'}">
+${p.noindex ? '<meta name="robots" content="noindex, follow">\n' : '<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">\n'}<meta property="og:type" content="${p.ogType || 'website'}">
 <meta property="og:site_name" content="Melodia Funèbre">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:title" content="${p.title}">
