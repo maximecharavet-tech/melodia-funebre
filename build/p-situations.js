@@ -58,8 +58,8 @@ const listeMeres = MERES.map(([titre, texte]) => {
 const maman = page({
   file: 'chanson-pour-maman-decedee.html',
   fil: 'Pour une maman',
-  title: 'Chanson hommage pour une maman décédée | Melodia Funèbre',
-  desc: `Une chanson d’hommage pour votre maman décédée, écrite d’après ce que vous racontez d’elle : quoi raconter, quand la faire entendre aux obsèques. Dès ${ESSENTIEL}.`,
+  title: 'Chanson pour maman décédée : un hommage écrit pour elle',
+  desc: `Une chanson pour votre maman ou votre mère décédée, écrite d’après ce que vous racontez d’elle. Quoi raconter, quand la faire entendre aux obsèques. Dès ${ESSENTIEL}.`,
   image: '/assets/img/og/chanson-pour-maman-decedee.jpg',
   imageAlt: 'Melodia Funèbre — Une chanson d’hommage pour maman',
   datePublished: PUBLIE,
@@ -216,8 +216,8 @@ ${listeMeres}
 const papa = page({
   file: 'chanson-pour-papa-decede.html',
   fil: 'Pour un papa',
-  title: 'Chanson hommage pour un papa décédé | Melodia Funèbre',
-  desc: `Une chanson d’hommage pour votre papa décédé, écrite d’après ce qu’il montrait sans le dire, dans un style qui lui ressemble. Dès ${ESSENTIEL}.`,
+  title: 'Chanson pour papa décédé : un hommage écrit pour lui',
+  desc: `Une chanson pour votre papa ou votre père décédé, écrite d’après ce qu’il montrait sans le dire, dans un style qui lui ressemble. Dès ${ESSENTIEL}.`,
   image: '/assets/img/og/chanson-pour-papa-decede.jpg',
   imageAlt: 'Melodia Funèbre — Une chanson d’hommage pour papa',
   datePublished: PUBLIE,
@@ -330,7 +330,7 @@ ${extrait('Jean, Paris', 'Composée pour un père de deux enfants')}
 const instrumentale = page({
   file: 'musique-obseques-instrumentale.html',
   fil: 'Sans paroles',
-  title: 'Musique d’obsèques sans paroles | Melodia Funèbre',
+  title: 'Musique instrumentale pour obsèques et enterrement',
   desc: "Musique instrumentale pour des obsèques : à quels moments elle convient mieux qu’une chanson, comment la choisir, et ce que permet une œuvre originale.",
   datePublished: PUBLIE,
   h1: 'Une musique<br><em>sans paroles.</em>',

@@ -3201,9 +3201,9 @@ Courriel
 
 ---
 
-Page : Quelle musique pour un enterrement ? | Melodia Funèbre
+Page : Musique d’obsèques : quelle musique pour un enterrement ?
 Adresse : https://melodia-funebre.fr/musique-obseques
-Résumé : Combien de morceaux, à quels moments, comment choisir sans se tromper, et les vérifications qui évitent l'accident du jour même.
+Résumé : Quelle musique pour des obsèques ? Combien de morceaux, à quels moments, comment choisir, et les vérifications qui évitent l'accident du jour même.
 
 Guide
 
@@ -3242,6 +3242,12 @@ Le morceau qui lui ressemble le plus. S'il n'y en a qu'un à choisir, c'est celu
 L'assemblée se lève et sort. La musique accompagne le mouvement et, souvent, allège. Beaucoup de familles choisissent ici quelque chose de plus vivant — et elles ont raison.
 
 Un morceau qu'il aimait, même joyeux. Personne ne vous en voudra.
+
+## Musique funèbre, marche funèbre, hymne, chanson : de quoi parle-t-on ?
+
+Les mots se mélangent quand on cherche vite. Une musique funèbre désigne largement tout ce qui accompagne un deuil. Une marche funèbre est une pièce lente, à pas régulier, écrite pour accompagner un cortège : celle de Chopin, troisième mouvement de sa deuxième sonate pour piano, est la plus connue — et donc la plus entendue. Un hymne est un chant d'assemblée, surtout présent dans les cérémonies religieuses : on le chante ensemble plutôt que de l'écouter. Une chanson d'hommage, enfin, parle de la personne ; c'est ce qui la distingue du reste, elle ne pourrait pas être passée pour quelqu'un d'autre.
+
+Aucune de ces catégories n'est meilleure qu'une autre, et une cérémonie solide en mêle souvent deux : un instrumental à l'entrée, une chanson au recueillement. Pour choisir l'instrumental, voir la musique d'obsèques sans paroles ; pour la chanson, la chanson d'hommage, en choisir une ou la faire écrire.
 
 ## Comment choisir, quand on n'a pas d'idée
 
@@ -3286,6 +3292,10 @@ Un conjoint Le morceau du mariage, s'il existe. Il fait pleurer toute la salle, 
 Un enfant Quelque chose de court et de lumineux. Les cérémonies d'enfants supportent mal la longueur.
 
 Un ami, un collègue Ce qui rappelle le groupe : la chanson des soirées, du club, de l'équipe.
+
+Un grand-père, une grand-mère La musique de sa génération, pas de la vôtre : un air de sa jeunesse, une chanson de bal, un chant qu'il ou elle connaissait par cœur. Les petits-enfants peuvent y ajouter un morceau qui leur appartient, à condition qu'il se comprenne sans explication.
+
+Un frère, une sœur Un morceau de l'enfance commune : la radio de la cuisine, un disque des parents, une chanson de vacances. Ce que les autres invités ne connaissent pas, un mot de présentation le leur donne.
 
 Une personne très âgée La musique de sa jeunesse à elle, pas de la vôtre. L'écart est souvent de quarante ans.
 
@@ -3337,15 +3347,38 @@ Les opérateurs funéraires disposent en général d'un fonds musical et d'un sy
 
 Deux à quatre minutes. En dessous, l'entrée ou la sortie n'a pas le temps de se faire ; au-delà, l'assemblée assise décroche. Prévoyez surtout où couper le morceau, et dites-le à la personne qui gère le son.
 
+### Quelle différence entre une musique funèbre, une marche funèbre et une chanson d'hommage ?
+
+La musique funèbre est le terme général. La marche funèbre est une pièce lente, à pas régulier, pour accompagner un cortège ; celle de Chopin est la plus connue. L'hymne est un chant d'assemblée, surtout religieux. La chanson d'hommage, elle, parle de la personne : elle ne pourrait pas être passée pour quelqu'un d'autre.
+
+### Quelle musique pour l'enterrement d'un grand-père ou d'une grand-mère ?
+
+Celle de sa génération plutôt que de la vôtre : un air de sa jeunesse, une chanson de bal, un chant qu'il ou elle connaissait par cœur. Les petits-enfants peuvent y ajouter un morceau qui leur appartient, à condition qu'il se comprenne sans explication.
+
 ### Peut-on faire écrire une chanson pour le défunt plutôt qu'en choisir une ?
 
-Oui. C'est un service récent et encore peu répandu en France : une œuvre originale est composée à partir de ce que la famille raconte du défunt — son métier, ses habitudes, une anecdote. Elle ne parle que de lui, et n'a aucun droit d'auteur à déclarer puisqu'elle n'appartient à aucun répertoire.
+Oui. C'est un service récent et encore peu répandu en France : une œuvre originale est composée à partir de ce que la famille raconte du défunt — son métier, ses habitudes, une anecdote. Elle ne parle que de lui, et n'a aucun droit d'auteur à déclarer puisqu'elle n'appartient à aucun répertoire. Le détail est dans le guide de la chanson d'hommage, et les trois formules sont présentées sur la page des offres.
 
 Et si rien ne convient
 
-Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter dix-sept, composées pour de vraies personnes, avant de décider quoi que ce soit.
+Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter vingt, composées pour de vraies personnes, avant de décider quoi que ce soit.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
+
+Autre chose à savoir
+
+Si la cérémonie a lieu au crématorium
+La musique en crémation
+→
+
+Si vous hésitez entre une chanson et un instrumental
+La musique sans paroles
+→
+
+Si aucun morceau existant ne lui ressemble
+La chanson d’hommage
+→
 
 Ce service est si récent que personne ne pense à le chercher.
 Faites-le connaître à qui en aurait besoin.
@@ -3445,6 +3478,21 @@ Et si rien ne convient
 Si l'idée de dépendre d'une autorisation vous pèse — pour diffuser, pour copier, pour transmettre — une œuvre écrite pour lui règle la question à la source. Elle n'appartient à personne d'autre qu'à vous.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
+
+Autre chose à savoir
+
+Si vous devez encore choisir les morceaux
+Quelle musique pour un enterrement
+→
+
+Si vous préférez une œuvre qui n’a aucun droit à déclarer
+La chanson d’hommage
+→
+
+Si vous voulez savoir ce que coûte une œuvre originale
+Les offres et les tarifs
+→
 
 Ce service est si récent que personne ne pense à le chercher.
 Faites-le connaître à qui en aurait besoin.
@@ -3536,6 +3584,21 @@ Et si rien ne convient
 Le moment de la disparition demande un morceau qui tienne debout — et c'est rarement ce qu'on trouve dans un répertoire existant. Nous composons des œuvres écrites pour cet instant précis, à partir de ce que vous nous racontez de lui.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
+
+Autre chose à savoir
+
+Si vous construisez toute la cérémonie
+Quelle musique pour un enterrement
+→
+
+Si le créneau est court et que les paroles n’y ont pas leur place
+La musique sans paroles
+→
+
+Si vous vous demandez qui doit déclarer la musique
+Les droits d’auteur aux obsèques
+→
 
 Ce service est si récent que personne ne pense à le chercher.
 Faites-le connaître à qui en aurait besoin.
@@ -3553,9 +3616,9 @@ Obsèques dans moins de 72 heures ? Nous composons en priorité, livraison possi
 
 ---
 
-Page : Chanson d'hommage pour un défunt | Melodia Funèbre
+Page : Chanson d’hommage pour un défunt : choisir ou faire écrire
 Adresse : https://melodia-funebre.fr/chanson-hommage
-Résumé : Choisir une chanson existante ou en faire composer une : ce qui change, ce que ça coûte, les délais, et comment décrire quelqu'un à qui doit l'écrire.
+Résumé : Une chanson pour un défunt : en choisir une existante ou la faire composer. Ce qui change, ce que ça coûte, les délais, et comment décrire la personne.
 
 Guide
 
@@ -3638,6 +3701,21 @@ Et si rien ne convient
 Si aucun morceau existant ne dit ce qu'il faudrait dire, c'est le signe qu'il faut l'écrire. Nous composons une œuvre originale par personne, à partir d'un entretien de cinq minutes, livrée en vingt-quatre heures.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
+
+Autre chose à savoir
+
+Si vous voulez comparer les trois formules
+Les offres et les tarifs
+→
+
+Si vous voulez savoir ce qui se passe après l’appel
+Comment se compose un hommage
+→
+
+Si vous devez aussi placer la chanson dans la cérémonie
+Quelle musique pour un enterrement
+→
 
 Ce service est si récent que personne ne pense à le chercher.
 Faites-le connaître à qui en aurait besoin.
@@ -3782,6 +3860,21 @@ Et si rien ne convient
 Nous fournissons la page hommage et le fichier de gravure ; votre agence funéraire réalise la plaque. La page n'est jamais référencée sur les moteurs de recherche, et la famille peut la retirer elle-même, à tout instant.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
+
+Autre chose à savoir
+
+Si la page souvenir doit faire entendre une chanson écrite pour lui
+La chanson d’hommage
+→
+
+Si vous voulez savoir ce que coûte la plaque, proposée en option
+Les offres et les tarifs
+→
+
+Si vous préparez aussi la cérémonie
+Quelle musique pour un enterrement
+→
 
 Ce service est si récent que personne ne pense à le chercher.
 Faites-le connaître à qui en aurait besoin.
@@ -3799,9 +3892,9 @@ Obsèques dans moins de 72 heures ? Nous composons en priorité, livraison possi
 
 ---
 
-Page : Chanson hommage pour une maman décédée | Melodia Funèbre
+Page : Chanson pour maman décédée : un hommage écrit pour elle
 Adresse : https://melodia-funebre.fr/chanson-pour-maman-decedee
-Résumé : Une chanson d’hommage pour votre maman décédée, écrite d’après ce que vous racontez d’elle : quoi raconter, quand la faire entendre aux obsèques. Dès 149 €.
+Résumé : Une chanson pour votre maman ou votre mère décédée, écrite d’après ce que vous racontez d’elle. Quoi raconter, quand la faire entendre aux obsèques. Dès 149 €.
 
 Pour une maman
 
@@ -4026,6 +4119,7 @@ Ce que nous faisons, nous
 Si aucun morceau ne lui ressemble, nous écrivons et composons sa chanson d’après ce que vous nous racontez d’elle, et vous la recevez avant la cérémonie.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
 
 Autre chose à savoir
 
@@ -4057,9 +4151,9 @@ Obsèques dans moins de 72 heures ? Nous composons en priorité, livraison possi
 
 ---
 
-Page : Chanson hommage pour un papa décédé | Melodia Funèbre
+Page : Chanson pour papa décédé : un hommage écrit pour lui
 Adresse : https://melodia-funebre.fr/chanson-pour-papa-decede
-Résumé : Une chanson d’hommage pour votre papa décédé, écrite d’après ce qu’il montrait sans le dire, dans un style qui lui ressemble. Dès 149 €.
+Résumé : Une chanson pour votre papa ou votre père décédé, écrite d’après ce qu’il montrait sans le dire, dans un style qui lui ressemble. Dès 149 €.
 
 Pour un papa
 
@@ -4236,6 +4330,7 @@ Ce que nous faisons, nous
 Si sa chanson n’existe pas encore, nous l’écrivons et la composons d’après ce que vous nous racontez de lui, dans le style qui lui ressemble.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
 
 Autre chose à savoir
 
@@ -4267,7 +4362,7 @@ Obsèques dans moins de 72 heures ? Nous composons en priorité, livraison possi
 
 ---
 
-Page : Musique d’obsèques sans paroles | Melodia Funèbre
+Page : Musique instrumentale pour obsèques et enterrement
 Adresse : https://melodia-funebre.fr/musique-obseques-instrumentale
 Résumé : Musique instrumentale pour des obsèques : à quels moments elle convient mieux qu’une chanson, comment la choisir, et ce que permet une œuvre originale.
 
@@ -4341,6 +4436,7 @@ Ce que nous faisons, nous
 Nous composons des œuvres originales, chantées ou instrumentales, écrites pour une personne précise et pour le moment où elles seront entendues.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
 
 Autre chose à savoir
 
@@ -4455,6 +4551,7 @@ Ce que nous faisons, nous
 Pour le moment du recueillement, nous composons une œuvre écrite pour la personne, dans le style qui lui ressemble, et livrée avant la cérémonie.
 
 Écouter des hommages composés
+Voir les offres et les tarifs
 
 Autre chose à savoir
 
