@@ -46,8 +46,18 @@
 
   var MSG_SESSION = 'Votre session a expiré. Reconnectez-vous pour continuer.';
 
+  function temoinConsole(present) {
+    try {
+      var secure = (typeof location !== 'undefined' && location.protocol === 'https:') ? '; Secure' : '';
+      document.cookie = present
+        ? 'melodia_console=1; Path=/; Max-Age=2592000; SameSite=Lax' + secure
+        : 'melodia_console=; Path=/; Max-Age=0; SameSite=Lax' + secure;
+    } catch (e) {}
+  }
+
   function effacerSession() {
     LS.del('melodia_session'); LS.del('melodia_role'); LS.del('melodia_agence');
+    temoinConsole(false);
   }
 
   /* Toute écriture de session passe par ici : c'est le seul endroit
@@ -63,6 +73,7 @@
     var vie = Number(s.expires_in || 0);
     if (!s.expires_at && vie) s.expires_at = Math.floor(Date.now() / 1000) + vie;
     LS.set('melodia_session', s);
+    temoinConsole(true);
     return s;
   }
 
@@ -428,6 +439,7 @@
       var s = LS.get('melodia_session', null);
       LS.del('melodia_master'); LS.del('melodia_session'); LS.del('melodia_user');
       LS.del('melodia_role'); LS.del('melodia_agence'); LS.del('melodia_role_erreur');
+      temoinConsole(false);
       try {
         sessionStorage.removeItem('melodia_saut');
         sessionStorage.removeItem('melodia_intro');
@@ -1069,7 +1081,7 @@
       var p ='Tu es un parolier français spécialisé dans les hommages funéraires respectueux et émouvants, et un directeur artistique musical.\n\n'
         + 'Défunt : ' + brief.defunt + ' · Traits : ' + (brief.traits || '-') + ' · Métier/passion : ' + (brief.metier || '-')
         + ' · Habitude : ' + (brief.habitude || '-') + ' · Anecdote : ' + (brief.anecdote || '-') + ' · Style : ' + (brief.style || 'Chanson française') + '\n\n'
-        + 'Réponds UNIQUEMENT en JSON strict sans backticks : {"title":"titre poétique 3-5 mots","lyrics":"[Couplet 1]\\n4 vers\\n\\n[Refrain]\\n4 vers\\n\\n[Couplet 2]\\n4 vers","style_prompt":"description EN ANGLAIS pour Mureka : genre, voix, instruments, tempo BPM, ambiance, 15-25 mots"}\n'
+        + 'Réponds UNIQUEMENT en JSON strict sans backticks : {"title":"titre poétique 3-5 mots","lyrics":"[Couplet 1]\\n4 vers\\n\\n[Refrain]\\n4 vers\\n\\n[Couplet 2]\\n4 vers","style_prompt":"description EN ANGLAIS : genre, voix, instruments, tempo BPM, ambiance, 15-25 mots"}\n'
         + 'Paroles : ton respectueux jamais pleurnichard, images concrètes de sa vraie vie, zéro cliché, vers chantables de 8-10 syllabes, rimes, le prénom apparaît au moins 2 fois.';
       var r = await fetch('https://text.pollinations.ai/openai', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1105,14 +1117,13 @@
         '?width=1024&height=1024&nologo=true&seed=' + g;
     },
 
-    /* ═══ Composition musicale via l'API Mureka ═══
-       Le circuit passe par nos fonctions serveur : la cle n'atteint
-       jamais le navigateur. */
+    /* ═══ Composition musicale, via nos fonctions serveur ═══
+       La clé du fournisseur n'atteint jamais le navigateur. */
 
     /** Verifie si la composition automatique est branchee cote serveur */
     async musicConfig() {
       try {
-        var r = await fetch('/api/music-config');
+        var r = await fetch('/api/music-config', { headers: await entetesIA(false) });
         if (!r.ok) return { configured: false };
         return await r.json();
       } catch (e) { return { configured: false, offline: true }; }
@@ -1156,7 +1167,7 @@
     /**
      * Interroge le service jusqu'a obtention des titres.
      * onTick(etat) est appele a chaque passage pour l'affichage.
-     * Mureka met typiquement 30 a 120 secondes.
+     * Une composition prend typiquement 30 a 120 secondes.
      */
     async musicPoll(taskId, onTick, options) {
       var opt = options || {};
@@ -1187,15 +1198,18 @@
     },
 
     /**
-     * Mode manuel : le brief est copie dans le presse-papiers et Suno
-     * s'ouvre. C'est le circuit courant, tant que la composition n'est
-     * pas automatisee.
+     * Mode manuel : le brief est copie dans le presse-papiers et
+     * l'atelier externe s'ouvre (l'adresse vient du serveur, une fois
+     * la session verifiee). C'est le circuit courant, tant que la
+     * composition n'est pas automatisee.
      */
-    manualExport(title, lyrics, style) {
+    manualExport(title, lyrics, style, atelierUrl) {
       var t = 'TITRE\n' + title
         + '\n\nSTYLE OF MUSIC (a coller dans le champ Style)\n' + style
         + '\n\nLYRICS (a coller dans le champ Lyrics, mode Custom)\n' + lyrics;
-      var ouvrir = function () { window.open('https://suno.com/create', '_blank', 'noopener'); };
+      var ouvrir = function () {
+        if (atelierUrl) window.open(atelierUrl, '_blank', 'noopener');
+      };
       if (navigator.clipboard && navigator.clipboard.writeText) {
         return navigator.clipboard.writeText(t).then(ouvrir, ouvrir);
       }
@@ -1203,4 +1217,7 @@
       return Promise.resolve();
     }
   };
+  try {
+    if (LS.get('melodia_session', null)) temoinConsole(true);
+  } catch (e) {}
 })();

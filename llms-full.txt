@@ -3361,7 +3361,7 @@ Oui. C'est un service récent et encore peu répandu en France : une œuvre orig
 
 Et si rien ne convient
 
-Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter vingt, composées pour de vraies personnes, avant de décider quoi que ce soit.
+Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter vingt, des hommages de démonstration, avant de décider quoi que ce soit.
 
 Écouter des hommages composés
 Voir les offres et les tarifs
@@ -4601,7 +4601,7 @@ L'atelier. Chaque écran, une famille qui attend.
 ## Collaborateur commercial
 
 Vous présentez le service aux agences de pompes funèbres de votre région. Pas de porte-à-porte
-au hasard : un annuaire, un script, des hommages réels à faire écouter, et une première
+au hasard : un annuaire, un script, des hommages de démonstration à faire écouter, et une première
 composition offerte à chaque agence pour qu'elle juge sur pièce.
 
 Commission sur chaque hommage · Secteur réservé

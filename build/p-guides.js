@@ -388,7 +388,7 @@ ${P.filmCampagne('ame-des-souvenirs',
       html: "<p>Oui. C'est un service récent et encore peu répandu en France : une œuvre originale est composée à partir de ce que la famille raconte du défunt — son métier, ses habitudes, une anecdote. Elle ne parle que de lui, et n'a aucun droit d'auteur à déclarer puisqu'elle n'appartient à aucun répertoire. Le détail est dans <a href=\"/chanson-hommage\">le guide de la chanson d'hommage</a>, et les trois formules sont présentées sur <a href=\"/offres\">la page des offres</a>.</p>"
     }
   ],
-  proposition: "Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter vingt, composées pour de vraies personnes, avant de décider quoi que ce soit."
+  proposition: "Il arrive qu'aucune chanson ne convienne — parce qu'elles parlent toutes de quelqu'un d'autre. C'est le point de départ de cette maison : nous composons une œuvre originale à partir de ce que vous nous racontez de lui, en vingt-quatre heures. Vous pouvez en écouter vingt, des hommages de démonstration, avant de décider quoi que ce soit."
 });
 
 

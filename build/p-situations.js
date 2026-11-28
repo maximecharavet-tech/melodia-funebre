@@ -30,7 +30,7 @@ const PUBLIE = '2026-11-01';
    sur la même intention — qui lui aurait pris ses impressions, la
    leçon des pages fusionnées en 301 —, c’est celle-ci qui s’étoffe, à
    la même adresse : comment la chanson se compose, ce qu’elle coûte,
-   les hommages réels écrits pour des mères et des grands-mères, le
+   les hommages de démonstration écrits pour des mères et des grands-mères, le
    questionnaire à remplir à la main, et des réponses citables. Prix
    et livrables : ceux de data.js (repris de content.json), rien
    d’autre. */
