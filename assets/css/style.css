@@ -6413,3 +6413,54 @@ a.reg-carte:hover .reg-jouer, a.reg-carte:focus-visible .reg-jouer {
           mask: radial-gradient(ellipse 70% 60% at 50% 55%, #000 0, rgba(0,0,0,.45) 55%, transparent 85%);
 }
 .exemple-fond::after { content: ''; position: absolute; inset: 0; background: rgba(4,4,7,.45); }
+
+.lv-manteau { display: block; width: 26px; height: 26px; margin: 1rem auto 0; color: var(--or-ivoire); }
+.livret.en-ecoute .lv-manteau, .livret-section.en-ecoute .lv-manteau { filter: drop-shadow(0 0 6px rgba(201,168,76,.55)); }
+
+/* ─── Le visuel de fond de la page « papa » ───
+   Une voiture arrêtée à la tombée du jour, vue depuis la portière
+   passager ouverte ; le manteau du père sur le siège ; la maison
+   en retrait, une lumière chaude à la fenêtre. Personne, pas de
+   visage. Sur ordinateur la voiture tient le tiers droit et le
+   titre reste sur la route, à gauche ; sur téléphone l'image est
+   verticale, centrée sur le manteau, et un voile plus dense passe
+   sous tout le texte. Le bas fond dans l'encre de la page. */
+.tete-papa { position: relative; isolation: isolate; overflow: hidden; padding-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+.tete-papa::before {
+  content: ''; position: absolute; inset: 0; z-index: -3;
+  background: url('/assets/img/papa/fond-voiture-1280.jpg') 86% 48% / cover no-repeat;
+  background-image: image-set(url('/assets/img/papa/fond-voiture-1280.webp') type('image/webp'), url('/assets/img/papa/fond-voiture-1280.jpg') type('image/jpeg'));
+}
+.tete-papa::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(4,4,7,.55) 0, rgba(4,4,7,0) 22%, rgba(4,4,7,0) 62%, var(--ink) 100%),
+    linear-gradient(90deg, rgba(4,4,7,.94) 0, rgba(4,4,7,.86) 36%, rgba(4,4,7,.42) 62%, rgba(4,4,7,.12) 100%);
+}
+/* La lumière de la maison respire, très lentement. */
+.tete-papa-lueur {
+  position: absolute; z-index: -2; pointer-events: none;
+  left: 72%; top: 38%; width: 22vw; aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,214,140,.28) 0, rgba(227,201,119,.10) 38%, transparent 68%);
+  mix-blend-mode: screen; opacity: .8;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tete-papa-lueur { animation: lampeRespire 7s ease-in-out infinite; }
+}
+@media (max-width: 760px) {
+  .tete-papa { padding-top: calc(4.5rem + 72vw); }
+  .tete-papa::before {
+    background: url('/assets/img/papa/fond-voiture-portrait-720.jpg') 50% -8vw / 100% auto no-repeat;
+    background-image: image-set(url('/assets/img/papa/fond-voiture-portrait-720.webp') type('image/webp'), url('/assets/img/papa/fond-voiture-portrait-720.jpg') type('image/jpeg'));
+    background-color: var(--ink);
+  }
+  .tete-papa::after {
+    background: linear-gradient(180deg, rgba(4,4,7,.5) 0, rgba(4,4,7,.05) 14%, rgba(4,4,7,.1) calc(2rem + 58vw), rgba(4,4,7,.86) calc(4.5rem + 76vw), var(--ink) calc(8rem + 110vw));
+  }
+  .tete-papa-lueur { left: 58%; top: calc(-8vw + 38vw); width: 48vw; }
+}
+
+.exemple-ecoute-papa .exemple-fond {
+  background: url('/assets/img/papa/fond-voiture-flou-640.jpg') 80% 55% / cover no-repeat;
+  background-image: image-set(url('/assets/img/papa/fond-voiture-flou-640.webp') type('image/webp'), url('/assets/img/papa/fond-voiture-flou-640.jpg') type('image/jpeg'));
+}
